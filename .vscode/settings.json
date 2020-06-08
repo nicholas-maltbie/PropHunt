@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/*.meta": true
+    },
+    "cSpell.words": [
+        "aldrich",
+        "maltbie"
+    ]
+}
