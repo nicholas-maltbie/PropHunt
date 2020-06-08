@@ -467,7 +467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4632fe2e9513db44d86de96764474e45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensitivity: 40
+  sensitivity: 100
   minVerticalAngle: -80
   maxVerticalAngle: 90
   pitchTarget: {fileID: 1788227364}
