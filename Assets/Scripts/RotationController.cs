@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Rotation controller for rotating an object based on mouse movement.
+/// </summary>
 public class RotationController : MonoBehaviour
 {
     /// <summary>
