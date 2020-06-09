@@ -5,7 +5,7 @@ to be able ot edit and change the project.
 
 # 1. Unity Setup
 
-Using [Unity v 2019.3.15f1](https://unity3d.com/unity/whats-new/2019.3.15)
+Using [Unity v 2019.4.0f1 (LTS)](https://unity3d.com/unity/whats-new/2019.4.0)
 * Including build support for Linux, Mac, and Windows.
 
 Install this version of Unity from Unity Hub
@@ -119,8 +119,6 @@ To add VSCode as Unity's default editor, select it under: `Edit > Preferences > 
 # 7. Switching Unity IDE to VSCode
 
 Unity Article on VSCode and Unity for reference [Article](https://code.visualstudio.com/docs/other/unity).
-
-This is written for [Unity v19.2.11f1](https://unity3d.com/unity/whats-new/2019.2.11).
 
 ## 7.1 Steps to switch to VSCode
 
