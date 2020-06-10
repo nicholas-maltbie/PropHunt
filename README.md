@@ -21,4 +21,3 @@ We are going to use Unity3D. For full information on the development environment
 ## Contribution Guidelines
 
 Please see [Contributing.md](Contributing.md) for details about adding to the project.
-

@@ -56,4 +56,3 @@ If you follow all these steps, we should have a clean, working master branch.
 ## 0. Author
 
 Also, add yourself to the authors csv file if you contribute to the repo.
-
