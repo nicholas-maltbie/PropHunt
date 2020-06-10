@@ -151,3 +151,8 @@ Using the following extensions for VSCode. For information about installing exte
 # 9. Coding Style
 
 As far as coding style, please try to stay consistent with [C# Coding Guidelines](https://wiki.unity3d.com/index.php/Csharp_Coding_Guidelines) from Unity's reference guide. 
+
+
+# 10. Known Issues
+
+* If your unity fails to open the project during import, it may be due to having the packages locked. To fix this try closing Unity and the IDE (most likely VS Code or Visual Studio) and re-open the project. After the project loads you can open the project and IDE without issue.
