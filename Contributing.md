@@ -10,6 +10,14 @@ Whenever you are working on a new feature, make sure to checkout a new branch. (
 git checkout -b $feature_name
 ```
 
+Naming convention for branches are as follows. Use a prefix that fits the kind of change the branch is making.
+
+|Type of Branch|Name Format|
+|--------------|-----------|
+|feature|`feature/$name`|
+|hotfix|`hotfix/$name`|
+|documentation|`doc/$name`|
+
 ## 2. Document Your Code
 
 Whenever you are adding new features or changing the code, make sure to add documentation. Use the [C# XML Documentation Comments](https://marketplace.visualstudio.com/items?itemName=k--kato.docomment) for documentation. This uses XML Documentation for C#. If you have any questions about this code, reference the [doxygen manual](http://www.doxygen.nl/manual/xmlcmds.html).
