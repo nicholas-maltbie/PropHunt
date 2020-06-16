@@ -26,7 +26,7 @@ public class Game : ComponentSystem
         EntityManager.DestroyEntity(GetSingletonEntity<InitGameComponent>());
         foreach (var world in World.All)
         {
-            var network = world.GetExistingSystem<NetworkStreamReceiveSystem>();
+            NetworkStreamReceiveSystem network = world.GetExistingSystem<NetworkStreamReceiveSystem>();
             if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
             {
                 // Client worlds automatically connect to localhost
@@ -34,7 +34,6 @@ public class Game : ComponentSystem
                 ep.Port = 7979;
                 network.Connect(ep);
             }
-            #if UNITY_EDITOR
             else if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
             {
                 // Server world automatically listens for connections from any host
@@ -42,7 +41,6 @@ public class Game : ComponentSystem
                 ep.Port = 7979;
                 network.Listen(ep);
             }
-            #endif
         }
     }
 }
@@ -57,6 +55,7 @@ public struct GoInGameRequest : IRpcCommand
     public void Serialize(ref DataStreamWriter writer)
     {
     }
+
     [BurstCompile]
     private static void InvokeExecute(ref RpcExecutor.Parameters parameters)
     {

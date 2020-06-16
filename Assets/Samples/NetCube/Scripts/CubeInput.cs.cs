@@ -4,25 +4,33 @@ using Unity.NetCode;
 using Unity.Networking.Transport;
 using Unity.Transforms;
 using UnityEngine;
+using Unity.Mathematics;
 
 public struct CubeInput : ICommandData<CubeInput>
 {
     public uint Tick => tick;
     public uint tick;
-    public int horizontal;
-    public int vertical;
+    public float horizontal;
+    public float vertical;
+
+    public float pitch;
+    public float yaw;
 
     public void Deserialize(uint tick, ref DataStreamReader reader)
     {
         this.tick = tick;
-        horizontal = reader.ReadInt();
-        vertical = reader.ReadInt();
+        this.horizontal = reader.ReadFloat();
+        this.vertical = reader.ReadFloat();
+        this.pitch = reader.ReadFloat();
+        this.yaw = reader.ReadFloat();
     }
 
     public void Serialize(ref DataStreamWriter writer)
     {
-        writer.WriteInt(horizontal);
-        writer.WriteInt(vertical);
+        writer.WriteFloat(this.horizontal);
+        writer.WriteFloat(this.vertical);
+        writer.WriteFloat(this.pitch);
+        writer.WriteFloat(this.yaw);
     }
 
     public void Deserialize(uint tick, ref DataStreamReader reader, CubeInput baseline,
@@ -71,45 +79,14 @@ public class SampleCubeInput : ComponentSystem
         }
         var input = default(CubeInput);
         input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
-        if (Input.GetKey("a"))
-            input.horizontal -= 1;
-        if (Input.GetKey("d"))
-            input.horizontal += 1;
-        if (Input.GetKey("s"))
-            input.vertical -= 1;
-        if (Input.GetKey("w"))
-            input.vertical += 1;
+        input.horizontal = Input.GetAxis("Horizontal");
+        input.vertical = Input.GetAxis("Vertical");
+        input.pitch = Input.GetAxis("Mouse Y");
+        input.yaw = Input.GetAxis("Mouse X");
         var inputBuffer = EntityManager.GetBuffer<CubeInput>(localInput);
         inputBuffer.AddCommandData(input);
     }
 }
-
-[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-public class MoveCubeSystem : ComponentSystem
-{
-    protected override void OnUpdate()
-    {
-        var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
-        var tick = group.PredictingTick;
-        var deltaTime = Time.DeltaTime;
-        Entities.ForEach((DynamicBuffer<CubeInput> inputBuffer, ref Translation trans, ref PredictedGhostComponent prediction) =>
-        {
-            if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
-                return;
-            CubeInput input;
-            inputBuffer.GetDataAtTick(tick, out input);
-            if (input.horizontal > 0)
-                trans.Value.x += deltaTime;
-            if (input.horizontal < 0)
-                trans.Value.x -= deltaTime;
-            if (input.vertical > 0)
-                trans.Value.z += deltaTime;
-            if (input.vertical < 0)
-                trans.Value.z -= deltaTime;
-        });
-    }
-}
-
 
 // When client has a connection with network id, go in game and tell server to also go in game
 [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
