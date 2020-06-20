@@ -24,7 +24,6 @@ public class CubeGhostUpdateSystem : JobComponentSystem
 #endif
         [ReadOnly] public ArchetypeChunkBufferType<CubeSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
-        public ArchetypeChunkComponentType<MovableCubeComponent> ghostMovableCubeComponentType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
         public ArchetypeChunkComponentType<Translation> ghostTranslationType;
 
@@ -38,7 +37,6 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             };
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
-            var ghostMovableCubeComponentArray = chunk.GetNativeArray(ghostMovableCubeComponentType);
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -62,13 +60,10 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 if (!snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData))
                     return;
 
-                var ghostMovableCubeComponent = ghostMovableCubeComponentArray[entityIndex];
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
-                ghostMovableCubeComponent.PlayerId = snapshotData.GetMovableCubeComponentPlayerId(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
-                ghostMovableCubeComponentArray[entityIndex] = ghostMovableCubeComponent;
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -90,6 +85,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
         public ArchetypeChunkComponentType<MovableCubeComponent> ghostMovableCubeComponentType;
+        public ArchetypeChunkComponentType<PlayerView> ghostPlayerViewType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
         public ArchetypeChunkComponentType<Translation> ghostTranslationType;
         public uint targetTick;
@@ -104,6 +100,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
             var ghostMovableCubeComponentArray = chunk.GetNativeArray(ghostMovableCubeComponentType);
+            var ghostPlayerViewArray = chunk.GetNativeArray(ghostPlayerViewType);
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -138,12 +135,16 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                     continue;
 
                 var ghostMovableCubeComponent = ghostMovableCubeComponentArray[entityIndex];
+                var ghostPlayerView = ghostPlayerViewArray[entityIndex];
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
                 ghostMovableCubeComponent.PlayerId = snapshotData.GetMovableCubeComponentPlayerId(deserializerState);
+                ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
+                ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostMovableCubeComponentArray[entityIndex] = ghostMovableCubeComponent;
+                ghostPlayerViewArray[entityIndex] = ghostPlayerView;
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -165,7 +166,6 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             All = new []{
                 ComponentType.ReadWrite<CubeSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
-                ComponentType.ReadWrite<MovableCubeComponent>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
             },
@@ -178,6 +178,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
                 ComponentType.ReadWrite<MovableCubeComponent>(),
+                ComponentType.ReadWrite<PlayerView>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
             }
@@ -204,6 +205,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
                 ghostMovableCubeComponentType = GetArchetypeChunkComponentType<MovableCubeComponent>(),
+                ghostPlayerViewType = GetArchetypeChunkComponentType<PlayerView>(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
 
@@ -226,7 +228,6 @@ public class CubeGhostUpdateSystem : JobComponentSystem
 #endif
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<CubeSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
-                ghostMovableCubeComponentType = GetArchetypeChunkComponentType<MovableCubeComponent>(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
                 targetTick = m_ClientSimulationSystemGroup.InterpolationTick,

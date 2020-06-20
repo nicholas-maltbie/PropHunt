@@ -12,6 +12,7 @@ public class CameraSystem : ComponentSystem
 {
     protected override void OnCreate()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         RequireSingletonForUpdate<NetworkIdComponent>();
     }
 
@@ -34,6 +35,14 @@ public class CameraSystem : ComponentSystem
                 }
             );
  
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (Cursor.lockState == CursorLockMode.None)
+                Cursor.lockState = CursorLockMode.Locked;
+            else if (Cursor.lockState == CursorLockMode.Locked)
+                Cursor.lockState = CursorLockMode.None;
+        }
+
         Camera.main.transform.position = position;
         Camera.main.transform.rotation = rotation;
     }
