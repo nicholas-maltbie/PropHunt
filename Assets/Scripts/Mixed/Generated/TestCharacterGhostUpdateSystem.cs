@@ -75,6 +75,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
                 ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
+                ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
                 ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
@@ -171,6 +172,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
                 ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
+                ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
                 ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
                 ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
                 ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);

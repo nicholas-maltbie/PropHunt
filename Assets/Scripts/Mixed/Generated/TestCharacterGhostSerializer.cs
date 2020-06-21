@@ -66,6 +66,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         var chunkDataLinkedEntityGroup = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
         snapshot.SetPlayerIdplayerId(chunkDataPlayerId[ent].playerId, serializerState);
         snapshot.SetPlayerMovementmoveSpeed(chunkDataPlayerMovement[ent].moveSpeed, serializerState);
+        snapshot.SetPlayerMovementsprintMultiplier(chunkDataPlayerMovement[ent].sprintMultiplier, serializerState);
         snapshot.SetPlayerMovementviewRotationRate(chunkDataPlayerMovement[ent].viewRotationRate, serializerState);
         snapshot.SetPlayerViewpitch(chunkDataPlayerView[ent].pitch, serializerState);
         snapshot.SetPlayerViewyaw(chunkDataPlayerView[ent].yaw, serializerState);
