@@ -76,8 +76,19 @@ public class ProphuntClientServerControlSystem : ComponentSystem
     }
 }
 
+/// <summary>
+/// This is the game main MonoBehaviour. This can be used to configure global
+/// settings and how the project operates.
+/// </summary>
 public class GameMain : UnityEngine.MonoBehaviour, IConvertGameObjectToEntity
 {
+    /// <summary>
+    /// This is the setup, can add attributes or set global settings from here.
+    /// Not configurable settings as of yet.
+    /// </summary>
+    /// <param name="entity">Entity to add attributes to (new entity being created).</param>
+    /// <param name="dstManager">Entity manager to configure global settings</param>
+    /// <param name="conversionSystem">Conversion settings from game object to entity</param>
     public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
     {
 #if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
