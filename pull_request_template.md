@@ -13,7 +13,7 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
-- ~~[ ] I have added tests that prove my fix is effective or that my feature works~~
-- ~~[ ] New and existing unit tests pass locally with my changes~~
+- [x] ~~I have added tests that prove my fix is effective or that my feature works~~
+- [x] ~~New and existing unit tests pass locally with my changes~~
 
 (No testing framework setup yet so ignore the last two)
