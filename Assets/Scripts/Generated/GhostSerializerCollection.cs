@@ -11,26 +11,32 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
     {
         var arr = new string[]
         {
+            "TestCharacterGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 0;
+    public int Length => 1;
 #endif
     public static int FindGhostType<T>()
         where T : struct, ISnapshotData<T>
     {
+        if (typeof(T) == typeof(TestCharacterSnapshotData))
+            return 0;
         return -1;
     }
 
     public void BeginSerialize(ComponentSystemBase system)
     {
+        m_TestCharacterGhostSerializer.BeginSerialize(system);
     }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
     {
         switch (serializer)
         {
+            case 0:
+                return m_TestCharacterGhostSerializer.CalculateImportance(chunk);
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -40,6 +46,8 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
     {
         switch (serializer)
         {
+            case 0:
+                return m_TestCharacterGhostSerializer.SnapshotSize;
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -49,10 +57,15 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
     {
         switch (data.ghostType)
         {
+            case 0:
+            {
+                return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<TestCharacterGhostSerializer, TestCharacterSnapshotData>(m_TestCharacterGhostSerializer, ref dataStream, data);
+            }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
     }
+    private TestCharacterGhostSerializer m_TestCharacterGhostSerializer;
 }
 
 public struct EnableProphuntGhostSendSystemComponent : IComponentData
