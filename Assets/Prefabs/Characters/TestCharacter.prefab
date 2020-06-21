@@ -90,9 +90,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3261350838457486256}
   - component: {fileID: -4735714693073688787}
-  - component: {fileID: 6340778626471403615}
   - component: {fileID: 1698639992764308297}
   - component: {fileID: 5590118871220118959}
+  - component: {fileID: -8700528946816345019}
   m_Layer: 0
   m_Name: TestCharacter
   m_TagString: Untagged
@@ -144,6 +144,20 @@ MonoBehaviour:
     - name: playerId
       quantization: -1
       interpolate: 0
+    manualFieldList: 0
+    entityIndex: 0
+  - name: PropHunt.Mixed.Components.PlayerMovement
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: moveSpeed
+      quantization: 100
+      interpolate: 1
+    - name: viewRotationRate
+      quantization: 100
+      interpolate: 1
     manualFieldList: 0
     entityIndex: 0
   - name: PropHunt.Mixed.Components.PlayerView
@@ -341,19 +355,6 @@ MonoBehaviour:
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter
   doNotStrip: 0
---- !u!114 &6340778626471403615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3378658210144245526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d80e06fadd6bd8c4299cd3e3ca46268d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 5
 --- !u!114 &1698639992764308297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +379,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 334e12dd9a08699488b63b716ae76544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8700528946816345019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a3b1ae9c19b91242bc57fd2c65b6804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  viewRotationRate: 3.14
 --- !u!1 &5362533525206946736
 GameObject:
   m_ObjectHideFlags: 0

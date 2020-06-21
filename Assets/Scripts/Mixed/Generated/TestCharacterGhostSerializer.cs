@@ -9,6 +9,7 @@ using Unity.Rendering;
 public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnapshotData>
 {
     private ComponentType componentTypePlayerId;
+    private ComponentType componentTypePlayerMovement;
     private ComponentType componentTypePlayerView;
     private ComponentType componentTypeLocalToWorld;
     private ComponentType componentTypeRotation;
@@ -16,6 +17,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     private ComponentType componentTypeLinkedEntityGroup;
     // FIXME: These disable safety since all serializers have an instance of the same type - causing aliasing. Should be fixed in a cleaner way
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<PlayerId> ghostPlayerIdType;
+    [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<PlayerMovement> ghostPlayerMovementType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<PlayerView> ghostPlayerViewType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Rotation> ghostRotationType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Translation> ghostTranslationType;
@@ -35,12 +37,14 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     public void BeginSerialize(ComponentSystemBase system)
     {
         componentTypePlayerId = ComponentType.ReadWrite<PlayerId>();
+        componentTypePlayerMovement = ComponentType.ReadWrite<PlayerMovement>();
         componentTypePlayerView = ComponentType.ReadWrite<PlayerView>();
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
         componentTypeRotation = ComponentType.ReadWrite<Rotation>();
         componentTypeTranslation = ComponentType.ReadWrite<Translation>();
         componentTypeLinkedEntityGroup = ComponentType.ReadWrite<LinkedEntityGroup>();
         ghostPlayerIdType = system.GetArchetypeChunkComponentType<PlayerId>(true);
+        ghostPlayerMovementType = system.GetArchetypeChunkComponentType<PlayerMovement>(true);
         ghostPlayerViewType = system.GetArchetypeChunkComponentType<PlayerView>(true);
         ghostRotationType = system.GetArchetypeChunkComponentType<Rotation>(true);
         ghostTranslationType = system.GetArchetypeChunkComponentType<Translation>(true);
@@ -55,11 +59,14 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     {
         snapshot.tick = tick;
         var chunkDataPlayerId = chunk.GetNativeArray(ghostPlayerIdType);
+        var chunkDataPlayerMovement = chunk.GetNativeArray(ghostPlayerMovementType);
         var chunkDataPlayerView = chunk.GetNativeArray(ghostPlayerViewType);
         var chunkDataRotation = chunk.GetNativeArray(ghostRotationType);
         var chunkDataTranslation = chunk.GetNativeArray(ghostTranslationType);
         var chunkDataLinkedEntityGroup = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
         snapshot.SetPlayerIdplayerId(chunkDataPlayerId[ent].playerId, serializerState);
+        snapshot.SetPlayerMovementmoveSpeed(chunkDataPlayerMovement[ent].moveSpeed, serializerState);
+        snapshot.SetPlayerMovementviewRotationRate(chunkDataPlayerMovement[ent].viewRotationRate, serializerState);
         snapshot.SetPlayerViewpitch(chunkDataPlayerView[ent].pitch, serializerState);
         snapshot.SetPlayerViewyaw(chunkDataPlayerView[ent].yaw, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);

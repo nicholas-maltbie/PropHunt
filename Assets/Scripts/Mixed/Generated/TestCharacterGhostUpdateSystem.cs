@@ -26,6 +26,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkBufferType<TestCharacterSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PlayerId> ghostPlayerIdType;
+        public ArchetypeChunkComponentType<PlayerMovement> ghostPlayerMovementType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
@@ -41,6 +42,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var ghostPlayerIdArray = chunk.GetNativeArray(ghostPlayerIdType);
+            var ghostPlayerMovementArray = chunk.GetNativeArray(ghostPlayerMovementType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
@@ -64,6 +66,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                     return;
 
                 var ghostPlayerId = ghostPlayerIdArray[entityIndex];
+                var ghostPlayerMovement = ghostPlayerMovementArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
@@ -71,6 +74,8 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
+                ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
+                ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -84,6 +89,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
                 ghostPlayerIdArray[entityIndex] = ghostPlayerId;
+                ghostPlayerMovementArray[entityIndex] = ghostPlayerMovement;
             }
         }
     }
@@ -103,6 +109,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
         public ArchetypeChunkComponentType<PlayerId> ghostPlayerIdType;
+        public ArchetypeChunkComponentType<PlayerMovement> ghostPlayerMovementType;
         public ArchetypeChunkComponentType<PlayerView> ghostPlayerViewType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
@@ -119,6 +126,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
             var ghostPlayerIdArray = chunk.GetNativeArray(ghostPlayerIdType);
+            var ghostPlayerMovementArray = chunk.GetNativeArray(ghostPlayerMovementType);
             var ghostPlayerViewArray = chunk.GetNativeArray(ghostPlayerViewType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -153,6 +161,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                     continue;
 
                 var ghostPlayerId = ghostPlayerIdArray[entityIndex];
+                var ghostPlayerMovement = ghostPlayerMovementArray[entityIndex];
                 var ghostPlayerView = ghostPlayerViewArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
@@ -161,6 +170,8 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
+                ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
+                ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
                 ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
                 ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
@@ -176,6 +187,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
                 ghostPlayerIdArray[entityIndex] = ghostPlayerId;
+                ghostPlayerMovementArray[entityIndex] = ghostPlayerMovement;
                 ghostPlayerViewArray[entityIndex] = ghostPlayerView;
             }
         }
@@ -197,6 +209,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadWrite<TestCharacterSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadWrite<PlayerId>(),
+                ComponentType.ReadWrite<PlayerMovement>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             },
             None = new []{ComponentType.ReadWrite<PredictedGhostComponent>()}
@@ -208,6 +221,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
                 ComponentType.ReadWrite<PlayerId>(),
+                ComponentType.ReadWrite<PlayerMovement>(),
                 ComponentType.ReadWrite<PlayerView>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             }
@@ -234,6 +248,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
                 ghostPlayerIdType = GetArchetypeChunkComponentType<PlayerId>(),
+                ghostPlayerMovementType = GetArchetypeChunkComponentType<PlayerMovement>(),
                 ghostPlayerViewType = GetArchetypeChunkComponentType<PlayerView>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
@@ -259,6 +274,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<TestCharacterSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 ghostPlayerIdType = GetArchetypeChunkComponentType<PlayerId>(),
+                ghostPlayerMovementType = GetArchetypeChunkComponentType<PlayerMovement>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
                 ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),

@@ -56,6 +56,16 @@ namespace PropHunt.Mixed.Commands
         /// </summary>
         public bool IsInteracting => jump == 1;
 
+        /// <summary>
+        /// Is the player currently attempting to sprint.
+        /// 1 is sprinting, 0 is not sprinting;
+        /// </summary>
+        public byte sprint;
+        /// <summary>
+        /// Is the character currently attempting to jump as a boolean
+        /// </summary>
+        public bool IsSprinting => sprint == 1;
+
         public void Deserialize(uint tick, ref DataStreamReader reader)
         {
             this.tick = tick;
@@ -65,6 +75,7 @@ namespace PropHunt.Mixed.Commands
             this.yawChange      = reader.ReadFloat();
             this.jump           = reader.ReadByte();
             this.interact       = reader.ReadByte();
+            this.sprint         = reader.ReadByte();
         }
 
         public void Serialize(ref DataStreamWriter writer)
@@ -75,6 +86,7 @@ namespace PropHunt.Mixed.Commands
             writer.WriteFloat(this.yawChange);
             writer.WriteByte(this.jump);
             writer.WriteByte(this.interact);
+            writer.WriteByte(this.sprint);
         }
 
         public void Deserialize(uint tick, ref DataStreamReader reader, PlayerInput baseline,

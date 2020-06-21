@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -18,14 +19,16 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class PlayerMovementSystem : ComponentSystem
     {
-
         protected override void OnUpdate()
         {
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
-            Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer, ref PredictedGhostComponent prediction, 
-                ref Translation trans, ref Rotation rot, ref PlayerView view) =>
+            
+            Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer,
+                ref PredictedGhostComponent prediction,
+                ref PlayerView view, ref PlayerMovement settings,
+                ref Translation trans, ref Rotation rot) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
@@ -35,9 +38,9 @@ namespace PropHunt.Mixed.Systems
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
 
-                view.pitch += deltaTime * -1 * input.pitchChange;
-                view.yaw += deltaTime * input.yawChange;
-                
+                view.pitch += deltaTime * -1 * input.pitchChange * settings.viewRotationRate;
+                view.yaw += deltaTime * input.yawChange * settings.viewRotationRate;
+
                 if (view.pitch > math.PI / 2)
                 {
                     view.pitch = math.PI / 2;
@@ -54,8 +57,10 @@ namespace PropHunt.Mixed.Systems
                 // Don't allow the total movement to be more than the 1x max move speed
                 float3 direction = inputVector / math.max(math.length(inputVector), 1);
 
+                float speedMultiplier = input.IsSprinting ? settings.moveSpeed : settings.SprintSpeed;
+
                 // Adjust position by movement
-                trans.Value += math.mul(quaternion.RotateY(view.yaw), direction) * 5 * deltaTime;
+                trans.Value += math.mul(quaternion.RotateY(view.yaw), direction) * speedMultiplier * deltaTime;
             });
         }
 
