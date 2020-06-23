@@ -1124,7 +1124,10 @@ MonoBehaviour:
   SerializerCollectionPath: GhostSerializerCollection.cs
   DeserializerCollectionPath: GhostDeserializerCollection.cs
   NamePrefix: Prophunt
-  Ghosts: []
+  Ghosts:
+  - prefab: {fileID: -4735714693073688787, guid: eee6a4ddc1ceae54c92cfa25bd5a5ef1,
+      type: 3}
+    enabled: 1
 --- !u!1 &585440707
 GameObject:
   m_ObjectHideFlags: 0
@@ -2411,6 +2414,51 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestSurface (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag00
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag01
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag02
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag03
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag04
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag05
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag06
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6388618960653614808, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: m_CustomTags.Tag07
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7496428620173621702, guid: 1dbed581fc5070947b76765ee5f861a7,
+        type: 3}
+      propertyPath: ConversionMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1dbed581fc5070947b76765ee5f861a7, type: 3}
 --- !u!4 &1312330955 stripped
@@ -3181,7 +3229,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 0
