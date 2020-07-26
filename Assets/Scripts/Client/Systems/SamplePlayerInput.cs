@@ -72,9 +72,9 @@ namespace PropHunt.Client.Systems
                 input.vertMove  = Input.GetAxis("Vertical");
                 input.pitchChange = Input.GetAxis("Mouse Y");
                 input.yawChange = Input.GetAxis("Mouse X");
-                input.interact = (byte) (Input.GetButtonDown("Interact") ? 0 : 1);
-                input.jump = (byte) (Input.GetButtonDown("Jump") ? 0 : 1);
-                input.sprint = (byte) (Input.GetButton("Sprint") ? 0 : 1);
+                input.interact = (byte) (Input.GetButtonDown("Interact") ? 1 : 0);
+                input.jump = (byte) (Input.GetButton("Jump") ? 1 : 0);
+                input.sprint = (byte) (Input.GetButton("Sprint") ? 1 : 0);
             }
             
             var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);

@@ -1,6 +1,7 @@
 
 
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components
@@ -35,6 +36,30 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostDefaultField(100, true)]
         public float viewRotationRate;
+
+        /// <summary>
+        /// Character's current velocity
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float3 velocity;
+
+        /// <summary>
+        /// Force of the player jump
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float jumpForce;
+
+        /// <summary>
+        /// Max angle that the player can walk at
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float maxWalkAngle;
+
+        /// <summary>
+        /// Distance to check if character is thouching ground
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float groundCheckDistance;
 
     }
 }

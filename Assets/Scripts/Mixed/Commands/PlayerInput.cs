@@ -44,7 +44,7 @@ namespace PropHunt.Mixed.Commands
         /// <summary>
         /// Is the character currently attempting to jump as a boolean.
         /// </summary>
-        public bool IsJumping => jump == 1;
+        public bool IsJumping => this.jump == 1;
 
         /// <summary>
         /// Is the player attempting to interact at this tick.
@@ -54,7 +54,7 @@ namespace PropHunt.Mixed.Commands
         /// <summary>
         /// Is the character currently attempting to interact as a boolean.
         /// </summary>
-        public bool IsInteracting => jump == 1;
+        public bool IsInteracting => this.interact == 1;
 
         /// <summary>
         /// Is the player currently attempting to sprint.
@@ -64,7 +64,7 @@ namespace PropHunt.Mixed.Commands
         /// <summary>
         /// Is the character currently attempting to jump as a boolean
         /// </summary>
-        public bool IsSprinting => sprint == 1;
+        public bool IsSprinting => this.sprint == 1;
 
         public void Deserialize(uint tick, ref DataStreamReader reader)
         {

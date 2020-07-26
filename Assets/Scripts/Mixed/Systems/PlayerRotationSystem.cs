@@ -13,11 +13,12 @@ namespace PropHunt.Mixed.Systems
 
     /// <summary>
     /// Player movement system that moves player controlled objects from
-    /// a given player's input.
+    /// a given player's input. Rotates the player view and object
+    /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class PlayerMovementSystem : ComponentSystem
+    public class PlayerRotationSystem : ComponentSystem
     {
         protected override void OnUpdate()
         {
@@ -37,7 +38,7 @@ namespace PropHunt.Mixed.Systems
 
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
-
+                
                 view.pitch += deltaTime * -1 * input.pitchChange * settings.viewRotationRate;
                 view.yaw += deltaTime * input.yawChange * settings.viewRotationRate;
 
@@ -50,17 +51,7 @@ namespace PropHunt.Mixed.Systems
                     view.pitch = -math.PI / 2;
                 }
 
-                rot.Value.value = quaternion.Euler(new float3(view.pitch, view.yaw, 0)).value;
-
-                // Rotate movement vector around current attitude (only care about horizontal)
-                float3 inputVector = new float3(input.horizMove, 0, input.vertMove);
-                // Don't allow the total movement to be more than the 1x max move speed
-                float3 direction = inputVector / math.max(math.length(inputVector), 1);
-
-                float speedMultiplier = input.IsSprinting ? settings.moveSpeed : settings.SprintSpeed;
-
-                // Adjust position by movement
-                trans.Value += math.mul(quaternion.RotateY(view.yaw), direction) * speedMultiplier * deltaTime;
+                rot.Value.value = quaternion.Euler(new float3(0, view.yaw, 0)).value;
             });
         }
 
