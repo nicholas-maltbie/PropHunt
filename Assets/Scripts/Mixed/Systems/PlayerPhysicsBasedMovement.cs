@@ -15,7 +15,8 @@ namespace PropHunt.Mixed.Systems
 
     /// <summary>
     /// Player movement system that moves player controlled objects from
-    /// a given player's input.
+    /// a given player's input. Moves a physics body attached to a
+    /// character based on input with some respect for physics.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]

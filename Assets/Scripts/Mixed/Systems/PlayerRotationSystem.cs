@@ -13,7 +13,8 @@ namespace PropHunt.Mixed.Systems
 
     /// <summary>
     /// Player movement system that moves player controlled objects from
-    /// a given player's input.
+    /// a given player's input. Rotates the player view and object
+    /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
