@@ -31,13 +31,30 @@ namespace PropHunt.Authoring
         /// </summary>
         public float gravityForce = 9.8f;
 
+        /// <summary>
+        /// Force of the player jump
+        /// </summary>
+        public float jumpForce = 5.0f;
+
+        /// <summary>
+        /// Maximum angle that a player can walk at
+        /// </summary>
+        public float maxWalkAngle = 45;
+
+        /// <summary>
+        /// Distance at which a player is considered 'grounded'
+        /// </summary>
+        public float groundCheckDistance = 0.1f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             PlayerMovement playerMovement = new PlayerMovement();
-            playerMovement.moveSpeed = moveSpeed;
-            playerMovement.viewRotationRate = viewRotationRate;
-            playerMovement.sprintMultiplier = sprintMultiplier;
-            playerMovement.gravityForce = gravityForce;
+            playerMovement.moveSpeed = this.moveSpeed;
+            playerMovement.viewRotationRate = this.viewRotationRate;
+            playerMovement.sprintMultiplier = this.sprintMultiplier;
+            playerMovement.jumpForce = this.jumpForce;
+            playerMovement.groundCheckDistance = this.groundCheckDistance;
+            playerMovement.maxWalkAngle = this.maxWalkAngle;
             dstManager.AddComponentData(entity, playerMovement);
         }
     }

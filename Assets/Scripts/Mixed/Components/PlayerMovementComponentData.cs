@@ -44,9 +44,22 @@ namespace PropHunt.Mixed.Components
         public float3 velocity;
 
         /// <summary>
-        /// Force that gravity exerts on the player (in m/s^2)
+        /// Force of the player jump
         /// </summary>
-        public float gravityForce;
+        [GhostDefaultField(100, true)]
+        public float jumpForce;
+
+        /// <summary>
+        /// Max angle that the player can walk at
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float maxWalkAngle;
+
+        /// <summary>
+        /// Distance to check if character is thouching ground
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float groundCheckDistance;
 
     }
 }

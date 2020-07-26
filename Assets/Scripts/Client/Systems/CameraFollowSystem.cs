@@ -14,7 +14,7 @@ namespace PropHunt.Client.Systems
     /// Camera follow system to follow a player object.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateInGroup(typeof(PresentationSystemGroup))]
     public class CameraFollowSystem : ComponentSystem
     {
         protected override void OnCreate()

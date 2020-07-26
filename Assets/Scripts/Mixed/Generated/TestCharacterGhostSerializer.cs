@@ -13,7 +13,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     private ComponentType componentTypePlayerMovement;
     private ComponentType componentTypePlayerView;
     private ComponentType componentTypePhysicsCollider;
-    private ComponentType componentTypePhysicsGravityFactor;
+    private ComponentType componentTypePhysicsDamping;
     private ComponentType componentTypePhysicsMass;
     private ComponentType componentTypePhysicsVelocity;
     private ComponentType componentTypeLocalToWorld;
@@ -45,7 +45,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         componentTypePlayerMovement = ComponentType.ReadWrite<PlayerMovement>();
         componentTypePlayerView = ComponentType.ReadWrite<PlayerView>();
         componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
-        componentTypePhysicsGravityFactor = ComponentType.ReadWrite<PhysicsGravityFactor>();
+        componentTypePhysicsDamping = ComponentType.ReadWrite<PhysicsDamping>();
         componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();
         componentTypePhysicsVelocity = ComponentType.ReadWrite<PhysicsVelocity>();
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
@@ -78,6 +78,9 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         snapshot.SetPlayerMovementsprintMultiplier(chunkDataPlayerMovement[ent].sprintMultiplier, serializerState);
         snapshot.SetPlayerMovementviewRotationRate(chunkDataPlayerMovement[ent].viewRotationRate, serializerState);
         snapshot.SetPlayerMovementvelocity(chunkDataPlayerMovement[ent].velocity, serializerState);
+        snapshot.SetPlayerMovementjumpForce(chunkDataPlayerMovement[ent].jumpForce, serializerState);
+        snapshot.SetPlayerMovementmaxWalkAngle(chunkDataPlayerMovement[ent].maxWalkAngle, serializerState);
+        snapshot.SetPlayerMovementgroundCheckDistance(chunkDataPlayerMovement[ent].groundCheckDistance, serializerState);
         snapshot.SetPlayerViewpitch(chunkDataPlayerView[ent].pitch, serializerState);
         snapshot.SetPlayerViewyaw(chunkDataPlayerView[ent].yaw, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);

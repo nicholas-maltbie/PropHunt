@@ -166,6 +166,15 @@ MonoBehaviour:
     - name: velocity
       quantization: 100
       interpolate: 1
+    - name: jumpForce
+      quantization: 100
+      interpolate: 1
+    - name: maxWalkAngle
+      quantization: 100
+      interpolate: 1
+    - name: groundCheckDistance
+      quantization: 100
+      interpolate: 1
     manualFieldList: 0
     entityIndex: 0
   - name: PropHunt.Mixed.Components.PlayerView
@@ -190,7 +199,7 @@ MonoBehaviour:
     fields: []
     manualFieldList: 0
     entityIndex: 0
-  - name: Unity.Physics.PhysicsGravityFactor
+  - name: Unity.Physics.PhysicsDamping
     interpolatedClient: 1
     predictedClient: 1
     server: 1
@@ -434,6 +443,10 @@ MonoBehaviour:
   moveSpeed: 5
   viewRotationRate: 3.14
   sprintMultiplier: 2
+  gravityForce: 9.8
+  jumpForce: 5
+  maxWalkAngle: 45
+  groundCheckDistance: 0.25
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,7 +618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MotionType: 1
+  m_MotionType: 0
   m_Mass: 1
   m_LinearDamping: 0.01
   m_AngularDamping: 0.05
