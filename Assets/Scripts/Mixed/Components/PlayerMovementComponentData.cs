@@ -1,6 +1,7 @@
 
 
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components
@@ -35,6 +36,17 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostDefaultField(100, true)]
         public float viewRotationRate;
+
+        /// <summary>
+        /// Character's current velocity
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float3 velocity;
+
+        /// <summary>
+        /// Force that gravity exerts on the player (in m/s^2)
+        /// </summary>
+        public float gravityForce;
 
     }
 }

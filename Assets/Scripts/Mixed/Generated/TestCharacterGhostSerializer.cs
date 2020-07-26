@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Collections;
 using Unity.NetCode;
 using PropHunt.Mixed.Components;
+using Unity.Physics;
 using Unity.Transforms;
 using Unity.Rendering;
 
@@ -11,6 +12,10 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     private ComponentType componentTypePlayerId;
     private ComponentType componentTypePlayerMovement;
     private ComponentType componentTypePlayerView;
+    private ComponentType componentTypePhysicsCollider;
+    private ComponentType componentTypePhysicsGravityFactor;
+    private ComponentType componentTypePhysicsMass;
+    private ComponentType componentTypePhysicsVelocity;
     private ComponentType componentTypeLocalToWorld;
     private ComponentType componentTypeRotation;
     private ComponentType componentTypeTranslation;
@@ -39,6 +44,10 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         componentTypePlayerId = ComponentType.ReadWrite<PlayerId>();
         componentTypePlayerMovement = ComponentType.ReadWrite<PlayerMovement>();
         componentTypePlayerView = ComponentType.ReadWrite<PlayerView>();
+        componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
+        componentTypePhysicsGravityFactor = ComponentType.ReadWrite<PhysicsGravityFactor>();
+        componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();
+        componentTypePhysicsVelocity = ComponentType.ReadWrite<PhysicsVelocity>();
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
         componentTypeRotation = ComponentType.ReadWrite<Rotation>();
         componentTypeTranslation = ComponentType.ReadWrite<Translation>();
@@ -68,6 +77,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         snapshot.SetPlayerMovementmoveSpeed(chunkDataPlayerMovement[ent].moveSpeed, serializerState);
         snapshot.SetPlayerMovementsprintMultiplier(chunkDataPlayerMovement[ent].sprintMultiplier, serializerState);
         snapshot.SetPlayerMovementviewRotationRate(chunkDataPlayerMovement[ent].viewRotationRate, serializerState);
+        snapshot.SetPlayerMovementvelocity(chunkDataPlayerMovement[ent].velocity, serializerState);
         snapshot.SetPlayerViewpitch(chunkDataPlayerView[ent].pitch, serializerState);
         snapshot.SetPlayerViewyaw(chunkDataPlayerView[ent].yaw, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);

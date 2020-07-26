@@ -77,6 +77,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
                 ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
                 ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
+                ghostPlayerMovement.velocity = snapshotData.GetPlayerMovementvelocity(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -174,6 +175,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
                 ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
                 ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
+                ghostPlayerMovement.velocity = snapshotData.GetPlayerMovementvelocity(deserializerState);
                 ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
                 ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);

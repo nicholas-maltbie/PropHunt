@@ -36,7 +36,7 @@ namespace PropHunt.Client.Systems
                     {
                         if (player.playerId == localPlayerId) {
                             position.x = transform.Value.x;
-                            position.y = transform.Value.y;
+                            position.y = transform.Value.y + 1.7f;
                             position.z = transform.Value.z;
                             rotation.value = quaternion.Euler(view.pitch, view.yaw, 0).value;
                         }

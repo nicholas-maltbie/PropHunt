@@ -1,5 +1,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
+using Unity.Physics;
 using UnityEngine;
 
 namespace PropHunt.Authoring
@@ -25,12 +26,18 @@ namespace PropHunt.Authoring
         /// </summary>
         public float sprintMultiplier = 2f;
 
+        /// <summary>
+        /// Force of gravity exerted on player
+        /// </summary>
+        public float gravityForce = 9.8f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             PlayerMovement playerMovement = new PlayerMovement();
             playerMovement.moveSpeed = moveSpeed;
             playerMovement.viewRotationRate = viewRotationRate;
             playerMovement.sprintMultiplier = sprintMultiplier;
+            playerMovement.gravityForce = gravityForce;
             dstManager.AddComponentData(entity, playerMovement);
         }
     }
