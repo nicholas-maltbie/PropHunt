@@ -7,14 +7,14 @@ using Unity.Rendering;
 namespace PropHunt.Authoring
 {
     /// <summary>
-    /// Player movement authoring component, will attach a palyer
-    /// movement attribute to an component as it is converted to an entity.
+    /// Cube Properties authoring component.
+    /// Will attach a cube material color attribute as it is converted to an entity.
     /// </summary>
     [RequireComponent(typeof(MeshRenderer))]
     public class CubePropertiesAuthoringComponent : MonoBehaviour, IConvertGameObjectToEntity
     {
         /// <summary>
-        /// Speed of movement in units per second
+        /// The color of the material of the cube.
         /// </summary>
         public Color materialColor;
 
