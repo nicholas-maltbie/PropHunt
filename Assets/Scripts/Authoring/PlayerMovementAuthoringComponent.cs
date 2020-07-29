@@ -29,7 +29,7 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Force of gravity exerted on player
         /// </summary>
-        public float gravityForce = 9.8f;
+        public Vector3 gravityForce = new Vector3(0, -9.8f, 0);
 
         /// <summary>
         /// Force of the player jump
@@ -55,6 +55,7 @@ namespace PropHunt.Authoring
             playerMovement.jumpForce = this.jumpForce;
             playerMovement.groundCheckDistance = this.groundCheckDistance;
             playerMovement.maxWalkAngle = this.maxWalkAngle;
+            playerMovement.gravityForce = this.gravityForce;
             dstManager.AddComponentData(entity, playerMovement);
         }
     }

@@ -13,7 +13,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
     private ComponentType componentTypePlayerMovement;
     private ComponentType componentTypePlayerView;
     private ComponentType componentTypePhysicsCollider;
-    private ComponentType componentTypePhysicsDamping;
+    private ComponentType componentTypePhysicsGravityFactor;
     private ComponentType componentTypePhysicsMass;
     private ComponentType componentTypePhysicsVelocity;
     private ComponentType componentTypeLocalToWorld;
@@ -45,7 +45,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         componentTypePlayerMovement = ComponentType.ReadWrite<PlayerMovement>();
         componentTypePlayerView = ComponentType.ReadWrite<PlayerView>();
         componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
-        componentTypePhysicsDamping = ComponentType.ReadWrite<PhysicsDamping>();
+        componentTypePhysicsGravityFactor = ComponentType.ReadWrite<PhysicsGravityFactor>();
         componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();
         componentTypePhysicsVelocity = ComponentType.ReadWrite<PhysicsVelocity>();
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
@@ -81,6 +81,7 @@ public struct TestCharacterGhostSerializer : IGhostSerializer<TestCharacterSnaps
         snapshot.SetPlayerMovementjumpForce(chunkDataPlayerMovement[ent].jumpForce, serializerState);
         snapshot.SetPlayerMovementmaxWalkAngle(chunkDataPlayerMovement[ent].maxWalkAngle, serializerState);
         snapshot.SetPlayerMovementgroundCheckDistance(chunkDataPlayerMovement[ent].groundCheckDistance, serializerState);
+        snapshot.SetPlayerMovementgravityForce(chunkDataPlayerMovement[ent].gravityForce, serializerState);
         snapshot.SetPlayerViewpitch(chunkDataPlayerView[ent].pitch, serializerState);
         snapshot.SetPlayerViewyaw(chunkDataPlayerView[ent].yaw, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);

@@ -81,6 +81,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostPlayerMovement.jumpForce = snapshotData.GetPlayerMovementjumpForce(deserializerState);
                 ghostPlayerMovement.maxWalkAngle = snapshotData.GetPlayerMovementmaxWalkAngle(deserializerState);
                 ghostPlayerMovement.groundCheckDistance = snapshotData.GetPlayerMovementgroundCheckDistance(deserializerState);
+                ghostPlayerMovement.gravityForce = snapshotData.GetPlayerMovementgravityForce(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -182,6 +183,7 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostPlayerMovement.jumpForce = snapshotData.GetPlayerMovementjumpForce(deserializerState);
                 ghostPlayerMovement.maxWalkAngle = snapshotData.GetPlayerMovementmaxWalkAngle(deserializerState);
                 ghostPlayerMovement.groundCheckDistance = snapshotData.GetPlayerMovementgroundCheckDistance(deserializerState);
+                ghostPlayerMovement.gravityForce = snapshotData.GetPlayerMovementgravityForce(deserializerState);
                 ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
                 ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);

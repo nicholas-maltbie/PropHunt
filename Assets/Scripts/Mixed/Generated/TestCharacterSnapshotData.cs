@@ -15,6 +15,9 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     private int PlayerMovementjumpForce;
     private int PlayerMovementmaxWalkAngle;
     private int PlayerMovementgroundCheckDistance;
+    private int PlayerMovementgravityForceX;
+    private int PlayerMovementgravityForceY;
+    private int PlayerMovementgravityForceZ;
     private int PlayerViewpitch;
     private int PlayerViewyaw;
     private int RotationValueX;
@@ -170,6 +173,24 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     public void SetPlayerMovementgroundCheckDistance(float val)
     {
         PlayerMovementgroundCheckDistance = (int)(val * 100);
+    }
+    public float3 GetPlayerMovementgravityForce(GhostDeserializerState deserializerState)
+    {
+        return GetPlayerMovementgravityForce();
+    }
+    public float3 GetPlayerMovementgravityForce()
+    {
+        return new float3(PlayerMovementgravityForceX * 0.01f, PlayerMovementgravityForceY * 0.01f, PlayerMovementgravityForceZ * 0.01f);
+    }
+    public void SetPlayerMovementgravityForce(float3 val, GhostSerializerState serializerState)
+    {
+        SetPlayerMovementgravityForce(val);
+    }
+    public void SetPlayerMovementgravityForce(float3 val)
+    {
+        PlayerMovementgravityForceX = (int)(val.x * 100);
+        PlayerMovementgravityForceY = (int)(val.y * 100);
+        PlayerMovementgravityForceZ = (int)(val.z * 100);
     }
     public float GetPlayerViewpitch(GhostDeserializerState deserializerState)
     {
@@ -328,6 +349,9 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
         PlayerMovementjumpForce = predictor.PredictInt(PlayerMovementjumpForce, baseline1.PlayerMovementjumpForce, baseline2.PlayerMovementjumpForce);
         PlayerMovementmaxWalkAngle = predictor.PredictInt(PlayerMovementmaxWalkAngle, baseline1.PlayerMovementmaxWalkAngle, baseline2.PlayerMovementmaxWalkAngle);
         PlayerMovementgroundCheckDistance = predictor.PredictInt(PlayerMovementgroundCheckDistance, baseline1.PlayerMovementgroundCheckDistance, baseline2.PlayerMovementgroundCheckDistance);
+        PlayerMovementgravityForceX = predictor.PredictInt(PlayerMovementgravityForceX, baseline1.PlayerMovementgravityForceX, baseline2.PlayerMovementgravityForceX);
+        PlayerMovementgravityForceY = predictor.PredictInt(PlayerMovementgravityForceY, baseline1.PlayerMovementgravityForceY, baseline2.PlayerMovementgravityForceY);
+        PlayerMovementgravityForceZ = predictor.PredictInt(PlayerMovementgravityForceZ, baseline1.PlayerMovementgravityForceZ, baseline2.PlayerMovementgravityForceZ);
         PlayerViewpitch = predictor.PredictInt(PlayerViewpitch, baseline1.PlayerViewpitch, baseline2.PlayerViewpitch);
         PlayerViewyaw = predictor.PredictInt(PlayerViewyaw, baseline1.PlayerViewyaw, baseline2.PlayerViewyaw);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
@@ -365,29 +389,32 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
         changeMask0 |= (PlayerMovementjumpForce != baseline.PlayerMovementjumpForce) ? (1u<<5) : 0;
         changeMask0 |= (PlayerMovementmaxWalkAngle != baseline.PlayerMovementmaxWalkAngle) ? (1u<<6) : 0;
         changeMask0 |= (PlayerMovementgroundCheckDistance != baseline.PlayerMovementgroundCheckDistance) ? (1u<<7) : 0;
-        changeMask0 |= (PlayerViewpitch != baseline.PlayerViewpitch) ? (1u<<8) : 0;
-        changeMask0 |= (PlayerViewyaw != baseline.PlayerViewyaw) ? (1u<<9) : 0;
+        changeMask0 |= (PlayerMovementgravityForceX != baseline.PlayerMovementgravityForceX ||
+                                           PlayerMovementgravityForceY != baseline.PlayerMovementgravityForceY ||
+                                           PlayerMovementgravityForceZ != baseline.PlayerMovementgravityForceZ) ? (1u<<8) : 0;
+        changeMask0 |= (PlayerViewpitch != baseline.PlayerViewpitch) ? (1u<<9) : 0;
+        changeMask0 |= (PlayerViewyaw != baseline.PlayerViewyaw) ? (1u<<10) : 0;
         changeMask0 |= (RotationValueX != baseline.RotationValueX ||
                                            RotationValueY != baseline.RotationValueY ||
                                            RotationValueZ != baseline.RotationValueZ ||
-                                           RotationValueW != baseline.RotationValueW) ? (1u<<10) : 0;
+                                           RotationValueW != baseline.RotationValueW) ? (1u<<11) : 0;
         changeMask0 |= (TranslationValueX != baseline.TranslationValueX ||
                                            TranslationValueY != baseline.TranslationValueY ||
-                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<11) : 0;
+                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<12) : 0;
         changeMask0 |= (Child0RotationValueX != baseline.Child0RotationValueX ||
                                            Child0RotationValueY != baseline.Child0RotationValueY ||
                                            Child0RotationValueZ != baseline.Child0RotationValueZ ||
-                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<12) : 0;
+                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<13) : 0;
         changeMask0 |= (Child0TranslationValueX != baseline.Child0TranslationValueX ||
                                            Child0TranslationValueY != baseline.Child0TranslationValueY ||
-                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<13) : 0;
+                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<14) : 0;
         changeMask0 |= (Child1RotationValueX != baseline.Child1RotationValueX ||
                                            Child1RotationValueY != baseline.Child1RotationValueY ||
                                            Child1RotationValueZ != baseline.Child1RotationValueZ ||
-                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<14) : 0;
+                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<15) : 0;
         changeMask0 |= (Child1TranslationValueX != baseline.Child1TranslationValueX ||
                                            Child1TranslationValueY != baseline.Child1TranslationValueY ||
-                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<15) : 0;
+                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<16) : 0;
         writer.WritePackedUIntDelta(changeMask0, baseline.changeMask0, compressionModel);
         bool isPredicted = GetPlayerIdplayerId() == networkId;
         writer.WritePackedUInt(isPredicted?1u:0, compressionModel);
@@ -411,40 +438,46 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             writer.WritePackedIntDelta(PlayerMovementmaxWalkAngle, baseline.PlayerMovementmaxWalkAngle, compressionModel);
         if ((changeMask0 & (1 << 7)) != 0)
             writer.WritePackedIntDelta(PlayerMovementgroundCheckDistance, baseline.PlayerMovementgroundCheckDistance, compressionModel);
-        if ((changeMask0 & (1 << 10)) != 0)
+        if ((changeMask0 & (1 << 8)) != 0)
+        {
+            writer.WritePackedIntDelta(PlayerMovementgravityForceX, baseline.PlayerMovementgravityForceX, compressionModel);
+            writer.WritePackedIntDelta(PlayerMovementgravityForceY, baseline.PlayerMovementgravityForceY, compressionModel);
+            writer.WritePackedIntDelta(PlayerMovementgravityForceZ, baseline.PlayerMovementgravityForceZ, compressionModel);
+        }
+        if ((changeMask0 & (1 << 11)) != 0)
         {
             writer.WritePackedIntDelta(RotationValueX, baseline.RotationValueX, compressionModel);
             writer.WritePackedIntDelta(RotationValueY, baseline.RotationValueY, compressionModel);
             writer.WritePackedIntDelta(RotationValueZ, baseline.RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(RotationValueW, baseline.RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 11)) != 0)
+        if ((changeMask0 & (1 << 12)) != 0)
         {
             writer.WritePackedIntDelta(TranslationValueX, baseline.TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(TranslationValueY, baseline.TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(TranslationValueZ, baseline.TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 12)) != 0)
+        if ((changeMask0 & (1 << 13)) != 0)
         {
             writer.WritePackedIntDelta(Child0RotationValueX, baseline.Child0RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueY, baseline.Child0RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueZ, baseline.Child0RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueW, baseline.Child0RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 13)) != 0)
+        if ((changeMask0 & (1 << 14)) != 0)
         {
             writer.WritePackedIntDelta(Child0TranslationValueX, baseline.Child0TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueY, baseline.Child0TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueZ, baseline.Child0TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 14)) != 0)
+        if ((changeMask0 & (1 << 15)) != 0)
         {
             writer.WritePackedIntDelta(Child1RotationValueX, baseline.Child1RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueY, baseline.Child1RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueZ, baseline.Child1RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueW, baseline.Child1RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 15)) != 0)
+        if ((changeMask0 & (1 << 16)) != 0)
         {
             writer.WritePackedIntDelta(Child1TranslationValueX, baseline.Child1TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1TranslationValueY, baseline.Child1TranslationValueY, compressionModel);
@@ -452,9 +485,9 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
         }
         if (isPredicted)
         {
-            if ((changeMask0 & (1 << 8)) != 0)
-                writer.WritePackedIntDelta(PlayerViewpitch, baseline.PlayerViewpitch, compressionModel);
             if ((changeMask0 & (1 << 9)) != 0)
+                writer.WritePackedIntDelta(PlayerViewpitch, baseline.PlayerViewpitch, compressionModel);
+            if ((changeMask0 & (1 << 10)) != 0)
                 writer.WritePackedIntDelta(PlayerViewyaw, baseline.PlayerViewyaw, compressionModel);
         }
     }
@@ -505,7 +538,19 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             PlayerMovementgroundCheckDistance = reader.ReadPackedIntDelta(baseline.PlayerMovementgroundCheckDistance, compressionModel);
         else
             PlayerMovementgroundCheckDistance = baseline.PlayerMovementgroundCheckDistance;
-        if ((changeMask0 & (1 << 10)) != 0)
+        if ((changeMask0 & (1 << 8)) != 0)
+        {
+            PlayerMovementgravityForceX = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceX, compressionModel);
+            PlayerMovementgravityForceY = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceY, compressionModel);
+            PlayerMovementgravityForceZ = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceZ, compressionModel);
+        }
+        else
+        {
+            PlayerMovementgravityForceX = baseline.PlayerMovementgravityForceX;
+            PlayerMovementgravityForceY = baseline.PlayerMovementgravityForceY;
+            PlayerMovementgravityForceZ = baseline.PlayerMovementgravityForceZ;
+        }
+        if ((changeMask0 & (1 << 11)) != 0)
         {
             RotationValueX = reader.ReadPackedIntDelta(baseline.RotationValueX, compressionModel);
             RotationValueY = reader.ReadPackedIntDelta(baseline.RotationValueY, compressionModel);
@@ -519,7 +564,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             RotationValueZ = baseline.RotationValueZ;
             RotationValueW = baseline.RotationValueW;
         }
-        if ((changeMask0 & (1 << 11)) != 0)
+        if ((changeMask0 & (1 << 12)) != 0)
         {
             TranslationValueX = reader.ReadPackedIntDelta(baseline.TranslationValueX, compressionModel);
             TranslationValueY = reader.ReadPackedIntDelta(baseline.TranslationValueY, compressionModel);
@@ -531,7 +576,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             TranslationValueY = baseline.TranslationValueY;
             TranslationValueZ = baseline.TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 12)) != 0)
+        if ((changeMask0 & (1 << 13)) != 0)
         {
             Child0RotationValueX = reader.ReadPackedIntDelta(baseline.Child0RotationValueX, compressionModel);
             Child0RotationValueY = reader.ReadPackedIntDelta(baseline.Child0RotationValueY, compressionModel);
@@ -545,7 +590,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child0RotationValueZ = baseline.Child0RotationValueZ;
             Child0RotationValueW = baseline.Child0RotationValueW;
         }
-        if ((changeMask0 & (1 << 13)) != 0)
+        if ((changeMask0 & (1 << 14)) != 0)
         {
             Child0TranslationValueX = reader.ReadPackedIntDelta(baseline.Child0TranslationValueX, compressionModel);
             Child0TranslationValueY = reader.ReadPackedIntDelta(baseline.Child0TranslationValueY, compressionModel);
@@ -557,7 +602,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child0TranslationValueY = baseline.Child0TranslationValueY;
             Child0TranslationValueZ = baseline.Child0TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 14)) != 0)
+        if ((changeMask0 & (1 << 15)) != 0)
         {
             Child1RotationValueX = reader.ReadPackedIntDelta(baseline.Child1RotationValueX, compressionModel);
             Child1RotationValueY = reader.ReadPackedIntDelta(baseline.Child1RotationValueY, compressionModel);
@@ -571,7 +616,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child1RotationValueZ = baseline.Child1RotationValueZ;
             Child1RotationValueW = baseline.Child1RotationValueW;
         }
-        if ((changeMask0 & (1 << 15)) != 0)
+        if ((changeMask0 & (1 << 16)) != 0)
         {
             Child1TranslationValueX = reader.ReadPackedIntDelta(baseline.Child1TranslationValueX, compressionModel);
             Child1TranslationValueY = reader.ReadPackedIntDelta(baseline.Child1TranslationValueY, compressionModel);
@@ -585,11 +630,11 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
         }
         if (isPredicted)
         {
-            if ((changeMask0 & (1 << 8)) != 0)
+            if ((changeMask0 & (1 << 9)) != 0)
                 PlayerViewpitch = reader.ReadPackedIntDelta(baseline.PlayerViewpitch, compressionModel);
             else
                 PlayerViewpitch = baseline.PlayerViewpitch;
-            if ((changeMask0 & (1 << 9)) != 0)
+            if ((changeMask0 & (1 << 10)) != 0)
                 PlayerViewyaw = reader.ReadPackedIntDelta(baseline.PlayerViewyaw, compressionModel);
             else
                 PlayerViewyaw = baseline.PlayerViewyaw;
@@ -604,6 +649,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
         SetPlayerMovementjumpForce(math.lerp(GetPlayerMovementjumpForce(), target.GetPlayerMovementjumpForce(), factor));
         SetPlayerMovementmaxWalkAngle(math.lerp(GetPlayerMovementmaxWalkAngle(), target.GetPlayerMovementmaxWalkAngle(), factor));
         SetPlayerMovementgroundCheckDistance(math.lerp(GetPlayerMovementgroundCheckDistance(), target.GetPlayerMovementgroundCheckDistance(), factor));
+        SetPlayerMovementgravityForce(math.lerp(GetPlayerMovementgravityForce(), target.GetPlayerMovementgravityForce(), factor));
         SetPlayerViewpitch(math.lerp(GetPlayerViewpitch(), target.GetPlayerViewpitch(), factor));
         SetPlayerViewyaw(math.lerp(GetPlayerViewyaw(), target.GetPlayerViewyaw(), factor));
         SetRotationValue(math.slerp(GetRotationValue(), target.GetRotationValue(), factor));

@@ -61,5 +61,11 @@ namespace PropHunt.Mixed.Components
         [GhostDefaultField(100, true)]
         public float groundCheckDistance;
 
+        /// <summary>
+        /// Distance to check if character is thouching ground
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float3 gravityForce;
+
     }
 }
