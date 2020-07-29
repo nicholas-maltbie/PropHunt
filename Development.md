@@ -22,6 +22,12 @@ Install the proper version of Unity from UnityHub using this unity hub link [uni
 * Note, UnityHub must be registered on your system for it to open the Unity Hub App.
 * To do this in linux, just launch the downloaded `UnityHub.AppImage` file.
 
+# 1.1 Install Related Tools
+
+In order to fully load and edit the project, you must have [Blender](https://www.blender.org/) version 2.8 or more recent. 
+Download for Blender can be found [here](https://www.blender.org/download/). Blender is an open source 
+piece of software used for 3d modeling, animation, and texturing (as well as many other features). 
+
 # 2. Setting Up the Project
 Now that the proper version of unity has been installed, open the project with UnityHub.
 In order to do this, you must first clone the repo:
@@ -156,3 +162,4 @@ As far as coding style, please try to stay consistent with [C# Coding Guidelines
 # 10. Known Issues
 
 * If your unity fails to open the project during import, it may be due to having the packages locked. To fix this try closing Unity and the IDE (most likely VS Code or Visual Studio) and re-open the project. After the project loads you can open the project and IDE without issue.
+* If your unity fails to run on the scenes with an error about assets, models, meshes, or prefabs, it may be due to not having the required libraries installed. Make sure you have [Blender](https://www.blender.org/) installed (v2.8 or greater). Make sure that you restart your machine after installing Blender.
