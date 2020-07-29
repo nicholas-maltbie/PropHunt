@@ -34,35 +34,18 @@ namespace PropHunt.Mixed.Systems
         /// <param name="start">Starting location</param>
         /// <param name="movement">Intended direction of movement</param>
         /// <param name="force">Force being applied</param>
+        /// <param name="collider">Collider controlling the character</param>
         /// <param name="maxBounces">Maximum number of bounces when moving. 
         /// After this has been exceeded the bouncing will stop. By default 
         /// this is one assuming that each move is fairly small this should approximate
         /// normal movement.</param>
         /// <returns>The final location of the character.</returns>
-        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, int maxBounces=1)
+        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, int maxBounces=1)
         {
             ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
 
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
-
-            // filter for what can be collided with
-            var filter = new CollisionFilter()
-            {
-                BelongsTo = ~0u,
-                CollidesWith = ~((uint) (1)),
-                GroupIndex = 1
-            };
-
-            float characterRadius = 0.5f;
-
-            // Collider representing the character
-            BlobAssetReference<Unity.Physics.Collider> characterCollider = Unity.Physics.CapsuleCollider.Create(
-                new CapsuleGeometry() {
-                    Vertex0 = new float3(0, 0, 0),
-                    Vertex1 = new float3(0, 2.0f, 0),
-                    Radius = characterRadius
-                }, filter);
 
             float epsilon = 0.001f;
 
@@ -81,20 +64,15 @@ namespace PropHunt.Mixed.Systems
                 {
                     Start = from,
                     End = target,
-                    Collider = (Unity.Physics.Collider*)characterCollider.GetUnsafePtr()
+                    Collider = collider.ColliderPtr
                 };
                 if(!collisionWorld.CastCollider(input, out hit)) {
                     // If there is no hit, target can be returned as final position
                     return target;
                 }
                 // Apply some force to the object hit
-                Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                if (pvTypeFromEntity.Exists(e)) {
-                    PhysicsVelocity entityVelocity = pvTypeFromEntity[e];
-                    entityVelocity.Linear = force;
-                }
+                // Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                 // Apply force on entity hit
-                // NOT SURE IF THIS WORKS YET!!!
                 Unity.Physics.Extensions.PhysicsWorldExtensions.ApplyImpulse(
                     physicsWorld.PhysicsWorld, hit.RigidBodyIndex, force, hit.Position);
 
@@ -125,28 +103,15 @@ namespace PropHunt.Mixed.Systems
         /// </summary>
         /// <param name="translation">starting position</param>
         /// <param name="groundCheckDistance">Max distance to reach for the ground</param>
+        /// <param name="collider">Collider controlling the character</param>
         /// <returns>A two component float, first component is the
         /// distance to the ground. Second component is angle betwen ground and the character.
         /// If the values of the components are -1, then that means that no object
         /// was found within groundCheckDistance</returns>
-        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance)
+        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider)
         {
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
-
-            var filter = new CollisionFilter()
-            {
-                BelongsTo = ~0u,
-                CollidesWith = ~((uint) (1)),
-                GroupIndex = 1
-            };
-
-            BlobAssetReference<Unity.Physics.Collider> characterCollider = Unity.Physics.CapsuleCollider.Create(
-                new CapsuleGeometry() {
-                    Vertex0 = new float3(0, 0, 0),
-                    Vertex1 = new float3(0, 2.0f, 0),
-                    Radius = 0.5f
-                }, filter);
 
             var from = translation;
             var to = translation - new float3(0f, groundCheckDistance, 0f);
@@ -154,7 +119,7 @@ namespace PropHunt.Mixed.Systems
             {
                 End = to,
                 Start = from,
-                Collider = (Unity.Physics.Collider*)characterCollider.GetUnsafePtr()
+                Collider = collider.ColliderPtr
             };
 
             Unity.Physics.ColliderCastHit hit = new Unity.Physics.ColliderCastHit();
@@ -176,7 +141,7 @@ namespace PropHunt.Mixed.Systems
             
             Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer,
                 ref PredictedGhostComponent prediction,
-                ref PlayerMovement settings, ref PhysicsVelocity pv,
+                ref PlayerMovement settings, ref PhysicsCollider collider,
                 ref Translation trans, ref Rotation rot) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
@@ -200,7 +165,7 @@ namespace PropHunt.Mixed.Systems
                 float3 movementVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
 
                 // Check if is grounded for jumping
-                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance);
+                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider);
                 float dist = groundedCheck.x;
                 float angle = groundedCheck.y;
                 bool grounded = dist >= 0 && angle < settings.maxWalkAngle;
@@ -220,9 +185,9 @@ namespace PropHunt.Mixed.Systems
                 }
 
                 // Player controlled movement
-                float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, maxBounces: 2);
+                float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, maxBounces: 2);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, maxBounces: 1);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, maxBounces: 1);
                 trans.Value = finalPos;
             });
         }
