@@ -43,9 +43,10 @@ namespace PropHunt.Mixed.Systems
                 GroupIndex = 1
             };
 
-            BlobAssetReference<Unity.Physics.Collider> sphereCollider = Unity.Physics.SphereCollider.Create(
-                new SphereGeometry() {
-                    Center = new float3(0, 0.5f, 0),
+            BlobAssetReference<Unity.Physics.Collider> characterCollider = Unity.Physics.CapsuleCollider.Create(
+                new CapsuleGeometry() {
+                    Vertex0 = new float3(0, 0, 0),
+                    Vertex1 = new float3(0, 2.0f, 0),
                     Radius = 0.5f
                 }, filter);
 
@@ -55,7 +56,7 @@ namespace PropHunt.Mixed.Systems
             {
                 End = to,
                 Start = from,
-                Collider = (Unity.Physics.Collider*)sphereCollider.GetUnsafePtr()
+                Collider = (Unity.Physics.Collider*)characterCollider.GetUnsafePtr()
             };
 
             Unity.Physics.ColliderCastHit hit = new Unity.Physics.ColliderCastHit();
