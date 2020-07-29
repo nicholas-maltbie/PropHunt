@@ -35,12 +35,13 @@ namespace PropHunt.Mixed.Systems
         /// <param name="movement">Intended direction of movement</param>
         /// <param name="force">Force being applied</param>
         /// <param name="collider">Collider controlling the character</param>
+        /// <param name="rotation">Current character rotation</param>
         /// <param name="maxBounces">Maximum number of bounces when moving. 
         /// After this has been exceeded the bouncing will stop. By default 
         /// this is one assuming that each move is fairly small this should approximate
         /// normal movement.</param>
         /// <returns>The final location of the character.</returns>
-        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, int maxBounces=1)
+        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, quaternion rotation, int maxBounces=1)
         {
             ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
 
@@ -64,7 +65,8 @@ namespace PropHunt.Mixed.Systems
                 {
                     Start = from,
                     End = target,
-                    Collider = collider.ColliderPtr
+                    Collider = collider.ColliderPtr,
+                    Orientation = rotation
                 };
                 if(!collisionWorld.CastCollider(input, out hit)) {
                     // If there is no hit, target can be returned as final position
@@ -104,11 +106,12 @@ namespace PropHunt.Mixed.Systems
         /// <param name="translation">starting position</param>
         /// <param name="groundCheckDistance">Max distance to reach for the ground</param>
         /// <param name="collider">Collider controlling the character</param>
+        /// <param name="rotation">Current character rotation</param>
         /// <returns>A two component float, first component is the
         /// distance to the ground. Second component is angle betwen ground and the character.
         /// If the values of the components are -1, then that means that no object
         /// was found within groundCheckDistance</returns>
-        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider)
+        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider, quaternion rotation)
         {
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
@@ -119,7 +122,8 @@ namespace PropHunt.Mixed.Systems
             {
                 End = to,
                 Start = from,
-                Collider = collider.ColliderPtr
+                Collider = collider.ColliderPtr,
+                Orientation = rotation
             };
 
             Unity.Physics.ColliderCastHit hit = new Unity.Physics.ColliderCastHit();
@@ -165,7 +169,7 @@ namespace PropHunt.Mixed.Systems
                 float3 movementVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
 
                 // Check if is grounded for jumping
-                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider);
+                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider, rot.Value);
                 float dist = groundedCheck.x;
                 float angle = groundedCheck.y;
                 bool grounded = dist >= 0 && angle < settings.maxWalkAngle;
@@ -185,9 +189,9 @@ namespace PropHunt.Mixed.Systems
                 }
 
                 // Player controlled movement
-                float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, maxBounces: 2);
+                float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, maxBounces: 1);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 0);
                 trans.Value = finalPos;
             });
         }
