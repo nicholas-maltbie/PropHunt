@@ -5,10 +5,7 @@ using Unity.Mathematics;
 public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
 {
     public uint tick;
-    private int MaterialColorValueX;
-    private int MaterialColorValueY;
-    private int MaterialColorValueZ;
-    private int MaterialColorValueW;
+    private int MaterialIdComponentDatamaterialId;
     private int RotationValueX;
     private int RotationValueY;
     private int RotationValueZ;
@@ -19,24 +16,21 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
     uint changeMask0;
 
     public uint Tick => tick;
-    public float4 GetMaterialColorValue(GhostDeserializerState deserializerState)
+    public int GetMaterialIdComponentDatamaterialId(GhostDeserializerState deserializerState)
     {
-        return GetMaterialColorValue();
+        return (int)MaterialIdComponentDatamaterialId;
     }
-    public float4 GetMaterialColorValue()
+    public int GetMaterialIdComponentDatamaterialId()
     {
-        return new float4(MaterialColorValueX * 0.01f, MaterialColorValueY * 0.01f, MaterialColorValueZ * 0.01f, MaterialColorValueW * 0.01f);
+        return (int)MaterialIdComponentDatamaterialId;
     }
-    public void SetMaterialColorValue(float4 val, GhostSerializerState serializerState)
+    public void SetMaterialIdComponentDatamaterialId(int val, GhostSerializerState serializerState)
     {
-        SetMaterialColorValue(val);
+        MaterialIdComponentDatamaterialId = (int)val;
     }
-    public void SetMaterialColorValue(float4 val)
+    public void SetMaterialIdComponentDatamaterialId(int val)
     {
-        MaterialColorValueX = (int)(val.x * 100);
-        MaterialColorValueY = (int)(val.y * 100);
-        MaterialColorValueZ = (int)(val.z * 100);
-        MaterialColorValueW = (int)(val.w * 100);
+        MaterialIdComponentDatamaterialId = (int)val;
     }
     public quaternion GetRotationValue(GhostDeserializerState deserializerState)
     {
@@ -79,10 +73,7 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
     public void PredictDelta(uint tick, ref CubeSnapshotData baseline1, ref CubeSnapshotData baseline2)
     {
         var predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
-        MaterialColorValueX = predictor.PredictInt(MaterialColorValueX, baseline1.MaterialColorValueX, baseline2.MaterialColorValueX);
-        MaterialColorValueY = predictor.PredictInt(MaterialColorValueY, baseline1.MaterialColorValueY, baseline2.MaterialColorValueY);
-        MaterialColorValueZ = predictor.PredictInt(MaterialColorValueZ, baseline1.MaterialColorValueZ, baseline2.MaterialColorValueZ);
-        MaterialColorValueW = predictor.PredictInt(MaterialColorValueW, baseline1.MaterialColorValueW, baseline2.MaterialColorValueW);
+        MaterialIdComponentDatamaterialId = predictor.PredictInt(MaterialIdComponentDatamaterialId, baseline1.MaterialIdComponentDatamaterialId, baseline2.MaterialIdComponentDatamaterialId);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
         RotationValueY = predictor.PredictInt(RotationValueY, baseline1.RotationValueY, baseline2.RotationValueY);
         RotationValueZ = predictor.PredictInt(RotationValueZ, baseline1.RotationValueZ, baseline2.RotationValueZ);
@@ -94,10 +85,7 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
 
     public void Serialize(int networkId, ref CubeSnapshotData baseline, ref DataStreamWriter writer, NetworkCompressionModel compressionModel)
     {
-        changeMask0 = (MaterialColorValueX != baseline.MaterialColorValueX ||
-                                          MaterialColorValueY != baseline.MaterialColorValueY ||
-                                          MaterialColorValueZ != baseline.MaterialColorValueZ ||
-                                          MaterialColorValueW != baseline.MaterialColorValueW) ? 1u : 0;
+        changeMask0 = (MaterialIdComponentDatamaterialId != baseline.MaterialIdComponentDatamaterialId) ? 1u : 0;
         changeMask0 |= (RotationValueX != baseline.RotationValueX ||
                                            RotationValueY != baseline.RotationValueY ||
                                            RotationValueZ != baseline.RotationValueZ ||
@@ -107,12 +95,7 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
                                            TranslationValueZ != baseline.TranslationValueZ) ? (1u<<2) : 0;
         writer.WritePackedUIntDelta(changeMask0, baseline.changeMask0, compressionModel);
         if ((changeMask0 & (1 << 0)) != 0)
-        {
-            writer.WritePackedIntDelta(MaterialColorValueX, baseline.MaterialColorValueX, compressionModel);
-            writer.WritePackedIntDelta(MaterialColorValueY, baseline.MaterialColorValueY, compressionModel);
-            writer.WritePackedIntDelta(MaterialColorValueZ, baseline.MaterialColorValueZ, compressionModel);
-            writer.WritePackedIntDelta(MaterialColorValueW, baseline.MaterialColorValueW, compressionModel);
-        }
+            writer.WritePackedIntDelta(MaterialIdComponentDatamaterialId, baseline.MaterialIdComponentDatamaterialId, compressionModel);
         if ((changeMask0 & (1 << 1)) != 0)
         {
             writer.WritePackedIntDelta(RotationValueX, baseline.RotationValueX, compressionModel);
@@ -134,19 +117,9 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
         this.tick = tick;
         changeMask0 = reader.ReadPackedUIntDelta(baseline.changeMask0, compressionModel);
         if ((changeMask0 & (1 << 0)) != 0)
-        {
-            MaterialColorValueX = reader.ReadPackedIntDelta(baseline.MaterialColorValueX, compressionModel);
-            MaterialColorValueY = reader.ReadPackedIntDelta(baseline.MaterialColorValueY, compressionModel);
-            MaterialColorValueZ = reader.ReadPackedIntDelta(baseline.MaterialColorValueZ, compressionModel);
-            MaterialColorValueW = reader.ReadPackedIntDelta(baseline.MaterialColorValueW, compressionModel);
-        }
+            MaterialIdComponentDatamaterialId = reader.ReadPackedIntDelta(baseline.MaterialIdComponentDatamaterialId, compressionModel);
         else
-        {
-            MaterialColorValueX = baseline.MaterialColorValueX;
-            MaterialColorValueY = baseline.MaterialColorValueY;
-            MaterialColorValueZ = baseline.MaterialColorValueZ;
-            MaterialColorValueW = baseline.MaterialColorValueW;
-        }
+            MaterialIdComponentDatamaterialId = baseline.MaterialIdComponentDatamaterialId;
         if ((changeMask0 & (1 << 1)) != 0)
         {
             RotationValueX = reader.ReadPackedIntDelta(baseline.RotationValueX, compressionModel);
@@ -176,7 +149,6 @@ public struct CubeSnapshotData : ISnapshotData<CubeSnapshotData>
     }
     public void Interpolate(ref CubeSnapshotData target, float factor)
     {
-        SetMaterialColorValue(math.lerp(GetMaterialColorValue(), target.GetMaterialColorValue(), factor));
         SetRotationValue(math.slerp(GetRotationValue(), target.GetRotationValue(), factor));
         SetTranslationValue(math.lerp(GetTranslationValue(), target.GetTranslationValue(), factor));
     }

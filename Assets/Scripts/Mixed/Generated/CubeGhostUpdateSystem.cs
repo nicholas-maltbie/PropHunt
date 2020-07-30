@@ -6,7 +6,7 @@ using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Networking.Transport.Utilities;
 using Unity.NetCode;
 using Unity.Entities;
-using Unity.Rendering;
+using PropHunt.Mixed.Components;
 using Unity.Transforms;
 
 [UpdateInGroup(typeof(GhostUpdateSystemGroup))]
@@ -25,7 +25,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
 #endif
         [ReadOnly] public ArchetypeChunkBufferType<CubeSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
-        public ArchetypeChunkComponentType<MaterialColor> ghostMaterialColorType;
+        public ArchetypeChunkComponentType<MaterialIdComponentData> ghostMaterialIdComponentDataType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
         public ArchetypeChunkComponentType<Translation> ghostTranslationType;
 
@@ -39,7 +39,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             };
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
-            var ghostMaterialColorArray = chunk.GetNativeArray(ghostMaterialColorType);
+            var ghostMaterialIdComponentDataArray = chunk.GetNativeArray(ghostMaterialIdComponentDataType);
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -63,13 +63,13 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 if (!snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData))
                     return;
 
-                var ghostMaterialColor = ghostMaterialColorArray[entityIndex];
+                var ghostMaterialIdComponentData = ghostMaterialIdComponentDataArray[entityIndex];
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
-                ghostMaterialColor.Value = snapshotData.GetMaterialColorValue(deserializerState);
+                ghostMaterialIdComponentData.materialId = snapshotData.GetMaterialIdComponentDatamaterialId(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
-                ghostMaterialColorArray[entityIndex] = ghostMaterialColor;
+                ghostMaterialIdComponentDataArray[entityIndex] = ghostMaterialIdComponentData;
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -90,7 +90,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkBufferType<CubeSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
-        public ArchetypeChunkComponentType<MaterialColor> ghostMaterialColorType;
+        public ArchetypeChunkComponentType<MaterialIdComponentData> ghostMaterialIdComponentDataType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
         public ArchetypeChunkComponentType<Translation> ghostTranslationType;
         public uint targetTick;
@@ -104,7 +104,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
-            var ghostMaterialColorArray = chunk.GetNativeArray(ghostMaterialColorType);
+            var ghostMaterialIdComponentDataArray = chunk.GetNativeArray(ghostMaterialIdComponentDataType);
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -138,13 +138,13 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 if (lastPredictedTickInst != snapshotData.Tick)
                     continue;
 
-                var ghostMaterialColor = ghostMaterialColorArray[entityIndex];
+                var ghostMaterialIdComponentData = ghostMaterialIdComponentDataArray[entityIndex];
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
-                ghostMaterialColor.Value = snapshotData.GetMaterialColorValue(deserializerState);
+                ghostMaterialIdComponentData.materialId = snapshotData.GetMaterialIdComponentDatamaterialId(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
-                ghostMaterialColorArray[entityIndex] = ghostMaterialColor;
+                ghostMaterialIdComponentDataArray[entityIndex] = ghostMaterialIdComponentData;
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -166,7 +166,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             All = new []{
                 ComponentType.ReadWrite<CubeSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
-                ComponentType.ReadWrite<MaterialColor>(),
+                ComponentType.ReadWrite<MaterialIdComponentData>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
             },
@@ -178,7 +178,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<CubeSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
-                ComponentType.ReadWrite<MaterialColor>(),
+                ComponentType.ReadWrite<MaterialIdComponentData>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
             }
@@ -204,7 +204,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<CubeSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
-                ghostMaterialColorType = GetArchetypeChunkComponentType<MaterialColor>(),
+                ghostMaterialIdComponentDataType = GetArchetypeChunkComponentType<MaterialIdComponentData>(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
 
@@ -227,7 +227,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
 #endif
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<CubeSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
-                ghostMaterialColorType = GetArchetypeChunkComponentType<MaterialColor>(),
+                ghostMaterialIdComponentDataType = GetArchetypeChunkComponentType<MaterialIdComponentData>(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
                 targetTick = m_ClientSimulationSystemGroup.InterpolationTick,
