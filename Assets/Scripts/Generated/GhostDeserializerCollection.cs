@@ -12,11 +12,12 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
         var arr = new string[]
         {
             "TestCharacterGhostSerializer",
+            "CubeGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 1;
+    public int Length => 2;
 #endif
     public void Initialize(World world)
     {
@@ -24,11 +25,16 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
         m_TestCharacterSnapshotDataNewGhostIds = curTestCharacterGhostSpawnSystem.NewGhostIds;
         m_TestCharacterSnapshotDataNewGhosts = curTestCharacterGhostSpawnSystem.NewGhosts;
         curTestCharacterGhostSpawnSystem.GhostType = 0;
+        var curCubeGhostSpawnSystem = world.GetOrCreateSystem<CubeGhostSpawnSystem>();
+        m_CubeSnapshotDataNewGhostIds = curCubeGhostSpawnSystem.NewGhostIds;
+        m_CubeSnapshotDataNewGhosts = curCubeGhostSpawnSystem.NewGhosts;
+        curCubeGhostSpawnSystem.GhostType = 1;
     }
 
     public void BeginDeserialize(JobComponentSystem system)
     {
         m_TestCharacterSnapshotDataFromEntity = system.GetBufferFromEntity<TestCharacterSnapshotData>();
+        m_CubeSnapshotDataFromEntity = system.GetBufferFromEntity<CubeSnapshotData>();
     }
     public bool Deserialize(int serializer, Entity entity, uint snapshot, uint baseline, uint baseline2, uint baseline3,
         ref DataStreamReader reader, NetworkCompressionModel compressionModel)
@@ -37,6 +43,9 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
         {
             case 0:
                 return GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeDeserialize(m_TestCharacterSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
+                baseline3, ref reader, compressionModel);
+            case 1:
+                return GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeDeserialize(m_CubeSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
                 baseline3, ref reader, compressionModel);
             default:
                 throw new ArgumentException("Invalid serializer type");
@@ -51,6 +60,10 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
                 m_TestCharacterSnapshotDataNewGhostIds.Add(ghostId);
                 m_TestCharacterSnapshotDataNewGhosts.Add(GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeSpawn<TestCharacterSnapshotData>(snapshot, ref reader, compressionModel));
                 break;
+            case 1:
+                m_CubeSnapshotDataNewGhostIds.Add(ghostId);
+                m_CubeSnapshotDataNewGhosts.Add(GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeSpawn<CubeSnapshotData>(snapshot, ref reader, compressionModel));
+                break;
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
@@ -59,6 +72,9 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
     private BufferFromEntity<TestCharacterSnapshotData> m_TestCharacterSnapshotDataFromEntity;
     private NativeList<int> m_TestCharacterSnapshotDataNewGhostIds;
     private NativeList<TestCharacterSnapshotData> m_TestCharacterSnapshotDataNewGhosts;
+    private BufferFromEntity<CubeSnapshotData> m_CubeSnapshotDataFromEntity;
+    private NativeList<int> m_CubeSnapshotDataNewGhostIds;
+    private NativeList<CubeSnapshotData> m_CubeSnapshotDataNewGhosts;
 }
 public struct EnableProphuntGhostReceiveSystemComponent : IComponentData
 {}
