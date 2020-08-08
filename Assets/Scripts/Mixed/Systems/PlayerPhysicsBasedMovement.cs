@@ -187,14 +187,7 @@ namespace PropHunt.Mixed.Systems
                 }
                 // Let the player drift to some value very close to the ground
                 else if (!grounded) {
-                    // Start falling by accelerating in the force of gravity
-                    // Accelerate more based on the slope
-                    float angleFactor = 1;
-                    if (angle > settings.maxWalkAngle)
-                    {
-                        angleFactor = angle / PlayerPhysicsBasedMovement.MaxAngleFall;
-                    }
-                    settings.velocity += settings.gravityForce * deltaTime * math.pow(angleFactor, 2);
+                    settings.velocity += settings.gravityForce * deltaTime;
                 }
                 // Have hit the ground, stop moving
                 else {
