@@ -179,7 +179,7 @@ namespace PropHunt.Mixed.Systems
                     settings.velocity = new float3(0, settings.jumpForce, 0);
                 }
                 // Let the player drift to some value very close to the ground
-                else if (!grounded || dist > 0.005f) {
+                else if (!grounded) {
                     // Start falling by accelerating in the force of gravity
                     settings.velocity += settings.gravityForce * deltaTime;
                 }
@@ -191,7 +191,7 @@ namespace PropHunt.Mixed.Systems
                 // Player controlled movement
                 float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 0);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 1);
                 trans.Value = finalPos;
             });
         }
