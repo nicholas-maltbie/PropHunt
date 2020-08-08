@@ -26,7 +26,11 @@ namespace PropHunt.Mixed.Systems
         /// <summary>
         /// Maximum angle between ground and character.
         /// </summary>
-        public static readonly float MaxAngleFall = 90;   
+        public static readonly float MaxAngleFallDegrees = 90;   
+        /// <summary>
+        /// Max angle to use when calculating the shoving angle of a character.
+        /// </summary>
+        public static readonly float MaxAngleShoveRadians = math.PI / 2;   
 
         /// <summary>
         /// Gets the final position of a character attempting to move from a starting
@@ -42,12 +46,18 @@ namespace PropHunt.Mixed.Systems
         /// <param name="force">Force being applied</param>
         /// <param name="collider">Collider controlling the character</param>
         /// <param name="rotation">Current character rotation</param>
+        /// <param name="anglePower">Power to raise decay of movement due to
+        /// changes in angle between intended movement and angle of surface.
+        /// Will be angleFactor= 1 / (1 + normAngle) where normAngle is a normalized value
+        /// between 0-1 where 1 is max angle (90 deg) and 0 is min angle (0 degrees).
+        /// AnglePower is the power to which the angle factor is raised
+        /// for a sharper decline. Value of zero negates this property.
         /// <param name="maxBounces">Maximum number of bounces when moving. 
         /// After this has been exceeded the bouncing will stop. By default 
         /// this is one assuming that each move is fairly small this should approximate
         /// normal movement.</param>
         /// <returns>The final location of the character.</returns>
-        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, quaternion rotation, int maxBounces=1)
+        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, quaternion rotation, float anglePower=2, int maxBounces=1)
         {
             ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
 
@@ -60,7 +70,8 @@ namespace PropHunt.Mixed.Systems
             float3 remaining = movement; // Remaining momentum
             int bounces = 0; // current number of bounces
             // Continue computing while there is momentum and bounces remaining
-            while (math.length(remaining) > epsilon && bounces <= maxBounces) {
+            while (math.length(remaining) > epsilon && bounces <= maxBounces)
+            {
                 // Get the target location given the momentum
                 float3 target = from + remaining;
 
@@ -74,7 +85,8 @@ namespace PropHunt.Mixed.Systems
                     Collider = collider.ColliderPtr,
                     Orientation = rotation
                 };
-                if(!collisionWorld.CastCollider(input, out hit)) {
+                if(!collisionWorld.CastCollider(input, out hit))
+                {
                     // If there is no hit, target can be returned as final position
                     return target;
                 }
@@ -88,9 +100,16 @@ namespace PropHunt.Mixed.Systems
                 from = from + remaining * hit.Fraction;
                 // Push slightly along normal to stop from getting caught in walls
                 from = from + hit.SurfaceNormal * epsilon;
+                // Get angle between surface normal and remaining movement
+                float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
+                // Normalize angle between to be between 0 and 1
+                angleBetween = math.min(PlayerPhysicsBasedMovement.MaxAngleShoveRadians, math.abs(angleBetween));
+                float normalizedAngle = angleBetween / PlayerPhysicsBasedMovement.MaxAngleShoveRadians;
+                // Create angle factor using 1 / (1 + normalizedAngle)
+                float angleFactor = 1.0f / (1.0f + normalizedAngle);
                 // If the character hit something
                 // Reduce the momentum by the remaining movement that ocurred
-                remaining = remaining * (1 - hit.Fraction);
+                remaining = remaining * (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
                 // Rotate the remaining remaining movement to be projected along the plane 
                 // of the surface hit (emulate pushing against the object)
                 // A is our vector and B is normal of plane
@@ -137,7 +156,7 @@ namespace PropHunt.Mixed.Systems
             if(collisionWorld.CastCollider(input, out hit)) {
                 float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), new float3(0, 1, 0))));
                 angleBetween = math.degrees(angleBetween);
-                angleBetween = math.max(0, math.min(angleBetween, PlayerPhysicsBasedMovement.MaxAngleFall));
+                angleBetween = math.max(0, math.min(angleBetween, PlayerPhysicsBasedMovement.MaxAngleFallDegrees));
                 return new float2(hit.Fraction * groundCheckDistance, angleBetween);
             }
             
@@ -193,11 +212,11 @@ namespace PropHunt.Mixed.Systems
                 else {
                     settings.velocity = float3.zero;
                 }
-
+                float3 finalPos = trans.Value;
                 // Player controlled movement
-                float3 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
+                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 1);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 2);
                 trans.Value = finalPos;
             });
         }

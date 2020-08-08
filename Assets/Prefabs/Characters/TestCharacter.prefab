@@ -445,7 +445,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   viewRotationRate: 3.14
-  sprintMultiplier: 2
+  sprintMultiplier: 1.5
   gravityForce: {x: 0, y: -9.8, z: 0}
   jumpForce: 5
   maxWalkAngle: 45
@@ -475,7 +475,7 @@ MonoBehaviour:
     Value:
       x: -90
       y: 0
-      z: -90
+      z: 90
     RotationOrder: 4
   m_Capsule:
     Height: 2
