@@ -216,7 +216,7 @@ namespace PropHunt.Mixed.Systems
                 // Player controlled movement
                 finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, maxBounces: 2);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, anglePower: 1.2f, maxBounces: 2);
                 trans.Value = finalPos;
             });
         }
