@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {
+
     /// <summary>
     /// Player movement system that moves player controlled objects from
     /// a given player's input. Moves a physics body attached to a
@@ -21,7 +22,12 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(PlayerRotationSystem))]
     public class PlayerPhysicsBasedMovement : ComponentSystem
-    {        
+    {
+        /// <summary>
+        /// Maximum angle between ground and character.
+        /// </summary>
+        public static readonly float MaxAngleFall = 90;   
+
         /// <summary>
         /// Gets the final position of a character attempting to move from a starting
         /// location with a given movement. The goal of this is to move the character
@@ -131,6 +137,7 @@ namespace PropHunt.Mixed.Systems
             if(collisionWorld.CastCollider(input, out hit)) {
                 float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), new float3(0, 1, 0))));
                 angleBetween = math.degrees(angleBetween);
+                angleBetween = math.max(0, math.min(angleBetween, PlayerPhysicsBasedMovement.MaxAngleFall));
                 return new float2(hit.Fraction * groundCheckDistance, angleBetween);
             }
             
@@ -181,7 +188,13 @@ namespace PropHunt.Mixed.Systems
                 // Let the player drift to some value very close to the ground
                 else if (!grounded) {
                     // Start falling by accelerating in the force of gravity
-                    settings.velocity += settings.gravityForce * deltaTime;
+                    // Accelerate more based on the slope
+                    float angleFactor = 1;
+                    if (angle > settings.maxWalkAngle)
+                    {
+                        angleFactor = angle / PlayerPhysicsBasedMovement.MaxAngleFall;
+                    }
+                    settings.velocity += settings.gravityForce * deltaTime * math.pow(angleFactor, 2);
                 }
                 // Have hit the ground, stop moving
                 else {

@@ -448,7 +448,7 @@ MonoBehaviour:
   sprintMultiplier: 2
   gravityForce: {x: 0, y: -9.8, z: 0}
   jumpForce: 5
-  maxWalkAngle: 65
+  maxWalkAngle: 45
   groundCheckDistance: 0.1
 --- !u!114 &2032777291050987007
 MonoBehaviour:
@@ -475,7 +475,7 @@ MonoBehaviour:
     Value:
       x: -90
       y: 0
-      z: 90
+      z: -90
     RotationOrder: 4
   m_Capsule:
     Height: 2
