@@ -475,7 +475,7 @@ MonoBehaviour:
     Value:
       x: -90
       y: 0
-      z: 90
+      z: -90
     RotationOrder: 4
   m_Capsule:
     Height: 2
