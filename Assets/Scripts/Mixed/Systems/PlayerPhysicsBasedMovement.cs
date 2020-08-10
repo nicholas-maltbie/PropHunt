@@ -49,26 +49,26 @@ namespace PropHunt.Mixed.Systems
         public T ClosestHit {get; private set; }
 
         /// <summary>
-        /// Pointer to the self collider
+        /// Entity index to avoid collisions with.
         /// </summary>
-        private BlobAssetReference<Unity.Physics.Collider> selfCollider;
+        private int selfEntityIndex;
 
         private CollisionWorld collisionWorld;
 
         /// <summary>
         /// Creates a self filtering object collision detection
         /// </summary>
-        /// <param name="collider">Collider to ignore</param>
+        /// <param name="entityId">Index of this entity</param>
         /// <param name="maxFraction">Maximum fraction that an object can be encountered
         /// as a portion of the current raycast draw</param>
         /// <param name="collisionWorld">World of all colliable objects</param>
-        public SelfFilteringClosestHitCollector(PhysicsCollider collider, float maxFraction, CollisionWorld collisionWorld)
+        public SelfFilteringClosestHitCollector(int entityIndex, float maxFraction, CollisionWorld collisionWorld)
         {
             this.MaxFraction = maxFraction;
             this.oldHit = default(T);
             this.ClosestHit = default(T);
             this.NumHits = 0;
-            this.selfCollider = collider.Value;
+            this.selfEntityIndex = entityIndex;
             this.collisionWorld = collisionWorld;
         }
 
@@ -78,7 +78,7 @@ namespace PropHunt.Mixed.Systems
         public bool AddHit(T hit)
         {
             Assert.IsTrue(hit.Fraction <= MaxFraction);
-            if (collisionWorld.Bodies[hit.RigidBodyIndex].Collider == this.selfCollider)
+            if (collisionWorld.Bodies[hit.RigidBodyIndex].Entity.Index == this.selfEntityIndex)
             {
                 return false;
             }
@@ -124,6 +124,7 @@ namespace PropHunt.Mixed.Systems
         /// <param name="start">Starting location</param>
         /// <param name="movement">Intended direction of movement</param>
         /// <param name="collider">Collider controlling the character</param>
+        /// <param name="entityIndex">Index of this entity</param>
         /// <param name="rotation">Current character rotation</param>
         /// <param name="anglePower">Power to raise decay of movement due to
         /// changes in angle between intended movement and angle of surface.
@@ -143,7 +144,7 @@ namespace PropHunt.Mixed.Systems
         /// would mean half of the energy is lost</param>
         /// <returns>The final location of the character.</returns>
         private unsafe float3 ProjectValidMovement(float3 start, float3 movement,
-            PhysicsCollider collider, quaternion rotation, float anglePower=2, int maxBounces=1,
+            PhysicsCollider collider, int entityIndex, quaternion rotation, float anglePower=2, int maxBounces=1,
             float pushPower = 25, float pushDecay = 0)
         {
             ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
@@ -172,7 +173,8 @@ namespace PropHunt.Mixed.Systems
                     Orientation = rotation
                 };
             
-                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(collider, 1.0f, collisionWorld);
+                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
 
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
@@ -237,17 +239,19 @@ namespace PropHunt.Mixed.Systems
         /// <param name="translation">starting position</param>
         /// <param name="groundCheckDistance">Max distance to reach for the ground</param>
         /// <param name="collider">Collider controlling the character</param>
+        /// <param name="entityIndex">Index of this entity</param>
         /// <param name="rotation">Current character rotation</param>
         /// <returns>A two component float, first component is the
         /// distance to the ground. Second component is angle betwen ground and the character.
         /// If the values of the components are -1, then that means that no object
         /// was found within groundCheckDistance</returns>
-        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider, quaternion rotation)
+        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider, int entityIndex, quaternion rotation)
         {
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
 
-            SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(collider, 1.0f, collisionWorld);
+            SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
 
             var from = translation;
             var to = translation - new float3(0f, groundCheckDistance, 0f);
@@ -278,7 +282,7 @@ namespace PropHunt.Mixed.Systems
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
             
-            Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer,
+            Entities.ForEach((Entity ent, DynamicBuffer<PlayerInput> inputBuffer,
                 ref PredictedGhostComponent prediction,
                 ref PlayerMovement settings, ref PhysicsCollider collider,
                 ref Translation trans, ref Rotation rot) =>
@@ -303,7 +307,7 @@ namespace PropHunt.Mixed.Systems
                 float3 movementVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
 
                 // Check if is grounded for jumping
-                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider, rot.Value);
+                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider, ent.Index, rot.Value);
                 float dist = groundedCheck.x;
                 float angle = groundedCheck.y;
                 bool grounded = dist >= 0 && angle < settings.maxWalkAngle;
@@ -322,9 +326,9 @@ namespace PropHunt.Mixed.Systems
                 }
                 float3 finalPos = trans.Value;
                 // Player controlled movement
-                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, collider, rot.Value, anglePower: 2f, maxBounces: 3);
+                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, collider, ent.Index, rot.Value, anglePower: 2f, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, collider, rot.Value, anglePower: 1.1f, maxBounces: 2);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, collider, ent.Index, rot.Value, anglePower: 1.1f, maxBounces: 2);
                 trans.Value = finalPos;
             });
         }
