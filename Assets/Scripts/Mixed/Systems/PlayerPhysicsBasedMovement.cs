@@ -1,7 +1,9 @@
 
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
+using Unity.Assertions;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -12,6 +14,76 @@ using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {
+    /// <summary>
+    /// Collider processor to handle filtering out an object to stop
+    /// hitting itself.
+    /// </summary>
+    public struct SelfFilteringClosestHitCollector<T> : ICollector<T> where T : struct,IQueryResult
+    {
+        /// <summary>
+        /// Can this exit early on the current hit object
+        /// </summary>
+        public bool EarlyOutOnFirstHit => false;
+
+        /// <summary>
+        /// Maximum fraction away that the hit object was encountered
+        /// along the path of the raycast
+        /// </summary>
+        /// <value></value>
+        public float MaxFraction { get; private set; }
+
+        /// <summary>
+        /// Number of objects hit
+        /// </summary>
+        public int NumHits { get; private set; }
+
+        /// <summary>
+        /// Previously hit object
+        /// </summary>
+        private T oldHit;
+
+        /// <summary>
+        /// Most recent (closest hit object)
+        /// </summary>
+        public T ClosestHit {get; private set; }
+
+        /// <summary>
+        /// Index of rigidbody to ignore
+        /// </summary>
+        private int selfRBIndex;
+
+        /// <summary>
+        /// Creates a self filtering object collision detection
+        /// </summary>
+        /// <param name="rbIndex">Rigidbody to ignore collisions for</param>
+        /// <param name="maxFraction">Maximum fraction that an object can be encountered
+        /// as a portion of the current raycast draw</param>
+        public SelfFilteringClosestHitCollector(int rbIndex, float maxFraction) {
+            MaxFraction = maxFraction;
+            oldHit = default(T);
+            ClosestHit = default(T);
+            NumHits = 0;
+            selfRBIndex = rbIndex;
+        }
+
+        #region ICollector
+
+        /// <inheritdoc/>
+        public bool AddHit(T hit) {
+            Assert.IsTrue(hit.Fraction <= MaxFraction);
+            if (hit.RigidBodyIndex == this.selfRBIndex)
+            {
+                return false;
+            }
+            MaxFraction = hit.Fraction;
+            this.oldHit = ClosestHit;
+            this.ClosestHit = hit;
+            this.NumHits = 1;
+            return true;
+        }
+
+        #endregion
+    }
 
     /// <summary>
     /// Player movement system that moves player controlled objects from
@@ -26,7 +98,8 @@ namespace PropHunt.Mixed.Systems
         /// <summary>
         /// Maximum angle between ground and character.
         /// </summary>
-        public static readonly float MaxAngleFallDegrees = 90;   
+        public static readonly float MaxAngleFallDegrees = 90;
+
         /// <summary>
         /// Max angle to use when calculating the shoving angle of a character.
         /// </summary>
@@ -77,7 +150,6 @@ namespace PropHunt.Mixed.Systems
 
                 // Do a cast of the collider to see if an object is hit during this
                 // movement action
-                Unity.Physics.ColliderCastHit hit = new Unity.Physics.ColliderCastHit();
                 var input = new ColliderCastInput()
                 {
                     Start = from,
@@ -85,11 +157,19 @@ namespace PropHunt.Mixed.Systems
                     Collider = collider.ColliderPtr,
                     Orientation = rotation
                 };
-                if(!collisionWorld.CastCollider(input, out hit))
+
+                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(-1, 1.0f);
+
+                bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
+
+                if(!collisionOcurred && hitCollector.NumHits == 0)
                 {
                     // If there is no hit, target can be returned as final position
                     return target;
                 }
+
+                Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
+
                 // Apply some force to the object hit
                 // Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                 // Apply force on entity hit
@@ -179,8 +259,7 @@ namespace PropHunt.Mixed.Systems
                     return;
                 }
 
-                PlayerInput input;
-                inputBuffer.GetDataAtTick(tick, out input);
+                inputBuffer.GetDataAtTick(tick, out PlayerInput input);
 
                 // Rotate movement vector around current attitude (only care about horizontal)
                 float3 inputVector = new float3(input.horizMove, 0, input.vertMove);
