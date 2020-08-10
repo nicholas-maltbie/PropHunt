@@ -190,7 +190,6 @@ namespace PropHunt.Mixed.Systems
                 from = from + hit.SurfaceNormal * epsilon;
 
                 // Apply some force to the object hit if it is moveable
-                // Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
                 // Apply force on entity hit
                 Entity hitEntity = collisionWorld.Bodies[hit.RigidBodyIndex].Entity;
                 if (EntityManager.HasComponent<PhysicsVelocity>(hitEntity) && 
