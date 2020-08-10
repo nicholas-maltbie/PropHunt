@@ -48,30 +48,36 @@ namespace PropHunt.Mixed.Systems
         public T ClosestHit {get; private set; }
 
         /// <summary>
-        /// Index of rigidbody to ignore
+        /// Pointer to the self collider
         /// </summary>
-        private int selfRBIndex;
+        private BlobAssetReference<Unity.Physics.Collider> selfCollider;
+
+        private CollisionWorld collisionWorld;
 
         /// <summary>
         /// Creates a self filtering object collision detection
         /// </summary>
-        /// <param name="rbIndex">Rigidbody to ignore collisions for</param>
+        /// <param name="collider">Collider to ignore</param>
         /// <param name="maxFraction">Maximum fraction that an object can be encountered
         /// as a portion of the current raycast draw</param>
-        public SelfFilteringClosestHitCollector(int rbIndex, float maxFraction) {
-            MaxFraction = maxFraction;
-            oldHit = default(T);
-            ClosestHit = default(T);
-            NumHits = 0;
-            selfRBIndex = rbIndex;
+        /// <param name="collisionWorld">World of all colliable objects</param>
+        public SelfFilteringClosestHitCollector(PhysicsCollider collider, float maxFraction, CollisionWorld collisionWorld)
+        {
+            this.MaxFraction = maxFraction;
+            this.oldHit = default(T);
+            this.ClosestHit = default(T);
+            this.NumHits = 0;
+            this.selfCollider = collider.Value;
+            this.collisionWorld = collisionWorld;
         }
 
         #region ICollector
 
         /// <inheritdoc/>
-        public bool AddHit(T hit) {
+        public bool AddHit(T hit)
+        {
             Assert.IsTrue(hit.Fraction <= MaxFraction);
-            if (hit.RigidBodyIndex == this.selfRBIndex)
+            if (collisionWorld.Bodies[hit.RigidBodyIndex].Collider == this.selfCollider)
             {
                 return false;
             }
@@ -157,8 +163,8 @@ namespace PropHunt.Mixed.Systems
                     Collider = collider.ColliderPtr,
                     Orientation = rotation
                 };
-
-                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(-1, 1.0f);
+            
+                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(collider, 1.0f, collisionWorld);
 
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
@@ -221,6 +227,8 @@ namespace PropHunt.Mixed.Systems
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
 
+            SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector = new SelfFilteringClosestHitCollector<ColliderCastHit>(collider, 1.0f, collisionWorld);
+
             var from = translation;
             var to = translation - new float3(0f, groundCheckDistance, 0f);
             var input = new ColliderCastInput()
@@ -231,9 +239,10 @@ namespace PropHunt.Mixed.Systems
                 Orientation = rotation
             };
 
-            Unity.Physics.ColliderCastHit hit = new Unity.Physics.ColliderCastHit();
+            bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
+            Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
-            if(collisionWorld.CastCollider(input, out hit)) {
+            if(collisionOcurred) {
                 float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), new float3(0, 1, 0))));
                 angleBetween = math.degrees(angleBetween);
                 angleBetween = math.max(0, math.min(angleBetween, PlayerPhysicsBasedMovement.MaxAngleFallDegrees));
@@ -293,9 +302,9 @@ namespace PropHunt.Mixed.Systems
                 }
                 float3 finalPos = trans.Value;
                 // Player controlled movement
-                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, maxBounces: 3);
+                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, anglePower: 2f, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, anglePower: 1.2f, maxBounces: 2);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, anglePower: 1.1f, maxBounces: 2);
                 trans.Value = finalPos;
             });
         }
