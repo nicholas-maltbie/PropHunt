@@ -8,6 +8,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
@@ -122,7 +123,6 @@ namespace PropHunt.Mixed.Systems
         /// </summary>
         /// <param name="start">Starting location</param>
         /// <param name="movement">Intended direction of movement</param>
-        /// <param name="force">Force being applied</param>
         /// <param name="collider">Collider controlling the character</param>
         /// <param name="rotation">Current character rotation</param>
         /// <param name="anglePower">Power to raise decay of movement due to
@@ -135,8 +135,16 @@ namespace PropHunt.Mixed.Systems
         /// After this has been exceeded the bouncing will stop. By default 
         /// this is one assuming that each move is fairly small this should approximate
         /// normal movement.</param>
+        /// <param name="pushPower">Multiplier for power when pushing on an object.
+        /// Larger values mean more pushing.</param>
+        /// <param name="pushDecay">How much does the current push decay the remaining
+        /// movement by. Values between [0, 1]. A zero would mean all energy is lost
+        /// when pushing, 1 means no momentum is lost by pushing. A value of 0.5
+        /// would mean half of the energy is lost</param>
         /// <returns>The final location of the character.</returns>
-        private unsafe float3 ProjectValidMovement(float3 start, float3 movement, float3 force, PhysicsCollider collider, quaternion rotation, float anglePower=2, int maxBounces=1)
+        private unsafe float3 ProjectValidMovement(float3 start, float3 movement,
+            PhysicsCollider collider, quaternion rotation, float anglePower=2, int maxBounces=1,
+            float pushPower = 25, float pushDecay = 0)
         {
             ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
 
@@ -176,16 +184,29 @@ namespace PropHunt.Mixed.Systems
 
                 Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
-                // Apply some force to the object hit
-                // Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
-                // Apply force on entity hit
-                Unity.Physics.Extensions.PhysicsWorldExtensions.ApplyImpulse(
-                    physicsWorld.PhysicsWorld, hit.RigidBodyIndex, force, hit.Position);
-
                 // Set the fraction of remaining movement (minus some small value)
                 from = from + remaining * hit.Fraction;
                 // Push slightly along normal to stop from getting caught in walls
                 from = from + hit.SurfaceNormal * epsilon;
+
+                // Apply some force to the object hit if it is moveable
+                // Entity e = physicsWorld.PhysicsWorld.Bodies[hit.RigidBodyIndex].Entity;
+                // Apply force on entity hit
+                Entity hitEntity = collisionWorld.Bodies[hit.RigidBodyIndex].Entity;
+                if (EntityManager.HasComponent<PhysicsVelocity>(hitEntity) && 
+                    EntityManager.HasComponent<PhysicsMass>(hitEntity) &&
+                    EntityManager.HasComponent<Rotation>(hitEntity) &&
+                    EntityManager.HasComponent<Translation>(hitEntity)) {
+                    PhysicsVelocity pv = EntityManager.GetComponentData<PhysicsVelocity>(hitEntity);
+                    PhysicsMass pm = EntityManager.GetComponentData<PhysicsMass>(hitEntity);
+                    Rotation rot = EntityManager.GetComponentData<Rotation>(hitEntity);
+                    Translation trans = EntityManager.GetComponentData<Translation>(hitEntity);
+                    pv.ApplyImpulse(pm, trans, rot, movement * pushPower, hit.Position);
+                    EntityManager.SetComponentData(hitEntity, pv);
+                    // If pushing something, reduce remaining force significantly
+                    remaining *= pushDecay;
+                }
+
                 // Get angle between surface normal and remaining movement
                 float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
                 // Normalize angle between to be between 0 and 1
@@ -302,9 +323,9 @@ namespace PropHunt.Mixed.Systems
                 }
                 float3 finalPos = trans.Value;
                 // Player controlled movement
-                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, movementVelocity, collider, rot.Value, anglePower: 2f, maxBounces: 3);
+                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, collider, rot.Value, anglePower: 2f, maxBounces: 3);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, settings.velocity, collider, rot.Value, anglePower: 1.1f, maxBounces: 2);
+                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, collider, rot.Value, anglePower: 1.1f, maxBounces: 2);
                 trans.Value = finalPos;
             });
         }
