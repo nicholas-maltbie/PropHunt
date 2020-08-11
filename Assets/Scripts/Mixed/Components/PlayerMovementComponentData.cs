@@ -67,5 +67,41 @@ namespace PropHunt.Mixed.Components
         [GhostDefaultField(100, true)]
         public float3 gravityForce;
 
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when falling
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float anglePowerFall;
+
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when walking
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float anglePowerMove;
+
+        /// <summary>
+        /// Power of pushing objects
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float pushPower;
+
+        /// <summary>
+        /// Max number of bounces per frame when moving
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public int maxBouncesMove;
+
+        /// <summary>
+        /// Max number of bounces per frame when falling
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public int maxBouncesFall;
+
+        /// <summary>
+        /// Proportional decrease in momentum due to pushing an object
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float pushDecay;
+
     }
 }

@@ -326,13 +326,29 @@ namespace PropHunt.Mixed.Systems
                 }
                 float3 finalPos = trans.Value;
                 // Player controlled movement
-                finalPos = ProjectValidMovement(trans.Value, movementVelocity * deltaTime, collider, ent.Index, rot.Value, anglePower: 2f, maxBounces: 3);
+                finalPos = ProjectValidMovement(
+                    trans.Value,
+                    movementVelocity * deltaTime,
+                    collider,
+                    ent.Index,
+                    rot.Value,
+                    pushDecay: settings.pushDecay,
+                    pushPower: settings.pushPower,
+                    anglePower: settings.anglePowerMove,
+                    maxBounces: settings.maxBouncesMove);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(finalPos, settings.velocity * deltaTime, collider, ent.Index, rot.Value, anglePower: 1.1f, maxBounces: 2);
+                finalPos = ProjectValidMovement(
+                    finalPos,
+                    settings.velocity * deltaTime,
+                    collider,
+                    ent.Index,
+                    rot.Value,
+                    pushDecay: settings.pushDecay,
+                    pushPower: settings.pushPower,
+                    anglePower: settings.anglePowerFall,
+                    maxBounces: settings.maxBouncesFall);
                 trans.Value = finalPos;
             });
         }
-
     }
-
 }

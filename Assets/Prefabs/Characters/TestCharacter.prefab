@@ -450,6 +450,12 @@ MonoBehaviour:
   jumpForce: 5
   maxWalkAngle: 45
   groundCheckDistance: 0.1
+  anglePowerFall: 1.2
+  anglePowerMove: 2
+  pushPower: 100
+  maxBouncesMove: 3
+  maxBouncesFall: 2
+  pushDecay: 0
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0

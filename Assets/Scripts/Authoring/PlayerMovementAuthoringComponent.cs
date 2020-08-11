@@ -46,16 +46,53 @@ namespace PropHunt.Authoring
         /// </summary>
         public float groundCheckDistance = 0.1f;
 
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when falling
+        /// </summary>
+        public float anglePowerFall = 1.2f;
+
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when walking
+        /// </summary>
+        public float anglePowerMove = 2.0f;
+
+        /// <summary>
+        /// Power of pushing objects
+        /// </summary>
+        public float pushPower = 10.0f;
+
+        /// <summary>
+        /// Max number of bounces per frame when moving
+        /// </summary>
+        public int maxBouncesMove = 3;
+
+        /// <summary>
+        /// Max number of bounces per frame when falling
+        /// </summary>
+        public int maxBouncesFall = 2;
+
+        /// <summary>
+        /// Proportional decrease in momentum due to pushing an object
+        /// </summary>
+        public float pushDecay = 0.0f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            PlayerMovement playerMovement = new PlayerMovement();
-            playerMovement.moveSpeed = this.moveSpeed;
-            playerMovement.viewRotationRate = this.viewRotationRate;
-            playerMovement.sprintMultiplier = this.sprintMultiplier;
-            playerMovement.jumpForce = this.jumpForce;
-            playerMovement.groundCheckDistance = this.groundCheckDistance;
-            playerMovement.maxWalkAngle = this.maxWalkAngle;
-            playerMovement.gravityForce = this.gravityForce;
+            PlayerMovement playerMovement = new PlayerMovement(){
+                moveSpeed = this.moveSpeed,
+                viewRotationRate = this.viewRotationRate,
+                sprintMultiplier = this.sprintMultiplier,
+                jumpForce = this.jumpForce,
+                groundCheckDistance = this.groundCheckDistance,
+                maxWalkAngle = this.maxWalkAngle,
+                gravityForce = this.gravityForce,
+                pushPower = this.pushPower,
+                anglePowerFall = this.anglePowerFall,
+                anglePowerMove = this.anglePowerMove,
+                maxBouncesMove = this.maxBouncesMove,
+                maxBouncesFall = this.maxBouncesFall,
+                pushDecay = this.pushDecay
+            };
             dstManager.AddComponentData(entity, playerMovement);
         }
     }
