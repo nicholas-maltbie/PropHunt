@@ -25,8 +25,11 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
 #endif
         [ReadOnly] public ArchetypeChunkBufferType<TestCharacterSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
+        public ArchetypeChunkComponentType<KCCGravity> ghostKCCGravityType;
+        public ArchetypeChunkComponentType<KCCGrounded> ghostKCCGroundedType;
+        public ArchetypeChunkComponentType<KCCJumping> ghostKCCJumpingType;
+        public ArchetypeChunkComponentType<KCCMovementSettings> ghostKCCMovementSettingsType;
         public ArchetypeChunkComponentType<PlayerId> ghostPlayerIdType;
-        public ArchetypeChunkComponentType<PlayerMovement> ghostPlayerMovementType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
@@ -41,8 +44,11 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
             };
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
+            var ghostKCCGravityArray = chunk.GetNativeArray(ghostKCCGravityType);
+            var ghostKCCGroundedArray = chunk.GetNativeArray(ghostKCCGroundedType);
+            var ghostKCCJumpingArray = chunk.GetNativeArray(ghostKCCJumpingType);
+            var ghostKCCMovementSettingsArray = chunk.GetNativeArray(ghostKCCMovementSettingsType);
             var ghostPlayerIdArray = chunk.GetNativeArray(ghostPlayerIdType);
-            var ghostPlayerMovementArray = chunk.GetNativeArray(ghostPlayerMovementType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
@@ -65,23 +71,33 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 if (!snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData))
                     return;
 
+                var ghostKCCGravity = ghostKCCGravityArray[entityIndex];
+                var ghostKCCGrounded = ghostKCCGroundedArray[entityIndex];
+                var ghostKCCJumping = ghostKCCJumpingArray[entityIndex];
+                var ghostKCCMovementSettings = ghostKCCMovementSettingsArray[entityIndex];
                 var ghostPlayerId = ghostPlayerIdArray[entityIndex];
-                var ghostPlayerMovement = ghostPlayerMovementArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
+                ghostKCCGravity.gravityAcceleration = snapshotData.GetKCCGravitygravityAcceleration(deserializerState);
+                ghostKCCGrounded.maxWalkAngle = snapshotData.GetKCCGroundedmaxWalkAngle(deserializerState);
+                ghostKCCGrounded.groundCheckDistance = snapshotData.GetKCCGroundedgroundCheckDistance(deserializerState);
+                ghostKCCJumping.jumpForce = snapshotData.GetKCCJumpingjumpForce(deserializerState);
+                ghostKCCJumping.attemptingJump = snapshotData.GetKCCJumpingattemptingJump(deserializerState);
+                ghostKCCMovementSettings.moveSpeed = snapshotData.GetKCCMovementSettingsmoveSpeed(deserializerState);
+                ghostKCCMovementSettings.sprintMultiplier = snapshotData.GetKCCMovementSettingssprintMultiplier(deserializerState);
+                ghostKCCMovementSettings.moveMaxBounces = snapshotData.GetKCCMovementSettingsmoveMaxBounces(deserializerState);
+                ghostKCCMovementSettings.moveAnglePower = snapshotData.GetKCCMovementSettingsmoveAnglePower(deserializerState);
+                ghostKCCMovementSettings.movePushPower = snapshotData.GetKCCMovementSettingsmovePushPower(deserializerState);
+                ghostKCCMovementSettings.movePushDecay = snapshotData.GetKCCMovementSettingsmovePushDecay(deserializerState);
+                ghostKCCMovementSettings.fallMaxBounces = snapshotData.GetKCCMovementSettingsfallMaxBounces(deserializerState);
+                ghostKCCMovementSettings.fallPushPower = snapshotData.GetKCCMovementSettingsfallPushPower(deserializerState);
+                ghostKCCMovementSettings.fallAnglePower = snapshotData.GetKCCMovementSettingsfallAnglePower(deserializerState);
+                ghostKCCMovementSettings.fallPushDecay = snapshotData.GetKCCMovementSettingsfallPushDecay(deserializerState);
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
-                ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
-                ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
-                ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
-                ghostPlayerMovement.velocity = snapshotData.GetPlayerMovementvelocity(deserializerState);
-                ghostPlayerMovement.jumpForce = snapshotData.GetPlayerMovementjumpForce(deserializerState);
-                ghostPlayerMovement.maxWalkAngle = snapshotData.GetPlayerMovementmaxWalkAngle(deserializerState);
-                ghostPlayerMovement.groundCheckDistance = snapshotData.GetPlayerMovementgroundCheckDistance(deserializerState);
-                ghostPlayerMovement.gravityForce = snapshotData.GetPlayerMovementgravityForce(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -94,8 +110,11 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
+                ghostKCCGravityArray[entityIndex] = ghostKCCGravity;
+                ghostKCCGroundedArray[entityIndex] = ghostKCCGrounded;
+                ghostKCCJumpingArray[entityIndex] = ghostKCCJumping;
+                ghostKCCMovementSettingsArray[entityIndex] = ghostKCCMovementSettings;
                 ghostPlayerIdArray[entityIndex] = ghostPlayerId;
-                ghostPlayerMovementArray[entityIndex] = ghostPlayerMovement;
             }
         }
     }
@@ -114,8 +133,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkBufferType<TestCharacterSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
+        public ArchetypeChunkComponentType<KCCGravity> ghostKCCGravityType;
+        public ArchetypeChunkComponentType<KCCGrounded> ghostKCCGroundedType;
+        public ArchetypeChunkComponentType<KCCJumping> ghostKCCJumpingType;
+        public ArchetypeChunkComponentType<KCCMovementSettings> ghostKCCMovementSettingsType;
+        public ArchetypeChunkComponentType<KCCVelocity> ghostKCCVelocityType;
         public ArchetypeChunkComponentType<PlayerId> ghostPlayerIdType;
-        public ArchetypeChunkComponentType<PlayerMovement> ghostPlayerMovementType;
         public ArchetypeChunkComponentType<PlayerView> ghostPlayerViewType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
@@ -131,8 +154,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
+            var ghostKCCGravityArray = chunk.GetNativeArray(ghostKCCGravityType);
+            var ghostKCCGroundedArray = chunk.GetNativeArray(ghostKCCGroundedType);
+            var ghostKCCJumpingArray = chunk.GetNativeArray(ghostKCCJumpingType);
+            var ghostKCCMovementSettingsArray = chunk.GetNativeArray(ghostKCCMovementSettingsType);
+            var ghostKCCVelocityArray = chunk.GetNativeArray(ghostKCCVelocityType);
             var ghostPlayerIdArray = chunk.GetNativeArray(ghostPlayerIdType);
-            var ghostPlayerMovementArray = chunk.GetNativeArray(ghostPlayerMovementType);
             var ghostPlayerViewArray = chunk.GetNativeArray(ghostPlayerViewType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -166,8 +193,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 if (lastPredictedTickInst != snapshotData.Tick)
                     continue;
 
+                var ghostKCCGravity = ghostKCCGravityArray[entityIndex];
+                var ghostKCCGrounded = ghostKCCGroundedArray[entityIndex];
+                var ghostKCCJumping = ghostKCCJumpingArray[entityIndex];
+                var ghostKCCMovementSettings = ghostKCCMovementSettingsArray[entityIndex];
+                var ghostKCCVelocity = ghostKCCVelocityArray[entityIndex];
                 var ghostPlayerId = ghostPlayerIdArray[entityIndex];
-                var ghostPlayerMovement = ghostPlayerMovementArray[entityIndex];
                 var ghostPlayerView = ghostPlayerViewArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
@@ -175,15 +206,25 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
+                ghostKCCGravity.gravityAcceleration = snapshotData.GetKCCGravitygravityAcceleration(deserializerState);
+                ghostKCCGrounded.maxWalkAngle = snapshotData.GetKCCGroundedmaxWalkAngle(deserializerState);
+                ghostKCCGrounded.groundCheckDistance = snapshotData.GetKCCGroundedgroundCheckDistance(deserializerState);
+                ghostKCCJumping.jumpForce = snapshotData.GetKCCJumpingjumpForce(deserializerState);
+                ghostKCCJumping.attemptingJump = snapshotData.GetKCCJumpingattemptingJump(deserializerState);
+                ghostKCCMovementSettings.moveSpeed = snapshotData.GetKCCMovementSettingsmoveSpeed(deserializerState);
+                ghostKCCMovementSettings.sprintMultiplier = snapshotData.GetKCCMovementSettingssprintMultiplier(deserializerState);
+                ghostKCCMovementSettings.moveMaxBounces = snapshotData.GetKCCMovementSettingsmoveMaxBounces(deserializerState);
+                ghostKCCMovementSettings.moveAnglePower = snapshotData.GetKCCMovementSettingsmoveAnglePower(deserializerState);
+                ghostKCCMovementSettings.movePushPower = snapshotData.GetKCCMovementSettingsmovePushPower(deserializerState);
+                ghostKCCMovementSettings.movePushDecay = snapshotData.GetKCCMovementSettingsmovePushDecay(deserializerState);
+                ghostKCCMovementSettings.fallMaxBounces = snapshotData.GetKCCMovementSettingsfallMaxBounces(deserializerState);
+                ghostKCCMovementSettings.fallPushPower = snapshotData.GetKCCMovementSettingsfallPushPower(deserializerState);
+                ghostKCCMovementSettings.fallAnglePower = snapshotData.GetKCCMovementSettingsfallAnglePower(deserializerState);
+                ghostKCCMovementSettings.fallPushDecay = snapshotData.GetKCCMovementSettingsfallPushDecay(deserializerState);
+                ghostKCCVelocity.playerVelocity = snapshotData.GetKCCVelocityplayerVelocity(deserializerState);
+                ghostKCCVelocity.worldVelocity = snapshotData.GetKCCVelocityworldVelocity(deserializerState);
                 ghostPlayerId.playerId = snapshotData.GetPlayerIdplayerId(deserializerState);
-                ghostPlayerMovement.moveSpeed = snapshotData.GetPlayerMovementmoveSpeed(deserializerState);
-                ghostPlayerMovement.sprintMultiplier = snapshotData.GetPlayerMovementsprintMultiplier(deserializerState);
-                ghostPlayerMovement.viewRotationRate = snapshotData.GetPlayerMovementviewRotationRate(deserializerState);
-                ghostPlayerMovement.velocity = snapshotData.GetPlayerMovementvelocity(deserializerState);
-                ghostPlayerMovement.jumpForce = snapshotData.GetPlayerMovementjumpForce(deserializerState);
-                ghostPlayerMovement.maxWalkAngle = snapshotData.GetPlayerMovementmaxWalkAngle(deserializerState);
-                ghostPlayerMovement.groundCheckDistance = snapshotData.GetPlayerMovementgroundCheckDistance(deserializerState);
-                ghostPlayerMovement.gravityForce = snapshotData.GetPlayerMovementgravityForce(deserializerState);
+                ghostPlayerView.viewRotationRate = snapshotData.GetPlayerViewviewRotationRate(deserializerState);
                 ghostPlayerView.pitch = snapshotData.GetPlayerViewpitch(deserializerState);
                 ghostPlayerView.yaw = snapshotData.GetPlayerViewyaw(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
@@ -198,8 +239,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
+                ghostKCCGravityArray[entityIndex] = ghostKCCGravity;
+                ghostKCCGroundedArray[entityIndex] = ghostKCCGrounded;
+                ghostKCCJumpingArray[entityIndex] = ghostKCCJumping;
+                ghostKCCMovementSettingsArray[entityIndex] = ghostKCCMovementSettings;
+                ghostKCCVelocityArray[entityIndex] = ghostKCCVelocity;
                 ghostPlayerIdArray[entityIndex] = ghostPlayerId;
-                ghostPlayerMovementArray[entityIndex] = ghostPlayerMovement;
                 ghostPlayerViewArray[entityIndex] = ghostPlayerView;
             }
         }
@@ -220,8 +265,11 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
             All = new []{
                 ComponentType.ReadWrite<TestCharacterSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
+                ComponentType.ReadWrite<KCCGravity>(),
+                ComponentType.ReadWrite<KCCGrounded>(),
+                ComponentType.ReadWrite<KCCJumping>(),
+                ComponentType.ReadWrite<KCCMovementSettings>(),
                 ComponentType.ReadWrite<PlayerId>(),
-                ComponentType.ReadWrite<PlayerMovement>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             },
             None = new []{ComponentType.ReadWrite<PredictedGhostComponent>()}
@@ -232,8 +280,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<TestCharacterSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
+                ComponentType.ReadWrite<KCCGravity>(),
+                ComponentType.ReadWrite<KCCGrounded>(),
+                ComponentType.ReadWrite<KCCJumping>(),
+                ComponentType.ReadWrite<KCCMovementSettings>(),
+                ComponentType.ReadWrite<KCCVelocity>(),
                 ComponentType.ReadWrite<PlayerId>(),
-                ComponentType.ReadWrite<PlayerMovement>(),
                 ComponentType.ReadWrite<PlayerView>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             }
@@ -259,8 +311,12 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<TestCharacterSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
+                ghostKCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(),
+                ghostKCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(),
+                ghostKCCJumpingType = GetArchetypeChunkComponentType<KCCJumping>(),
+                ghostKCCMovementSettingsType = GetArchetypeChunkComponentType<KCCMovementSettings>(),
+                ghostKCCVelocityType = GetArchetypeChunkComponentType<KCCVelocity>(),
                 ghostPlayerIdType = GetArchetypeChunkComponentType<PlayerId>(),
-                ghostPlayerMovementType = GetArchetypeChunkComponentType<PlayerMovement>(),
                 ghostPlayerViewType = GetArchetypeChunkComponentType<PlayerView>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
@@ -285,8 +341,11 @@ public class TestCharacterGhostUpdateSystem : JobComponentSystem
 #endif
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<TestCharacterSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
+                ghostKCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(),
+                ghostKCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(),
+                ghostKCCJumpingType = GetArchetypeChunkComponentType<KCCJumping>(),
+                ghostKCCMovementSettingsType = GetArchetypeChunkComponentType<KCCMovementSettings>(),
                 ghostPlayerIdType = GetArchetypeChunkComponentType<PlayerId>(),
-                ghostPlayerMovementType = GetArchetypeChunkComponentType<PlayerMovement>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
                 ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),

@@ -1230,10 +1230,10 @@ MonoBehaviour:
   DeserializerCollectionPath: GhostDeserializerCollection.cs
   NamePrefix: Prophunt
   Ghosts:
-  - prefab: {fileID: -4735714693073688787, guid: eee6a4ddc1ceae54c92cfa25bd5a5ef1,
+  - prefab: {fileID: -2038115422834610797, guid: 9ce66645134d05648a349e8c3c23779d,
       type: 3}
     enabled: 1
-  - prefab: {fileID: -2038115422834610797, guid: 9ce66645134d05648a349e8c3c23779d,
+  - prefab: {fileID: 7895700625144195435, guid: eee6a4ddc1ceae54c92cfa25bd5a5ef1,
       type: 3}
     enabled: 1
 --- !u!1 &585440707

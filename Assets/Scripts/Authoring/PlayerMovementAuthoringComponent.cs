@@ -1,5 +1,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
 using UnityEngine;
 
@@ -15,11 +16,6 @@ namespace PropHunt.Authoring
         /// Speed of movement in units per second
         /// </summary>
         public float moveSpeed = 5f;
-
-        /// <summary>
-        /// Speed of view rotation in radians per second
-        /// </summary>
-        public float viewRotationRate = 3.14f;
 
         /// <summary>
         /// Multiplier for sprinting speed
@@ -49,27 +45,27 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Decrease in momentum factor due to angle change when falling
         /// </summary>
-        public float anglePowerFall = 1.2f;
+        public float fallAnglePower = 1.2f;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when walking
         /// </summary>
-        public float anglePowerMove = 2.0f;
+        public float moveAnglePower = 2.0f;
 
         /// <summary>
         /// Power of pushing objects
         /// </summary>
-        public float pushPower = 10.0f;
+        public float pushPower = 20.0f;
 
         /// <summary>
         /// Max number of bounces per frame when moving
         /// </summary>
-        public int maxBouncesMove = 3;
+        public int movemaxBounces = 3;
 
         /// <summary>
         /// Max number of bounces per frame when falling
         /// </summary>
-        public int maxBouncesFall = 2;
+        public int fallMaxBounces = 2;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object
@@ -78,22 +74,33 @@ namespace PropHunt.Authoring
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            PlayerMovement playerMovement = new PlayerMovement(){
+            dstManager.AddComponentData(entity, new KCCMovementSettings() {
                 moveSpeed = this.moveSpeed,
-                viewRotationRate = this.viewRotationRate,
                 sprintMultiplier = this.sprintMultiplier,
+                moveMaxBounces = this.movemaxBounces,
+                moveAnglePower = this.moveAnglePower,
+                movePushPower = this.pushPower,
+                movePushDecay = this.pushDecay,
+                fallMaxBounces = this.fallMaxBounces,
+                fallAnglePower = this.fallAnglePower,
+                fallPushPower = this.pushPower,
+                fallPushDecay = this.pushDecay,
+            });
+            dstManager.AddComponentData(entity, new KCCJumping() {
                 jumpForce = this.jumpForce,
-                groundCheckDistance = this.groundCheckDistance,
+            });
+            dstManager.AddComponentData(entity, new KCCGrounded() {
                 maxWalkAngle = this.maxWalkAngle,
-                gravityForce = this.gravityForce,
-                pushPower = this.pushPower,
-                anglePowerFall = this.anglePowerFall,
-                anglePowerMove = this.anglePowerMove,
-                maxBouncesMove = this.maxBouncesMove,
-                maxBouncesFall = this.maxBouncesFall,
-                pushDecay = this.pushDecay
-            };
-            dstManager.AddComponentData(entity, playerMovement);
+                groundCheckDistance = this.groundCheckDistance,
+            });
+            dstManager.AddComponentData(entity, new KCCVelocity() {
+                playerVelocity = float3.zero,
+                worldVelocity = float3.zero
+            });
+            dstManager.AddComponentData(entity, new KCCGravity() {
+                gravityAcceleration = this.gravityForce,
+            });
+
         }
     }
 }

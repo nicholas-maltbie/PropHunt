@@ -26,10 +26,11 @@ namespace PropHunt.Mixed.Systems
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
             
-            Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer,
+            Entities.ForEach((
+                DynamicBuffer<PlayerInput> inputBuffer,
                 ref PredictedGhostComponent prediction,
-                ref PlayerView view, ref PlayerMovement settings,
-                ref Translation trans, ref Rotation rot) =>
+                ref PlayerView view,
+                ref Rotation rot) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
@@ -39,19 +40,19 @@ namespace PropHunt.Mixed.Systems
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
                 
-                view.pitch += deltaTime * -1 * input.pitchChange * settings.viewRotationRate;
-                view.yaw += deltaTime * input.yawChange * settings.viewRotationRate;
+                view.pitch += deltaTime * -1 * input.pitchChange * view.viewRotationRate;
+                view.yaw += deltaTime * input.yawChange * view.viewRotationRate;
 
-                if (view.pitch > math.PI / 2)
+                if (view.pitch > 90)
                 {
-                    view.pitch = math.PI / 2;
+                    view.pitch = 90;
                 }
-                else if (view.pitch < -math.PI / 2)
+                else if (view.pitch < -90)
                 {
-                    view.pitch = -math.PI / 2;
+                    view.pitch = -90;
                 }
 
-                rot.Value.value = quaternion.Euler(new float3(0, view.yaw, 0)).value;
+                rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
             });
         }
 

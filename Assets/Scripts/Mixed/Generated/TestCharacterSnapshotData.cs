@@ -5,19 +5,31 @@ using Unity.Mathematics;
 public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotData>
 {
     public uint tick;
+    private int KCCGravitygravityAccelerationX;
+    private int KCCGravitygravityAccelerationY;
+    private int KCCGravitygravityAccelerationZ;
+    private int KCCGroundedmaxWalkAngle;
+    private int KCCGroundedgroundCheckDistance;
+    private int KCCJumpingjumpForce;
+    private uint KCCJumpingattemptingJump;
+    private int KCCMovementSettingsmoveSpeed;
+    private int KCCMovementSettingssprintMultiplier;
+    private int KCCMovementSettingsmoveMaxBounces;
+    private int KCCMovementSettingsmoveAnglePower;
+    private int KCCMovementSettingsmovePushPower;
+    private int KCCMovementSettingsmovePushDecay;
+    private int KCCMovementSettingsfallMaxBounces;
+    private int KCCMovementSettingsfallPushPower;
+    private int KCCMovementSettingsfallAnglePower;
+    private int KCCMovementSettingsfallPushDecay;
+    private int KCCVelocityplayerVelocityX;
+    private int KCCVelocityplayerVelocityY;
+    private int KCCVelocityplayerVelocityZ;
+    private int KCCVelocityworldVelocityX;
+    private int KCCVelocityworldVelocityY;
+    private int KCCVelocityworldVelocityZ;
     private int PlayerIdplayerId;
-    private int PlayerMovementmoveSpeed;
-    private int PlayerMovementsprintMultiplier;
-    private int PlayerMovementviewRotationRate;
-    private int PlayerMovementvelocityX;
-    private int PlayerMovementvelocityY;
-    private int PlayerMovementvelocityZ;
-    private int PlayerMovementjumpForce;
-    private int PlayerMovementmaxWalkAngle;
-    private int PlayerMovementgroundCheckDistance;
-    private int PlayerMovementgravityForceX;
-    private int PlayerMovementgravityForceY;
-    private int PlayerMovementgravityForceZ;
+    private int PlayerViewviewRotationRate;
     private int PlayerViewpitch;
     private int PlayerViewyaw;
     private int RotationValueX;
@@ -44,6 +56,284 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     uint changeMask0;
 
     public uint Tick => tick;
+    public float3 GetKCCGravitygravityAcceleration(GhostDeserializerState deserializerState)
+    {
+        return GetKCCGravitygravityAcceleration();
+    }
+    public float3 GetKCCGravitygravityAcceleration()
+    {
+        return new float3(KCCGravitygravityAccelerationX * 0.01f, KCCGravitygravityAccelerationY * 0.01f, KCCGravitygravityAccelerationZ * 0.01f);
+    }
+    public void SetKCCGravitygravityAcceleration(float3 val, GhostSerializerState serializerState)
+    {
+        SetKCCGravitygravityAcceleration(val);
+    }
+    public void SetKCCGravitygravityAcceleration(float3 val)
+    {
+        KCCGravitygravityAccelerationX = (int)(val.x * 100);
+        KCCGravitygravityAccelerationY = (int)(val.y * 100);
+        KCCGravitygravityAccelerationZ = (int)(val.z * 100);
+    }
+    public float GetKCCGroundedmaxWalkAngle(GhostDeserializerState deserializerState)
+    {
+        return KCCGroundedmaxWalkAngle * 0.01f;
+    }
+    public float GetKCCGroundedmaxWalkAngle()
+    {
+        return KCCGroundedmaxWalkAngle * 0.01f;
+    }
+    public void SetKCCGroundedmaxWalkAngle(float val, GhostSerializerState serializerState)
+    {
+        KCCGroundedmaxWalkAngle = (int)(val * 100);
+    }
+    public void SetKCCGroundedmaxWalkAngle(float val)
+    {
+        KCCGroundedmaxWalkAngle = (int)(val * 100);
+    }
+    public float GetKCCGroundedgroundCheckDistance(GhostDeserializerState deserializerState)
+    {
+        return KCCGroundedgroundCheckDistance * 0.01f;
+    }
+    public float GetKCCGroundedgroundCheckDistance()
+    {
+        return KCCGroundedgroundCheckDistance * 0.01f;
+    }
+    public void SetKCCGroundedgroundCheckDistance(float val, GhostSerializerState serializerState)
+    {
+        KCCGroundedgroundCheckDistance = (int)(val * 100);
+    }
+    public void SetKCCGroundedgroundCheckDistance(float val)
+    {
+        KCCGroundedgroundCheckDistance = (int)(val * 100);
+    }
+    public float GetKCCJumpingjumpForce(GhostDeserializerState deserializerState)
+    {
+        return KCCJumpingjumpForce * 0.01f;
+    }
+    public float GetKCCJumpingjumpForce()
+    {
+        return KCCJumpingjumpForce * 0.01f;
+    }
+    public void SetKCCJumpingjumpForce(float val, GhostSerializerState serializerState)
+    {
+        KCCJumpingjumpForce = (int)(val * 100);
+    }
+    public void SetKCCJumpingjumpForce(float val)
+    {
+        KCCJumpingjumpForce = (int)(val * 100);
+    }
+    public bool GetKCCJumpingattemptingJump(GhostDeserializerState deserializerState)
+    {
+        return KCCJumpingattemptingJump!=0;
+    }
+    public bool GetKCCJumpingattemptingJump()
+    {
+        return KCCJumpingattemptingJump!=0;
+    }
+    public void SetKCCJumpingattemptingJump(bool val, GhostSerializerState serializerState)
+    {
+        KCCJumpingattemptingJump = val?1u:0;
+    }
+    public void SetKCCJumpingattemptingJump(bool val)
+    {
+        KCCJumpingattemptingJump = val?1u:0;
+    }
+    public float GetKCCMovementSettingsmoveSpeed(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsmoveSpeed * 0.01f;
+    }
+    public float GetKCCMovementSettingsmoveSpeed()
+    {
+        return KCCMovementSettingsmoveSpeed * 0.01f;
+    }
+    public void SetKCCMovementSettingsmoveSpeed(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsmoveSpeed = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsmoveSpeed(float val)
+    {
+        KCCMovementSettingsmoveSpeed = (int)(val * 100);
+    }
+    public float GetKCCMovementSettingssprintMultiplier(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingssprintMultiplier * 0.01f;
+    }
+    public float GetKCCMovementSettingssprintMultiplier()
+    {
+        return KCCMovementSettingssprintMultiplier * 0.01f;
+    }
+    public void SetKCCMovementSettingssprintMultiplier(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingssprintMultiplier = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingssprintMultiplier(float val)
+    {
+        KCCMovementSettingssprintMultiplier = (int)(val * 100);
+    }
+    public int GetKCCMovementSettingsmoveMaxBounces(GhostDeserializerState deserializerState)
+    {
+        return (int)KCCMovementSettingsmoveMaxBounces;
+    }
+    public int GetKCCMovementSettingsmoveMaxBounces()
+    {
+        return (int)KCCMovementSettingsmoveMaxBounces;
+    }
+    public void SetKCCMovementSettingsmoveMaxBounces(int val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsmoveMaxBounces = (int)val;
+    }
+    public void SetKCCMovementSettingsmoveMaxBounces(int val)
+    {
+        KCCMovementSettingsmoveMaxBounces = (int)val;
+    }
+    public float GetKCCMovementSettingsmoveAnglePower(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsmoveAnglePower * 0.01f;
+    }
+    public float GetKCCMovementSettingsmoveAnglePower()
+    {
+        return KCCMovementSettingsmoveAnglePower * 0.01f;
+    }
+    public void SetKCCMovementSettingsmoveAnglePower(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsmoveAnglePower = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsmoveAnglePower(float val)
+    {
+        KCCMovementSettingsmoveAnglePower = (int)(val * 100);
+    }
+    public float GetKCCMovementSettingsmovePushPower(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsmovePushPower * 0.01f;
+    }
+    public float GetKCCMovementSettingsmovePushPower()
+    {
+        return KCCMovementSettingsmovePushPower * 0.01f;
+    }
+    public void SetKCCMovementSettingsmovePushPower(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsmovePushPower = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsmovePushPower(float val)
+    {
+        KCCMovementSettingsmovePushPower = (int)(val * 100);
+    }
+    public float GetKCCMovementSettingsmovePushDecay(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsmovePushDecay * 0.01f;
+    }
+    public float GetKCCMovementSettingsmovePushDecay()
+    {
+        return KCCMovementSettingsmovePushDecay * 0.01f;
+    }
+    public void SetKCCMovementSettingsmovePushDecay(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsmovePushDecay = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsmovePushDecay(float val)
+    {
+        KCCMovementSettingsmovePushDecay = (int)(val * 100);
+    }
+    public int GetKCCMovementSettingsfallMaxBounces(GhostDeserializerState deserializerState)
+    {
+        return (int)KCCMovementSettingsfallMaxBounces;
+    }
+    public int GetKCCMovementSettingsfallMaxBounces()
+    {
+        return (int)KCCMovementSettingsfallMaxBounces;
+    }
+    public void SetKCCMovementSettingsfallMaxBounces(int val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsfallMaxBounces = (int)val;
+    }
+    public void SetKCCMovementSettingsfallMaxBounces(int val)
+    {
+        KCCMovementSettingsfallMaxBounces = (int)val;
+    }
+    public float GetKCCMovementSettingsfallPushPower(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsfallPushPower * 0.01f;
+    }
+    public float GetKCCMovementSettingsfallPushPower()
+    {
+        return KCCMovementSettingsfallPushPower * 0.01f;
+    }
+    public void SetKCCMovementSettingsfallPushPower(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsfallPushPower = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsfallPushPower(float val)
+    {
+        KCCMovementSettingsfallPushPower = (int)(val * 100);
+    }
+    public float GetKCCMovementSettingsfallAnglePower(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsfallAnglePower * 0.01f;
+    }
+    public float GetKCCMovementSettingsfallAnglePower()
+    {
+        return KCCMovementSettingsfallAnglePower * 0.01f;
+    }
+    public void SetKCCMovementSettingsfallAnglePower(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsfallAnglePower = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsfallAnglePower(float val)
+    {
+        KCCMovementSettingsfallAnglePower = (int)(val * 100);
+    }
+    public float GetKCCMovementSettingsfallPushDecay(GhostDeserializerState deserializerState)
+    {
+        return KCCMovementSettingsfallPushDecay * 0.01f;
+    }
+    public float GetKCCMovementSettingsfallPushDecay()
+    {
+        return KCCMovementSettingsfallPushDecay * 0.01f;
+    }
+    public void SetKCCMovementSettingsfallPushDecay(float val, GhostSerializerState serializerState)
+    {
+        KCCMovementSettingsfallPushDecay = (int)(val * 100);
+    }
+    public void SetKCCMovementSettingsfallPushDecay(float val)
+    {
+        KCCMovementSettingsfallPushDecay = (int)(val * 100);
+    }
+    public float3 GetKCCVelocityplayerVelocity(GhostDeserializerState deserializerState)
+    {
+        return GetKCCVelocityplayerVelocity();
+    }
+    public float3 GetKCCVelocityplayerVelocity()
+    {
+        return new float3(KCCVelocityplayerVelocityX * 0.01f, KCCVelocityplayerVelocityY * 0.01f, KCCVelocityplayerVelocityZ * 0.01f);
+    }
+    public void SetKCCVelocityplayerVelocity(float3 val, GhostSerializerState serializerState)
+    {
+        SetKCCVelocityplayerVelocity(val);
+    }
+    public void SetKCCVelocityplayerVelocity(float3 val)
+    {
+        KCCVelocityplayerVelocityX = (int)(val.x * 100);
+        KCCVelocityplayerVelocityY = (int)(val.y * 100);
+        KCCVelocityplayerVelocityZ = (int)(val.z * 100);
+    }
+    public float3 GetKCCVelocityworldVelocity(GhostDeserializerState deserializerState)
+    {
+        return GetKCCVelocityworldVelocity();
+    }
+    public float3 GetKCCVelocityworldVelocity()
+    {
+        return new float3(KCCVelocityworldVelocityX * 0.01f, KCCVelocityworldVelocityY * 0.01f, KCCVelocityworldVelocityZ * 0.01f);
+    }
+    public void SetKCCVelocityworldVelocity(float3 val, GhostSerializerState serializerState)
+    {
+        SetKCCVelocityworldVelocity(val);
+    }
+    public void SetKCCVelocityworldVelocity(float3 val)
+    {
+        KCCVelocityworldVelocityX = (int)(val.x * 100);
+        KCCVelocityworldVelocityY = (int)(val.y * 100);
+        KCCVelocityworldVelocityZ = (int)(val.z * 100);
+    }
     public int GetPlayerIdplayerId(GhostDeserializerState deserializerState)
     {
         return (int)PlayerIdplayerId;
@@ -60,137 +350,21 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     {
         PlayerIdplayerId = (int)val;
     }
-    public float GetPlayerMovementmoveSpeed(GhostDeserializerState deserializerState)
+    public float GetPlayerViewviewRotationRate(GhostDeserializerState deserializerState)
     {
-        return PlayerMovementmoveSpeed * 0.01f;
+        return PlayerViewviewRotationRate * 0.01f;
     }
-    public float GetPlayerMovementmoveSpeed()
+    public float GetPlayerViewviewRotationRate()
     {
-        return PlayerMovementmoveSpeed * 0.01f;
+        return PlayerViewviewRotationRate * 0.01f;
     }
-    public void SetPlayerMovementmoveSpeed(float val, GhostSerializerState serializerState)
+    public void SetPlayerViewviewRotationRate(float val, GhostSerializerState serializerState)
     {
-        PlayerMovementmoveSpeed = (int)(val * 100);
+        PlayerViewviewRotationRate = (int)(val * 100);
     }
-    public void SetPlayerMovementmoveSpeed(float val)
+    public void SetPlayerViewviewRotationRate(float val)
     {
-        PlayerMovementmoveSpeed = (int)(val * 100);
-    }
-    public float GetPlayerMovementsprintMultiplier(GhostDeserializerState deserializerState)
-    {
-        return PlayerMovementsprintMultiplier * 0.01f;
-    }
-    public float GetPlayerMovementsprintMultiplier()
-    {
-        return PlayerMovementsprintMultiplier * 0.01f;
-    }
-    public void SetPlayerMovementsprintMultiplier(float val, GhostSerializerState serializerState)
-    {
-        PlayerMovementsprintMultiplier = (int)(val * 100);
-    }
-    public void SetPlayerMovementsprintMultiplier(float val)
-    {
-        PlayerMovementsprintMultiplier = (int)(val * 100);
-    }
-    public float GetPlayerMovementviewRotationRate(GhostDeserializerState deserializerState)
-    {
-        return PlayerMovementviewRotationRate * 0.01f;
-    }
-    public float GetPlayerMovementviewRotationRate()
-    {
-        return PlayerMovementviewRotationRate * 0.01f;
-    }
-    public void SetPlayerMovementviewRotationRate(float val, GhostSerializerState serializerState)
-    {
-        PlayerMovementviewRotationRate = (int)(val * 100);
-    }
-    public void SetPlayerMovementviewRotationRate(float val)
-    {
-        PlayerMovementviewRotationRate = (int)(val * 100);
-    }
-    public float3 GetPlayerMovementvelocity(GhostDeserializerState deserializerState)
-    {
-        return GetPlayerMovementvelocity();
-    }
-    public float3 GetPlayerMovementvelocity()
-    {
-        return new float3(PlayerMovementvelocityX * 0.01f, PlayerMovementvelocityY * 0.01f, PlayerMovementvelocityZ * 0.01f);
-    }
-    public void SetPlayerMovementvelocity(float3 val, GhostSerializerState serializerState)
-    {
-        SetPlayerMovementvelocity(val);
-    }
-    public void SetPlayerMovementvelocity(float3 val)
-    {
-        PlayerMovementvelocityX = (int)(val.x * 100);
-        PlayerMovementvelocityY = (int)(val.y * 100);
-        PlayerMovementvelocityZ = (int)(val.z * 100);
-    }
-    public float GetPlayerMovementjumpForce(GhostDeserializerState deserializerState)
-    {
-        return PlayerMovementjumpForce * 0.01f;
-    }
-    public float GetPlayerMovementjumpForce()
-    {
-        return PlayerMovementjumpForce * 0.01f;
-    }
-    public void SetPlayerMovementjumpForce(float val, GhostSerializerState serializerState)
-    {
-        PlayerMovementjumpForce = (int)(val * 100);
-    }
-    public void SetPlayerMovementjumpForce(float val)
-    {
-        PlayerMovementjumpForce = (int)(val * 100);
-    }
-    public float GetPlayerMovementmaxWalkAngle(GhostDeserializerState deserializerState)
-    {
-        return PlayerMovementmaxWalkAngle * 0.01f;
-    }
-    public float GetPlayerMovementmaxWalkAngle()
-    {
-        return PlayerMovementmaxWalkAngle * 0.01f;
-    }
-    public void SetPlayerMovementmaxWalkAngle(float val, GhostSerializerState serializerState)
-    {
-        PlayerMovementmaxWalkAngle = (int)(val * 100);
-    }
-    public void SetPlayerMovementmaxWalkAngle(float val)
-    {
-        PlayerMovementmaxWalkAngle = (int)(val * 100);
-    }
-    public float GetPlayerMovementgroundCheckDistance(GhostDeserializerState deserializerState)
-    {
-        return PlayerMovementgroundCheckDistance * 0.01f;
-    }
-    public float GetPlayerMovementgroundCheckDistance()
-    {
-        return PlayerMovementgroundCheckDistance * 0.01f;
-    }
-    public void SetPlayerMovementgroundCheckDistance(float val, GhostSerializerState serializerState)
-    {
-        PlayerMovementgroundCheckDistance = (int)(val * 100);
-    }
-    public void SetPlayerMovementgroundCheckDistance(float val)
-    {
-        PlayerMovementgroundCheckDistance = (int)(val * 100);
-    }
-    public float3 GetPlayerMovementgravityForce(GhostDeserializerState deserializerState)
-    {
-        return GetPlayerMovementgravityForce();
-    }
-    public float3 GetPlayerMovementgravityForce()
-    {
-        return new float3(PlayerMovementgravityForceX * 0.01f, PlayerMovementgravityForceY * 0.01f, PlayerMovementgravityForceZ * 0.01f);
-    }
-    public void SetPlayerMovementgravityForce(float3 val, GhostSerializerState serializerState)
-    {
-        SetPlayerMovementgravityForce(val);
-    }
-    public void SetPlayerMovementgravityForce(float3 val)
-    {
-        PlayerMovementgravityForceX = (int)(val.x * 100);
-        PlayerMovementgravityForceY = (int)(val.y * 100);
-        PlayerMovementgravityForceZ = (int)(val.z * 100);
+        PlayerViewviewRotationRate = (int)(val * 100);
     }
     public float GetPlayerViewpitch(GhostDeserializerState deserializerState)
     {
@@ -339,19 +513,31 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     public void PredictDelta(uint tick, ref TestCharacterSnapshotData baseline1, ref TestCharacterSnapshotData baseline2)
     {
         var predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
+        KCCGravitygravityAccelerationX = predictor.PredictInt(KCCGravitygravityAccelerationX, baseline1.KCCGravitygravityAccelerationX, baseline2.KCCGravitygravityAccelerationX);
+        KCCGravitygravityAccelerationY = predictor.PredictInt(KCCGravitygravityAccelerationY, baseline1.KCCGravitygravityAccelerationY, baseline2.KCCGravitygravityAccelerationY);
+        KCCGravitygravityAccelerationZ = predictor.PredictInt(KCCGravitygravityAccelerationZ, baseline1.KCCGravitygravityAccelerationZ, baseline2.KCCGravitygravityAccelerationZ);
+        KCCGroundedmaxWalkAngle = predictor.PredictInt(KCCGroundedmaxWalkAngle, baseline1.KCCGroundedmaxWalkAngle, baseline2.KCCGroundedmaxWalkAngle);
+        KCCGroundedgroundCheckDistance = predictor.PredictInt(KCCGroundedgroundCheckDistance, baseline1.KCCGroundedgroundCheckDistance, baseline2.KCCGroundedgroundCheckDistance);
+        KCCJumpingjumpForce = predictor.PredictInt(KCCJumpingjumpForce, baseline1.KCCJumpingjumpForce, baseline2.KCCJumpingjumpForce);
+        KCCJumpingattemptingJump = (uint)predictor.PredictInt((int)KCCJumpingattemptingJump, (int)baseline1.KCCJumpingattemptingJump, (int)baseline2.KCCJumpingattemptingJump);
+        KCCMovementSettingsmoveSpeed = predictor.PredictInt(KCCMovementSettingsmoveSpeed, baseline1.KCCMovementSettingsmoveSpeed, baseline2.KCCMovementSettingsmoveSpeed);
+        KCCMovementSettingssprintMultiplier = predictor.PredictInt(KCCMovementSettingssprintMultiplier, baseline1.KCCMovementSettingssprintMultiplier, baseline2.KCCMovementSettingssprintMultiplier);
+        KCCMovementSettingsmoveMaxBounces = predictor.PredictInt(KCCMovementSettingsmoveMaxBounces, baseline1.KCCMovementSettingsmoveMaxBounces, baseline2.KCCMovementSettingsmoveMaxBounces);
+        KCCMovementSettingsmoveAnglePower = predictor.PredictInt(KCCMovementSettingsmoveAnglePower, baseline1.KCCMovementSettingsmoveAnglePower, baseline2.KCCMovementSettingsmoveAnglePower);
+        KCCMovementSettingsmovePushPower = predictor.PredictInt(KCCMovementSettingsmovePushPower, baseline1.KCCMovementSettingsmovePushPower, baseline2.KCCMovementSettingsmovePushPower);
+        KCCMovementSettingsmovePushDecay = predictor.PredictInt(KCCMovementSettingsmovePushDecay, baseline1.KCCMovementSettingsmovePushDecay, baseline2.KCCMovementSettingsmovePushDecay);
+        KCCMovementSettingsfallMaxBounces = predictor.PredictInt(KCCMovementSettingsfallMaxBounces, baseline1.KCCMovementSettingsfallMaxBounces, baseline2.KCCMovementSettingsfallMaxBounces);
+        KCCMovementSettingsfallPushPower = predictor.PredictInt(KCCMovementSettingsfallPushPower, baseline1.KCCMovementSettingsfallPushPower, baseline2.KCCMovementSettingsfallPushPower);
+        KCCMovementSettingsfallAnglePower = predictor.PredictInt(KCCMovementSettingsfallAnglePower, baseline1.KCCMovementSettingsfallAnglePower, baseline2.KCCMovementSettingsfallAnglePower);
+        KCCMovementSettingsfallPushDecay = predictor.PredictInt(KCCMovementSettingsfallPushDecay, baseline1.KCCMovementSettingsfallPushDecay, baseline2.KCCMovementSettingsfallPushDecay);
+        KCCVelocityplayerVelocityX = predictor.PredictInt(KCCVelocityplayerVelocityX, baseline1.KCCVelocityplayerVelocityX, baseline2.KCCVelocityplayerVelocityX);
+        KCCVelocityplayerVelocityY = predictor.PredictInt(KCCVelocityplayerVelocityY, baseline1.KCCVelocityplayerVelocityY, baseline2.KCCVelocityplayerVelocityY);
+        KCCVelocityplayerVelocityZ = predictor.PredictInt(KCCVelocityplayerVelocityZ, baseline1.KCCVelocityplayerVelocityZ, baseline2.KCCVelocityplayerVelocityZ);
+        KCCVelocityworldVelocityX = predictor.PredictInt(KCCVelocityworldVelocityX, baseline1.KCCVelocityworldVelocityX, baseline2.KCCVelocityworldVelocityX);
+        KCCVelocityworldVelocityY = predictor.PredictInt(KCCVelocityworldVelocityY, baseline1.KCCVelocityworldVelocityY, baseline2.KCCVelocityworldVelocityY);
+        KCCVelocityworldVelocityZ = predictor.PredictInt(KCCVelocityworldVelocityZ, baseline1.KCCVelocityworldVelocityZ, baseline2.KCCVelocityworldVelocityZ);
         PlayerIdplayerId = predictor.PredictInt(PlayerIdplayerId, baseline1.PlayerIdplayerId, baseline2.PlayerIdplayerId);
-        PlayerMovementmoveSpeed = predictor.PredictInt(PlayerMovementmoveSpeed, baseline1.PlayerMovementmoveSpeed, baseline2.PlayerMovementmoveSpeed);
-        PlayerMovementsprintMultiplier = predictor.PredictInt(PlayerMovementsprintMultiplier, baseline1.PlayerMovementsprintMultiplier, baseline2.PlayerMovementsprintMultiplier);
-        PlayerMovementviewRotationRate = predictor.PredictInt(PlayerMovementviewRotationRate, baseline1.PlayerMovementviewRotationRate, baseline2.PlayerMovementviewRotationRate);
-        PlayerMovementvelocityX = predictor.PredictInt(PlayerMovementvelocityX, baseline1.PlayerMovementvelocityX, baseline2.PlayerMovementvelocityX);
-        PlayerMovementvelocityY = predictor.PredictInt(PlayerMovementvelocityY, baseline1.PlayerMovementvelocityY, baseline2.PlayerMovementvelocityY);
-        PlayerMovementvelocityZ = predictor.PredictInt(PlayerMovementvelocityZ, baseline1.PlayerMovementvelocityZ, baseline2.PlayerMovementvelocityZ);
-        PlayerMovementjumpForce = predictor.PredictInt(PlayerMovementjumpForce, baseline1.PlayerMovementjumpForce, baseline2.PlayerMovementjumpForce);
-        PlayerMovementmaxWalkAngle = predictor.PredictInt(PlayerMovementmaxWalkAngle, baseline1.PlayerMovementmaxWalkAngle, baseline2.PlayerMovementmaxWalkAngle);
-        PlayerMovementgroundCheckDistance = predictor.PredictInt(PlayerMovementgroundCheckDistance, baseline1.PlayerMovementgroundCheckDistance, baseline2.PlayerMovementgroundCheckDistance);
-        PlayerMovementgravityForceX = predictor.PredictInt(PlayerMovementgravityForceX, baseline1.PlayerMovementgravityForceX, baseline2.PlayerMovementgravityForceX);
-        PlayerMovementgravityForceY = predictor.PredictInt(PlayerMovementgravityForceY, baseline1.PlayerMovementgravityForceY, baseline2.PlayerMovementgravityForceY);
-        PlayerMovementgravityForceZ = predictor.PredictInt(PlayerMovementgravityForceZ, baseline1.PlayerMovementgravityForceZ, baseline2.PlayerMovementgravityForceZ);
+        PlayerViewviewRotationRate = predictor.PredictInt(PlayerViewviewRotationRate, baseline1.PlayerViewviewRotationRate, baseline2.PlayerViewviewRotationRate);
         PlayerViewpitch = predictor.PredictInt(PlayerViewpitch, baseline1.PlayerViewpitch, baseline2.PlayerViewpitch);
         PlayerViewyaw = predictor.PredictInt(PlayerViewyaw, baseline1.PlayerViewyaw, baseline2.PlayerViewyaw);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
@@ -379,116 +565,147 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
 
     public void Serialize(int networkId, ref TestCharacterSnapshotData baseline, ref DataStreamWriter writer, NetworkCompressionModel compressionModel)
     {
-        changeMask0 = (PlayerIdplayerId != baseline.PlayerIdplayerId) ? 1u : 0;
-        changeMask0 |= (PlayerMovementmoveSpeed != baseline.PlayerMovementmoveSpeed) ? (1u<<1) : 0;
-        changeMask0 |= (PlayerMovementsprintMultiplier != baseline.PlayerMovementsprintMultiplier) ? (1u<<2) : 0;
-        changeMask0 |= (PlayerMovementviewRotationRate != baseline.PlayerMovementviewRotationRate) ? (1u<<3) : 0;
-        changeMask0 |= (PlayerMovementvelocityX != baseline.PlayerMovementvelocityX ||
-                                           PlayerMovementvelocityY != baseline.PlayerMovementvelocityY ||
-                                           PlayerMovementvelocityZ != baseline.PlayerMovementvelocityZ) ? (1u<<4) : 0;
-        changeMask0 |= (PlayerMovementjumpForce != baseline.PlayerMovementjumpForce) ? (1u<<5) : 0;
-        changeMask0 |= (PlayerMovementmaxWalkAngle != baseline.PlayerMovementmaxWalkAngle) ? (1u<<6) : 0;
-        changeMask0 |= (PlayerMovementgroundCheckDistance != baseline.PlayerMovementgroundCheckDistance) ? (1u<<7) : 0;
-        changeMask0 |= (PlayerMovementgravityForceX != baseline.PlayerMovementgravityForceX ||
-                                           PlayerMovementgravityForceY != baseline.PlayerMovementgravityForceY ||
-                                           PlayerMovementgravityForceZ != baseline.PlayerMovementgravityForceZ) ? (1u<<8) : 0;
-        changeMask0 |= (PlayerViewpitch != baseline.PlayerViewpitch) ? (1u<<9) : 0;
-        changeMask0 |= (PlayerViewyaw != baseline.PlayerViewyaw) ? (1u<<10) : 0;
+        changeMask0 = (KCCGravitygravityAccelerationX != baseline.KCCGravitygravityAccelerationX ||
+                                          KCCGravitygravityAccelerationY != baseline.KCCGravitygravityAccelerationY ||
+                                          KCCGravitygravityAccelerationZ != baseline.KCCGravitygravityAccelerationZ) ? 1u : 0;
+        changeMask0 |= (KCCGroundedmaxWalkAngle != baseline.KCCGroundedmaxWalkAngle) ? (1u<<1) : 0;
+        changeMask0 |= (KCCGroundedgroundCheckDistance != baseline.KCCGroundedgroundCheckDistance) ? (1u<<2) : 0;
+        changeMask0 |= (KCCJumpingjumpForce != baseline.KCCJumpingjumpForce) ? (1u<<3) : 0;
+        changeMask0 |= (KCCJumpingattemptingJump != baseline.KCCJumpingattemptingJump) ? (1u<<4) : 0;
+        changeMask0 |= (KCCMovementSettingsmoveSpeed != baseline.KCCMovementSettingsmoveSpeed) ? (1u<<5) : 0;
+        changeMask0 |= (KCCMovementSettingssprintMultiplier != baseline.KCCMovementSettingssprintMultiplier) ? (1u<<6) : 0;
+        changeMask0 |= (KCCMovementSettingsmoveMaxBounces != baseline.KCCMovementSettingsmoveMaxBounces) ? (1u<<7) : 0;
+        changeMask0 |= (KCCMovementSettingsmoveAnglePower != baseline.KCCMovementSettingsmoveAnglePower) ? (1u<<8) : 0;
+        changeMask0 |= (KCCMovementSettingsmovePushPower != baseline.KCCMovementSettingsmovePushPower) ? (1u<<9) : 0;
+        changeMask0 |= (KCCMovementSettingsmovePushDecay != baseline.KCCMovementSettingsmovePushDecay) ? (1u<<10) : 0;
+        changeMask0 |= (KCCMovementSettingsfallMaxBounces != baseline.KCCMovementSettingsfallMaxBounces) ? (1u<<11) : 0;
+        changeMask0 |= (KCCMovementSettingsfallPushPower != baseline.KCCMovementSettingsfallPushPower) ? (1u<<12) : 0;
+        changeMask0 |= (KCCMovementSettingsfallAnglePower != baseline.KCCMovementSettingsfallAnglePower) ? (1u<<13) : 0;
+        changeMask0 |= (KCCMovementSettingsfallPushDecay != baseline.KCCMovementSettingsfallPushDecay) ? (1u<<14) : 0;
+        changeMask0 |= (KCCVelocityplayerVelocityX != baseline.KCCVelocityplayerVelocityX ||
+                                           KCCVelocityplayerVelocityY != baseline.KCCVelocityplayerVelocityY ||
+                                           KCCVelocityplayerVelocityZ != baseline.KCCVelocityplayerVelocityZ) ? (1u<<15) : 0;
+        changeMask0 |= (KCCVelocityworldVelocityX != baseline.KCCVelocityworldVelocityX ||
+                                           KCCVelocityworldVelocityY != baseline.KCCVelocityworldVelocityY ||
+                                           KCCVelocityworldVelocityZ != baseline.KCCVelocityworldVelocityZ) ? (1u<<16) : 0;
+        changeMask0 |= (PlayerIdplayerId != baseline.PlayerIdplayerId) ? (1u<<17) : 0;
+        changeMask0 |= (PlayerViewviewRotationRate != baseline.PlayerViewviewRotationRate) ? (1u<<18) : 0;
+        changeMask0 |= (PlayerViewpitch != baseline.PlayerViewpitch) ? (1u<<19) : 0;
+        changeMask0 |= (PlayerViewyaw != baseline.PlayerViewyaw) ? (1u<<20) : 0;
         changeMask0 |= (RotationValueX != baseline.RotationValueX ||
                                            RotationValueY != baseline.RotationValueY ||
                                            RotationValueZ != baseline.RotationValueZ ||
-                                           RotationValueW != baseline.RotationValueW) ? (1u<<11) : 0;
+                                           RotationValueW != baseline.RotationValueW) ? (1u<<21) : 0;
         changeMask0 |= (TranslationValueX != baseline.TranslationValueX ||
                                            TranslationValueY != baseline.TranslationValueY ||
-                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<12) : 0;
+                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<22) : 0;
         changeMask0 |= (Child0RotationValueX != baseline.Child0RotationValueX ||
                                            Child0RotationValueY != baseline.Child0RotationValueY ||
                                            Child0RotationValueZ != baseline.Child0RotationValueZ ||
-                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<13) : 0;
+                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<23) : 0;
         changeMask0 |= (Child0TranslationValueX != baseline.Child0TranslationValueX ||
                                            Child0TranslationValueY != baseline.Child0TranslationValueY ||
-                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<14) : 0;
+                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<24) : 0;
         changeMask0 |= (Child1RotationValueX != baseline.Child1RotationValueX ||
                                            Child1RotationValueY != baseline.Child1RotationValueY ||
                                            Child1RotationValueZ != baseline.Child1RotationValueZ ||
-                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<15) : 0;
+                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<25) : 0;
         changeMask0 |= (Child1TranslationValueX != baseline.Child1TranslationValueX ||
                                            Child1TranslationValueY != baseline.Child1TranslationValueY ||
-                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<16) : 0;
+                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<26) : 0;
         writer.WritePackedUIntDelta(changeMask0, baseline.changeMask0, compressionModel);
-        bool isPredicted = GetPlayerIdplayerId() == networkId;
-        writer.WritePackedUInt(isPredicted?1u:0, compressionModel);
         if ((changeMask0 & (1 << 0)) != 0)
-            writer.WritePackedIntDelta(PlayerIdplayerId, baseline.PlayerIdplayerId, compressionModel);
+        {
+            writer.WritePackedIntDelta(KCCGravitygravityAccelerationX, baseline.KCCGravitygravityAccelerationX, compressionModel);
+            writer.WritePackedIntDelta(KCCGravitygravityAccelerationY, baseline.KCCGravitygravityAccelerationY, compressionModel);
+            writer.WritePackedIntDelta(KCCGravitygravityAccelerationZ, baseline.KCCGravitygravityAccelerationZ, compressionModel);
+        }
         if ((changeMask0 & (1 << 1)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementmoveSpeed, baseline.PlayerMovementmoveSpeed, compressionModel);
+            writer.WritePackedIntDelta(KCCGroundedmaxWalkAngle, baseline.KCCGroundedmaxWalkAngle, compressionModel);
         if ((changeMask0 & (1 << 2)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementsprintMultiplier, baseline.PlayerMovementsprintMultiplier, compressionModel);
+            writer.WritePackedIntDelta(KCCGroundedgroundCheckDistance, baseline.KCCGroundedgroundCheckDistance, compressionModel);
         if ((changeMask0 & (1 << 3)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementviewRotationRate, baseline.PlayerMovementviewRotationRate, compressionModel);
+            writer.WritePackedIntDelta(KCCJumpingjumpForce, baseline.KCCJumpingjumpForce, compressionModel);
         if ((changeMask0 & (1 << 4)) != 0)
-        {
-            writer.WritePackedIntDelta(PlayerMovementvelocityX, baseline.PlayerMovementvelocityX, compressionModel);
-            writer.WritePackedIntDelta(PlayerMovementvelocityY, baseline.PlayerMovementvelocityY, compressionModel);
-            writer.WritePackedIntDelta(PlayerMovementvelocityZ, baseline.PlayerMovementvelocityZ, compressionModel);
-        }
+            writer.WritePackedUIntDelta(KCCJumpingattemptingJump, baseline.KCCJumpingattemptingJump, compressionModel);
         if ((changeMask0 & (1 << 5)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementjumpForce, baseline.PlayerMovementjumpForce, compressionModel);
+            writer.WritePackedIntDelta(KCCMovementSettingsmoveSpeed, baseline.KCCMovementSettingsmoveSpeed, compressionModel);
         if ((changeMask0 & (1 << 6)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementmaxWalkAngle, baseline.PlayerMovementmaxWalkAngle, compressionModel);
+            writer.WritePackedIntDelta(KCCMovementSettingssprintMultiplier, baseline.KCCMovementSettingssprintMultiplier, compressionModel);
         if ((changeMask0 & (1 << 7)) != 0)
-            writer.WritePackedIntDelta(PlayerMovementgroundCheckDistance, baseline.PlayerMovementgroundCheckDistance, compressionModel);
+            writer.WritePackedIntDelta(KCCMovementSettingsmoveMaxBounces, baseline.KCCMovementSettingsmoveMaxBounces, compressionModel);
         if ((changeMask0 & (1 << 8)) != 0)
-        {
-            writer.WritePackedIntDelta(PlayerMovementgravityForceX, baseline.PlayerMovementgravityForceX, compressionModel);
-            writer.WritePackedIntDelta(PlayerMovementgravityForceY, baseline.PlayerMovementgravityForceY, compressionModel);
-            writer.WritePackedIntDelta(PlayerMovementgravityForceZ, baseline.PlayerMovementgravityForceZ, compressionModel);
-        }
+            writer.WritePackedIntDelta(KCCMovementSettingsmoveAnglePower, baseline.KCCMovementSettingsmoveAnglePower, compressionModel);
+        if ((changeMask0 & (1 << 9)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsmovePushPower, baseline.KCCMovementSettingsmovePushPower, compressionModel);
+        if ((changeMask0 & (1 << 10)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsmovePushDecay, baseline.KCCMovementSettingsmovePushDecay, compressionModel);
         if ((changeMask0 & (1 << 11)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsfallMaxBounces, baseline.KCCMovementSettingsfallMaxBounces, compressionModel);
+        if ((changeMask0 & (1 << 12)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsfallPushPower, baseline.KCCMovementSettingsfallPushPower, compressionModel);
+        if ((changeMask0 & (1 << 13)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsfallAnglePower, baseline.KCCMovementSettingsfallAnglePower, compressionModel);
+        if ((changeMask0 & (1 << 14)) != 0)
+            writer.WritePackedIntDelta(KCCMovementSettingsfallPushDecay, baseline.KCCMovementSettingsfallPushDecay, compressionModel);
+        if ((changeMask0 & (1 << 15)) != 0)
+        {
+            writer.WritePackedIntDelta(KCCVelocityplayerVelocityX, baseline.KCCVelocityplayerVelocityX, compressionModel);
+            writer.WritePackedIntDelta(KCCVelocityplayerVelocityY, baseline.KCCVelocityplayerVelocityY, compressionModel);
+            writer.WritePackedIntDelta(KCCVelocityplayerVelocityZ, baseline.KCCVelocityplayerVelocityZ, compressionModel);
+        }
+        if ((changeMask0 & (1 << 16)) != 0)
+        {
+            writer.WritePackedIntDelta(KCCVelocityworldVelocityX, baseline.KCCVelocityworldVelocityX, compressionModel);
+            writer.WritePackedIntDelta(KCCVelocityworldVelocityY, baseline.KCCVelocityworldVelocityY, compressionModel);
+            writer.WritePackedIntDelta(KCCVelocityworldVelocityZ, baseline.KCCVelocityworldVelocityZ, compressionModel);
+        }
+        if ((changeMask0 & (1 << 17)) != 0)
+            writer.WritePackedIntDelta(PlayerIdplayerId, baseline.PlayerIdplayerId, compressionModel);
+        if ((changeMask0 & (1 << 18)) != 0)
+            writer.WritePackedIntDelta(PlayerViewviewRotationRate, baseline.PlayerViewviewRotationRate, compressionModel);
+        if ((changeMask0 & (1 << 19)) != 0)
+            writer.WritePackedIntDelta(PlayerViewpitch, baseline.PlayerViewpitch, compressionModel);
+        if ((changeMask0 & (1 << 20)) != 0)
+            writer.WritePackedIntDelta(PlayerViewyaw, baseline.PlayerViewyaw, compressionModel);
+        if ((changeMask0 & (1 << 21)) != 0)
         {
             writer.WritePackedIntDelta(RotationValueX, baseline.RotationValueX, compressionModel);
             writer.WritePackedIntDelta(RotationValueY, baseline.RotationValueY, compressionModel);
             writer.WritePackedIntDelta(RotationValueZ, baseline.RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(RotationValueW, baseline.RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 12)) != 0)
+        if ((changeMask0 & (1 << 22)) != 0)
         {
             writer.WritePackedIntDelta(TranslationValueX, baseline.TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(TranslationValueY, baseline.TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(TranslationValueZ, baseline.TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 13)) != 0)
+        if ((changeMask0 & (1 << 23)) != 0)
         {
             writer.WritePackedIntDelta(Child0RotationValueX, baseline.Child0RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueY, baseline.Child0RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueZ, baseline.Child0RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueW, baseline.Child0RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 14)) != 0)
+        if ((changeMask0 & (1 << 24)) != 0)
         {
             writer.WritePackedIntDelta(Child0TranslationValueX, baseline.Child0TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueY, baseline.Child0TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueZ, baseline.Child0TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 15)) != 0)
+        if ((changeMask0 & (1 << 25)) != 0)
         {
             writer.WritePackedIntDelta(Child1RotationValueX, baseline.Child1RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueY, baseline.Child1RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueZ, baseline.Child1RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueW, baseline.Child1RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 16)) != 0)
+        if ((changeMask0 & (1 << 26)) != 0)
         {
             writer.WritePackedIntDelta(Child1TranslationValueX, baseline.Child1TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1TranslationValueY, baseline.Child1TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(Child1TranslationValueZ, baseline.Child1TranslationValueZ, compressionModel);
-        }
-        if (isPredicted)
-        {
-            if ((changeMask0 & (1 << 9)) != 0)
-                writer.WritePackedIntDelta(PlayerViewpitch, baseline.PlayerViewpitch, compressionModel);
-            if ((changeMask0 & (1 << 10)) != 0)
-                writer.WritePackedIntDelta(PlayerViewyaw, baseline.PlayerViewyaw, compressionModel);
         }
     }
 
@@ -497,60 +714,115 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
     {
         this.tick = tick;
         changeMask0 = reader.ReadPackedUIntDelta(baseline.changeMask0, compressionModel);
-        bool isPredicted = reader.ReadPackedUInt(compressionModel)!=0;
         if ((changeMask0 & (1 << 0)) != 0)
+        {
+            KCCGravitygravityAccelerationX = reader.ReadPackedIntDelta(baseline.KCCGravitygravityAccelerationX, compressionModel);
+            KCCGravitygravityAccelerationY = reader.ReadPackedIntDelta(baseline.KCCGravitygravityAccelerationY, compressionModel);
+            KCCGravitygravityAccelerationZ = reader.ReadPackedIntDelta(baseline.KCCGravitygravityAccelerationZ, compressionModel);
+        }
+        else
+        {
+            KCCGravitygravityAccelerationX = baseline.KCCGravitygravityAccelerationX;
+            KCCGravitygravityAccelerationY = baseline.KCCGravitygravityAccelerationY;
+            KCCGravitygravityAccelerationZ = baseline.KCCGravitygravityAccelerationZ;
+        }
+        if ((changeMask0 & (1 << 1)) != 0)
+            KCCGroundedmaxWalkAngle = reader.ReadPackedIntDelta(baseline.KCCGroundedmaxWalkAngle, compressionModel);
+        else
+            KCCGroundedmaxWalkAngle = baseline.KCCGroundedmaxWalkAngle;
+        if ((changeMask0 & (1 << 2)) != 0)
+            KCCGroundedgroundCheckDistance = reader.ReadPackedIntDelta(baseline.KCCGroundedgroundCheckDistance, compressionModel);
+        else
+            KCCGroundedgroundCheckDistance = baseline.KCCGroundedgroundCheckDistance;
+        if ((changeMask0 & (1 << 3)) != 0)
+            KCCJumpingjumpForce = reader.ReadPackedIntDelta(baseline.KCCJumpingjumpForce, compressionModel);
+        else
+            KCCJumpingjumpForce = baseline.KCCJumpingjumpForce;
+        if ((changeMask0 & (1 << 4)) != 0)
+            KCCJumpingattemptingJump = reader.ReadPackedUIntDelta(baseline.KCCJumpingattemptingJump, compressionModel);
+        else
+            KCCJumpingattemptingJump = baseline.KCCJumpingattemptingJump;
+        if ((changeMask0 & (1 << 5)) != 0)
+            KCCMovementSettingsmoveSpeed = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsmoveSpeed, compressionModel);
+        else
+            KCCMovementSettingsmoveSpeed = baseline.KCCMovementSettingsmoveSpeed;
+        if ((changeMask0 & (1 << 6)) != 0)
+            KCCMovementSettingssprintMultiplier = reader.ReadPackedIntDelta(baseline.KCCMovementSettingssprintMultiplier, compressionModel);
+        else
+            KCCMovementSettingssprintMultiplier = baseline.KCCMovementSettingssprintMultiplier;
+        if ((changeMask0 & (1 << 7)) != 0)
+            KCCMovementSettingsmoveMaxBounces = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsmoveMaxBounces, compressionModel);
+        else
+            KCCMovementSettingsmoveMaxBounces = baseline.KCCMovementSettingsmoveMaxBounces;
+        if ((changeMask0 & (1 << 8)) != 0)
+            KCCMovementSettingsmoveAnglePower = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsmoveAnglePower, compressionModel);
+        else
+            KCCMovementSettingsmoveAnglePower = baseline.KCCMovementSettingsmoveAnglePower;
+        if ((changeMask0 & (1 << 9)) != 0)
+            KCCMovementSettingsmovePushPower = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsmovePushPower, compressionModel);
+        else
+            KCCMovementSettingsmovePushPower = baseline.KCCMovementSettingsmovePushPower;
+        if ((changeMask0 & (1 << 10)) != 0)
+            KCCMovementSettingsmovePushDecay = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsmovePushDecay, compressionModel);
+        else
+            KCCMovementSettingsmovePushDecay = baseline.KCCMovementSettingsmovePushDecay;
+        if ((changeMask0 & (1 << 11)) != 0)
+            KCCMovementSettingsfallMaxBounces = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsfallMaxBounces, compressionModel);
+        else
+            KCCMovementSettingsfallMaxBounces = baseline.KCCMovementSettingsfallMaxBounces;
+        if ((changeMask0 & (1 << 12)) != 0)
+            KCCMovementSettingsfallPushPower = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsfallPushPower, compressionModel);
+        else
+            KCCMovementSettingsfallPushPower = baseline.KCCMovementSettingsfallPushPower;
+        if ((changeMask0 & (1 << 13)) != 0)
+            KCCMovementSettingsfallAnglePower = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsfallAnglePower, compressionModel);
+        else
+            KCCMovementSettingsfallAnglePower = baseline.KCCMovementSettingsfallAnglePower;
+        if ((changeMask0 & (1 << 14)) != 0)
+            KCCMovementSettingsfallPushDecay = reader.ReadPackedIntDelta(baseline.KCCMovementSettingsfallPushDecay, compressionModel);
+        else
+            KCCMovementSettingsfallPushDecay = baseline.KCCMovementSettingsfallPushDecay;
+        if ((changeMask0 & (1 << 15)) != 0)
+        {
+            KCCVelocityplayerVelocityX = reader.ReadPackedIntDelta(baseline.KCCVelocityplayerVelocityX, compressionModel);
+            KCCVelocityplayerVelocityY = reader.ReadPackedIntDelta(baseline.KCCVelocityplayerVelocityY, compressionModel);
+            KCCVelocityplayerVelocityZ = reader.ReadPackedIntDelta(baseline.KCCVelocityplayerVelocityZ, compressionModel);
+        }
+        else
+        {
+            KCCVelocityplayerVelocityX = baseline.KCCVelocityplayerVelocityX;
+            KCCVelocityplayerVelocityY = baseline.KCCVelocityplayerVelocityY;
+            KCCVelocityplayerVelocityZ = baseline.KCCVelocityplayerVelocityZ;
+        }
+        if ((changeMask0 & (1 << 16)) != 0)
+        {
+            KCCVelocityworldVelocityX = reader.ReadPackedIntDelta(baseline.KCCVelocityworldVelocityX, compressionModel);
+            KCCVelocityworldVelocityY = reader.ReadPackedIntDelta(baseline.KCCVelocityworldVelocityY, compressionModel);
+            KCCVelocityworldVelocityZ = reader.ReadPackedIntDelta(baseline.KCCVelocityworldVelocityZ, compressionModel);
+        }
+        else
+        {
+            KCCVelocityworldVelocityX = baseline.KCCVelocityworldVelocityX;
+            KCCVelocityworldVelocityY = baseline.KCCVelocityworldVelocityY;
+            KCCVelocityworldVelocityZ = baseline.KCCVelocityworldVelocityZ;
+        }
+        if ((changeMask0 & (1 << 17)) != 0)
             PlayerIdplayerId = reader.ReadPackedIntDelta(baseline.PlayerIdplayerId, compressionModel);
         else
             PlayerIdplayerId = baseline.PlayerIdplayerId;
-        if ((changeMask0 & (1 << 1)) != 0)
-            PlayerMovementmoveSpeed = reader.ReadPackedIntDelta(baseline.PlayerMovementmoveSpeed, compressionModel);
+        if ((changeMask0 & (1 << 18)) != 0)
+            PlayerViewviewRotationRate = reader.ReadPackedIntDelta(baseline.PlayerViewviewRotationRate, compressionModel);
         else
-            PlayerMovementmoveSpeed = baseline.PlayerMovementmoveSpeed;
-        if ((changeMask0 & (1 << 2)) != 0)
-            PlayerMovementsprintMultiplier = reader.ReadPackedIntDelta(baseline.PlayerMovementsprintMultiplier, compressionModel);
+            PlayerViewviewRotationRate = baseline.PlayerViewviewRotationRate;
+        if ((changeMask0 & (1 << 19)) != 0)
+            PlayerViewpitch = reader.ReadPackedIntDelta(baseline.PlayerViewpitch, compressionModel);
         else
-            PlayerMovementsprintMultiplier = baseline.PlayerMovementsprintMultiplier;
-        if ((changeMask0 & (1 << 3)) != 0)
-            PlayerMovementviewRotationRate = reader.ReadPackedIntDelta(baseline.PlayerMovementviewRotationRate, compressionModel);
+            PlayerViewpitch = baseline.PlayerViewpitch;
+        if ((changeMask0 & (1 << 20)) != 0)
+            PlayerViewyaw = reader.ReadPackedIntDelta(baseline.PlayerViewyaw, compressionModel);
         else
-            PlayerMovementviewRotationRate = baseline.PlayerMovementviewRotationRate;
-        if ((changeMask0 & (1 << 4)) != 0)
-        {
-            PlayerMovementvelocityX = reader.ReadPackedIntDelta(baseline.PlayerMovementvelocityX, compressionModel);
-            PlayerMovementvelocityY = reader.ReadPackedIntDelta(baseline.PlayerMovementvelocityY, compressionModel);
-            PlayerMovementvelocityZ = reader.ReadPackedIntDelta(baseline.PlayerMovementvelocityZ, compressionModel);
-        }
-        else
-        {
-            PlayerMovementvelocityX = baseline.PlayerMovementvelocityX;
-            PlayerMovementvelocityY = baseline.PlayerMovementvelocityY;
-            PlayerMovementvelocityZ = baseline.PlayerMovementvelocityZ;
-        }
-        if ((changeMask0 & (1 << 5)) != 0)
-            PlayerMovementjumpForce = reader.ReadPackedIntDelta(baseline.PlayerMovementjumpForce, compressionModel);
-        else
-            PlayerMovementjumpForce = baseline.PlayerMovementjumpForce;
-        if ((changeMask0 & (1 << 6)) != 0)
-            PlayerMovementmaxWalkAngle = reader.ReadPackedIntDelta(baseline.PlayerMovementmaxWalkAngle, compressionModel);
-        else
-            PlayerMovementmaxWalkAngle = baseline.PlayerMovementmaxWalkAngle;
-        if ((changeMask0 & (1 << 7)) != 0)
-            PlayerMovementgroundCheckDistance = reader.ReadPackedIntDelta(baseline.PlayerMovementgroundCheckDistance, compressionModel);
-        else
-            PlayerMovementgroundCheckDistance = baseline.PlayerMovementgroundCheckDistance;
-        if ((changeMask0 & (1 << 8)) != 0)
-        {
-            PlayerMovementgravityForceX = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceX, compressionModel);
-            PlayerMovementgravityForceY = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceY, compressionModel);
-            PlayerMovementgravityForceZ = reader.ReadPackedIntDelta(baseline.PlayerMovementgravityForceZ, compressionModel);
-        }
-        else
-        {
-            PlayerMovementgravityForceX = baseline.PlayerMovementgravityForceX;
-            PlayerMovementgravityForceY = baseline.PlayerMovementgravityForceY;
-            PlayerMovementgravityForceZ = baseline.PlayerMovementgravityForceZ;
-        }
-        if ((changeMask0 & (1 << 11)) != 0)
+            PlayerViewyaw = baseline.PlayerViewyaw;
+        if ((changeMask0 & (1 << 21)) != 0)
         {
             RotationValueX = reader.ReadPackedIntDelta(baseline.RotationValueX, compressionModel);
             RotationValueY = reader.ReadPackedIntDelta(baseline.RotationValueY, compressionModel);
@@ -564,7 +836,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             RotationValueZ = baseline.RotationValueZ;
             RotationValueW = baseline.RotationValueW;
         }
-        if ((changeMask0 & (1 << 12)) != 0)
+        if ((changeMask0 & (1 << 22)) != 0)
         {
             TranslationValueX = reader.ReadPackedIntDelta(baseline.TranslationValueX, compressionModel);
             TranslationValueY = reader.ReadPackedIntDelta(baseline.TranslationValueY, compressionModel);
@@ -576,7 +848,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             TranslationValueY = baseline.TranslationValueY;
             TranslationValueZ = baseline.TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 13)) != 0)
+        if ((changeMask0 & (1 << 23)) != 0)
         {
             Child0RotationValueX = reader.ReadPackedIntDelta(baseline.Child0RotationValueX, compressionModel);
             Child0RotationValueY = reader.ReadPackedIntDelta(baseline.Child0RotationValueY, compressionModel);
@@ -590,7 +862,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child0RotationValueZ = baseline.Child0RotationValueZ;
             Child0RotationValueW = baseline.Child0RotationValueW;
         }
-        if ((changeMask0 & (1 << 14)) != 0)
+        if ((changeMask0 & (1 << 24)) != 0)
         {
             Child0TranslationValueX = reader.ReadPackedIntDelta(baseline.Child0TranslationValueX, compressionModel);
             Child0TranslationValueY = reader.ReadPackedIntDelta(baseline.Child0TranslationValueY, compressionModel);
@@ -602,7 +874,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child0TranslationValueY = baseline.Child0TranslationValueY;
             Child0TranslationValueZ = baseline.Child0TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 15)) != 0)
+        if ((changeMask0 & (1 << 25)) != 0)
         {
             Child1RotationValueX = reader.ReadPackedIntDelta(baseline.Child1RotationValueX, compressionModel);
             Child1RotationValueY = reader.ReadPackedIntDelta(baseline.Child1RotationValueY, compressionModel);
@@ -616,7 +888,7 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child1RotationValueZ = baseline.Child1RotationValueZ;
             Child1RotationValueW = baseline.Child1RotationValueW;
         }
-        if ((changeMask0 & (1 << 16)) != 0)
+        if ((changeMask0 & (1 << 26)) != 0)
         {
             Child1TranslationValueX = reader.ReadPackedIntDelta(baseline.Child1TranslationValueX, compressionModel);
             Child1TranslationValueY = reader.ReadPackedIntDelta(baseline.Child1TranslationValueY, compressionModel);
@@ -628,28 +900,24 @@ public struct TestCharacterSnapshotData : ISnapshotData<TestCharacterSnapshotDat
             Child1TranslationValueY = baseline.Child1TranslationValueY;
             Child1TranslationValueZ = baseline.Child1TranslationValueZ;
         }
-        if (isPredicted)
-        {
-            if ((changeMask0 & (1 << 9)) != 0)
-                PlayerViewpitch = reader.ReadPackedIntDelta(baseline.PlayerViewpitch, compressionModel);
-            else
-                PlayerViewpitch = baseline.PlayerViewpitch;
-            if ((changeMask0 & (1 << 10)) != 0)
-                PlayerViewyaw = reader.ReadPackedIntDelta(baseline.PlayerViewyaw, compressionModel);
-            else
-                PlayerViewyaw = baseline.PlayerViewyaw;
-        }
     }
     public void Interpolate(ref TestCharacterSnapshotData target, float factor)
     {
-        SetPlayerMovementmoveSpeed(math.lerp(GetPlayerMovementmoveSpeed(), target.GetPlayerMovementmoveSpeed(), factor));
-        SetPlayerMovementsprintMultiplier(math.lerp(GetPlayerMovementsprintMultiplier(), target.GetPlayerMovementsprintMultiplier(), factor));
-        SetPlayerMovementviewRotationRate(math.lerp(GetPlayerMovementviewRotationRate(), target.GetPlayerMovementviewRotationRate(), factor));
-        SetPlayerMovementvelocity(math.lerp(GetPlayerMovementvelocity(), target.GetPlayerMovementvelocity(), factor));
-        SetPlayerMovementjumpForce(math.lerp(GetPlayerMovementjumpForce(), target.GetPlayerMovementjumpForce(), factor));
-        SetPlayerMovementmaxWalkAngle(math.lerp(GetPlayerMovementmaxWalkAngle(), target.GetPlayerMovementmaxWalkAngle(), factor));
-        SetPlayerMovementgroundCheckDistance(math.lerp(GetPlayerMovementgroundCheckDistance(), target.GetPlayerMovementgroundCheckDistance(), factor));
-        SetPlayerMovementgravityForce(math.lerp(GetPlayerMovementgravityForce(), target.GetPlayerMovementgravityForce(), factor));
+        SetKCCGravitygravityAcceleration(math.lerp(GetKCCGravitygravityAcceleration(), target.GetKCCGravitygravityAcceleration(), factor));
+        SetKCCGroundedmaxWalkAngle(math.lerp(GetKCCGroundedmaxWalkAngle(), target.GetKCCGroundedmaxWalkAngle(), factor));
+        SetKCCGroundedgroundCheckDistance(math.lerp(GetKCCGroundedgroundCheckDistance(), target.GetKCCGroundedgroundCheckDistance(), factor));
+        SetKCCJumpingjumpForce(math.lerp(GetKCCJumpingjumpForce(), target.GetKCCJumpingjumpForce(), factor));
+        SetKCCMovementSettingsmoveSpeed(math.lerp(GetKCCMovementSettingsmoveSpeed(), target.GetKCCMovementSettingsmoveSpeed(), factor));
+        SetKCCMovementSettingssprintMultiplier(math.lerp(GetKCCMovementSettingssprintMultiplier(), target.GetKCCMovementSettingssprintMultiplier(), factor));
+        SetKCCMovementSettingsmoveAnglePower(math.lerp(GetKCCMovementSettingsmoveAnglePower(), target.GetKCCMovementSettingsmoveAnglePower(), factor));
+        SetKCCMovementSettingsmovePushPower(math.lerp(GetKCCMovementSettingsmovePushPower(), target.GetKCCMovementSettingsmovePushPower(), factor));
+        SetKCCMovementSettingsmovePushDecay(math.lerp(GetKCCMovementSettingsmovePushDecay(), target.GetKCCMovementSettingsmovePushDecay(), factor));
+        SetKCCMovementSettingsfallPushPower(math.lerp(GetKCCMovementSettingsfallPushPower(), target.GetKCCMovementSettingsfallPushPower(), factor));
+        SetKCCMovementSettingsfallAnglePower(math.lerp(GetKCCMovementSettingsfallAnglePower(), target.GetKCCMovementSettingsfallAnglePower(), factor));
+        SetKCCMovementSettingsfallPushDecay(math.lerp(GetKCCMovementSettingsfallPushDecay(), target.GetKCCMovementSettingsfallPushDecay(), factor));
+        SetKCCVelocityplayerVelocity(math.lerp(GetKCCVelocityplayerVelocity(), target.GetKCCVelocityplayerVelocity(), factor));
+        SetKCCVelocityworldVelocity(math.lerp(GetKCCVelocityworldVelocity(), target.GetKCCVelocityworldVelocity(), factor));
+        SetPlayerViewviewRotationRate(math.lerp(GetPlayerViewviewRotationRate(), target.GetPlayerViewviewRotationRate(), factor));
         SetPlayerViewpitch(math.lerp(GetPlayerViewpitch(), target.GetPlayerViewpitch(), factor));
         SetPlayerViewyaw(math.lerp(GetPlayerViewyaw(), target.GetPlayerViewyaw(), factor));
         SetRotationValue(math.slerp(GetRotationValue(), target.GetRotationValue(), factor));
