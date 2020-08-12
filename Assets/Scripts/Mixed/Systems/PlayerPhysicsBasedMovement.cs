@@ -3,7 +3,6 @@ using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
 using Unity.Assertions;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -11,7 +10,6 @@ using Unity.Physics;
 using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -39,11 +37,6 @@ namespace PropHunt.Mixed.Systems
         public int NumHits { get; private set; }
 
         /// <summary>
-        /// Previously hit object
-        /// </summary>
-        private T oldHit;
-
-        /// <summary>
         /// Most recent (closest hit object)
         /// </summary>
         public T ClosestHit {get; private set; }
@@ -51,7 +44,7 @@ namespace PropHunt.Mixed.Systems
         /// <summary>
         /// Entity index to avoid collisions with.
         /// </summary>
-        private int selfEntityIndex;
+        private readonly int selfEntityIndex;
 
         private CollisionWorld collisionWorld;
 
@@ -65,8 +58,7 @@ namespace PropHunt.Mixed.Systems
         public SelfFilteringClosestHitCollector(int entityIndex, float maxFraction, CollisionWorld collisionWorld)
         {
             this.MaxFraction = maxFraction;
-            this.oldHit = default(T);
-            this.ClosestHit = default(T);
+            this.ClosestHit = default;
             this.NumHits = 0;
             this.selfEntityIndex = entityIndex;
             this.collisionWorld = collisionWorld;
@@ -82,8 +74,7 @@ namespace PropHunt.Mixed.Systems
             {
                 return false;
             }
-            MaxFraction = hit.Fraction;
-            this.oldHit = ClosestHit;
+            this.MaxFraction = hit.Fraction;
             this.ClosestHit = hit;
             this.NumHits = 1;
             return true;
@@ -147,8 +138,6 @@ namespace PropHunt.Mixed.Systems
             PhysicsCollider collider, int entityIndex, quaternion rotation, float anglePower=2, int maxBounces=1,
             float pushPower = 25, float pushDecay = 0)
         {
-            ComponentDataFromEntity<PhysicsVelocity> pvTypeFromEntity = GetComponentDataFromEntity<PhysicsVelocity>(true);
-
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
 
@@ -217,7 +206,7 @@ namespace PropHunt.Mixed.Systems
                 float angleFactor = 1.0f / (1.0f + normalizedAngle);
                 // If the character hit something
                 // Reduce the momentum by the remaining movement that ocurred
-                remaining = remaining * (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
+                remaining *= (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
                 // Rotate the remaining remaining movement to be projected along the plane 
                 // of the surface hit (emulate pushing against the object)
                 // A is our vector and B is normal of plane
@@ -232,6 +221,35 @@ namespace PropHunt.Mixed.Systems
             }
             return from;
         }
+
+        /// <summary>
+        /// Structure containing information from hitting the ground
+        /// </summary>
+        public struct GroundHitData {
+            /// <summary>
+            /// Length of ray used for casting distance to ground
+            /// </summary>
+            public float rayCastLength;
+            
+            /// <summary>
+            /// Distance to the ground (will be less than or equal to ray cast legnth).
+            /// Will be 0 if on the ground. This value will be -1 if the
+            /// ground was not hit.
+            /// </summary>
+            public float distanceToground;
+
+            /// <summary>
+            /// Angle between the ground the the player's 'up' vector (-gravity fector).
+            /// Will always be a positive value between 0 and 90 degrees if the ground is hit. Is 
+            /// measured in degrees. Will be a value of -1 if no hit ocurred.
+            /// </summary>
+            public float angle;
+
+            /// <summary>
+            /// Did the ray actually hit the ground within the rayCastLength?
+            /// </summary>
+            public bool hit;
+        }
         
         /// <summary>
         /// Gets the angle between a character and the ground their standing on
@@ -245,7 +263,7 @@ namespace PropHunt.Mixed.Systems
         /// distance to the ground. Second component is angle betwen ground and the character.
         /// If the values of the components are -1, then that means that no object
         /// was found within groundCheckDistance</returns>
-        public unsafe float2 AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider, int entityIndex, quaternion rotation)
+        public unsafe GroundHitData AngleBetweenGround(float3 translation, float groundCheckDistance, PhysicsCollider collider, int entityIndex, quaternion rotation)
         {
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
@@ -268,12 +286,22 @@ namespace PropHunt.Mixed.Systems
 
             if(collisionOcurred) {
                 float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), new float3(0, 1, 0))));
-                angleBetween = math.degrees(angleBetween);
-                angleBetween = math.max(0, math.min(angleBetween, PlayerPhysicsBasedMovement.MaxAngleFallDegrees));
-                return new float2(hit.Fraction * groundCheckDistance, angleBetween);
+                float angleDegrees = math.degrees(angleBetween);
+                float angleBounded = math.max(0, math.min(angleDegrees, PlayerPhysicsBasedMovement.MaxAngleFallDegrees));
+                return new GroundHitData(){
+                    hit = true,
+                    rayCastLength = groundCheckDistance,
+                    distanceToground = hit.Fraction * groundCheckDistance,
+                    angle = angleBounded
+                };
             }
             
-            return new float2(-1, -1);
+            return new GroundHitData(){
+                hit = false,
+                rayCastLength = groundCheckDistance,
+                distanceToground = -1,
+                angle = -1
+            };
         }
 
         protected override void OnUpdate()
@@ -307,10 +335,8 @@ namespace PropHunt.Mixed.Systems
                 float3 movementVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
 
                 // Check if is grounded for jumping
-                float2 groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider, ent.Index, rot.Value);
-                float dist = groundedCheck.x;
-                float angle = groundedCheck.y;
-                bool grounded = dist >= 0 && angle < settings.maxWalkAngle;
+                GroundHitData groundedCheck = this.AngleBetweenGround(trans.Value, settings.groundCheckDistance, collider, ent.Index, rot.Value);
+                bool grounded = groundedCheck.hit && groundedCheck.angle < settings.maxWalkAngle;
                 // Jump if grounded and player hits jump button
                 if (grounded && input.IsJumping)
                 {
@@ -324,10 +350,10 @@ namespace PropHunt.Mixed.Systems
                 else {
                     settings.velocity = float3.zero;
                 }
-                float3 finalPos = trans.Value;
+                float3 currentPos = trans.Value;
                 // Player controlled movement
-                finalPos = ProjectValidMovement(
-                    trans.Value,
+                float3 movementPos = ProjectValidMovement(
+                    currentPos,
                     movementVelocity * deltaTime,
                     collider,
                     ent.Index,
@@ -337,8 +363,8 @@ namespace PropHunt.Mixed.Systems
                     anglePower: settings.anglePowerMove,
                     maxBounces: settings.maxBouncesMove);
                 // Gravity controlled movement (Don't let the player bounce from this)
-                finalPos = ProjectValidMovement(
-                    finalPos,
+                float3 gravityPos = ProjectValidMovement(
+                    movementPos,
                     settings.velocity * deltaTime,
                     collider,
                     ent.Index,
@@ -347,7 +373,7 @@ namespace PropHunt.Mixed.Systems
                     pushPower: settings.pushPower,
                     anglePower: settings.anglePowerFall,
                     maxBounces: settings.maxBouncesFall);
-                trans.Value = finalPos;
+                trans.Value = gravityPos;
             });
         }
     }
