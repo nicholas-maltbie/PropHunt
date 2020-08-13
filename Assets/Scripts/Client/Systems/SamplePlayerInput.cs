@@ -37,12 +37,12 @@ namespace PropHunt.Client.Systems
         {
             if (Input.GetButtonDown("Cancel"))
             {
-                if (Cursor.lockState == CursorLockMode.None)
+                if (movementState == LockedInputState.ALLOW)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     this.movementState = LockedInputState.DENY;
                 }
-                else if (Cursor.lockState == CursorLockMode.Locked)
+                else if (movementState == LockedInputState.DENY)
                 {
                     Cursor.lockState = CursorLockMode.None;
                     this.movementState = LockedInputState.ALLOW;
@@ -75,6 +75,16 @@ namespace PropHunt.Client.Systems
                 input.interact = (byte) (Input.GetButtonDown("Interact") ? 1 : 0);
                 input.jump = (byte) (Input.GetButton("Jump") ? 1 : 0);
                 input.sprint = (byte) (Input.GetButton("Sprint") ? 1 : 0);
+            }
+            else
+            {
+                input.horizMove = 0;
+                input.vertMove  = 0;
+                input.pitchChange = 0;
+                input.yawChange = 0;
+                input.interact = 0;
+                input.jump = 0;
+                input.sprint = 0;
             }
             
             var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
