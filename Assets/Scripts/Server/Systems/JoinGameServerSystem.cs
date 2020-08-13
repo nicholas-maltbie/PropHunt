@@ -3,11 +3,12 @@ using System;
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Transforms;
 
 namespace PropHunt.Server.Systems
 {
-
     /// <summary>
     /// When server receives go in game request, go in game and delete request
     /// </summary>
@@ -33,6 +34,10 @@ namespace PropHunt.Server.Systems
                 var player = EntityManager.Instantiate(prefab);
                 EntityManager.SetComponentData(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
 
+                Translation trans = EntityManager.GetComponentData<Translation>(player);
+                trans.Value = new float3(0, 5, 0);
+                EntityManager.SetComponentData(player, trans);
+
                 PostUpdateCommands.AddBuffer<PlayerInput>(player);
                 PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent {targetEntity = player});
                 
@@ -40,5 +45,4 @@ namespace PropHunt.Server.Systems
             });
         }
     }
-
 }
