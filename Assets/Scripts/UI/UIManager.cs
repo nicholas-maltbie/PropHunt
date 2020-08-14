@@ -100,7 +100,10 @@ namespace PropHunt.UI
                     this.screenLookup[screenName].SetActive(false);
                 }
             }
+        }
 
+        public void OnEnable()
+        {
             // Setup listening to event queue
             RequestScreenChange += this.HandleScreenRequest;
         }

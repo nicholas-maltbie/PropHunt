@@ -2,6 +2,9 @@
 
 namespace PropHunt.UI
 {
+    /// <summary>
+    /// Simple class to abstract commands to change UI for a menu screen
+    /// </summary>
     public class MenuController : MonoBehaviour
     {
         /// <summary>
