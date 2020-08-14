@@ -14,18 +14,9 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateAfter(typeof(MenuManagerSystem))]
     public class SamplePlayerInput : ComponentSystem
     {
-        /// <summary>
-        /// Enum to control locking the current player input. This could be for things such
-        /// as a pause menu or other options.
-        /// </summary>
-        private enum LockedInputState {ALLOW, DENY};
-
-        /// <summary>
-        /// Current movement input state of the player
-        /// </summary>
-        private LockedInputState movementState = LockedInputState.ALLOW;
 
         protected override void OnCreate()
         {
@@ -35,20 +26,6 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            if (Input.GetButtonDown("Cancel"))
-            {
-                if (movementState == LockedInputState.ALLOW)
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                    this.movementState = LockedInputState.DENY;
-                }
-                else if (movementState == LockedInputState.DENY)
-                {
-                    Cursor.lockState = CursorLockMode.None;
-                    this.movementState = LockedInputState.ALLOW;
-                }
-            }
-
             var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
             if (localInput == Entity.Null)
             {
@@ -66,7 +43,7 @@ namespace PropHunt.Client.Systems
             var input = default(PlayerInput);
             input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
-            if (this.movementState == LockedInputState.ALLOW) 
+            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW) 
             {
                 input.horizMove = Input.GetAxis("Horizontal");
                 input.vertMove  = Input.GetAxis("Vertical");
