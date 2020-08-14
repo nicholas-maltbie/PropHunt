@@ -1,4 +1,4 @@
-
+using PropHunt.UI;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.NetCode;
@@ -30,6 +30,39 @@ namespace PropHunt.Client.Systems
         /// </summary>
         public static LockedInputState MovementState => MenuManagerSystem.movementState;
 
+        /// <summary>
+        /// Screen with in game menu options
+        /// </summary>
+        public static readonly string MenuScreen = "InGameMenu";
+
+        /// <summary>
+        /// Screen with in game heads up display name
+        /// </summary>
+        public static readonly string HUDScreen = "InGameHUD";
+
+        protected override void OnCreate()
+        {
+            // Add listener to screen change events
+            UIManager.ScreenChangeOccur += this.HandleScreenChangeEvent;
+        }
+
+        protected override void OnDestroy()
+        {
+            UIManager.ScreenChangeOccur -= this.HandleScreenChangeEvent;
+        }
+
+        /// <summary>
+        /// Handle events when the screen changes to ensure movement state
+        /// is unlocked while the in game heads up display is shown.
+        /// </summary>
+        private void HandleScreenChangeEvent(object sender, ScreenChangeEventArgs eventArgs)
+        {
+            if (eventArgs.newScreen == MenuManagerSystem.HUDScreen)
+            {
+                MenuManagerSystem.movementState = LockedInputState.ALLOW;
+            }
+        }
+
         protected override void OnUpdate()
         {
             // Parse user input to check if the toggle menu button has been pressed
@@ -38,10 +71,12 @@ namespace PropHunt.Client.Systems
                 if (movementState == LockedInputState.ALLOW)
                 {
                     MenuManagerSystem.movementState = LockedInputState.DENY;
+                    UIManager.RequestNewScreen(this, MenuManagerSystem.MenuScreen);
                 }
                 else if (movementState == LockedInputState.DENY)
                 {
                     MenuManagerSystem.movementState = LockedInputState.ALLOW;
+                    UIManager.RequestNewScreen(this, MenuManagerSystem.HUDScreen);
                 }
             }
 

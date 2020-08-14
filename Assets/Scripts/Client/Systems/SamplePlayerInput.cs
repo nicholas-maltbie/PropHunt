@@ -8,7 +8,6 @@ using Unity.Burst;
 
 namespace PropHunt.Client.Systems
 {
-
     /// <summary>
     /// Systemt to sample player input at each tick.
     /// </summary>
