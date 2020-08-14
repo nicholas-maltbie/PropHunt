@@ -160,12 +160,12 @@ MonoBehaviour:
   gravityForce: {x: 0, y: -9.8, z: 0}
   jumpForce: 5
   maxWalkAngle: 45
-  groundCheckDistance: 0.01
+  groundCheckDistance: 0.1
   fallAnglePower: 1.2
-  moveAnglePower: 2
+  moveAnglePower: 1.8
   pushPower: 20
   movemaxBounces: 3
-  fallMaxBounces: 2
+  fallMaxBounces: 3
   pushDecay: 0
 --- !u!114 &2032777291050987007
 MonoBehaviour:
@@ -396,10 +396,10 @@ MonoBehaviour:
   PredictingPlayerNetworkId: PropHunt.Mixed.Components.PlayerId.playerId
   Components:
   - name: PropHunt.Mixed.Components.KCCGravity
-    interpolatedClient: 1
+    interpolatedClient: 0
     predictedClient: 1
     server: 1
-    sendDataTo: 0
+    sendDataTo: 2
     fields:
     - name: gravityAcceleration
       quantization: 100
@@ -476,7 +476,7 @@ MonoBehaviour:
     interpolatedClient: 0
     predictedClient: 1
     server: 1
-    sendDataTo: 0
+    sendDataTo: 2
     fields:
     - name: playerVelocity
       quantization: 100
@@ -501,7 +501,7 @@ MonoBehaviour:
     interpolatedClient: 0
     predictedClient: 1
     server: 1
-    sendDataTo: 0
+    sendDataTo: 2
     fields:
     - name: viewRotationRate
       quantization: 100
