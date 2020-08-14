@@ -1,5 +1,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
 using UnityEngine;
 
@@ -17,11 +18,6 @@ namespace PropHunt.Authoring
         public float moveSpeed = 5f;
 
         /// <summary>
-        /// Speed of view rotation in radians per second
-        /// </summary>
-        public float viewRotationRate = 3.14f;
-
-        /// <summary>
         /// Multiplier for sprinting speed
         /// </summary>
         public float sprintMultiplier = 2f;
@@ -29,7 +25,7 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Force of gravity exerted on player
         /// </summary>
-        public float gravityForce = 9.8f;
+        public Vector3 gravityForce = new Vector3(0, -9.8f, 0);
 
         /// <summary>
         /// Force of the player jump
@@ -46,16 +42,65 @@ namespace PropHunt.Authoring
         /// </summary>
         public float groundCheckDistance = 0.1f;
 
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when falling
+        /// </summary>
+        public float fallAnglePower = 1.2f;
+
+        /// <summary>
+        /// Decrease in momentum factor due to angle change when walking
+        /// </summary>
+        public float moveAnglePower = 2.0f;
+
+        /// <summary>
+        /// Power of pushing objects
+        /// </summary>
+        public float pushPower = 20.0f;
+
+        /// <summary>
+        /// Max number of bounces per frame when moving
+        /// </summary>
+        public int movemaxBounces = 3;
+
+        /// <summary>
+        /// Max number of bounces per frame when falling
+        /// </summary>
+        public int fallMaxBounces = 2;
+
+        /// <summary>
+        /// Proportional decrease in momentum due to pushing an object
+        /// </summary>
+        public float pushDecay = 0.0f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            PlayerMovement playerMovement = new PlayerMovement();
-            playerMovement.moveSpeed = this.moveSpeed;
-            playerMovement.viewRotationRate = this.viewRotationRate;
-            playerMovement.sprintMultiplier = this.sprintMultiplier;
-            playerMovement.jumpForce = this.jumpForce;
-            playerMovement.groundCheckDistance = this.groundCheckDistance;
-            playerMovement.maxWalkAngle = this.maxWalkAngle;
-            dstManager.AddComponentData(entity, playerMovement);
+            dstManager.AddComponentData(entity, new KCCMovementSettings() {
+                moveSpeed = this.moveSpeed,
+                sprintMultiplier = this.sprintMultiplier,
+                moveMaxBounces = this.movemaxBounces,
+                moveAnglePower = this.moveAnglePower,
+                movePushPower = this.pushPower,
+                movePushDecay = this.pushDecay,
+                fallMaxBounces = this.fallMaxBounces,
+                fallAnglePower = this.fallAnglePower,
+                fallPushPower = this.pushPower,
+                fallPushDecay = this.pushDecay,
+            });
+            dstManager.AddComponentData(entity, new KCCJumping() {
+                jumpForce = this.jumpForce,
+            });
+            dstManager.AddComponentData(entity, new KCCGrounded() {
+                maxWalkAngle = this.maxWalkAngle,
+                groundCheckDistance = this.groundCheckDistance,
+            });
+            dstManager.AddComponentData(entity, new KCCVelocity() {
+                playerVelocity = float3.zero,
+                worldVelocity = float3.zero
+            });
+            dstManager.AddComponentData(entity, new KCCGravity() {
+                gravityAcceleration = this.gravityForce,
+            });
+
         }
     }
 }

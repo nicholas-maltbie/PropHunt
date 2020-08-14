@@ -14,13 +14,19 @@ namespace PropHunt.Mixed.Components
     public struct PlayerView : IComponentData
     {
         /// <summary>
-        /// Current pitch of the player's view
+        /// Player view speed in degrees per second
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float viewRotationRate;
+
+        /// <summary>
+        /// Current pitch of the player's view in degrees
         /// </summary>
         [GhostDefaultField(100, true)]
         public float pitch;
         
         /// <summary>
-        /// Current yaw of the player's view
+        /// Current yaw of the player's view in degrees
         /// </summary>
         [GhostDefaultField(100, true)]
         public float yaw;
