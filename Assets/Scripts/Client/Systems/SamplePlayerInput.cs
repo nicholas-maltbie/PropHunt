@@ -8,24 +8,14 @@ using Unity.Burst;
 
 namespace PropHunt.Client.Systems
 {
-
     /// <summary>
     /// Systemt to sample player input at each tick.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateAfter(typeof(MenuManagerSystem))]
     public class SamplePlayerInput : ComponentSystem
     {
-        /// <summary>
-        /// Enum to control locking the current player input. This could be for things such
-        /// as a pause menu or other options.
-        /// </summary>
-        private enum LockedInputState {ALLOW, DENY};
-
-        /// <summary>
-        /// Current movement input state of the player
-        /// </summary>
-        private LockedInputState movementState = LockedInputState.ALLOW;
 
         protected override void OnCreate()
         {
@@ -35,20 +25,6 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            if (Input.GetButtonDown("Cancel"))
-            {
-                if (Cursor.lockState == CursorLockMode.None)
-                {
-                    Cursor.lockState = CursorLockMode.Locked;
-                    this.movementState = LockedInputState.DENY;
-                }
-                else if (Cursor.lockState == CursorLockMode.Locked)
-                {
-                    Cursor.lockState = CursorLockMode.None;
-                    this.movementState = LockedInputState.ALLOW;
-                }
-            }
-
             var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
             if (localInput == Entity.Null)
             {
@@ -66,7 +42,7 @@ namespace PropHunt.Client.Systems
             var input = default(PlayerInput);
             input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
-            if (this.movementState == LockedInputState.ALLOW) 
+            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW) 
             {
                 input.horizMove = Input.GetAxis("Horizontal");
                 input.vertMove  = Input.GetAxis("Vertical");
@@ -75,6 +51,16 @@ namespace PropHunt.Client.Systems
                 input.interact = (byte) (Input.GetButtonDown("Interact") ? 1 : 0);
                 input.jump = (byte) (Input.GetButton("Jump") ? 1 : 0);
                 input.sprint = (byte) (Input.GetButton("Sprint") ? 1 : 0);
+            }
+            else
+            {
+                input.horizMove = 0;
+                input.vertMove  = 0;
+                input.pitchChange = 0;
+                input.yawChange = 0;
+                input.interact = 0;
+                input.jump = 0;
+                input.sprint = 0;
             }
             
             var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
