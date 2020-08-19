@@ -44,8 +44,6 @@ namespace PropHunt.Client.Systems
                 }
             });
 
-            UnityEngine.Debug.Log($"Current connection state is {ConnectionSystem.IsConnected}");
-
             if (ConnectionSystem.disconnectRequested)
             {
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
