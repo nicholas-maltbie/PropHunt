@@ -41,7 +41,6 @@ namespace PropHunt.Client.Systems
                 if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
                     ConnectionSystem.IsConnected = false;
-                    EntityManager.RemoveComponent(ent, typeof(NetworkStreamInGame));
                 }
             });
 
