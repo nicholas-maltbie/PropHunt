@@ -118,7 +118,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7661981311809011232}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5802224716180026734}
+        m_MethodName: DisconnectClient
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5166412537738579464
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,6 +430,7 @@ GameObject:
   - component: {fileID: 9012516056103054911}
   - component: {fileID: 9012516056103054910}
   - component: {fileID: 199260564935243663}
+  - component: {fileID: 5802224716180026734}
   m_Layer: 5
   m_Name: InGameMenu
   m_TagString: Untagged
@@ -517,5 +529,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ee52dadfaa455148a69c5d23ea72b37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5802224716180026734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9012516056103054897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e733dac4e8f0294c96f7b9aaa135e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -13,6 +13,7 @@ namespace PropHunt.Client.Systems
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class JoinGameClientSystem : ComponentSystem
     {
+
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
