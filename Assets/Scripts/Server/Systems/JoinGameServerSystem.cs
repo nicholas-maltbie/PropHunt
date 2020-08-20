@@ -5,6 +5,7 @@ using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Server.Systems
@@ -12,6 +13,7 @@ namespace PropHunt.Server.Systems
     /// <summary>
     /// When server receives go in game request, go in game and delete request
     /// </summary>
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class JoinGameServerSystem : ComponentSystem
     {
@@ -31,13 +33,12 @@ namespace PropHunt.Server.Systems
                 var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
                 var ghostId = ProphuntGhostSerializerCollection.FindGhostType<TestCharacterSnapshotData>();
                 var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
-                var player = EntityManager.Instantiate(prefab);
-                EntityManager.SetComponentData(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
-
+                var player = PostUpdateCommands.Instantiate(prefab);
+                PostUpdateCommands.SetComponent(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
+                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
 
                 PostUpdateCommands.AddBuffer<PlayerInput>(player);
                 PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
-                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
                 
                 PostUpdateCommands.DestroyEntity(reqEnt);
             });
