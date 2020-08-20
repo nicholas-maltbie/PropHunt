@@ -34,12 +34,10 @@ namespace PropHunt.Server.Systems
                 var player = EntityManager.Instantiate(prefab);
                 EntityManager.SetComponentData(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
 
-                Translation trans = EntityManager.GetComponentData<Translation>(player);
-                trans.Value = new float3(0, 5, 0);
-                EntityManager.SetComponentData(player, trans);
 
                 PostUpdateCommands.AddBuffer<PlayerInput>(player);
-                PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent {targetEntity = player});
+                PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
+                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
                 
                 PostUpdateCommands.DestroyEntity(reqEnt);
             });
