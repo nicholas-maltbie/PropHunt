@@ -2,7 +2,9 @@
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
@@ -14,59 +16,122 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class KCCGroundedSystem : ComponentSystem
+    public class KCCGroundedSystem : SystemBase
     {
         /// <summary>
         /// Maximum degrees between ground and player 
         /// </summary>
         public static readonly float MaxAngleFallDegrees = 90;
 
-        protected override unsafe void OnUpdate()
+        /// <summary>
+        /// Entity queries for selecting entities
+        /// that fit the archetype for KCCGrounded
+        /// </summary>
+        private EntityQuery m_Query;
+
+        /// <summary>
+        /// Job for updating grounded state in chunks
+        /// </summary>
+        [BurstCompile]
+        struct KCCGroundedJob : IJobChunk
+        {
+            public ArchetypeChunkComponentType<KCCGrounded> KCCGroundedType;
+            [ReadOnly] public ArchetypeChunkEntityType EntityType;
+            [ReadOnly] public ArchetypeChunkComponentType<PhysicsCollider> PhysicsColliderType;
+            [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
+            [ReadOnly] public ArchetypeChunkComponentType<Rotation> RotationType;
+            [ReadOnly] public ArchetypeChunkComponentType<KCCGravity> KCCGravityType;
+            public PhysicsWorld physicsWorld;
+
+            public unsafe void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+            {
+                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
+                var chunkPhysicsCollider = chunk.GetNativeArray(PhysicsColliderType);
+                var chunkTranslation = chunk.GetNativeArray(TranslationType);
+                var chunkRotation = chunk.GetNativeArray(RotationType);
+                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
+                var chunkEntity = chunk.GetNativeArray(EntityType);
+                var instanceCount = chunk.Count;
+
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var entity = chunkEntity[i];
+                    var grounded = chunkGrounded[i];
+                    var collider = chunkPhysicsCollider[i];
+                    var translation = chunkTranslation[i];
+                    var rotation = chunkRotation[i];
+                    var gravity = chunkKCCGravity[i];
+                    
+                    SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                        new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+
+                    float3 from = translation.Value;
+                    float3 to = from + gravity.Down * grounded.groundCheckDistance;
+
+                    var input = new ColliderCastInput()
+                    {
+                        End = to,
+                        Start = from,
+                        Collider = collider.ColliderPtr,
+                        Orientation = rotation.Value
+                    };
+
+                    bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
+                    Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
+
+                    if(collisionOcurred) {
+                        float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
+                        float angleDegrees = math.degrees(angleBetween);
+                        grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
+                        grounded.onGround = true;
+                        grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
+                    }
+                    else {
+                        grounded.onGround = false;
+                        grounded.distanceToGround = -1;
+                        grounded.angle = -1;
+                    }
+
+                    // reset assignment of written items
+                    chunkGrounded[i] = grounded;
+                }
+            }
+        }
+
+        protected override void OnCreate()
+        {
+            var queryDesc = new EntityQueryDesc()
+            {
+                All = new ComponentType[]
+                {
+                    ComponentType.ReadWrite<KCCGrounded>(),
+                    ComponentType.ReadOnly<PhysicsCollider>(),
+                    ComponentType.ReadOnly<Translation>(),
+                    ComponentType.ReadOnly<Rotation>(),
+                    ComponentType.ReadOnly<KCCGravity>()
+                }
+            };
+
+            this.m_Query = GetEntityQuery(queryDesc);
+        }
+
+        protected unsafe override void OnUpdate()
         {
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
-            CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
 
-            // Update grounded data for each KCC
-            Entities.ForEach((
-                Entity ent,
-                ref PhysicsCollider collider,
-                ref Translation trans,
-                ref Rotation rot,
-                ref KCCGrounded grounded,
-                ref KCCGravity gravity) =>
+            var job = new KCCGroundedJob()
             {
-                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(ent.Index, 1.0f, collisionWorld);
+                EntityType = this.GetArchetypeChunkEntityType(),
+                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(false),
+                PhysicsColliderType = GetArchetypeChunkComponentType<PhysicsCollider>(true),
+                TranslationType = GetArchetypeChunkComponentType<Translation>(true),
+                RotationType = GetArchetypeChunkComponentType<Rotation>(true),
+                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+                physicsWorld = physicsWorld.PhysicsWorld
+            };
 
-                float3 from = trans.Value;
-                float3 to = from + gravity.Down * grounded.groundCheckDistance;
-
-                var input = new ColliderCastInput()
-                {
-                    End = to,
-                    Start = from,
-                    Collider = collider.ColliderPtr,
-                    Orientation = rot.Value
-                };
-
-                bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
-                Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
-                
-                if(collisionOcurred) {
-                    float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
-                    float angleDegrees = math.degrees(angleBetween);
-                    grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
-                    grounded.onGround = true;
-                    grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
-                }
-                else {
-                    grounded.onGround = false;
-                    grounded.distanceToGround = -1;
-                    grounded.angle = -1;
-                }
-            });
+            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
         }
     }
 
@@ -161,7 +226,7 @@ namespace PropHunt.Mixed.Systems
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
-    [UpdateAfter(typeof(KCCGrounded))]
+    [UpdateAfter(typeof(KCCGroundedSystem))]
     public class KCCGravitySystem : ComponentSystem
     {
         protected override void OnUpdate()
