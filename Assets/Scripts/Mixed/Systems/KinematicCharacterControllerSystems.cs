@@ -199,23 +199,80 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
-    public class KCCJumpSystem : ComponentSystem
+    public class KCCJumpSystem : SystemBase
     {
+
+        /// <summary>
+        /// Entity queries for selecting entities
+        /// that fit the archetype for KCCJumpSystem
+        /// </summary>
+        private EntityQuery m_Query;
+
+        /// <summary>
+        /// Job for updating jump state in chunks
+        /// </summary>
+        [BurstCompile]
+        private struct KCCJumpJob : IJobChunk
+        {
+            public ArchetypeChunkComponentType<KCCVelocity> KCCVelocityType;
+            [ReadOnly] public ArchetypeChunkComponentType<KCCJumping> KCCJumpingType;
+            [ReadOnly] public ArchetypeChunkComponentType<KCCGrounded> KCCGroundedType;
+            [ReadOnly] public ArchetypeChunkComponentType<KCCGravity> KCCGravityType;
+
+            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+            {
+                var chunkVelocity = chunk.GetNativeArray(KCCVelocityType);
+                var chunkJumping = chunk.GetNativeArray(KCCJumpingType);
+                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
+                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
+                var instanceCount = chunk.Count;
+
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var velocity = chunkVelocity[i];
+                    var jumping = chunkJumping[i];
+                    var grounded = chunkGrounded[i];
+                    var gravity = chunkKCCGravity[i];
+                    
+                    // If the KCC is attempting to jump and is grounded, jump
+                    if (jumping.attemptingJump && !grounded.Falling)
+                    {
+                        velocity.worldVelocity = gravity.Up * jumping.jumpForce;
+                    }
+                    // Otherwise, do nothing
+
+                    chunkVelocity[i] = velocity;
+                }
+            }
+        }
+
+        protected override void OnCreate()
+        {
+            var queryDesc = new EntityQueryDesc()
+            {
+                All = new ComponentType[]
+                {
+                    ComponentType.ReadWrite<KCCVelocity>(),
+                    ComponentType.ReadOnly<KCCJumping>(),
+                    ComponentType.ReadOnly<KCCGrounded>(),
+                    ComponentType.ReadOnly<KCCGravity>()
+                }
+            };
+
+            this.m_Query = GetEntityQuery(queryDesc);
+        }
+
         protected override void OnUpdate()
         {
-            Entities.ForEach((
-                ref KCCJumping jumping,
-                ref KCCVelocity velocity,
-                ref KCCGrounded grounded,
-                ref KCCGravity gravity) =>
+            var job = new KCCJumpJob()
             {
-                // If the KCC is attempting to jump and is grounded, jump
-                if (jumping.attemptingJump && !grounded.Falling)
-                {
-                    velocity.worldVelocity = gravity.Up * jumping.jumpForce;
-                }
-                // Otherwise, do nothing
-            });
+                KCCVelocityType = GetArchetypeChunkComponentType<KCCVelocity>(false),
+                KCCJumpingType = GetArchetypeChunkComponentType<KCCJumping>(true),
+                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(true),
+                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+            };
+
+            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
         }
     }
 
