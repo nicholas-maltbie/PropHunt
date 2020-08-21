@@ -161,7 +161,7 @@ namespace PropHunt.Mixed.Systems
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
-    [UpdateAfter(typeof(KCCGroundedSystem))]
+    [UpdateAfter(typeof(KCCGrounded))]
     public class KCCGravitySystem : ComponentSystem
     {
         protected override void OnUpdate()
