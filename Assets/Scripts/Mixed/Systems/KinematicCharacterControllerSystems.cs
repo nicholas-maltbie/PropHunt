@@ -37,11 +37,17 @@ namespace PropHunt.Mixed.Systems
         struct KCCGroundedJob : IJobChunk
         {
             public ArchetypeChunkComponentType<KCCGrounded> KCCGroundedType;
+            
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
+
             [ReadOnly] public ArchetypeChunkComponentType<PhysicsCollider> PhysicsColliderType;
+
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
+
             [ReadOnly] public ArchetypeChunkComponentType<Rotation> RotationType;
+            
             [ReadOnly] public ArchetypeChunkComponentType<KCCGravity> KCCGravityType;
+            
             public PhysicsWorld physicsWorld;
 
             public unsafe void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
@@ -195,13 +201,11 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
     public class KCCJumpSystem : SystemBase
     {
-
         /// <summary>
         /// Entity queries for selecting entities
         /// that fit the archetype for KCCJumpSystem
@@ -215,8 +219,11 @@ namespace PropHunt.Mixed.Systems
         private struct KCCJumpJob : IJobChunk
         {
             public ArchetypeChunkComponentType<KCCVelocity> KCCVelocityType;
+
             [ReadOnly] public ArchetypeChunkComponentType<KCCJumping> KCCJumpingType;
+
             [ReadOnly] public ArchetypeChunkComponentType<KCCGrounded> KCCGroundedType;
+
             [ReadOnly] public ArchetypeChunkComponentType<KCCGravity> KCCGravityType;
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
@@ -280,32 +287,89 @@ namespace PropHunt.Mixed.Systems
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGroundedSystem))]
-    public class KCCGravitySystem : ComponentSystem
+    public class KCCGravitySystem : SystemBase
     {
+        /// <summary>
+        /// Entity queries for selecting entities
+        /// that fit the archetype for KCCJumpSystem
+        /// </summary>
+        private EntityQuery m_Query;
+
+        /// <summary>
+        /// Job to apply gravity to the KCC velocity component
+        /// based on gravity and grounded state
+        /// </summary>
+        [BurstCompile]
+        private struct KCCGravityJob : IJobChunk
+        {
+            public float deltaTime;
+
+            public ArchetypeChunkComponentType<KCCVelocity> KCCVelocityType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<KCCGrounded> KCCGroundedType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<KCCGravity> KCCGravityType;
+
+            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+            {
+                var chunkVelocity = chunk.GetNativeArray(KCCVelocityType);
+                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
+                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
+                var instanceCount = chunk.Count;
+
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var grounded = chunkGrounded[i];
+                    var gravity = chunkKCCGravity[i];
+                    var velocity = chunkVelocity[i];
+
+                    // If the player is not grounded, push down by
+                    // gravity's acceleration
+                    if (grounded.Falling)
+                    {
+                        velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
+                    }
+                    // Have hit the ground, stop moving
+                    else
+                    {
+                        velocity.worldVelocity = float3.zero;
+                    }
+
+                    chunkVelocity[i] = velocity;
+                }
+            }
+
+        }
+
+        protected override void OnCreate()
+        {
+            var queryDesc = new EntityQueryDesc()
+            {
+                All = new ComponentType[]
+                {
+                    ComponentType.ReadWrite<KCCVelocity>(),
+                    ComponentType.ReadOnly<KCCGrounded>(),
+                    ComponentType.ReadOnly<KCCGravity>()
+                }
+            };
+
+            this.m_Query = GetEntityQuery(queryDesc);
+        }
+
         protected override void OnUpdate()
         {
-            var deltaTime = Time.DeltaTime;
-            Entities.ForEach((
-                ref KCCVelocity velocity,
-                ref KCCGrounded grounded,
-                ref KCCGravity gravity) =>
+            var job = new KCCGravityJob()
             {
-                // If the player is not grounded, push down by
-                // gravity's acceleration
-                if (grounded.Falling) {
-                    velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
-                }
-                // Have hit the ground, stop moving
-                else {
-                    velocity.worldVelocity = float3.zero;
-                }
-            });
+                deltaTime = Time.DeltaTime,
+                KCCVelocityType = GetArchetypeChunkComponentType<KCCVelocity>(false),
+                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(true),
+                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+            };
+
+            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
         }
     }
-
-
 }
