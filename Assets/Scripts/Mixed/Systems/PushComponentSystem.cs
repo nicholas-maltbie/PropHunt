@@ -55,20 +55,20 @@ namespace PropHunt.Mixed.Systems
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                var chunkEntity = chunk.GetNativeArray(EntityType);
-                var chunkPushForce = chunk.GetBufferAccessor(PushForceType);
+                var chunkEntity = chunk.GetNativeArray(this.EntityType);
+                var chunkPushForce = chunk.GetBufferAccessor(this.PushForceType);
                 var instanceCount = chunk.Count;
 
                 if (isServer && // Only push if server world
-                    chunk.Has<PhysicsVelocity>(PhysicsVelocityType) &&
-                    chunk.Has<PhysicsMass>(PhysicsMassType) &&
-                    chunk.Has<Translation>(TranslationType) &&
-                    chunk.Has<Rotation>(RotationType))
+                    chunk.Has<PhysicsVelocity>(this.PhysicsVelocityType) &&
+                    chunk.Has<PhysicsMass>(this.PhysicsMassType) &&
+                    chunk.Has<Translation>(this.TranslationType) &&
+                    chunk.Has<Rotation>(this.RotationType))
                 {
-                    var chunkPhysicsVelocity = chunk.GetNativeArray(PhysicsVelocityType);
-                    var chunkPhysicsMass = chunk.GetNativeArray(PhysicsMassType);
-                    var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                    var chunkRotation = chunk.GetNativeArray(RotationType);
+                    var chunkPhysicsVelocity = chunk.GetNativeArray(this.PhysicsVelocityType);
+                    var chunkPhysicsMass = chunk.GetNativeArray(this.PhysicsMassType);
+                    var chunkTranslation = chunk.GetNativeArray(this.TranslationType);
+                    var chunkRotation = chunk.GetNativeArray(this.RotationType);
 
                     for (int i = 0; i < instanceCount; i++)
                     {
@@ -134,7 +134,7 @@ namespace PropHunt.Mixed.Systems
                 RotationType = this.GetArchetypeChunkComponentType<Rotation>()
             };
 
-            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
             this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
     }

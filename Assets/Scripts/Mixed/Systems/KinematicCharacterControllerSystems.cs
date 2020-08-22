@@ -133,12 +133,12 @@ namespace PropHunt.Mixed.Systems
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                var chunkEntity = chunk.GetNativeArray(EntityType);
-                var chunkPhysicsCollider = chunk.GetNativeArray(PhysicsColliderType);
-                var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                var chunkRotation = chunk.GetNativeArray(RotationType);
-                var chunkKCCVelocity = chunk.GetNativeArray(KCCVelocityType);
-                var chunkKCCMovementSettings = chunk.GetNativeArray(KCCMovementSettingsType);
+                var chunkEntity = chunk.GetNativeArray(this.EntityType);
+                var chunkPhysicsCollider = chunk.GetNativeArray(this.PhysicsColliderType);
+                var chunkTranslation = chunk.GetNativeArray(this.TranslationType);
+                var chunkRotation = chunk.GetNativeArray(this.RotationType);
+                var chunkKCCVelocity = chunk.GetNativeArray(this.KCCVelocityType);
+                var chunkKCCMovementSettings = chunk.GetNativeArray(this.KCCMovementSettingsType);
 
                 var instanceCount = chunk.Count;
                 for (int i = 0; i < instanceCount; i++)
@@ -201,7 +201,7 @@ namespace PropHunt.Mixed.Systems
                 KCCMovementSettingsType = this.GetArchetypeChunkComponentType<KCCMovementSettings>(true)
             };
 
-            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
             this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
             this.Dependency.Complete();
         }
