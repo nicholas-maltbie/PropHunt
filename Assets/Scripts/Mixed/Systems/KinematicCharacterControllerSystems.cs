@@ -75,72 +75,135 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class KCCMovementSystem : JobComponentSystem
+    public class KCCMovementSystem : SystemBase
     {
         /// <summary>
         /// Command buffer system for pushing objects
         /// </summary>
         private EndSimulationEntityCommandBufferSystem commandBufferSystem;
+
+        /// <summary>
+        /// Entity queries for selecting entities
+        /// that fit the archetype for KCCMovement
+        /// </summary>
+        private EntityQuery m_Query;
  
         protected override void OnCreate()
         {
+            var queryDesc = new EntityQueryDesc()
+            {
+                All = new ComponentType[]
+                {
+                    ComponentType.ReadOnly<PhysicsCollider>(),
+                    ComponentType.ReadWrite<Translation>(),
+                    ComponentType.ReadOnly<Rotation>(),
+                    ComponentType.ReadOnly<KCCVelocity>(),
+                    ComponentType.ReadOnly<KCCMovementSettings>()
+                }
+            };
+
+            this.m_Query = GetEntityQuery(queryDesc);
+
             this.commandBufferSystem =  World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        /// <summary>
+        /// Job to handle player movement
+        /// </summary>
+        [BurstCompile]
+        private struct KCCMovementJob : IJobChunk
         {
-            var deltaTime = Time.DeltaTime;
+            public float deltaTime;
 
-            BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
-            CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
-            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
+            public PhysicsWorld physicsWorld;
 
-            // Update grounded data for each KCC
-            var jobHandle = Entities.ForEach((
-                Entity ent,
-                int entityInQueryIndex,
-                ref PhysicsCollider collider,
-                ref Translation trans,
-                ref Rotation rot,
-                ref KCCVelocity velocity,
-                ref KCCMovementSettings movementSettings) =>
+            public EntityCommandBuffer.Concurrent commandBuffer;
+
+            [ReadOnly] public ArchetypeChunkEntityType EntityType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<PhysicsCollider> PhysicsColliderType;
+            
+            public ArchetypeChunkComponentType<Translation> TranslationType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<Rotation> RotationType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<KCCVelocity> KCCVelocityType;
+
+            [ReadOnly] public ArchetypeChunkComponentType<KCCMovementSettings> KCCMovementSettingsType;
+
+            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                // Adjust character translation due to player movement
-                trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    commandBuffer,
-                    entityInQueryIndex,
-                    collisionWorld,
-                    trans.Value,
-                    velocity.playerVelocity * deltaTime,
-                    collider,
-                    ent.Index,
-                    rot.Value,
-                    maxBounces : movementSettings.moveMaxBounces,
-                    pushPower  : movementSettings.movePushPower,
-                    pushDecay  : movementSettings.movePushDecay,
-                    anglePower : movementSettings.moveAnglePower
-                );
-                // Adjust character translation due to gravity/world forces
-                trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    commandBuffer,
-                    entityInQueryIndex,
-                    collisionWorld,
-                    trans.Value,
-                    velocity.worldVelocity * deltaTime,
-                    collider,
-                    ent.Index,
-                    rot.Value,
-                    maxBounces : movementSettings.fallMaxBounces,
-                    pushPower  : movementSettings.fallPushPower,
-                    pushDecay  : movementSettings.fallPushDecay,
-                    anglePower : movementSettings.fallAnglePower
-                );
-            }).Schedule(inputDeps);
+                var chunkEntity = chunk.GetNativeArray(EntityType);
+                var chunkPhysicsCollider = chunk.GetNativeArray(PhysicsColliderType);
+                var chunkTranslation = chunk.GetNativeArray(TranslationType);
+                var chunkRotation = chunk.GetNativeArray(RotationType);
+                var chunkKCCVelocity = chunk.GetNativeArray(KCCVelocityType);
+                var chunkKCCMovementSettings = chunk.GetNativeArray(KCCMovementSettingsType);
 
-            // Make sure that the ECB system knows about our job
-            this.commandBufferSystem.AddJobHandleForProducer(jobHandle);
-            jobHandle.Complete();
-            return default;
+                var instanceCount = chunk.Count;
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    var entity = chunkEntity[i];
+                    var physicsCollider = chunkPhysicsCollider[i];
+                    var translation = chunkTranslation[i];
+                    var rotation = chunkRotation[i];
+                    var velocity = chunkKCCVelocity[i];
+                    var movementSettings = chunkKCCMovementSettings[i];
+
+                    // Adjust character translation due to player movement
+                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                        commandBuffer,
+                        chunkIndex,
+                        physicsWorld.CollisionWorld,
+                        translation.Value,
+                        velocity.playerVelocity * deltaTime,
+                        physicsCollider,
+                        entity.Index,
+                        rotation.Value,
+                        maxBounces : movementSettings.moveMaxBounces,
+                        pushPower  : movementSettings.movePushPower,
+                        pushDecay  : movementSettings.movePushDecay,
+                        anglePower : movementSettings.moveAnglePower
+                    );
+                    // Adjust character translation due to gravity/world forces
+                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                        commandBuffer,
+                        chunkIndex,
+                        physicsWorld.CollisionWorld,
+                        translation.Value,
+                        velocity.worldVelocity * deltaTime,
+                        physicsCollider,
+                        entity.Index,
+                        rotation.Value,
+                        maxBounces : movementSettings.fallMaxBounces,
+                        pushPower  : movementSettings.fallPushPower,
+                        pushDecay  : movementSettings.fallPushDecay,
+                        anglePower : movementSettings.fallAnglePower
+                    );
+
+                    chunkTranslation[i] = translation;
+                }
+            }
+        }
+
+        protected override void  OnUpdate()
+        {
+            var job = new KCCMovementJob()
+            {
+                deltaTime = Time.DeltaTime,
+                physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld,
+                commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent(),
+                EntityType = this.GetArchetypeChunkEntityType(),
+                PhysicsColliderType = this.GetArchetypeChunkComponentType<PhysicsCollider>(true),
+                TranslationType = this.GetArchetypeChunkComponentType<Translation>(false),
+                RotationType = this.GetArchetypeChunkComponentType<Rotation>(true),
+                KCCVelocityType = this.GetArchetypeChunkComponentType<KCCVelocity>(true),
+                KCCMovementSettingsType = this.GetArchetypeChunkComponentType<KCCMovementSettings>(true)
+            };
+
+            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
+            this.Dependency.Complete();
         }
     }
 

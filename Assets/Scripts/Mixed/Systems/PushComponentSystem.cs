@@ -8,6 +8,7 @@ using PropHunt.Mixed.Components;
 using Unity.Collections;
 using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
+using Unity.Burst;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -29,6 +30,11 @@ namespace PropHunt.Mixed.Systems
         /// </summary>
         private EntityQuery m_Query;
 
+        /// <summary>
+        /// Struct for the job of pushing an chunk of objects
+        /// and then cleaning up the PushForce events
+        /// </summary>
+        [BurstCompile]
         struct PushJob : IJobChunk
         {
             public bool isServer;
@@ -120,11 +126,11 @@ namespace PropHunt.Mixed.Systems
                 isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null,
                 commandBuffer = commandBuffer,
                 EntityType = this.GetArchetypeChunkEntityType(),
-                PhysicsVelocityType = GetArchetypeChunkComponentType<PhysicsVelocity>(),
-                PushForceType = GetArchetypeChunkComponentType<PushForce>(),
-                PhysicsMassType = GetArchetypeChunkComponentType<PhysicsMass>(),
-                TranslationType = GetArchetypeChunkComponentType<Translation>(),
-                RotationType = GetArchetypeChunkComponentType<Rotation>()
+                PhysicsVelocityType = this.GetArchetypeChunkComponentType<PhysicsVelocity>(),
+                PushForceType = this.GetArchetypeChunkComponentType<PushForce>(),
+                PhysicsMassType = this.GetArchetypeChunkComponentType<PhysicsMass>(),
+                TranslationType = this.GetArchetypeChunkComponentType<Translation>(),
+                RotationType = this.GetArchetypeChunkComponentType<Rotation>()
             };
 
             this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
