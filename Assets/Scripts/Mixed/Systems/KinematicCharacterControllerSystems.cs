@@ -75,18 +75,30 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class KCCMovementSystem : ComponentSystem
+    public class KCCMovementSystem : JobComponentSystem
     {
-        protected override void OnUpdate()
+        /// <summary>
+        /// Command buffer system for pushing objects
+        /// </summary>
+        private EndSimulationEntityCommandBufferSystem commandBufferSystem;
+ 
+        protected override void OnCreate()
+        {
+            this.commandBufferSystem =  World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var deltaTime = Time.DeltaTime;
 
             BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
             CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
+            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
             // Update grounded data for each KCC
-            Entities.ForEach((
+            var jobHandle = Entities.ForEach((
                 Entity ent,
+                int entityInQueryIndex,
                 ref PhysicsCollider collider,
                 ref Translation trans,
                 ref Rotation rot,
@@ -95,7 +107,8 @@ namespace PropHunt.Mixed.Systems
             {
                 // Adjust character translation due to player movement
                 trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    EntityManager,
+                    commandBuffer,
+                    entityInQueryIndex,
                     collisionWorld,
                     trans.Value,
                     velocity.playerVelocity * deltaTime,
@@ -109,7 +122,8 @@ namespace PropHunt.Mixed.Systems
                 );
                 // Adjust character translation due to gravity/world forces
                 trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    EntityManager,
+                    commandBuffer,
+                    entityInQueryIndex,
                     collisionWorld,
                     trans.Value,
                     velocity.worldVelocity * deltaTime,
@@ -121,7 +135,12 @@ namespace PropHunt.Mixed.Systems
                     pushDecay  : movementSettings.fallPushDecay,
                     anglePower : movementSettings.fallAnglePower
                 );
-            });
+            }).Schedule(inputDeps);
+
+            // Make sure that the ECB system knows about our job
+            this.commandBufferSystem.AddJobHandleForProducer(jobHandle);
+            jobHandle.Complete();
+            return default;
         }
     }
 
