@@ -52,12 +52,12 @@ namespace PropHunt.Mixed.Systems
 
             public unsafe void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
-                var chunkPhysicsCollider = chunk.GetNativeArray(PhysicsColliderType);
-                var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                var chunkRotation = chunk.GetNativeArray(RotationType);
-                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
-                var chunkEntity = chunk.GetNativeArray(EntityType);
+                var chunkGrounded = chunk.GetNativeArray(this.KCCGroundedType);
+                var chunkPhysicsCollider = chunk.GetNativeArray(this.PhysicsColliderType);
+                var chunkTranslation = chunk.GetNativeArray(this.TranslationType);
+                var chunkRotation = chunk.GetNativeArray(this.RotationType);
+                var chunkKCCGravity = chunk.GetNativeArray(this.KCCGravityType);
+                var chunkEntity = chunk.GetNativeArray(this.EntityType);
                 var instanceCount = chunk.Count;
 
                 for (int i = 0; i < instanceCount; i++)
@@ -129,15 +129,15 @@ namespace PropHunt.Mixed.Systems
             var job = new KCCGroundedJob()
             {
                 EntityType = this.GetArchetypeChunkEntityType(),
-                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(false),
-                PhysicsColliderType = GetArchetypeChunkComponentType<PhysicsCollider>(true),
-                TranslationType = GetArchetypeChunkComponentType<Translation>(true),
-                RotationType = GetArchetypeChunkComponentType<Rotation>(true),
-                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+                KCCGroundedType = this.GetArchetypeChunkComponentType<KCCGrounded>(false),
+                PhysicsColliderType = this.GetArchetypeChunkComponentType<PhysicsCollider>(true),
+                TranslationType = this.GetArchetypeChunkComponentType<Translation>(true),
+                RotationType = this.GetArchetypeChunkComponentType<Rotation>(true),
+                KCCGravityType = this.GetArchetypeChunkComponentType<KCCGravity>(true),
                 physicsWorld = physicsWorld.PhysicsWorld
             };
 
-            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
         }
     }
 
@@ -228,10 +228,10 @@ namespace PropHunt.Mixed.Systems
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                var chunkVelocity = chunk.GetNativeArray(KCCVelocityType);
-                var chunkJumping = chunk.GetNativeArray(KCCJumpingType);
-                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
-                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
+                var chunkVelocity = chunk.GetNativeArray(this.KCCVelocityType);
+                var chunkJumping = chunk.GetNativeArray(this.KCCJumpingType);
+                var chunkGrounded = chunk.GetNativeArray(this.KCCGroundedType);
+                var chunkKCCGravity = chunk.GetNativeArray(this.KCCGravityType);
                 var instanceCount = chunk.Count;
 
                 for (int i = 0; i < instanceCount; i++)
@@ -273,13 +273,13 @@ namespace PropHunt.Mixed.Systems
         {
             var job = new KCCJumpJob()
             {
-                KCCVelocityType = GetArchetypeChunkComponentType<KCCVelocity>(false),
-                KCCJumpingType = GetArchetypeChunkComponentType<KCCJumping>(true),
-                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(true),
-                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+                KCCVelocityType = this.GetArchetypeChunkComponentType<KCCVelocity>(false),
+                KCCJumpingType = this.GetArchetypeChunkComponentType<KCCJumping>(true),
+                KCCGroundedType = this.GetArchetypeChunkComponentType<KCCGrounded>(true),
+                KCCGravityType = this.GetArchetypeChunkComponentType<KCCGravity>(true),
             };
 
-            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
         }
     }
 
@@ -315,9 +315,9 @@ namespace PropHunt.Mixed.Systems
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-                var chunkVelocity = chunk.GetNativeArray(KCCVelocityType);
-                var chunkGrounded = chunk.GetNativeArray(KCCGroundedType);
-                var chunkKCCGravity = chunk.GetNativeArray(KCCGravityType);
+                var chunkVelocity = chunk.GetNativeArray(this.KCCVelocityType);
+                var chunkGrounded = chunk.GetNativeArray(this.KCCGroundedType);
+                var chunkKCCGravity = chunk.GetNativeArray(this.KCCGravityType);
                 var instanceCount = chunk.Count;
 
                 for (int i = 0; i < instanceCount; i++)
@@ -364,12 +364,12 @@ namespace PropHunt.Mixed.Systems
             var job = new KCCGravityJob()
             {
                 deltaTime = Time.DeltaTime,
-                KCCVelocityType = GetArchetypeChunkComponentType<KCCVelocity>(false),
-                KCCGroundedType = GetArchetypeChunkComponentType<KCCGrounded>(true),
-                KCCGravityType = GetArchetypeChunkComponentType<KCCGravity>(true),
+                KCCVelocityType = this.GetArchetypeChunkComponentType<KCCVelocity>(false),
+                KCCGroundedType = this.GetArchetypeChunkComponentType<KCCGrounded>(true),
+                KCCGravityType = this.GetArchetypeChunkComponentType<KCCGravity>(true),
             };
 
-            this.Dependency = job.ScheduleParallel(m_Query, this.Dependency);
+            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
         }
     }
 }
