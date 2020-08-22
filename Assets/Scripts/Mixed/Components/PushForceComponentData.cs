@@ -1,21 +1,24 @@
 
+using System;
+using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 
 namespace PropHunt.Mixed.Components
 {
     /// <summary>
-    /// Pushing being applied to an entity
+    /// Buffer to store forces applied to object every frame
     /// </summary>
-    public struct PushForce : IComponentData
+    [InternalBufferCapacity(8)]
+    public struct PushForce : IBufferElementData
     {
         /// <summary>
-        /// Force and direction of push event
+        /// For being applied
         /// </summary>
         public float3 force;
 
         /// <summary>
-        /// Point where the hit occurs
+        /// Location of force being applied
         /// </summary>
         public float3 point;
     }

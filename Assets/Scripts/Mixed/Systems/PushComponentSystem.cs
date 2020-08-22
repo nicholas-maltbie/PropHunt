@@ -45,7 +45,7 @@ namespace PropHunt.Mixed.Systems
 
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
 
-            [ReadOnly] public ArchetypeChunkComponentType<PushForce> PushForceType;
+            [ReadOnly] public ArchetypeChunkBufferType<PushForce> PushForceType;
 
             [ReadOnly] public ArchetypeChunkComponentType<PhysicsMass> PhysicsMassType;
 
@@ -56,7 +56,7 @@ namespace PropHunt.Mixed.Systems
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
                 var chunkEntity = chunk.GetNativeArray(EntityType);
-                var chunkPushForce = chunk.GetNativeArray(PushForceType);
+                var chunkPushForce = chunk.GetBufferAccessor(PushForceType);
                 var instanceCount = chunk.Count;
 
                 if (isServer && // Only push if server world
@@ -77,8 +77,11 @@ namespace PropHunt.Mixed.Systems
                         var pushForce = chunkPushForce[i];
                         var translation = chunkTranslation[i];
                         var rotation = chunkRotation[i];
-                        
-                        physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce.force, pushForce.point);
+
+                        for (int push = 0; push < pushForce.Length; push++)
+                        {
+                            physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce[push].force, pushForce[push].point);
+                        }
 
                         chunkPhysicsVelocity[i] = physicsVelocity;
                     }
@@ -89,7 +92,7 @@ namespace PropHunt.Mixed.Systems
                     var entity = chunkEntity[i];
                     var pushForce = chunkPushForce[i];
 
-                    commandBuffer.RemoveComponent(chunkIndex, entity, typeof(PushForce));
+                    commandBuffer.RemoveComponent(chunkIndex, entity, ComponentType.ReadOnly<PushForce>());
                 }
             }
         }
@@ -125,7 +128,7 @@ namespace PropHunt.Mixed.Systems
                 commandBuffer = commandBuffer,
                 EntityType = this.GetArchetypeChunkEntityType(),
                 PhysicsVelocityType = this.GetArchetypeChunkComponentType<PhysicsVelocity>(),
-                PushForceType = this.GetArchetypeChunkComponentType<PushForce>(),
+                PushForceType = this.GetArchetypeChunkBufferType<PushForce>(),
                 PhysicsMassType = this.GetArchetypeChunkComponentType<PhysicsMass>(),
                 TranslationType = this.GetArchetypeChunkComponentType<Translation>(),
                 RotationType = this.GetArchetypeChunkComponentType<Rotation>()

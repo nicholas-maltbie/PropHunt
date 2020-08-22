@@ -108,7 +108,8 @@ namespace PropHunt.Mixed.Utilities
                 // Apply some force to the object hit if it is moveable
                 // Apply force on entity hit
                 if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies) {
-                    commandBuffer.AddComponent(jobIndex, hit.Entity, new PushForce(){force = movement * pushPower, point = hit.Position});
+                    commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
+                    commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce(){force = movement * pushPower, point = hit.Position});
                     // If pushing something, reduce remaining force significantly
                     remaining *= pushDecay;
                 }
