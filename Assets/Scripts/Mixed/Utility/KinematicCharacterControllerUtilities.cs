@@ -109,7 +109,6 @@ namespace PropHunt.Mixed.Utilities
                 // Apply force on entity hit
                 if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies) {
                     commandBuffer.AddComponent(jobIndex, hit.Entity, new PushForce(){force = movement * pushPower, point = hit.Position});
-                    UnityEngine.Debug.Log($"Pushing entity {hit.Entity.Index}");
                     // If pushing something, reduce remaining force significantly
                     remaining *= pushDecay;
                 }

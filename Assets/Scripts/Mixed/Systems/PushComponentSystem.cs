@@ -77,8 +77,6 @@ namespace PropHunt.Mixed.Systems
                         var pushForce = chunkPushForce[i];
                         var translation = chunkTranslation[i];
                         var rotation = chunkRotation[i];
-
-                        UnityEngine.Debug.Log($"Pushing entity {chunkEntity[i].Index}");
                         
                         physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce.force, pushForce.point);
 
