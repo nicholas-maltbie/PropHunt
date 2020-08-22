@@ -18,6 +18,7 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateAfter(typeof(ConnectionSystem))]
     public class MenuManagerSystem : ComponentSystem
     {
         /// <summary>
@@ -31,14 +32,24 @@ namespace PropHunt.Client.Systems
         public static LockedInputState MovementState => MenuManagerSystem.movementState;
 
         /// <summary>
+        /// Main menu default screen for when leaving the game
+        /// </summary>
+        public static readonly string MainMenuScreen = "MainMenuScreen";
+
+        /// <summary>
         /// Screen with in game menu options
         /// </summary>
-        public static readonly string MenuScreen = "InGameMenu";
+        public static readonly string InGameMenuScreen = "InGameMenu";
 
         /// <summary>
         /// Screen with in game heads up display name
         /// </summary>
         public static readonly string HUDScreen = "InGameHUD";
+
+        /// <summary>
+        /// Was this previously connected last frame
+        /// </summary>
+        private bool previouslyConnected;
 
         protected override void OnCreate()
         {
@@ -65,32 +76,56 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            // Parse user input to check if the toggle menu button has been pressed
-            if (Input.GetButtonDown("Cancel"))
-            {
-                if (movementState == LockedInputState.ALLOW)
-                {
-                    MenuManagerSystem.movementState = LockedInputState.DENY;
-                    UIManager.RequestNewScreen(this, MenuManagerSystem.MenuScreen);
-                }
-                else if (movementState == LockedInputState.DENY)
-                {
-                    MenuManagerSystem.movementState = LockedInputState.ALLOW;
-                    UIManager.RequestNewScreen(this, MenuManagerSystem.HUDScreen);
-                }
-            }
+            bool currentlyConnected = ConnectionSystem.IsConnected;
 
-            // Set cursor visibility based on current user input
-            if (movementState == LockedInputState.ALLOW)
-            {
-                Cursor.lockState = CursorLockMode.Confined;
-                Cursor.visible = false;
-            }
-            else if (movementState == LockedInputState.DENY)
+            // This should only act while in game
+            if (!currentlyConnected)
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
+            else
+            {
+                // Parse user input to check if the toggle menu button has been pressed
+                if (Input.GetButtonDown("Cancel"))
+                {
+                    if (MenuManagerSystem.movementState == LockedInputState.ALLOW)
+                    {
+                        MenuManagerSystem.movementState = LockedInputState.DENY;
+                        UIManager.RequestNewScreen(this, MenuManagerSystem.InGameMenuScreen);
+                    }
+                    else if (movementState == LockedInputState.DENY)
+                    {
+                        MenuManagerSystem.movementState = LockedInputState.ALLOW;
+                        UIManager.RequestNewScreen(this, MenuManagerSystem.HUDScreen);
+                    }
+                }
+
+                // Set cursor visibility based on current user input
+                if (MenuManagerSystem.movementState == LockedInputState.ALLOW)
+                {
+                    Cursor.lockState = CursorLockMode.Confined;
+                    Cursor.visible = false;
+                }
+                else if (MenuManagerSystem.movementState == LockedInputState.DENY)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+            }
+
+            // If this changed from connected to not connected, will open main menu
+            if (!currentlyConnected && this.previouslyConnected)
+            {
+                UIManager.RequestNewScreen(this, MenuManagerSystem.MainMenuScreen);
+            }
+            // if this changed from not connected to connected, open in game menu
+            if (currentlyConnected && !this.previouslyConnected)
+            {
+                UIManager.RequestNewScreen(this, MenuManagerSystem.HUDScreen);
+            }
+
+            this.previouslyConnected = currentlyConnected;
         }
     }
 }

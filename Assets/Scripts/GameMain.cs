@@ -21,12 +21,31 @@ namespace PropHunt.Game
 [UpdateInWorld(UpdateInWorld.TargetWorld.Default)]
 public class ProphuntClientServerControlSystem : ComponentSystem
 {
-    private const ushort networkPort = 25623;
+
+    /// <summary>
+    /// Network address for local connection (loopback)
+    /// </summary>
+    public static string DefaultNetworkAddress = "127.0.0.1";
+
+    /// <summary>
+    /// Network port for default connection to the server
+    /// </summary>
+    public static ushort DefaultNetworkPort = 25623;
+
+    /// <summary>
+    /// Network address of server being connected to.
+    /// </summary>
+    public static string NetworkAddress;
+
+    /// <summary>
+    /// Port for host connection
+    /// </summary>
+    public static ushort NetworkPort = 25623;
 
     /// <summary>
     /// Setup struct for initializing server
     /// </summary>
-    private struct InitializeClientServer : IComponentData
+    public struct InitializeClientServer : IComponentData
     {
     }
 
@@ -36,7 +55,6 @@ public class ProphuntClientServerControlSystem : ComponentSystem
     protected override void OnCreate()
     {
         RequireSingletonForUpdate<InitializeClientServer>();
-        var initEntity = EntityManager.CreateEntity(typeof(InitializeClientServer));
     }
 
     /// <summary>
@@ -49,29 +67,22 @@ public class ProphuntClientServerControlSystem : ComponentSystem
         EntityManager.DestroyEntity(GetSingletonEntity<InitializeClientServer>());
         foreach (var world in World.All)
         {
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
             // Bind the server and start listening for connections
             if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
             {
                 NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
-                ep.Port = networkPort;
+                ep.Port = NetworkPort;
                 world.GetExistingSystem<NetworkStreamReceiveSystem>().Listen(ep);
             }
-#endif
-#if !UNITY_SERVER
             // Auto connect all clients to the server
             if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
             {
                 // Enable fixed tick rate
                 world.EntityManager.CreateEntity(typeof(FixedClientTickRate));
-                NetworkEndPoint ep = NetworkEndPoint.LoopbackIpv4;
-                ep.Port = networkPort;
-#if UNITY_EDITOR
-                ep = NetworkEndPoint.Parse(ClientServerBootstrap.RequestedAutoConnect, networkPort);
-#endif
+                UnityEngine.Debug.Log($"Connecting to {NetworkAddress}:{NetworkPort}");
+                NetworkEndPoint ep = NetworkEndPoint.Parse(NetworkAddress, NetworkPort);
                 world.GetExistingSystem<NetworkStreamReceiveSystem>().Connect(ep);
             }
-#endif
         }
     }
 }

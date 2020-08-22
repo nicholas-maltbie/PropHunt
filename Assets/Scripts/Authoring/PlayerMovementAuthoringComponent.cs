@@ -60,7 +60,7 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Max number of bounces per frame when moving
         /// </summary>
-        public int movemaxBounces = 3;
+        public int moveMaxBounces = 3;
 
         /// <summary>
         /// Max number of bounces per frame when falling
@@ -77,7 +77,7 @@ namespace PropHunt.Authoring
             dstManager.AddComponentData(entity, new KCCMovementSettings() {
                 moveSpeed = this.moveSpeed,
                 sprintMultiplier = this.sprintMultiplier,
-                moveMaxBounces = this.movemaxBounces,
+                moveMaxBounces = this.moveMaxBounces,
                 moveAnglePower = this.moveAnglePower,
                 movePushPower = this.pushPower,
                 movePushDecay = this.pushDecay,
