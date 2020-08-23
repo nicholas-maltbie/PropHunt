@@ -137,11 +137,12 @@ namespace PropHunt.Mixed.Systems
     {
         protected override void OnUpdate()
         {
-            Entities.WithBurst().ForEach(
-                (ref KCCVelocity velocity,
-                 in KCCJumping jumping,
-                 in KCCGrounded grounded,
-                 in KCCGravity gravity) => {
+            Entities.WithBurst().ForEach((
+                ref KCCVelocity velocity,
+                in KCCJumping jumping,
+                in KCCGrounded grounded,
+                in KCCGravity gravity) =>
+                {
                     // If the KCC is attempting to jump and is grounded, jump
                     if (jumping.attemptingJump && !grounded.Falling)
                     {
@@ -166,10 +167,10 @@ namespace PropHunt.Mixed.Systems
         {
             float deltaTime = Time.DeltaTime;
 
-            Entities.WithBurst().ForEach(
-                (ref KCCVelocity velocity,
-                 in KCCGrounded grounded,
-                 in KCCGravity gravity) => 
+            Entities.WithBurst().ForEach((
+                ref KCCVelocity velocity,
+                in KCCGrounded grounded,
+                in KCCGravity gravity) => 
                 {
                     // If the player is not grounded, push down by
                     // gravity's acceleration
