@@ -20,7 +20,6 @@ namespace PropHunt.Mixed.Systems
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(PlayerRotationSystem))]
-    [UpdateBefore(typeof(KCCMovementSystem))]
     public class KinematicCharacterControllerInput : ComponentSystem
     {
         protected override void OnUpdate()

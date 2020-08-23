@@ -12,130 +12,75 @@ using Unity.Burst;
 
 namespace PropHunt.Mixed.Systems
 {
+    /// <summary>
+    /// System group for resolving push forces applied to dynamic objects in the scene
+    /// </summary>
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    public class PushForceGroup : ComponentSystemGroup {}
 
     /// <summary>
-    /// Apply pushes to objects with push component
+    /// System to remove Push Components the frame after they are created
     /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class PushForceSystem : SystemBase
+    [UpdateInGroup(typeof(PushForceGroup))]
+    public class PushForceCleanup : SystemBase
     {
         /// <summary>
         /// Command buffer for removing push forces after they are applied
         /// </summary>
         EndSimulationEntityCommandBufferSystem commandBufferSystem;
 
-        /// <summary>
-        /// Entity queries for selecting entities
-        /// that fit the archetype for PushForce
-        /// </summary>
-        private EntityQuery m_Query;
-
-        /// <summary>
-        /// Struct for the job of pushing an chunk of objects
-        /// and then cleaning up the PushForce events
-        /// </summary>
-        [BurstCompile]
-        struct PushJob : IJobChunk
-        {
-            public bool isServer;
-
-            public EntityCommandBuffer.Concurrent commandBuffer;
-
-            public ArchetypeChunkComponentType<PhysicsVelocity> PhysicsVelocityType;
-
-            [ReadOnly] public ArchetypeChunkEntityType EntityType;
-
-            [ReadOnly] public ArchetypeChunkBufferType<PushForce> PushForceType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<PhysicsMass> PhysicsMassType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<Rotation> RotationType;
-
-            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
-            {
-                var chunkEntity = chunk.GetNativeArray(this.EntityType);
-                var chunkPushForce = chunk.GetBufferAccessor(this.PushForceType);
-                var instanceCount = chunk.Count;
-
-                if (isServer && // Only push if server world
-                    chunk.Has<PhysicsVelocity>(this.PhysicsVelocityType) &&
-                    chunk.Has<PhysicsMass>(this.PhysicsMassType) &&
-                    chunk.Has<Translation>(this.TranslationType) &&
-                    chunk.Has<Rotation>(this.RotationType))
-                {
-                    var chunkPhysicsVelocity = chunk.GetNativeArray(this.PhysicsVelocityType);
-                    var chunkPhysicsMass = chunk.GetNativeArray(this.PhysicsMassType);
-                    var chunkTranslation = chunk.GetNativeArray(this.TranslationType);
-                    var chunkRotation = chunk.GetNativeArray(this.RotationType);
-
-                    for (int i = 0; i < instanceCount; i++)
-                    {
-                        var physicsVelocity = chunkPhysicsVelocity[i];
-                        var physicsMass = chunkPhysicsMass[i];
-                        var pushForce = chunkPushForce[i];
-                        var translation = chunkTranslation[i];
-                        var rotation = chunkRotation[i];
-
-                        for (int push = 0; push < pushForce.Length; push++)
-                        {
-                            physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce[push].force, pushForce[push].point);
-                        }
-
-                        chunkPhysicsVelocity[i] = physicsVelocity;
-                    }
-                }
-
-                for (int i = 0; i < instanceCount; i++)
-                {
-                    var entity = chunkEntity[i];
-                    var pushForce = chunkPushForce[i];
-
-                    commandBuffer.RemoveComponent(chunkIndex, entity, ComponentType.ReadOnly<PushForce>());
-                }
-            }
-        }
-
         protected override void OnCreate()
         {
             this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-            var queryDesc = new EntityQueryDesc()
-            {
-                All = new ComponentType[]
-                {
-                    ComponentType.ReadOnly<PushForce>(),
-                },
-                Any = new ComponentType[]
-                {
-                    ComponentType.ReadWrite<PhysicsVelocity>(),
-                    ComponentType.ReadOnly<PhysicsMass>(),
-                    ComponentType.ReadOnly<Translation>(),
-                    ComponentType.ReadOnly<Rotation>()
-                }
-            };
-
-            this.m_Query = GetEntityQuery(queryDesc);
         }
 
         protected override void OnUpdate()
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            var job = new PushJob()
-            {
-                isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null,
-                commandBuffer = commandBuffer,
-                EntityType = this.GetArchetypeChunkEntityType(),
-                PhysicsVelocityType = this.GetArchetypeChunkComponentType<PhysicsVelocity>(),
-                PushForceType = this.GetArchetypeChunkBufferType<PushForce>(),
-                PhysicsMassType = this.GetArchetypeChunkComponentType<PhysicsMass>(),
-                TranslationType = this.GetArchetypeChunkComponentType<Translation>(),
-                RotationType = this.GetArchetypeChunkComponentType<Rotation>()
-            };
+            Entities.WithBurst().ForEach((
+                Entity entity, 
+                int entityInQueryIndex,
+                in DynamicBuffer<PushForce> pushForce) =>
+                {
+                    commandBuffer.RemoveComponent(entityInQueryIndex, entity, ComponentType.ReadOnly<PushForce>());
+                }
+            ).ScheduleParallel();
 
-            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
+            this.Dependency.Complete();
             this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
+        }
+    }
+
+    /// <summary>
+    /// Apply pushes to objects with push component
+    /// </summary>
+    [UpdateInGroup(typeof(PushForceGroup))]
+    [UpdateBefore(typeof(PushForceCleanup))]
+    public class PushForceApply : SystemBase
+    {
+
+        protected override void OnUpdate()
+        {
+            // Only apply force if this is the server
+            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
+
+            if (isServer)
+            {
+                Entities.WithBurst().ForEach((
+                    ref PhysicsVelocity physicsVelocity,
+                    in PhysicsMass physicsMass,
+                    in Translation translation,
+                    in Rotation rotation,
+                    in DynamicBuffer<PushForce> pushForce) =>
+                    {
+                        for (int push = 0; push < pushForce.Length; push++)
+                        {
+                            physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce[push].force, pushForce[push].point);
+                        }
+                    }
+                ).ScheduleParallel();
+            }
         }
     }
 }

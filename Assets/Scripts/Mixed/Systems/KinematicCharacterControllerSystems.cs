@@ -14,10 +14,24 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
+    /// System group for all Kinematic Character Controller Actions
+    /// </summary>
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateAfter(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(PushForceGroup))]
+    public class KCCUpdateGroup : ComponentSystemGroup {}
+
+    /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
+<<<<<<< HEAD
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class KCCGroundedSystem : SystemBase
+=======
+    [BurstCompile]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    public class KCCGroundedSystem : ComponentSystem
+>>>>>>> Adjusted to use ForEach instead of IJobChunk
     {
         /// <summary>
         /// Maximum degrees between ground and player 
@@ -74,86 +88,37 @@ namespace PropHunt.Mixed.Systems
     /// Applies character movement to a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCMovementSystem : SystemBase
     {
         /// <summary>
         /// Command buffer system for pushing objects
         /// </summary>
         private EndSimulationEntityCommandBufferSystem commandBufferSystem;
-
-        /// <summary>
-        /// Entity queries for selecting entities
-        /// that fit the archetype for KCCMovement
-        /// </summary>
-        private EntityQuery m_Query;
  
         protected override void OnCreate()
         {
-            var queryDesc = new EntityQueryDesc()
-            {
-                All = new ComponentType[]
-                {
-                    ComponentType.ReadOnly<PhysicsCollider>(),
-                    ComponentType.ReadWrite<Translation>(),
-                    ComponentType.ReadOnly<Rotation>(),
-                    ComponentType.ReadOnly<KCCVelocity>(),
-                    ComponentType.ReadOnly<KCCMovementSettings>()
-                }
-            };
-
-            this.m_Query = GetEntityQuery(queryDesc);
-
             this.commandBufferSystem =  World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
-        /// <summary>
-        /// Job to handle player movement
-        /// </summary>
-        [BurstCompile]
-        private struct KCCMovementJob : IJobChunk
+        protected override void  OnUpdate()
         {
-            public float deltaTime;
+            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
+            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            float deltaTime = Time.DeltaTime;
 
-            public PhysicsWorld physicsWorld;
-
-            public EntityCommandBuffer.Concurrent commandBuffer;
-
-            [ReadOnly] public ArchetypeChunkEntityType EntityType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<PhysicsCollider> PhysicsColliderType;
-            
-            public ArchetypeChunkComponentType<Translation> TranslationType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<Rotation> RotationType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<KCCVelocity> KCCVelocityType;
-
-            [ReadOnly] public ArchetypeChunkComponentType<KCCMovementSettings> KCCMovementSettingsType;
-
-            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
-            {
-                var chunkEntity = chunk.GetNativeArray(this.EntityType);
-                var chunkPhysicsCollider = chunk.GetNativeArray(this.PhysicsColliderType);
-                var chunkTranslation = chunk.GetNativeArray(this.TranslationType);
-                var chunkRotation = chunk.GetNativeArray(this.RotationType);
-                var chunkKCCVelocity = chunk.GetNativeArray(this.KCCVelocityType);
-                var chunkKCCMovementSettings = chunk.GetNativeArray(this.KCCMovementSettingsType);
-
-                var instanceCount = chunk.Count;
-                for (int i = 0; i < instanceCount; i++)
-                {
-                    var entity = chunkEntity[i];
-                    var physicsCollider = chunkPhysicsCollider[i];
-                    var translation = chunkTranslation[i];
-                    var rotation = chunkRotation[i];
-                    var velocity = chunkKCCVelocity[i];
-                    var movementSettings = chunkKCCMovementSettings[i];
-
+            Entities.WithBurst().ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in KCCVelocity velocity,
+                in PhysicsCollider physicsCollider,
+                in Rotation rotation,
+                in KCCMovementSettings movementSettings) => {
                     // Adjust character translation due to player movement
                     translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
                         commandBuffer,
-                        chunkIndex,
+                        entityInQueryIndex,
                         physicsWorld.CollisionWorld,
                         translation.Value,
                         velocity.playerVelocity * deltaTime,
@@ -168,7 +133,7 @@ namespace PropHunt.Mixed.Systems
                     // Adjust character translation due to gravity/world forces
                     translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
                         commandBuffer,
-                        chunkIndex,
+                        entityInQueryIndex,
                         physicsWorld.CollisionWorld,
                         translation.Value,
                         velocity.worldVelocity * deltaTime,
@@ -180,30 +145,11 @@ namespace PropHunt.Mixed.Systems
                         pushDecay  : movementSettings.fallPushDecay,
                         anglePower : movementSettings.fallAnglePower
                     );
-
-                    chunkTranslation[i] = translation;
                 }
-            }
-        }
+            ).ScheduleParallel();
 
-        protected override void  OnUpdate()
-        {
-            var job = new KCCMovementJob()
-            {
-                deltaTime = Time.DeltaTime,
-                physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld,
-                commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent(),
-                EntityType = this.GetArchetypeChunkEntityType(),
-                PhysicsColliderType = this.GetArchetypeChunkComponentType<PhysicsCollider>(true),
-                TranslationType = this.GetArchetypeChunkComponentType<Translation>(false),
-                RotationType = this.GetArchetypeChunkComponentType<Rotation>(true),
-                KCCVelocityType = this.GetArchetypeChunkComponentType<KCCVelocity>(true),
-                KCCMovementSettingsType = this.GetArchetypeChunkComponentType<KCCMovementSettings>(true)
-            };
-
-            this.Dependency = job.ScheduleParallel(this.m_Query, this.Dependency);
-            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
             this.Dependency.Complete();
+            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
     }
 
@@ -212,7 +158,12 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
+<<<<<<< HEAD
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+=======
+    [BurstCompile]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+>>>>>>> Adjusted to use ForEach instead of IJobChunk
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
     public class KCCJumpSystem : SystemBase
@@ -240,7 +191,12 @@ namespace PropHunt.Mixed.Systems
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
+<<<<<<< HEAD
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+=======
+    [BurstCompile]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+>>>>>>> Adjusted to use ForEach instead of IJobChunk
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGroundedSystem))]
     public class KCCGravitySystem : SystemBase
