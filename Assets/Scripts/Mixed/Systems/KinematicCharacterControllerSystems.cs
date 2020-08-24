@@ -1,8 +1,6 @@
 
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -16,7 +14,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup {}
@@ -24,14 +22,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
-<<<<<<< HEAD
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class KCCGroundedSystem : SystemBase
-=======
-    [BurstCompile]
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
-    public class KCCGroundedSystem : ComponentSystem
->>>>>>> Adjusted to use ForEach instead of IJobChunk
     {
         /// <summary>
         /// Maximum degrees between ground and player 
@@ -87,7 +79,6 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCMovementSystem : SystemBase
     {
@@ -158,12 +149,7 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
-<<<<<<< HEAD
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-=======
-    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
->>>>>>> Adjusted to use ForEach instead of IJobChunk
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
     public class KCCJumpSystem : SystemBase
@@ -191,12 +177,7 @@ namespace PropHunt.Mixed.Systems
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
-<<<<<<< HEAD
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-=======
-    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
->>>>>>> Adjusted to use ForEach instead of IJobChunk
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGroundedSystem))]
     public class KCCGravitySystem : SystemBase
