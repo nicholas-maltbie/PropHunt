@@ -14,7 +14,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     [UpdateAfter(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup {}
@@ -22,7 +22,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCGroundedSystem : SystemBase
     {
         /// <summary>
