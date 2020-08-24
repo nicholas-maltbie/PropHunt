@@ -1,8 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
-using Unity.Physics.Extensions;
-using Unity.Transforms;
+using PropHunt.Mixed.Components;
 
 namespace PropHunt.Mixed.Utilities
 {
@@ -25,7 +24,8 @@ namespace PropHunt.Mixed.Utilities
         /// into another direction giving the effect of sliding along objects
         /// while the character's momentum is absorbed into the wall.
         /// </summary>
-        /// <param name="manager">Entity manager for pushing other entities</param>
+        /// <param name="commandBuffer">Command buffer for adding push events to objects</param>
+        /// <param name="jobIndex">Index of this job for command buffer use</param>
         /// <param name="collisionWorld">World for checking collisions and other colliable objects</param>
         /// <param name="start">Starting location</param>
         /// <param name="movement">Intended direction of movement</param>
@@ -53,7 +53,8 @@ namespace PropHunt.Mixed.Utilities
         /// tuned for how much to push away while not allowing being shoved into objects.</param>
         /// <returns>The final location of the character.</returns>
         public static unsafe float3 ProjectValidMovement(
-            EntityManager manager,
+            EntityCommandBuffer.Concurrent commandBuffer,
+            int jobIndex,
             CollisionWorld collisionWorld,
             float3 start,
             float3 movement,
@@ -69,6 +70,7 @@ namespace PropHunt.Mixed.Utilities
             float3 from = start; // Starting location of movement
             float3 remaining = movement; // Remaining momentum
             int bounces = 0; // current number of bounces
+
             // Continue computing while there is momentum and bounces remaining
             while (math.length(remaining) > epsilon && bounces <= maxBounces)
             {
@@ -105,17 +107,9 @@ namespace PropHunt.Mixed.Utilities
 
                 // Apply some force to the object hit if it is moveable
                 // Apply force on entity hit
-                Entity hitEntity = collisionWorld.Bodies[hit.RigidBodyIndex].Entity;
-                if (manager.HasComponent<PhysicsVelocity>(hitEntity)
-                    && manager.HasComponent<PhysicsMass>(hitEntity)
-                    && manager.HasComponent<Rotation>(hitEntity)
-                    && manager.HasComponent<Translation>(hitEntity)) {
-                    PhysicsVelocity pv = manager.GetComponentData<PhysicsVelocity>(hitEntity);
-                    PhysicsMass pm = manager.GetComponentData<PhysicsMass>(hitEntity);
-                    Rotation rot = manager.GetComponentData<Rotation>(hitEntity);
-                    Translation trans = manager.GetComponentData<Translation>(hitEntity);
-                    pv.ApplyImpulse(pm, trans, rot, movement * pushPower, hit.Position);
-                    manager.SetComponentData(hitEntity, pv);
+                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies) {
+                    commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
+                    commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce(){force = movement * pushPower, point = hit.Position});
                     // If pushing something, reduce remaining force significantly
                     remaining *= pushDecay;
                 }

@@ -1,8 +1,6 @@
 
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -14,9 +12,17 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
+    /// System group for all Kinematic Character Controller Actions
+    /// </summary>
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateAfter(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(PushForceGroup))]
+    public class KCCUpdateGroup : ComponentSystemGroup {}
+
+    /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCGroundedSystem : SystemBase
     {
         /// <summary>
@@ -73,55 +79,68 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
-    [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class KCCMovementSystem : ComponentSystem
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    public class KCCMovementSystem : SystemBase
     {
-        protected override void OnUpdate()
+        /// <summary>
+        /// Command buffer system for pushing objects
+        /// </summary>
+        private EndSimulationEntityCommandBufferSystem commandBufferSystem;
+ 
+        protected override void OnCreate()
         {
-            var deltaTime = Time.DeltaTime;
+            this.commandBufferSystem =  World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
 
-            BuildPhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>();
-            CollisionWorld collisionWorld = physicsWorld.PhysicsWorld.CollisionWorld;
+        protected override void  OnUpdate()
+        {
+            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
+            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            float deltaTime = Time.DeltaTime;
 
-            // Update grounded data for each KCC
-            Entities.ForEach((
-                Entity ent,
-                ref PhysicsCollider collider,
-                ref Translation trans,
-                ref Rotation rot,
-                ref KCCVelocity velocity,
-                ref KCCMovementSettings movementSettings) =>
-            {
-                // Adjust character translation due to player movement
-                trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    EntityManager,
-                    collisionWorld,
-                    trans.Value,
-                    velocity.playerVelocity * deltaTime,
-                    collider,
-                    ent.Index,
-                    rot.Value,
-                    maxBounces : movementSettings.moveMaxBounces,
-                    pushPower  : movementSettings.movePushPower,
-                    pushDecay  : movementSettings.movePushDecay,
-                    anglePower : movementSettings.moveAnglePower
-                );
-                // Adjust character translation due to gravity/world forces
-                trans.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                    EntityManager,
-                    collisionWorld,
-                    trans.Value,
-                    velocity.worldVelocity * deltaTime,
-                    collider,
-                    ent.Index,
-                    rot.Value,
-                    maxBounces : movementSettings.fallMaxBounces,
-                    pushPower  : movementSettings.fallPushPower,
-                    pushDecay  : movementSettings.fallPushDecay,
-                    anglePower : movementSettings.fallAnglePower
-                );
-            });
+            Entities.WithBurst().ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in KCCVelocity velocity,
+                in PhysicsCollider physicsCollider,
+                in Rotation rotation,
+                in KCCMovementSettings movementSettings) => {
+                    // Adjust character translation due to player movement
+                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                        commandBuffer,
+                        entityInQueryIndex,
+                        physicsWorld.CollisionWorld,
+                        translation.Value,
+                        velocity.playerVelocity * deltaTime,
+                        physicsCollider,
+                        entity.Index,
+                        rotation.Value,
+                        maxBounces : movementSettings.moveMaxBounces,
+                        pushPower  : movementSettings.movePushPower,
+                        pushDecay  : movementSettings.movePushDecay,
+                        anglePower : movementSettings.moveAnglePower
+                    );
+                    // Adjust character translation due to gravity/world forces
+                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                        commandBuffer,
+                        entityInQueryIndex,
+                        physicsWorld.CollisionWorld,
+                        translation.Value,
+                        velocity.worldVelocity * deltaTime,
+                        physicsCollider,
+                        entity.Index,
+                        rotation.Value,
+                        maxBounces : movementSettings.fallMaxBounces,
+                        pushPower  : movementSettings.fallPushPower,
+                        pushDecay  : movementSettings.fallPushDecay,
+                        anglePower : movementSettings.fallAnglePower
+                    );
+                }
+            ).ScheduleParallel();
+
+            this.Dependency.Complete();
+            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
     }
 
@@ -130,7 +149,7 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
     public class KCCJumpSystem : SystemBase
@@ -158,7 +177,7 @@ namespace PropHunt.Mixed.Systems
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGroundedSystem))]
     public class KCCGravitySystem : SystemBase
