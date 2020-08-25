@@ -205,7 +205,15 @@ namespace PropHunt.Mixed.Systems
                     // Have hit the ground, set velocity to the speed of movement
                     else
                     {
-                        velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
+                        bool validGroundVelocity = grounded.groundedRBIndex >= 0 && grounded.groundedRBIndex < physicsWorld.Bodies.Length;
+                        if (validGroundVelocity)
+                        {
+                            velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
+                        }
+                        else
+                        {
+                            velocity.worldVelocity = float3.zero;
+                        }
                     }
                 }
             ).ScheduleParallel();
