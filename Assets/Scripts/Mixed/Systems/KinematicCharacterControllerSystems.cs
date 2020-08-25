@@ -5,6 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
+using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 
@@ -64,11 +65,15 @@ namespace PropHunt.Mixed.Systems
                         grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
                         grounded.onGround = true;
                         grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
+                        grounded.groundedRBIndex = hit.RigidBodyIndex;
+                        grounded.groundedPoint = hit.Position;
                     }
                     else {
                         grounded.onGround = false;
                         grounded.distanceToGround = -1;
                         grounded.angle = -1;
+                        grounded.groundedRBIndex = -1;
+                        grounded.groundedPoint = float3.zero;
                     }
                 }
             ).ScheduleParallel();
@@ -164,7 +169,7 @@ namespace PropHunt.Mixed.Systems
                     // If the KCC is attempting to jump and is grounded, jump
                     if (jumping.attemptingJump && !grounded.Falling)
                     {
-                        velocity.worldVelocity = gravity.Up * jumping.jumpForce;
+                        velocity.worldVelocity += gravity.Up * jumping.jumpForce;
                     }
                     // Otherwise, do nothing
                 }
@@ -184,6 +189,7 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
+            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
             Entities.ForEach((
                 ref KCCVelocity velocity,
@@ -196,10 +202,10 @@ namespace PropHunt.Mixed.Systems
                     {
                         velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                     }
-                    // Have hit the ground, stop moving
+                    // Have hit the ground, set velocity to the speed of movement
                     else
                     {
-                        velocity.worldVelocity = float3.zero;
+                        velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
                     }
                 }
             ).ScheduleParallel();

@@ -13,11 +13,13 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
         {
             "CubeGhostSerializer",
             "TestCharacterGhostSerializer",
+            "SpinningCylinderGhostSerializer",
+            "HorizontalSpinningCylinderGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 2;
+    public int Length => 4;
 #endif
     public static int FindGhostType<T>()
         where T : struct, ISnapshotData<T>
@@ -26,6 +28,10 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
             return 0;
         if (typeof(T) == typeof(TestCharacterSnapshotData))
             return 1;
+        if (typeof(T) == typeof(SpinningCylinderSnapshotData))
+            return 2;
+        if (typeof(T) == typeof(HorizontalSpinningCylinderSnapshotData))
+            return 3;
         return -1;
     }
 
@@ -33,6 +39,8 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
     {
         m_CubeGhostSerializer.BeginSerialize(system);
         m_TestCharacterGhostSerializer.BeginSerialize(system);
+        m_SpinningCylinderGhostSerializer.BeginSerialize(system);
+        m_HorizontalSpinningCylinderGhostSerializer.BeginSerialize(system);
     }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
@@ -43,6 +51,10 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
                 return m_CubeGhostSerializer.CalculateImportance(chunk);
             case 1:
                 return m_TestCharacterGhostSerializer.CalculateImportance(chunk);
+            case 2:
+                return m_SpinningCylinderGhostSerializer.CalculateImportance(chunk);
+            case 3:
+                return m_HorizontalSpinningCylinderGhostSerializer.CalculateImportance(chunk);
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -56,6 +68,10 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
                 return m_CubeGhostSerializer.SnapshotSize;
             case 1:
                 return m_TestCharacterGhostSerializer.SnapshotSize;
+            case 2:
+                return m_SpinningCylinderGhostSerializer.SnapshotSize;
+            case 3:
+                return m_HorizontalSpinningCylinderGhostSerializer.SnapshotSize;
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -73,12 +89,22 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
             {
                 return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<TestCharacterGhostSerializer, TestCharacterSnapshotData>(m_TestCharacterGhostSerializer, ref dataStream, data);
             }
+            case 2:
+            {
+                return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<SpinningCylinderGhostSerializer, SpinningCylinderSnapshotData>(m_SpinningCylinderGhostSerializer, ref dataStream, data);
+            }
+            case 3:
+            {
+                return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<HorizontalSpinningCylinderGhostSerializer, HorizontalSpinningCylinderSnapshotData>(m_HorizontalSpinningCylinderGhostSerializer, ref dataStream, data);
+            }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
     }
     private CubeGhostSerializer m_CubeGhostSerializer;
     private TestCharacterGhostSerializer m_TestCharacterGhostSerializer;
+    private SpinningCylinderGhostSerializer m_SpinningCylinderGhostSerializer;
+    private HorizontalSpinningCylinderGhostSerializer m_HorizontalSpinningCylinderGhostSerializer;
 }
 
 public struct EnableProphuntGhostSendSystemComponent : IComponentData
