@@ -178,6 +178,34 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
+    /// System to move character with ground
+    /// </summary>
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(KCCGroundedSystem))]
+    [UpdateBefore(typeof(KCCGravitySystem))]
+    public class KCCMoveWithGroundSystem : SystemBase
+    {
+        protected override void OnUpdate()
+        {
+            float deltaTime = Time.DeltaTime;
+            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+
+            // Only applies to grounded KCC characters with a KCC velocity.
+            Entities.WithBurst().ForEach((
+                ref KCCVelocity velocity,
+                in KCCGrounded grounded) => 
+                {
+                    bool validGroundVelocity = grounded.groundedRBIndex >= 0 && grounded.groundedRBIndex < physicsWorld.Bodies.Length;
+                    if (validGroundVelocity && !grounded.Falling)
+                    {
+                        velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
+                    }
+                }
+            ).ScheduleParallel();
+        }
+    }
+
+    /// <summary>
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
@@ -200,21 +228,10 @@ namespace PropHunt.Mixed.Systems
                     // gravity's acceleration
                     if (grounded.Falling)
                     {
+                        // have world velocity decrease due to air resistance
                         velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                     }
-                    // Have hit the ground, set velocity to the speed of movement
-                    else
-                    {
-                        bool validGroundVelocity = grounded.groundedRBIndex >= 0 && grounded.groundedRBIndex < physicsWorld.Bodies.Length;
-                        if (validGroundVelocity)
-                        {
-                            velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
-                        }
-                        else
-                        {
-                            velocity.worldVelocity = float3.zero;
-                        }
-                    }
+                    // Have hit the ground
                 }
             ).ScheduleParallel();
         }
