@@ -15,11 +15,12 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
             "TestCharacterGhostSerializer",
             "SpinningCylinderGhostSerializer",
             "HorizontalSpinningCylinderGhostSerializer",
+            "ExampleMovingPlatformGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 4;
+    public int Length => 5;
 #endif
     public void Initialize(World world)
     {
@@ -39,6 +40,10 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
         m_HorizontalSpinningCylinderSnapshotDataNewGhostIds = curHorizontalSpinningCylinderGhostSpawnSystem.NewGhostIds;
         m_HorizontalSpinningCylinderSnapshotDataNewGhosts = curHorizontalSpinningCylinderGhostSpawnSystem.NewGhosts;
         curHorizontalSpinningCylinderGhostSpawnSystem.GhostType = 3;
+        var curExampleMovingPlatformGhostSpawnSystem = world.GetOrCreateSystem<ExampleMovingPlatformGhostSpawnSystem>();
+        m_ExampleMovingPlatformSnapshotDataNewGhostIds = curExampleMovingPlatformGhostSpawnSystem.NewGhostIds;
+        m_ExampleMovingPlatformSnapshotDataNewGhosts = curExampleMovingPlatformGhostSpawnSystem.NewGhosts;
+        curExampleMovingPlatformGhostSpawnSystem.GhostType = 4;
     }
 
     public void BeginDeserialize(JobComponentSystem system)
@@ -47,6 +52,7 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
         m_TestCharacterSnapshotDataFromEntity = system.GetBufferFromEntity<TestCharacterSnapshotData>();
         m_SpinningCylinderSnapshotDataFromEntity = system.GetBufferFromEntity<SpinningCylinderSnapshotData>();
         m_HorizontalSpinningCylinderSnapshotDataFromEntity = system.GetBufferFromEntity<HorizontalSpinningCylinderSnapshotData>();
+        m_ExampleMovingPlatformSnapshotDataFromEntity = system.GetBufferFromEntity<ExampleMovingPlatformSnapshotData>();
     }
     public bool Deserialize(int serializer, Entity entity, uint snapshot, uint baseline, uint baseline2, uint baseline3,
         ref DataStreamReader reader, NetworkCompressionModel compressionModel)
@@ -64,6 +70,9 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
                 baseline3, ref reader, compressionModel);
             case 3:
                 return GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeDeserialize(m_HorizontalSpinningCylinderSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
+                baseline3, ref reader, compressionModel);
+            case 4:
+                return GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeDeserialize(m_ExampleMovingPlatformSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
                 baseline3, ref reader, compressionModel);
             default:
                 throw new ArgumentException("Invalid serializer type");
@@ -90,6 +99,10 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
                 m_HorizontalSpinningCylinderSnapshotDataNewGhostIds.Add(ghostId);
                 m_HorizontalSpinningCylinderSnapshotDataNewGhosts.Add(GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeSpawn<HorizontalSpinningCylinderSnapshotData>(snapshot, ref reader, compressionModel));
                 break;
+            case 4:
+                m_ExampleMovingPlatformSnapshotDataNewGhostIds.Add(ghostId);
+                m_ExampleMovingPlatformSnapshotDataNewGhosts.Add(GhostReceiveSystem<ProphuntGhostDeserializerCollection>.InvokeSpawn<ExampleMovingPlatformSnapshotData>(snapshot, ref reader, compressionModel));
+                break;
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
@@ -107,6 +120,9 @@ public struct ProphuntGhostDeserializerCollection : IGhostDeserializerCollection
     private BufferFromEntity<HorizontalSpinningCylinderSnapshotData> m_HorizontalSpinningCylinderSnapshotDataFromEntity;
     private NativeList<int> m_HorizontalSpinningCylinderSnapshotDataNewGhostIds;
     private NativeList<HorizontalSpinningCylinderSnapshotData> m_HorizontalSpinningCylinderSnapshotDataNewGhosts;
+    private BufferFromEntity<ExampleMovingPlatformSnapshotData> m_ExampleMovingPlatformSnapshotDataFromEntity;
+    private NativeList<int> m_ExampleMovingPlatformSnapshotDataNewGhostIds;
+    private NativeList<ExampleMovingPlatformSnapshotData> m_ExampleMovingPlatformSnapshotDataNewGhosts;
 }
 public struct EnableProphuntGhostReceiveSystemComponent : IComponentData
 {}

@@ -15,11 +15,12 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
             "TestCharacterGhostSerializer",
             "SpinningCylinderGhostSerializer",
             "HorizontalSpinningCylinderGhostSerializer",
+            "ExampleMovingPlatformGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 4;
+    public int Length => 5;
 #endif
     public static int FindGhostType<T>()
         where T : struct, ISnapshotData<T>
@@ -32,6 +33,8 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
             return 2;
         if (typeof(T) == typeof(HorizontalSpinningCylinderSnapshotData))
             return 3;
+        if (typeof(T) == typeof(ExampleMovingPlatformSnapshotData))
+            return 4;
         return -1;
     }
 
@@ -41,6 +44,7 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
         m_TestCharacterGhostSerializer.BeginSerialize(system);
         m_SpinningCylinderGhostSerializer.BeginSerialize(system);
         m_HorizontalSpinningCylinderGhostSerializer.BeginSerialize(system);
+        m_ExampleMovingPlatformGhostSerializer.BeginSerialize(system);
     }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
@@ -55,6 +59,8 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
                 return m_SpinningCylinderGhostSerializer.CalculateImportance(chunk);
             case 3:
                 return m_HorizontalSpinningCylinderGhostSerializer.CalculateImportance(chunk);
+            case 4:
+                return m_ExampleMovingPlatformGhostSerializer.CalculateImportance(chunk);
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -72,6 +78,8 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
                 return m_SpinningCylinderGhostSerializer.SnapshotSize;
             case 3:
                 return m_HorizontalSpinningCylinderGhostSerializer.SnapshotSize;
+            case 4:
+                return m_ExampleMovingPlatformGhostSerializer.SnapshotSize;
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -97,6 +105,10 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
             {
                 return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<HorizontalSpinningCylinderGhostSerializer, HorizontalSpinningCylinderSnapshotData>(m_HorizontalSpinningCylinderGhostSerializer, ref dataStream, data);
             }
+            case 4:
+            {
+                return GhostSendSystem<ProphuntGhostSerializerCollection>.InvokeSerialize<ExampleMovingPlatformGhostSerializer, ExampleMovingPlatformSnapshotData>(m_ExampleMovingPlatformGhostSerializer, ref dataStream, data);
+            }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
@@ -105,6 +117,7 @@ public struct ProphuntGhostSerializerCollection : IGhostSerializerCollection
     private TestCharacterGhostSerializer m_TestCharacterGhostSerializer;
     private SpinningCylinderGhostSerializer m_SpinningCylinderGhostSerializer;
     private HorizontalSpinningCylinderGhostSerializer m_HorizontalSpinningCylinderGhostSerializer;
+    private ExampleMovingPlatformGhostSerializer m_ExampleMovingPlatformGhostSerializer;
 }
 
 public struct EnableProphuntGhostSendSystemComponent : IComponentData

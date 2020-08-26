@@ -162,9 +162,9 @@ MonoBehaviour:
   maxWalkAngle: 45
   groundCheckDistance: 0.01
   fallAnglePower: 1.2
-  moveAnglePower: 2
+  moveAnglePower: 5
   pushPower: 50
-  movemaxBounces: 5
+  moveMaxBounces: 5
   fallMaxBounces: 3
   pushDecay: 0
 --- !u!114 &2032777291050987007
@@ -192,7 +192,7 @@ MonoBehaviour:
     Value:
       x: -90
       y: 0
-      z: -90
+      z: 90
     RotationOrder: 4
   m_Capsule:
     Height: 2
