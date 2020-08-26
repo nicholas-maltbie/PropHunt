@@ -195,6 +195,8 @@ namespace PropHunt.Mixed.Systems
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded) => 
                 {
+                    // Seems to be running into a bug where the 
+                    // velocity between client and server are different, need to investigate further
                     bool validGroundVelocity = grounded.groundedRBIndex >= 0 && grounded.groundedRBIndex < physicsWorld.Bodies.Length;
                     if (validGroundVelocity && !grounded.Falling)
                     {
