@@ -9,6 +9,7 @@ using Unity.Transforms;
 
 public struct ExampleMovingPlatformGhostSerializer : IGhostSerializer<ExampleMovingPlatformSnapshotData>
 {
+    private ComponentType componentTypeMovementTracking;
     private ComponentType componentTypeMovingPlatform;
     private ComponentType componentTypeMovingPlatformTarget;
     private ComponentType componentTypePhysicsCollider;
@@ -41,6 +42,7 @@ public struct ExampleMovingPlatformGhostSerializer : IGhostSerializer<ExampleMov
     public int SnapshotSize => UnsafeUtility.SizeOf<ExampleMovingPlatformSnapshotData>();
     public void BeginSerialize(ComponentSystemBase system)
     {
+        componentTypeMovementTracking = ComponentType.ReadWrite<MovementTracking>();
         componentTypeMovingPlatform = ComponentType.ReadWrite<MovingPlatform>();
         componentTypeMovingPlatformTarget = ComponentType.ReadWrite<MovingPlatformTarget>();
         componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();

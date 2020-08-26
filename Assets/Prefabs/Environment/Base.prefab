@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5911232013872527037
+--- !u!1 &2785870034172475870
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,7 +8,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5911232013872527034}
+  - component: {fileID: 5586360675910551852}
+  m_Layer: 0
+  m_Name: Target (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5586360675910551852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785870034172475870}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5911232014463065064}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5764976842194343142
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8930912253877516307}
   m_Layer: 0
   m_Name: Target (0)
   m_TagString: Untagged
@@ -16,16 +46,16 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5911232013872527034
+--- !u!4 &8930912253877516307
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5911232013872527037}
+  m_GameObject: {fileID: 5764976842194343142}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 10, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5911232014463065064}
   m_RootOrder: 0
@@ -45,6 +75,7 @@ GameObject:
   - component: {fileID: 5911232014463065076}
   - component: {fileID: 5911232014463065077}
   - component: {fileID: 5911232014463065074}
+  - component: {fileID: 1514763822}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -59,12 +90,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5911232014463065067}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 21.92, y: 5.36, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 0.1, z: 2}
   m_Children:
-  - {fileID: 5911232013872527034}
-  - {fileID: 5911232015406833327}
+  - {fileID: 8930912253877516307}
+  - {fileID: 5586360675910551852}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -336,8 +367,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   positions:
-  - {fileID: 5911232013872527034}
-  - {fileID: 5911232015406833327}
+  - {fileID: 8930912253877516307}
+  - {fileID: 5586360675910551852}
   loopMethod: 0
   speed: 3
 --- !u!114 &5911232014463065074
@@ -360,7 +391,7 @@ MonoBehaviour:
   Importance: 1
   PredictingPlayerNetworkId: 
   Components:
-  - name: PropHunt.Mixed.Components.MovingPlatform
+  - name: PropHunt.Mixed.Components.MovementTracking
     interpolatedClient: 1
     predictedClient: 1
     server: 1
@@ -368,9 +399,17 @@ MonoBehaviour:
     fields: []
     manualFieldList: 0
     entityIndex: 0
+  - name: PropHunt.Mixed.Components.MovingPlatform
+    interpolatedClient: 0
+    predictedClient: 0
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
   - name: PropHunt.Mixed.Components.MovingPlatformTarget
-    interpolatedClient: 1
-    predictedClient: 1
+    interpolatedClient: 0
+    predictedClient: 0
     server: 1
     sendDataTo: 0
     fields: []
@@ -401,8 +440,8 @@ MonoBehaviour:
     manualFieldList: 0
     entityIndex: 0
   - name: Unity.Physics.PhysicsVelocity
-    interpolatedClient: 1
-    predictedClient: 1
+    interpolatedClient: 0
+    predictedClient: 0
     server: 1
     sendDataTo: 0
     fields: []
@@ -486,14 +525,6 @@ MonoBehaviour:
     fields: []
     manualFieldList: 0
     entityIndex: 1
-  - name: Unity.Transforms.NonUniformScale
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
   - name: Unity.Transforms.Parent
     interpolatedClient: 1
     predictedClient: 1
@@ -540,14 +571,6 @@ MonoBehaviour:
     fields: []
     manualFieldList: 0
     entityIndex: 2
-  - name: Unity.Transforms.NonUniformScale
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
   - name: Unity.Transforms.Parent
     interpolatedClient: 1
     predictedClient: 1
@@ -581,33 +604,15 @@ MonoBehaviour:
   prefabId: 563546384c88d2240844b477c3d3fac8
   Name: ExampleMovingPlatform
   doNotStrip: 0
---- !u!1 &5911232015406833326
-GameObject:
+--- !u!114 &1514763822
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5911232015406833327}
-  m_Layer: 0
-  m_Name: Target (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5911232015406833327
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5911232015406833326}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 10, z: 0.5}
-  m_Children: []
-  m_Father: {fileID: 5911232014463065064}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 5911232014463065067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71fdf970c6d40204d80b14eab66bff68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

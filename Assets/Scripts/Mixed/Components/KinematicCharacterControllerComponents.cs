@@ -150,6 +150,11 @@ namespace PropHunt.Mixed.Components
         /// Point on which the object is touching the ground
         /// </summary>
         public float3 groundedPoint;
+
+        /// <summary>
+        /// Entity hit
+        /// </summary>
+        public Entity hitEntity;
     }
 
     /// <summary>

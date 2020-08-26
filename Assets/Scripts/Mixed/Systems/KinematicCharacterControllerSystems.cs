@@ -67,6 +67,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
+                        grounded.hitEntity = hit.Entity;
                     }
                     else {
                         grounded.onGround = false;
@@ -74,6 +75,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.angle = -1;
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
+                        grounded.hitEntity = Entity.Null;
                     }
                 }
             ).ScheduleParallel();
@@ -190,17 +192,27 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = Time.DeltaTime;
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
+            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
+
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.WithBurst().ForEach((
+                int entityInQueryIndex,
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded) => 
                 {
+                    float3 groundVel = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
+
                     // Seems to be running into a bug where the 
                     // velocity between client and server are different, need to investigate further
-                    bool validGroundVelocity = grounded.groundedRBIndex >= 0 && grounded.groundedRBIndex < physicsWorld.Bodies.Length;
-                    if (validGroundVelocity && !grounded.Falling)
+                    UnityEngine.Debug.Log($"isServer: {isServer}, grounded: {grounded.Falling}, groundVel: {groundVel}, groundMoving: {this.HasComponent<MovementTracking>(grounded.hitEntity)}");
+
+                    if (this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
-                        velocity.worldVelocity = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
+                        velocity.worldVelocity = this.GetComponent<MovementTracking>(grounded.hitEntity).Displacement / deltaTime;
+                    }
+                    else if (grounded.onGround)
+                    {
+                        velocity.worldVelocity = float3.zero;
                     }
                 }
             ).ScheduleParallel();

@@ -495,6 +495,81 @@ Transform:
   m_Father: {fileID: 813477144}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!1001 &265949917
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 719056213}
+    m_Modifications:
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5911232014463065067, guid: 563546384c88d2240844b477c3d3fac8,
+        type: 3}
+      propertyPath: m_Name
+      value: Base
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 563546384c88d2240844b477c3d3fac8, type: 3}
+--- !u!4 &265949918 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
+    type: 3}
+  m_PrefabInstance: {fileID: 265949917}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &279584121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1513,7 +1588,7 @@ Transform:
   - {fileID: 279584122}
   - {fileID: 2048632733}
   - {fileID: 1962744475}
-  - {fileID: 1499955470}
+  - {fileID: 265949918}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3162,12 +3237,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1dbed581fc5070947b76765ee5f861a7, type: 3}
---- !u!4 &1499955470 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-    type: 3}
-  m_PrefabInstance: {fileID: 5911232015412976358}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1563708343
 GameObject:
   m_ObjectHideFlags: 0
@@ -4547,470 +4616,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1dbed581fc5070947b76765ee5f861a7, type: 3}
---- !u!1001 &5911232015412976358
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 719056213}
-    m_Modifications:
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 15.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 5.36
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -5.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065064, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065067, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_Name
-      value: Base
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.size
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].fields.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].fields.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].fields.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].fields.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[13].name
-      value: Unity.Transforms.LocalToParent
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[13].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[13].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[13].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[13].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[14].name
-      value: Unity.Transforms.LocalToWorld
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[14].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[14].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[14].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[14].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[15].name
-      value: Unity.Transforms.NonUniformScale
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[15].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[15].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[15].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[15].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[16].name
-      value: Unity.Transforms.Parent
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[16].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[16].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[16].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[16].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].name
-      value: Unity.Transforms.Rotation
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].fields.Array.data[0].name
-      value: Value
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].fields.Array.data[0].quantization
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].fields.Array.data[0].interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[17].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].name
-      value: Unity.Transforms.Translation
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].fields.Array.data[0].name
-      value: Value
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].fields.Array.data[0].quantization
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].fields.Array.data[0].interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[18].entityIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[19].name
-      value: Unity.Transforms.LocalToParent
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[19].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[19].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[19].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[19].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[20].name
-      value: Unity.Transforms.LocalToWorld
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[20].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[20].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[20].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[20].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[21].name
-      value: Unity.Transforms.NonUniformScale
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[21].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[21].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[21].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[21].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[22].name
-      value: Unity.Transforms.Parent
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[22].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[22].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[22].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[22].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].name
-      value: Unity.Transforms.Rotation
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].fields.Array.data[0].name
-      value: Value
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].fields.Array.data[0].quantization
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].fields.Array.data[0].interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[23].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].name
-      value: Unity.Transforms.Translation
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].predictedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].server
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].fields.Array.data[0].name
-      value: Value
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].fields.Array.data[0].quantization
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].fields.Array.data[0].interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[24].entityIndex
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: Components.Array.data[5].interpolatedClient
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5911232014463065078, guid: 563546384c88d2240844b477c3d3fac8,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 7c3f5e9b6bb388e47bdf0e0deef9d35f, type: 2}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 563546384c88d2240844b477c3d3fac8, type: 3}
 --- !u!1001 &6545281331079485700
 PrefabInstance:
   m_ObjectHideFlags: 0
