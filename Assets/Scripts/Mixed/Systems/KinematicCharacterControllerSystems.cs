@@ -195,7 +195,6 @@ namespace PropHunt.Mixed.Systems
 
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.WithBurst().ForEach((
-                int entityInQueryIndex,
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded) => 
                 {
