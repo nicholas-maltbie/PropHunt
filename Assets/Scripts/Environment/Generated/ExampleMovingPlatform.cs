@@ -5,6 +5,10 @@ using Unity.Mathematics;
 public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPlatformSnapshotData>
 {
     public uint tick;
+    private int MovingPlatformspeed;
+    private int MovingPlatformloopMethod;
+    private int MovingPlatformcurrent;
+    private int MovingPlatformdirection;
     private int RotationValueX;
     private int RotationValueY;
     private int RotationValueZ;
@@ -29,6 +33,70 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
     uint changeMask0;
 
     public uint Tick => tick;
+    public float GetMovingPlatformspeed(GhostDeserializerState deserializerState)
+    {
+        return MovingPlatformspeed * 0.01f;
+    }
+    public float GetMovingPlatformspeed()
+    {
+        return MovingPlatformspeed * 0.01f;
+    }
+    public void SetMovingPlatformspeed(float val, GhostSerializerState serializerState)
+    {
+        MovingPlatformspeed = (int)(val * 100);
+    }
+    public void SetMovingPlatformspeed(float val)
+    {
+        MovingPlatformspeed = (int)(val * 100);
+    }
+    public PropHunt.Mixed.Components.PlatformLooping GetMovingPlatformloopMethod(GhostDeserializerState deserializerState)
+    {
+        return (PropHunt.Mixed.Components.PlatformLooping)MovingPlatformloopMethod;
+    }
+    public PropHunt.Mixed.Components.PlatformLooping GetMovingPlatformloopMethod()
+    {
+        return (PropHunt.Mixed.Components.PlatformLooping)MovingPlatformloopMethod;
+    }
+    public void SetMovingPlatformloopMethod(PropHunt.Mixed.Components.PlatformLooping val, GhostSerializerState serializerState)
+    {
+        MovingPlatformloopMethod = (int)val;
+    }
+    public void SetMovingPlatformloopMethod(PropHunt.Mixed.Components.PlatformLooping val)
+    {
+        MovingPlatformloopMethod = (int)val;
+    }
+    public int GetMovingPlatformcurrent(GhostDeserializerState deserializerState)
+    {
+        return (int)MovingPlatformcurrent;
+    }
+    public int GetMovingPlatformcurrent()
+    {
+        return (int)MovingPlatformcurrent;
+    }
+    public void SetMovingPlatformcurrent(int val, GhostSerializerState serializerState)
+    {
+        MovingPlatformcurrent = (int)val;
+    }
+    public void SetMovingPlatformcurrent(int val)
+    {
+        MovingPlatformcurrent = (int)val;
+    }
+    public int GetMovingPlatformdirection(GhostDeserializerState deserializerState)
+    {
+        return (int)MovingPlatformdirection;
+    }
+    public int GetMovingPlatformdirection()
+    {
+        return (int)MovingPlatformdirection;
+    }
+    public void SetMovingPlatformdirection(int val, GhostSerializerState serializerState)
+    {
+        MovingPlatformdirection = (int)val;
+    }
+    public void SetMovingPlatformdirection(int val)
+    {
+        MovingPlatformdirection = (int)val;
+    }
     public quaternion GetRotationValue(GhostDeserializerState deserializerState)
     {
         return GetRotationValue();
@@ -144,6 +212,10 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
     public void PredictDelta(uint tick, ref ExampleMovingPlatformSnapshotData baseline1, ref ExampleMovingPlatformSnapshotData baseline2)
     {
         var predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
+        MovingPlatformspeed = predictor.PredictInt(MovingPlatformspeed, baseline1.MovingPlatformspeed, baseline2.MovingPlatformspeed);
+        MovingPlatformloopMethod = predictor.PredictInt(MovingPlatformloopMethod, baseline1.MovingPlatformloopMethod, baseline2.MovingPlatformloopMethod);
+        MovingPlatformcurrent = predictor.PredictInt(MovingPlatformcurrent, baseline1.MovingPlatformcurrent, baseline2.MovingPlatformcurrent);
+        MovingPlatformdirection = predictor.PredictInt(MovingPlatformdirection, baseline1.MovingPlatformdirection, baseline2.MovingPlatformdirection);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
         RotationValueY = predictor.PredictInt(RotationValueY, baseline1.RotationValueY, baseline2.RotationValueY);
         RotationValueZ = predictor.PredictInt(RotationValueZ, baseline1.RotationValueZ, baseline2.RotationValueZ);
@@ -169,62 +241,74 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
 
     public void Serialize(int networkId, ref ExampleMovingPlatformSnapshotData baseline, ref DataStreamWriter writer, NetworkCompressionModel compressionModel)
     {
-        changeMask0 = (RotationValueX != baseline.RotationValueX ||
-                                          RotationValueY != baseline.RotationValueY ||
-                                          RotationValueZ != baseline.RotationValueZ ||
-                                          RotationValueW != baseline.RotationValueW) ? 1u : 0;
+        changeMask0 = (MovingPlatformspeed != baseline.MovingPlatformspeed) ? 1u : 0;
+        changeMask0 |= (MovingPlatformloopMethod != baseline.MovingPlatformloopMethod) ? (1u<<1) : 0;
+        changeMask0 |= (MovingPlatformcurrent != baseline.MovingPlatformcurrent) ? (1u<<2) : 0;
+        changeMask0 |= (MovingPlatformdirection != baseline.MovingPlatformdirection) ? (1u<<3) : 0;
+        changeMask0 |= (RotationValueX != baseline.RotationValueX ||
+                                           RotationValueY != baseline.RotationValueY ||
+                                           RotationValueZ != baseline.RotationValueZ ||
+                                           RotationValueW != baseline.RotationValueW) ? (1u<<4) : 0;
         changeMask0 |= (TranslationValueX != baseline.TranslationValueX ||
                                            TranslationValueY != baseline.TranslationValueY ||
-                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<1) : 0;
+                                           TranslationValueZ != baseline.TranslationValueZ) ? (1u<<5) : 0;
         changeMask0 |= (Child0RotationValueX != baseline.Child0RotationValueX ||
                                            Child0RotationValueY != baseline.Child0RotationValueY ||
                                            Child0RotationValueZ != baseline.Child0RotationValueZ ||
-                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<2) : 0;
+                                           Child0RotationValueW != baseline.Child0RotationValueW) ? (1u<<6) : 0;
         changeMask0 |= (Child0TranslationValueX != baseline.Child0TranslationValueX ||
                                            Child0TranslationValueY != baseline.Child0TranslationValueY ||
-                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<3) : 0;
+                                           Child0TranslationValueZ != baseline.Child0TranslationValueZ) ? (1u<<7) : 0;
         changeMask0 |= (Child1RotationValueX != baseline.Child1RotationValueX ||
                                            Child1RotationValueY != baseline.Child1RotationValueY ||
                                            Child1RotationValueZ != baseline.Child1RotationValueZ ||
-                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<4) : 0;
+                                           Child1RotationValueW != baseline.Child1RotationValueW) ? (1u<<8) : 0;
         changeMask0 |= (Child1TranslationValueX != baseline.Child1TranslationValueX ||
                                            Child1TranslationValueY != baseline.Child1TranslationValueY ||
-                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<5) : 0;
+                                           Child1TranslationValueZ != baseline.Child1TranslationValueZ) ? (1u<<9) : 0;
         writer.WritePackedUIntDelta(changeMask0, baseline.changeMask0, compressionModel);
         if ((changeMask0 & (1 << 0)) != 0)
+            writer.WritePackedIntDelta(MovingPlatformspeed, baseline.MovingPlatformspeed, compressionModel);
+        if ((changeMask0 & (1 << 1)) != 0)
+            writer.WritePackedIntDelta(MovingPlatformloopMethod, baseline.MovingPlatformloopMethod, compressionModel);
+        if ((changeMask0 & (1 << 2)) != 0)
+            writer.WritePackedIntDelta(MovingPlatformcurrent, baseline.MovingPlatformcurrent, compressionModel);
+        if ((changeMask0 & (1 << 3)) != 0)
+            writer.WritePackedIntDelta(MovingPlatformdirection, baseline.MovingPlatformdirection, compressionModel);
+        if ((changeMask0 & (1 << 4)) != 0)
         {
             writer.WritePackedIntDelta(RotationValueX, baseline.RotationValueX, compressionModel);
             writer.WritePackedIntDelta(RotationValueY, baseline.RotationValueY, compressionModel);
             writer.WritePackedIntDelta(RotationValueZ, baseline.RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(RotationValueW, baseline.RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 1)) != 0)
+        if ((changeMask0 & (1 << 5)) != 0)
         {
             writer.WritePackedIntDelta(TranslationValueX, baseline.TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(TranslationValueY, baseline.TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(TranslationValueZ, baseline.TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 2)) != 0)
+        if ((changeMask0 & (1 << 6)) != 0)
         {
             writer.WritePackedIntDelta(Child0RotationValueX, baseline.Child0RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueY, baseline.Child0RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueZ, baseline.Child0RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child0RotationValueW, baseline.Child0RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 3)) != 0)
+        if ((changeMask0 & (1 << 7)) != 0)
         {
             writer.WritePackedIntDelta(Child0TranslationValueX, baseline.Child0TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueY, baseline.Child0TranslationValueY, compressionModel);
             writer.WritePackedIntDelta(Child0TranslationValueZ, baseline.Child0TranslationValueZ, compressionModel);
         }
-        if ((changeMask0 & (1 << 4)) != 0)
+        if ((changeMask0 & (1 << 8)) != 0)
         {
             writer.WritePackedIntDelta(Child1RotationValueX, baseline.Child1RotationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueY, baseline.Child1RotationValueY, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueZ, baseline.Child1RotationValueZ, compressionModel);
             writer.WritePackedIntDelta(Child1RotationValueW, baseline.Child1RotationValueW, compressionModel);
         }
-        if ((changeMask0 & (1 << 5)) != 0)
+        if ((changeMask0 & (1 << 9)) != 0)
         {
             writer.WritePackedIntDelta(Child1TranslationValueX, baseline.Child1TranslationValueX, compressionModel);
             writer.WritePackedIntDelta(Child1TranslationValueY, baseline.Child1TranslationValueY, compressionModel);
@@ -238,6 +322,22 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
         this.tick = tick;
         changeMask0 = reader.ReadPackedUIntDelta(baseline.changeMask0, compressionModel);
         if ((changeMask0 & (1 << 0)) != 0)
+            MovingPlatformspeed = reader.ReadPackedIntDelta(baseline.MovingPlatformspeed, compressionModel);
+        else
+            MovingPlatformspeed = baseline.MovingPlatformspeed;
+        if ((changeMask0 & (1 << 1)) != 0)
+            MovingPlatformloopMethod = reader.ReadPackedIntDelta(baseline.MovingPlatformloopMethod, compressionModel);
+        else
+            MovingPlatformloopMethod = baseline.MovingPlatformloopMethod;
+        if ((changeMask0 & (1 << 2)) != 0)
+            MovingPlatformcurrent = reader.ReadPackedIntDelta(baseline.MovingPlatformcurrent, compressionModel);
+        else
+            MovingPlatformcurrent = baseline.MovingPlatformcurrent;
+        if ((changeMask0 & (1 << 3)) != 0)
+            MovingPlatformdirection = reader.ReadPackedIntDelta(baseline.MovingPlatformdirection, compressionModel);
+        else
+            MovingPlatformdirection = baseline.MovingPlatformdirection;
+        if ((changeMask0 & (1 << 4)) != 0)
         {
             RotationValueX = reader.ReadPackedIntDelta(baseline.RotationValueX, compressionModel);
             RotationValueY = reader.ReadPackedIntDelta(baseline.RotationValueY, compressionModel);
@@ -251,7 +351,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
             RotationValueZ = baseline.RotationValueZ;
             RotationValueW = baseline.RotationValueW;
         }
-        if ((changeMask0 & (1 << 1)) != 0)
+        if ((changeMask0 & (1 << 5)) != 0)
         {
             TranslationValueX = reader.ReadPackedIntDelta(baseline.TranslationValueX, compressionModel);
             TranslationValueY = reader.ReadPackedIntDelta(baseline.TranslationValueY, compressionModel);
@@ -263,7 +363,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
             TranslationValueY = baseline.TranslationValueY;
             TranslationValueZ = baseline.TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 2)) != 0)
+        if ((changeMask0 & (1 << 6)) != 0)
         {
             Child0RotationValueX = reader.ReadPackedIntDelta(baseline.Child0RotationValueX, compressionModel);
             Child0RotationValueY = reader.ReadPackedIntDelta(baseline.Child0RotationValueY, compressionModel);
@@ -277,7 +377,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
             Child0RotationValueZ = baseline.Child0RotationValueZ;
             Child0RotationValueW = baseline.Child0RotationValueW;
         }
-        if ((changeMask0 & (1 << 3)) != 0)
+        if ((changeMask0 & (1 << 7)) != 0)
         {
             Child0TranslationValueX = reader.ReadPackedIntDelta(baseline.Child0TranslationValueX, compressionModel);
             Child0TranslationValueY = reader.ReadPackedIntDelta(baseline.Child0TranslationValueY, compressionModel);
@@ -289,7 +389,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
             Child0TranslationValueY = baseline.Child0TranslationValueY;
             Child0TranslationValueZ = baseline.Child0TranslationValueZ;
         }
-        if ((changeMask0 & (1 << 4)) != 0)
+        if ((changeMask0 & (1 << 8)) != 0)
         {
             Child1RotationValueX = reader.ReadPackedIntDelta(baseline.Child1RotationValueX, compressionModel);
             Child1RotationValueY = reader.ReadPackedIntDelta(baseline.Child1RotationValueY, compressionModel);
@@ -303,7 +403,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
             Child1RotationValueZ = baseline.Child1RotationValueZ;
             Child1RotationValueW = baseline.Child1RotationValueW;
         }
-        if ((changeMask0 & (1 << 5)) != 0)
+        if ((changeMask0 & (1 << 9)) != 0)
         {
             Child1TranslationValueX = reader.ReadPackedIntDelta(baseline.Child1TranslationValueX, compressionModel);
             Child1TranslationValueY = reader.ReadPackedIntDelta(baseline.Child1TranslationValueY, compressionModel);
@@ -318,6 +418,7 @@ public struct ExampleMovingPlatformSnapshotData : ISnapshotData<ExampleMovingPla
     }
     public void Interpolate(ref ExampleMovingPlatformSnapshotData target, float factor)
     {
+        SetMovingPlatformspeed(math.lerp(GetMovingPlatformspeed(), target.GetMovingPlatformspeed(), factor));
         SetRotationValue(math.slerp(GetRotationValue(), target.GetRotationValue(), factor));
         SetTranslationValue(math.lerp(GetTranslationValue(), target.GetTranslationValue(), factor));
         SetChild0RotationValue(math.slerp(GetChild0RotationValue(), target.GetChild0RotationValue(), factor));

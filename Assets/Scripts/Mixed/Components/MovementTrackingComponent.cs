@@ -8,6 +8,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Component to track an object's displacement and rotation during a frame
     /// </summary>
+    [GenerateAuthoringComponent]
     public struct MovementTracking : IComponentData
     {
         /// <summary>

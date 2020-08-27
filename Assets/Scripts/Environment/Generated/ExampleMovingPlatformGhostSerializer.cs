@@ -25,6 +25,7 @@ public struct ExampleMovingPlatformGhostSerializer : IGhostSerializer<ExampleMov
     private ComponentType componentTypeTranslation;
     private ComponentType componentTypeLinkedEntityGroup;
     // FIXME: These disable safety since all serializers have an instance of the same type - causing aliasing. Should be fixed in a cleaner way
+    [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<MovingPlatform> ghostMovingPlatformType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Rotation> ghostRotationType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkComponentType<Translation> ghostTranslationType;
     [NativeDisableContainerSafetyRestriction][ReadOnly] private ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
@@ -57,6 +58,7 @@ public struct ExampleMovingPlatformGhostSerializer : IGhostSerializer<ExampleMov
         componentTypeRotation = ComponentType.ReadWrite<Rotation>();
         componentTypeTranslation = ComponentType.ReadWrite<Translation>();
         componentTypeLinkedEntityGroup = ComponentType.ReadWrite<LinkedEntityGroup>();
+        ghostMovingPlatformType = system.GetArchetypeChunkComponentType<MovingPlatform>(true);
         ghostRotationType = system.GetArchetypeChunkComponentType<Rotation>(true);
         ghostTranslationType = system.GetArchetypeChunkComponentType<Translation>(true);
         ghostLinkedEntityGroupType = system.GetArchetypeChunkBufferType<LinkedEntityGroup>(true);
@@ -69,9 +71,14 @@ public struct ExampleMovingPlatformGhostSerializer : IGhostSerializer<ExampleMov
     public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick, ref ExampleMovingPlatformSnapshotData snapshot, GhostSerializerState serializerState)
     {
         snapshot.tick = tick;
+        var chunkDataMovingPlatform = chunk.GetNativeArray(ghostMovingPlatformType);
         var chunkDataRotation = chunk.GetNativeArray(ghostRotationType);
         var chunkDataTranslation = chunk.GetNativeArray(ghostTranslationType);
         var chunkDataLinkedEntityGroup = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
+        snapshot.SetMovingPlatformspeed(chunkDataMovingPlatform[ent].speed, serializerState);
+        snapshot.SetMovingPlatformloopMethod(chunkDataMovingPlatform[ent].loopMethod, serializerState);
+        snapshot.SetMovingPlatformcurrent(chunkDataMovingPlatform[ent].current, serializerState);
+        snapshot.SetMovingPlatformdirection(chunkDataMovingPlatform[ent].direction, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);
         snapshot.SetTranslationValue(chunkDataTranslation[ent].Value, serializerState);
         snapshot.SetChild0RotationValue(ghostChild0RotationType[chunkDataLinkedEntityGroup[ent][1].Value].Value, serializerState);

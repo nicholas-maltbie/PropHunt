@@ -6,6 +6,7 @@ using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Networking.Transport.Utilities;
 using Unity.NetCode;
 using Unity.Entities;
+using PropHunt.Mixed.Components;
 using Unity.Transforms;
 
 [UpdateInGroup(typeof(GhostUpdateSystemGroup))]
@@ -24,6 +25,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
 #endif
         [ReadOnly] public ArchetypeChunkBufferType<ExampleMovingPlatformSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
+        public ArchetypeChunkComponentType<MovingPlatform> ghostMovingPlatformType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
@@ -38,6 +40,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
             };
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
+            var ghostMovingPlatformArray = chunk.GetNativeArray(ghostMovingPlatformType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
@@ -60,12 +63,17 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 if (!snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData))
                     return;
 
+                var ghostMovingPlatform = ghostMovingPlatformArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
+                ghostMovingPlatform.speed = snapshotData.GetMovingPlatformspeed(deserializerState);
+                ghostMovingPlatform.loopMethod = snapshotData.GetMovingPlatformloopMethod(deserializerState);
+                ghostMovingPlatform.current = snapshotData.GetMovingPlatformcurrent(deserializerState);
+                ghostMovingPlatform.direction = snapshotData.GetMovingPlatformdirection(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -78,6 +86,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
+                ghostMovingPlatformArray[entityIndex] = ghostMovingPlatform;
             }
         }
     }
@@ -96,6 +105,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkBufferType<ExampleMovingPlatformSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
+        public ArchetypeChunkComponentType<MovingPlatform> ghostMovingPlatformType;
         [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
         [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
@@ -110,6 +120,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
+            var ghostMovingPlatformArray = chunk.GetNativeArray(ghostMovingPlatformType);
             var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
@@ -142,12 +153,17 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 if (lastPredictedTickInst != snapshotData.Tick)
                     continue;
 
+                var ghostMovingPlatform = ghostMovingPlatformArray[entityIndex];
                 var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
                 var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 var ghostChild1Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
                 var ghostChild1Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value];
+                ghostMovingPlatform.speed = snapshotData.GetMovingPlatformspeed(deserializerState);
+                ghostMovingPlatform.loopMethod = snapshotData.GetMovingPlatformloopMethod(deserializerState);
+                ghostMovingPlatform.current = snapshotData.GetMovingPlatformcurrent(deserializerState);
+                ghostMovingPlatform.direction = snapshotData.GetMovingPlatformdirection(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
                 ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
@@ -160,6 +176,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Rotation;
                 ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][2].Value] = ghostChild1Translation;
+                ghostMovingPlatformArray[entityIndex] = ghostMovingPlatform;
             }
         }
     }
@@ -179,6 +196,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
             All = new []{
                 ComponentType.ReadWrite<ExampleMovingPlatformSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
+                ComponentType.ReadWrite<MovingPlatform>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             },
             None = new []{ComponentType.ReadWrite<PredictedGhostComponent>()}
@@ -189,6 +207,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<ExampleMovingPlatformSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
+                ComponentType.ReadWrite<MovingPlatform>(),
                 ComponentType.ReadOnly<LinkedEntityGroup>(),
             }
         });
@@ -213,6 +232,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<ExampleMovingPlatformSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
+                ghostMovingPlatformType = GetArchetypeChunkComponentType<MovingPlatform>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
                 ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),
@@ -236,6 +256,7 @@ public class ExampleMovingPlatformGhostUpdateSystem : JobComponentSystem
 #endif
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<ExampleMovingPlatformSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
+                ghostMovingPlatformType = GetArchetypeChunkComponentType<MovingPlatform>(),
                 ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
                 ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
                 ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),

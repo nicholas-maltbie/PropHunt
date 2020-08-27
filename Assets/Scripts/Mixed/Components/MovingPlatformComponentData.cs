@@ -1,6 +1,7 @@
 
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components
 {
@@ -34,22 +35,26 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Speed at which this platform moves between targets
         /// </summary>
+        [GhostDefaultField(100, true)]
         public float speed;
 
         /// <summary>
         /// Method of looping when target list is exhausted
         /// </summary>
+        [GhostDefaultField]
         public PlatformLooping loopMethod;
 
         /// <summary>
         /// Current platform this is moving toward
         /// </summary>
+        [GhostDefaultField]
         public int current;
 
         /// <summary>
         /// Direction of next platform being selected. This
         /// is decided by loop method when the list ends
         /// </summary>
+        [GhostDefaultField]
         public int direction;
     }
 }

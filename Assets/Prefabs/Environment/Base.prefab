@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 5911232014463065076}
   - component: {fileID: 5911232014463065077}
   - component: {fileID: 5911232014463065074}
-  - component: {fileID: 1514763822}
+  - component: {fileID: 7089896821153077156}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -400,16 +400,28 @@ MonoBehaviour:
     manualFieldList: 0
     entityIndex: 0
   - name: PropHunt.Mixed.Components.MovingPlatform
-    interpolatedClient: 0
-    predictedClient: 0
+    interpolatedClient: 1
+    predictedClient: 1
     server: 1
     sendDataTo: 0
-    fields: []
+    fields:
+    - name: speed
+      quantization: 100
+      interpolate: 1
+    - name: loopMethod
+      quantization: -1
+      interpolate: 0
+    - name: current
+      quantization: -1
+      interpolate: 0
+    - name: direction
+      quantization: -1
+      interpolate: 0
     manualFieldList: 0
     entityIndex: 0
   - name: PropHunt.Mixed.Components.MovingPlatformTarget
-    interpolatedClient: 0
-    predictedClient: 0
+    interpolatedClient: 1
+    predictedClient: 1
     server: 1
     sendDataTo: 0
     fields: []
@@ -604,7 +616,7 @@ MonoBehaviour:
   prefabId: 563546384c88d2240844b477c3d3fac8
   Name: ExampleMovingPlatform
   doNotStrip: 0
---- !u!114 &1514763822
+--- !u!114 &7089896821153077156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -613,6 +625,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5911232014463065067}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71fdf970c6d40204d80b14eab66bff68, type: 3}
+  m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
