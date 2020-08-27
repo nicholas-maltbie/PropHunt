@@ -5,7 +5,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
-using Unity.Physics.Extensions;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 
@@ -191,7 +190,6 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
-            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.WithBurst().ForEach((
@@ -204,8 +202,6 @@ namespace PropHunt.Mixed.Systems
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
                         velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint) / deltaTime;
-
-                        float3 groundVel = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
                     }
                     else if (!grounded.Falling)
                     {
@@ -228,7 +224,6 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
-            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
             Entities.ForEach((
                 ref KCCVelocity velocity,
@@ -239,10 +234,12 @@ namespace PropHunt.Mixed.Systems
                     // gravity's acceleration
                     if (grounded.Falling)
                     {
-                        // have world velocity decrease due to air resistance
+                        // have world velocity decrease due to air resistance (future feature)
+
+                        // fall due to gravity
                         velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                     }
-                    // Have hit the ground
+                    // else: Have hit the ground, don't accelerate due to gravity
                 }
             ).ScheduleParallel();
         }

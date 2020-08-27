@@ -21,7 +21,7 @@ namespace PropHunt.Mixed.Systems
                 in Rotation rotation) =>
                 {
                     MovementTracking.UpdateState(ref movementTracking, translation.Value, rotation.Value);
-                }).Schedule();
+                }).ScheduleParallel();
         }
     }
 }
