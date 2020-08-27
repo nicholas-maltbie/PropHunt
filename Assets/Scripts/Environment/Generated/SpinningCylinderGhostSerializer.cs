@@ -2,12 +2,14 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Collections;
 using Unity.NetCode;
+using PropHunt.Mixed.Components;
 using Unity.Physics;
 using Unity.Rendering;
 using Unity.Transforms;
 
 public struct SpinningCylinderGhostSerializer : IGhostSerializer<SpinningCylinderSnapshotData>
 {
+    private ComponentType componentTypeMovementTracking;
     private ComponentType componentTypePhysicsCollider;
     private ComponentType componentTypePhysicsGravityFactor;
     private ComponentType componentTypePhysicsMass;
@@ -32,6 +34,7 @@ public struct SpinningCylinderGhostSerializer : IGhostSerializer<SpinningCylinde
     public int SnapshotSize => UnsafeUtility.SizeOf<SpinningCylinderSnapshotData>();
     public void BeginSerialize(ComponentSystemBase system)
     {
+        componentTypeMovementTracking = ComponentType.ReadWrite<MovementTracking>();
         componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
         componentTypePhysicsGravityFactor = ComponentType.ReadWrite<PhysicsGravityFactor>();
         componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();

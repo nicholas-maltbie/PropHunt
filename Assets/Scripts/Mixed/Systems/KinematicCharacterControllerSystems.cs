@@ -16,6 +16,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     [UpdateAfter(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(MovementTrackingSystemTrack))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup {}
 
@@ -200,17 +201,16 @@ namespace PropHunt.Mixed.Systems
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded) => 
                 {
-                    float3 groundVel = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
-
-                    // Seems to be running into a bug where the 
-                    // velocity between client and server are different, need to investigate further
-                    UnityEngine.Debug.Log($"isServer: {isServer}, grounded: {grounded.Falling}, groundVel: {groundVel}, groundMoving: {this.HasComponent<MovementTracking>(grounded.hitEntity)}");
-
-                    if (this.HasComponent<MovementTracking>(grounded.hitEntity))
+                    // Bit jittery but this could probably be fixed by smoothing the movement a bit
+                    // to handle server lag and difference between positions
+                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
-                        velocity.worldVelocity = this.GetComponent<MovementTracking>(grounded.hitEntity).Displacement / deltaTime;
+                        MovementTracking change = this.GetComponent<MovementTracking>(grounded.hitEntity);
+                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(change, grounded.groundedPoint) / deltaTime;
+
+                        float3 groundVel = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
                     }
-                    else if (grounded.onGround)
+                    else if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
                     }

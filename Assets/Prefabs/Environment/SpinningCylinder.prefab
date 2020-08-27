@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5902303242071951098}
   - component: {fileID: 5902303242071951103}
   - component: {fileID: 5902303242071951102}
+  - component: {fileID: 2939923142992969230}
   m_Layer: 0
   m_Name: SpinningCylinder
   m_TagString: Untagged
@@ -310,6 +311,14 @@ MonoBehaviour:
   Importance: 1
   PredictingPlayerNetworkId: 
   Components:
+  - name: PropHunt.Mixed.Components.MovementTracking
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
   - name: Unity.Physics.PhysicsCollider
     interpolatedClient: 1
     predictedClient: 1
@@ -407,3 +416,15 @@ MonoBehaviour:
   prefabId: 500369948f8b01346b0c4e2c343e2fe7
   Name: SpinningCylinder
   doNotStrip: 0
+--- !u!114 &2939923142992969230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5902303242071951096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71fdf970c6d40204d80b14eab66bff68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
