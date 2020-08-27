@@ -193,8 +193,6 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = Time.DeltaTime;
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
-
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.WithBurst().ForEach((
                 int entityInQueryIndex,
@@ -205,8 +203,8 @@ namespace PropHunt.Mixed.Systems
                     // to handle server lag and difference between positions
                     if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
-                        MovementTracking change = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(change, grounded.groundedPoint) / deltaTime;
+                        MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
+                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint) / deltaTime;
 
                         float3 groundVel = physicsWorld.GetLinearVelocity(grounded.groundedRBIndex, grounded.groundedPoint);
                     }
