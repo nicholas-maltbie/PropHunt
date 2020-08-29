@@ -76,3 +76,6 @@ crashlytics-build.properties
 
 # Temporary asset list for building
 .lfs-assets-id
+
+# Ignore Code Coverage Results
+CodeCoverage
