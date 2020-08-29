@@ -27,16 +27,12 @@ namespace PropHunt.Client.Systems
         {
             int localPlayerId = GetSingleton<NetworkIdComponent>().Value;
 
-            Debug.Log("helloworld");
-
             float3 position = Camera.main.transform.position;
             quaternion rotation = Camera.main.transform.rotation;
             Entities.
                 ForEach(
                     (ref Translation transform, ref Rotation rot, ref PlayerId player, ref PlayerView view) =>
                     {
-                        Debug.Log($"{player.playerId}, {localPlayerId}");
-                        Debug.Log($"trans {transform.Value}, rot {rot.Value}");
                         if (player.playerId == localPlayerId) {
                             position.x = transform.Value.x;
                             position.y = transform.Value.y;
