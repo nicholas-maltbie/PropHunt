@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using Moq;
 using Moq.Protected;
 using NUnit.Framework;
 using PropHunt.Client.Systems;
@@ -93,12 +94,20 @@ namespace PropHunt.Tests.Client
         /// <param name="networkId">Player id to give the created NetworkIDComponent</param>
         private void CreateNetworkSingletons(int networkId)
         {
+            var system = World.GetExistingSystem<CameraFollowSystem>();
+
             // Setup singleton data
-            var networkIDEntity = World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
-            World.EntityManager.CreateEntity(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>());
+            if (!system.HasSingleton<NetworkIdComponent>())
+            {
+                World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
+            }
+            if (!system.HasSingleton<EnableProphuntGhostReceiveSystemComponent>())
+            {
+                World.EntityManager.CreateEntity(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>());
+            }
+            var networkIDEntity = system.GetSingleton<NetworkIdComponent>(); 
 
             // Set singleton data
-            var system = World.GetExistingSystem<CameraFollowSystem>();
             system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent {Value = networkId});
             system.SetSingleton<EnableProphuntGhostReceiveSystemComponent>(new EnableProphuntGhostReceiveSystemComponent());
         }
@@ -152,15 +161,15 @@ namespace PropHunt.Tests.Client
             this.cameraFollow = World.AddSystem<CameraFollowSystem>(cameraFollowMock.Object);
             cameraFollowMock.Protected().Setup("OnUpdate");
 
-            // Create target entity
-            var cameraTarget = this.CreateTargetEntity();
-            int playerId = 1;
-
-            // Move starting entity
-            Vector3 targetPos = new float3(CameraFollowSystemTests.StartingPosition) + new float3(1, 1, 1);
-            m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
-            m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
-            this.CreateNetworkSingletons(playerId);
+            // Destroy the netwok singletons
+            if (this.cameraFollow.HasSingleton<NetworkIdComponent>())
+            {
+                World.EntityManager.DestroyEntity(World.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<NetworkIdComponent>()));
+            }
+            if (this.cameraFollow.HasSingleton<EnableProphuntGhostReceiveSystemComponent>())
+            {
+                World.EntityManager.DestroyEntity(World.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>()));
+            }
 
             // Ensure that camera doesn't move without required singletons
             this.cameraFollow.Update();
