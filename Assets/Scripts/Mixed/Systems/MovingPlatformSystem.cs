@@ -15,7 +15,7 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 ref PhysicsVelocity pv,
                 ref MovingPlatform movingPlatform,
                 in Translation translation,

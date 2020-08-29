@@ -192,7 +192,7 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = Time.DeltaTime;
 
             // Only applies to grounded KCC characters with a KCC velocity.
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded) => 
                 {
