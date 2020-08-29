@@ -1,21 +1,23 @@
 {
     "name": "EditModeTests",
     "references": [
+        "Unity.Entities",
+        "Unity.Entities.Tests",
+        "Unity.Entities.Editor.Tests",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Unity.Entities",
-        "PropHunt"
+        "PropHunt.Tests.Utils"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll"
     ],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],

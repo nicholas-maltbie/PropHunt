@@ -1,0 +1,21 @@
+{
+    "name": "PropHunt.Tests.Utils",
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Tests",
+        "Unity.Entities.Editor.Tests",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
