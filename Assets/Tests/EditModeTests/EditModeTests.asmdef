@@ -6,7 +6,11 @@
         "Unity.Entities.Editor.Tests",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "PropHunt.Tests.Utils"
+        "PropHunt.Tests.Utils",
+        "PropHunt",
+        "Unity.Transforms",
+        "Unity.Mathematics",
+        "Unity.NetCode"
     ],
     "includePlatforms": [
         "Editor"
