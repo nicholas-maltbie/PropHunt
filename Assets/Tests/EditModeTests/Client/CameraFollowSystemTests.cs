@@ -75,16 +75,10 @@ namespace PropHunt.Tests.Client
         /// <param name="rotation">rotation of the camera, if null will skip</param>
         private void AssertCameraTransform(Vector3 position, Quaternion rotation)
         {
-            if (position != null)
-            {
-                Assert.IsTrue(position == this.camera.transform.position,
-                    $"Expected translation {position} but found translation {this.camera.transform.position}");
-            }
-            if (rotation != null)
-            {
-                Assert.IsTrue(rotation == this.camera.transform.rotation,
-                    $"Expected rotation {rotation} but found rotation {this.camera.transform.rotation}");
-            }
+            Assert.IsTrue(position == this.camera.transform.position,
+                $"Expected translation {position} but found translation {this.camera.transform.position}");
+            Assert.IsTrue(rotation == this.camera.transform.rotation,
+                $"Expected rotation {rotation} but found rotation {this.camera.transform.rotation}");
         }
 
         /// <summary>
