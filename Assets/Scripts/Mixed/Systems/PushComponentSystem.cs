@@ -38,7 +38,7 @@ namespace PropHunt.Mixed.Systems
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 Entity entity, 
                 int entityInQueryIndex,
                 in DynamicBuffer<PushForce> pushForce) =>
@@ -67,7 +67,7 @@ namespace PropHunt.Mixed.Systems
 
             if (isServer)
             {
-                Entities.WithBurst().ForEach((
+                Entities.ForEach((
                     ref PhysicsVelocity physicsVelocity,
                     in PhysicsMass physicsMass,
                     in Translation translation,

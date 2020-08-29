@@ -18,7 +18,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    public class PlayerRotationSystem : ComponentSystem
+    public class PlayerRotationSystem : SystemBase
     {
         protected override void OnUpdate()
         {
@@ -28,9 +28,9 @@ namespace PropHunt.Mixed.Systems
             
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
-                ref PredictedGhostComponent prediction,
                 ref PlayerView view,
-                ref Rotation rot) =>
+                ref Rotation rot,
+                in PredictedGhostComponent prediction) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
@@ -53,7 +53,7 @@ namespace PropHunt.Mixed.Systems
                 }
 
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
-            });
+            }).ScheduleParallel();
         }
 
     }
