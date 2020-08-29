@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using Moq.Protected;
+using NUnit.Framework;
 using PropHunt.Client.Systems;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
@@ -74,11 +76,13 @@ namespace PropHunt.Tests.Client
         {
             if (position != null)
             {
-                Assert.IsTrue(position == this.camera.transform.position);
+                Assert.IsTrue(position == this.camera.transform.position,
+                    $"Expected translation {position} but found translation {this.camera.transform.position}");
             }
             if (rotation != null)
             {
-                Assert.IsTrue(rotation == this.camera.transform.rotation);
+                Assert.IsTrue(rotation == this.camera.transform.rotation,
+                    $"Expected rotation {rotation} but found rotation {this.camera.transform.rotation}");
             }
         }
 
@@ -143,26 +147,11 @@ namespace PropHunt.Tests.Client
         [Test]
         public void CameraFollowSystem_NoSingletons()
         {
-            // Create target entity
-            var entity = this.CreateTargetEntity();
+            // Setup camera follow system mock for update function
+            Mock<CameraFollowSystem> cameraFollowMock = new Mock<CameraFollowSystem>();
+            this.cameraFollow = World.AddSystem<CameraFollowSystem>(cameraFollowMock.Object);
+            cameraFollowMock.Protected().Setup("OnUpdate");
 
-            // Move starting entity
-            Vector3 position = new float3(CameraFollowSystemTests.StartingPosition) + new float3(1, 1, 1);
-            m_Manager.SetComponentData(entity, new Translation {Value = position});
-
-            // Ensure that camera doesn't move without required singletons
-            this.cameraFollow.Update();
-            
-            // Ensure camera has not moved
-            this.AssertCameraTransform(CameraFollowSystemTests.StartingPosition, CameraFollowSystemTests.StartingRotation);
-        }
-
-        /// <summary>
-        /// Test to ensure that Update method is called with singletons
-        /// </summary>
-        [Test]
-        public void CameraFollowSystem_WithSingletons()
-        {
             // Create target entity
             var cameraTarget = this.CreateTargetEntity();
             int playerId = 1;
@@ -175,9 +164,76 @@ namespace PropHunt.Tests.Client
 
             // Ensure that camera doesn't move without required singletons
             this.cameraFollow.Update();
-            
-            // Ensure camera has not moved
-            this.AssertCameraTransform(targetPos, CameraFollowSystemTests.StartingRotation);
+
+            // Ensure update function has not been invoked
+            cameraFollowMock.Protected().Verify("OnUpdate", Times.Never());;
+        }
+
+        /// <summary>
+        /// Test to ensure that Update method is called with singletons
+        /// </summary>
+        [Test]
+        public void CameraFollowSystem_WithSingletons()
+        {
+            // Setup camera follow system mock for update function
+            Mock<CameraFollowSystem> cameraFollowMock = new Mock<CameraFollowSystem>();
+            this.cameraFollow = World.AddSystem<CameraFollowSystem>(cameraFollowMock.Object);
+            cameraFollowMock.Protected().Setup("OnUpdate");
+
+            // Create target entity
+            var cameraTarget = this.CreateTargetEntity();
+            int playerId = 1;
+
+            // Move starting entity
+            Vector3 targetPos = new float3(CameraFollowSystemTests.StartingPosition) + new float3(1, 1, 1);
+            m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
+            m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
+            this.CreateNetworkSingletons(playerId);
+
+            // Ensure that camera doesn't move without required singletons
+            this.cameraFollow.Update();
+
+            // Ensure update function has been invoked
+            cameraFollowMock.Protected().Verify("OnUpdate", Times.Once());
+        }
+
+        /// <summary>
+        /// Ensure that the camera follow system will follow a moving object
+        /// </summary>
+        [Test]
+        public void CameraFollowSystem_MoveWithTarget()
+        {
+            // Create target entity
+            var cameraTarget = this.CreateTargetEntity();
+            int playerId = 1;
+
+            // Move starting entity
+            Vector3 changePos = new Vector3(1, 1, 1);
+            float changePitch = 1f;
+            float changeYaw = 2f;
+
+            // Setup track for target position and rotation
+            Vector3 targetPos = CameraFollowSystemTests.StartingPosition;
+            PlayerView targetView = new PlayerView() {pitch = 0, yaw = 0};
+
+            int updates = 10;
+            for (int i = 0; i < updates; i++)
+            {
+                // Move target positions
+                targetPos += changePos;
+                targetView.pitch += changePitch;
+                targetView.yaw += changeYaw;
+                m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
+                m_Manager.SetComponentData(cameraTarget, targetView);
+                m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
+                this.CreateNetworkSingletons(playerId);
+
+                // Ensure that camera doesn't move without required singletons
+                this.cameraFollow.Update();
+
+                // Ensure position and rotation is correct
+                this.AssertCameraTransform(targetPos, Quaternion.Euler(targetView.pitch, targetView.yaw, 0));
+            }
         }
     }
 }
