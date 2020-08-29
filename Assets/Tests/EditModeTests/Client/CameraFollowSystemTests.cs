@@ -42,7 +42,8 @@ namespace PropHunt.Tests.Client
             if (Camera.main == null)
             {
                 this.camera = GameObject.Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
-                this.camera.AddComponent<Camera>();
+                var cameraComponent = this.camera.AddComponent<Camera>();
+                this.camera.tag = "MainCamera";
             }
             else
             {
@@ -88,15 +89,14 @@ namespace PropHunt.Tests.Client
         /// <param name="networkId">Player id to give the created NetworkIDComponent</param>
         private void CreateNetworkSingletons(int networkId)
         {
-            // System for creating and editing singletons
-            var system = World.GetExistingSystem<ComponentSystemBase>();
-
             // Setup singleton data
             var networkIDEntity = World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
             World.EntityManager.CreateEntity(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>());
 
             // Set singleton data
+            var system = World.GetExistingSystem<CameraFollowSystem>();
             system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent {Value = networkId});
+            system.SetSingleton<EnableProphuntGhostReceiveSystemComponent>(new EnableProphuntGhostReceiveSystemComponent());
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace PropHunt.Tests.Client
             // Do not create a target entity
 
             // Do an update step for the system
-            World.Update();
+            this.cameraFollow.Update();
 
             // Ensure camera has not moved
             this.AssertCameraTransform(CameraFollowSystemTests.StartingPosition, CameraFollowSystemTests.StartingRotation);
@@ -151,7 +151,7 @@ namespace PropHunt.Tests.Client
             m_Manager.SetComponentData(entity, new Translation {Value = position});
 
             // Ensure that camera doesn't move without required singletons
-            World.Update();
+            this.cameraFollow.Update();
             
             // Ensure camera has not moved
             this.AssertCameraTransform(CameraFollowSystemTests.StartingPosition, CameraFollowSystemTests.StartingRotation);
@@ -174,7 +174,7 @@ namespace PropHunt.Tests.Client
             this.CreateNetworkSingletons(playerId);
 
             // Ensure that camera doesn't move without required singletons
-            World.Update();
+            this.cameraFollow.Update();
             
             // Ensure camera has not moved
             this.AssertCameraTransform(targetPos, CameraFollowSystemTests.StartingRotation);

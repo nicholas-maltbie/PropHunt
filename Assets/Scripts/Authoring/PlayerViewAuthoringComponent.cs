@@ -15,10 +15,16 @@ namespace PropHunt.Authoring
         /// </summary>
         public float viewRotationRate = 180f;
 
+        /// <summary>
+        /// offset for where to place camera relative to character
+        /// </summary>
+        public Vector3 offset = new Vector3(0, 1.7f, 0);
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new PlayerView(){
-                viewRotationRate = this.viewRotationRate
+                viewRotationRate = this.viewRotationRate,
+                offset = offset
             });
         }
     }

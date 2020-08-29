@@ -35,8 +35,9 @@ namespace PropHunt.Client.Systems
                     {
                         if (player.playerId == localPlayerId) {
                             position.x = transform.Value.x;
-                            position.y = transform.Value.y + 1.7f;
+                            position.y = transform.Value.y;
                             position.z = transform.Value.z;
+                            position += view.offset;
                             rotation.value = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0).value;
                         }
                     }
