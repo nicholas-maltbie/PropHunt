@@ -1,4 +1,3 @@
-
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using Unity.Entities;

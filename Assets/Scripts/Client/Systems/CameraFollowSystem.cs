@@ -1,5 +1,4 @@
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Systems;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;

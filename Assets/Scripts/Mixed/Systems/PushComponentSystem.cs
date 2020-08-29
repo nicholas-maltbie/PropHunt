@@ -1,14 +1,10 @@
-
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Physics;
 using Unity.Transforms;
 using PropHunt.Mixed.Components;
-using Unity.Collections;
 using Unity.Physics.Extensions;
-using Unity.Physics.Systems;
-using Unity.Burst;
 
 namespace PropHunt.Mixed.Systems
 {

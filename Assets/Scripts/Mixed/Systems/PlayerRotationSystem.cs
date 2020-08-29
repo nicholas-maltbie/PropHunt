@@ -1,4 +1,3 @@
-
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
 using Unity.Burst;
@@ -6,7 +5,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {

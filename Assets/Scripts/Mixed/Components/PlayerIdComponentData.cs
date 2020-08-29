@@ -1,5 +1,4 @@
-﻿
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components

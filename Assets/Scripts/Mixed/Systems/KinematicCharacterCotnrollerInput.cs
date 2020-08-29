@@ -1,15 +1,11 @@
 
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
-using Unity.Physics.Extensions;
-using Unity.Physics.Systems;
-using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
 {

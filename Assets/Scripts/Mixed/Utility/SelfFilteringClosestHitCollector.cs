@@ -1,4 +1,3 @@
-
 using Unity.Physics;
 
 namespace PropHunt.Mixed.Utilities
