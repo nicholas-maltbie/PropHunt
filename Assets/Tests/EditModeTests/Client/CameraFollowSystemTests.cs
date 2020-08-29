@@ -210,6 +210,42 @@ namespace PropHunt.Tests.Client
         /// Ensure that the camera follow system will follow a moving object
         /// </summary>
         [Test]
+        public void CameraFollowSystem_MultipleTarget()
+        {
+            // Create target entity1
+            var cameraTarget1 = this.CreateTargetEntity();
+            var cameraTarget2 = this.CreateTargetEntity();
+
+            int playerId = 1;
+            int notPlayerId = playerId - 1;
+            this.CreateNetworkSingletons(playerId);
+
+            Vector3 pos1 = new Vector3(1, 1, 1);
+            Vector3 pos2 = new Vector3(-1, -1, -1);
+
+            m_Manager.SetComponentData(cameraTarget1, new Translation {Value = pos1});
+            m_Manager.SetComponentData(cameraTarget2, new Translation {Value = pos2});
+
+            m_Manager.SetComponentData(cameraTarget1, new PlayerId {playerId = playerId});
+            m_Manager.SetComponentData(cameraTarget2, new PlayerId {playerId = notPlayerId});
+            
+            // Ensure that camera moved to follow target 1
+            this.cameraFollow.Update();
+            this.AssertCameraTransform(pos1, null);
+
+            // Change target camera
+            m_Manager.SetComponentData(cameraTarget1, new PlayerId {playerId = notPlayerId});
+            m_Manager.SetComponentData(cameraTarget2, new PlayerId {playerId = playerId});
+
+            // Ensure that camera moved to follow target 2
+            this.cameraFollow.Update();
+            this.AssertCameraTransform(pos2, CameraFollowSystemTests.StartingRotation);
+        }
+
+        /// <summary>
+        /// Ensure that the camera follow system will follow a moving object
+        /// </summary>
+        [Test]
         public void CameraFollowSystem_MoveWithTarget()
         {
             // Create target entity
@@ -225,6 +261,9 @@ namespace PropHunt.Tests.Client
             Vector3 targetPos = CameraFollowSystemTests.StartingPosition;
             PlayerView targetView = new PlayerView() {pitch = 0, yaw = 0};
 
+            // Setup singletons
+            this.CreateNetworkSingletons(playerId);
+
             int updates = 10;
             for (int i = 0; i < updates; i++)
             {
@@ -235,7 +274,6 @@ namespace PropHunt.Tests.Client
                 m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
                 m_Manager.SetComponentData(cameraTarget, targetView);
                 m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
-                this.CreateNetworkSingletons(playerId);
 
                 // Ensure that camera doesn't move without required singletons
                 this.cameraFollow.Update();
