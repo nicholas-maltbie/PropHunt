@@ -231,7 +231,7 @@ namespace PropHunt.Tests.Client
             
             // Ensure that camera moved to follow target 1
             this.cameraFollow.Update();
-            this.AssertCameraTransform(pos1, null);
+            this.AssertCameraTransform(pos1, CameraFollowSystemTests.StartingRotation);
 
             // Change target camera
             m_Manager.SetComponentData(cameraTarget1, new PlayerId {playerId = notPlayerId});
