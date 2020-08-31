@@ -1,6 +1,8 @@
 name: Main
 
-on: [push, pull_request]
+on:
+  pull_request: {}
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
