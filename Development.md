@@ -65,20 +65,20 @@ git-lfs --version
 After you have downloaded the git repo, launch unity hub and navigate to the `Projects` section on the
 menu on the left half of the screen. 
 
-![Unity Hub Projects Screen with highlights around the projects and add buttons](SampleImages/SetupGuide/UnityProjects.png)
+![Unity Hub Projects Screen with highlights around the projects and add buttons](https://drive.google.com/uc?export=view&id=1hJgtwej_AGCw9ASVkFL6hH-VzF3Mopya)
 
 From this file menu, navigate to the folder where the
 project has been downloaded. For example 
 `~/projects/PropHunt`. Then hit the `Open` 
 button in the file selector.
 
-![Selecting Project from file selector](SampleImages/SetupGuide/UnityLoad.png)
+![Selecting Project from file selector](https://drive.google.com/uc?export=view&id=1XbxAoZ4ISadUDGPs6bxxQUUxYnxXlLOa)
 
 After the environment has a chance to load, the project 
 should be listed in the projects area as shown in the image
 below.
 
-![Everything setup and good to go](SampleImages/SetupGuide/UnityComplete.png)
+![Everything setup and good to go](https://drive.google.com/uc?export=view&id=14u9Wy9Z85XrhbUmrWNuUaqdZ5B00TMUX)
 
 # 5. Coding Environment
 
@@ -101,9 +101,9 @@ To enable the .NET 4.x scripting runtime, take the following steps:
 1. Open PlayerSettings in the Unity Inspector by selecting `Edit > Project Settings > Player > Other Settings`.
 2. Under the Configuration heading, click the Scripting Runtime Version dropdown and select .NET 4.x Equivalent. You will be prompted to restart Unity.
 
-![Navigating to menu](SampleImages/SetupGuide/SetupDotNet4.x.png)
+![Navigating to menu](https://drive.google.com/uc?export=view&id=1QnLfHdX3HC27FXjjVuFf3ASqezcALpgL)
 
-![Menu to setup changes](SampleImages/SetupGuide/vstu_scripting-runtime-version.png)
+![Menu to setup changes](https://drive.google.com/uc?export=view&id=15EWdxaH7x5OWRXiQlcwUo-2q-8WKn0jv)
 
 From Microsoft's article ([Unity to .NET 4.x](https://docs.microsoft.com/en-us/visualstudio/cross-platform/unity-scripting-upgrade?view=vs-2019))
 
@@ -135,12 +135,12 @@ Edit > Preferences > External Tools > External Script Editor
 1. Edit (Top left of screen)
 2. Preferences (Lower section of the edit menu)
 
-![Edit > Preferences view in Unity](SampleImages/SetupGuide/EditPreferences.png)
+![Edit > Preferences view in Unity](https://drive.google.com/uc?export=view&id=18hnXNEX87WM0cpGjyG8r2pI5xMUECF5z)
 
 3. External Tools (Lower section of sub menus for Preferences)
 4. Select Visual Studio Code from the External Script Editor
 
-![Preferences > External Tools > Select External](SampleImages/SetupGuide/SelectVSCode.png)
+![Preferences > External Tools > Select External](https://drive.google.com/uc?export=view&id=1Wx_d1u-XSBQn6AX_un7sqbrUq_6bXT__)
 
 # 8. VS Code Extensions
 
