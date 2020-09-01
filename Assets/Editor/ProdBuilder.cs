@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 
 namespace EditorNamespace
@@ -18,42 +19,99 @@ namespace EditorNamespace
 
         public static void Client_Windows()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Windows-Client/Windows-Client.exe", BuildTarget.StandaloneWindows, BuildOptionsClient());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsClient();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Windows-Client/Windows-Client.exe";
+            playerOptions.target = BuildTarget.StandaloneWindows;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Server_Windows()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Windows-Server/Windows-Server.exe", BuildTarget.StandaloneWindows, BuildOptionsServer());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsServer();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Windows-Server/Windows-Server.exe";
+            playerOptions.target = BuildTarget.StandaloneWindows;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Client_Windows64()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Windows64-Client/Windows64-Client.exe", BuildTarget.StandaloneWindows64, BuildOptionsClient());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsClient();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Windows64-Client/Windows64-Client.exe";
+            playerOptions.target = BuildTarget.StandaloneWindows64;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Server_Windows64()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Windows64-Server/Windows64-Server.exe", BuildTarget.StandaloneWindows64, BuildOptionsServer());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsServer();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Windows64-Server/Windows64-Server.exe";
+            playerOptions.target = BuildTarget.StandaloneWindows64;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Client_Linux64()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Linux64-Client/Linux64-Client.exe", BuildTarget.StandaloneLinux64, BuildOptionsClient());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsClient();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Linux64-Client/Linux64-Client.exe";
+            playerOptions.target = BuildTarget.StandaloneLinux64;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Server_Linux64()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/Linux64-Server/Linux64-Server.exe", BuildTarget.StandaloneLinux64, BuildOptionsServer());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsServer();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/Linux64-Server/Linux64-Server.exe";
+            playerOptions.target = BuildTarget.StandaloneLinux64;
+            BuildPipeline.BuildPlayer(playerOptions);
         }
 
         public static void Client_OSX()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/OSX-Client/OSX-Client.exe", BuildTarget.StandaloneOSX, BuildOptionsClient());
+            BuildOptions options = BuildOptionsClient();
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = options;
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/OSX-Client/OSX-Client.exe";
+            playerOptions.target = BuildTarget.StandaloneLinux64;
+            BuildPipeline.BuildPlayer(playerOptions);
+
+            // move contents of Builds.app folder
+            string sourceFolder = "Builds.app";
+            string destFolder = "Builds";
+            foreach (string filePath in Directory.GetFiles(sourceFolder))
+            {
+                File.Copy(Path.Combine(sourceFolder, filePath), Path.Combine(destFolder, filePath), true);
+            }
         }
 
         public static void Server_OSX()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "Builds/OSX-Server/OSX-Server.exe", BuildTarget.StandaloneOSX, BuildOptionsServer());
+            BuildPlayerOptions playerOptions = new BuildPlayerOptions();
+            playerOptions.options = BuildOptionsServer();
+            playerOptions.scenes = ProdScenes;
+            playerOptions.locationPathName = "Builds/OSX-Server/OSX-Server.exe";
+            playerOptions.target = BuildTarget.StandaloneOSX;
+            BuildPipeline.BuildPlayer(playerOptions);
+
+            // move contents of Builds.app folder
+            string sourceFolder = "Builds.app";
+            string destFolder = "Builds";
+            foreach (string filePath in Directory.GetFiles(sourceFolder))
+            {
+                File.Copy(Path.Combine(sourceFolder, filePath), Path.Combine(destFolder, filePath), true);
+            }
         }
     }
 }
