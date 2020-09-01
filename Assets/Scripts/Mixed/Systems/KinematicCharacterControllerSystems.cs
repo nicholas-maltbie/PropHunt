@@ -1,4 +1,3 @@
-
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using Unity.Entities;
@@ -34,7 +33,7 @@ namespace PropHunt.Mixed.Systems
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 Entity entity,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
@@ -98,7 +97,7 @@ namespace PropHunt.Mixed.Systems
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             float deltaTime = Time.DeltaTime;
 
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -156,7 +155,7 @@ namespace PropHunt.Mixed.Systems
     {
         protected override void OnUpdate()
         {
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCJumping jumping,
                 in KCCGrounded grounded,
@@ -186,7 +185,7 @@ namespace PropHunt.Mixed.Systems
         {
             float deltaTime = Time.DeltaTime;
 
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded,
                 in KCCGravity gravity) => 

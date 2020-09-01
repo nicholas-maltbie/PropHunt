@@ -1,15 +1,11 @@
 
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
-using Unity.Physics.Extensions;
-using Unity.Physics.Systems;
-using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -20,7 +16,7 @@ namespace PropHunt.Mixed.Systems
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(PlayerRotationSystem))]
-    public class KinematicCharacterControllerInput : ComponentSystem
+    public class KinematicCharacterControllerInput : SystemBase
     {
         protected override void OnUpdate()
         {
@@ -30,11 +26,11 @@ namespace PropHunt.Mixed.Systems
             
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
-                ref PredictedGhostComponent prediction,
-                ref PlayerView view,
-                ref KCCMovementSettings settings,
                 ref KCCVelocity velocity,
-                ref KCCJumping jump) =>
+                ref KCCJumping jump,
+                in PredictedGhostComponent prediction,
+                in PlayerView view,
+                in KCCMovementSettings settings) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
@@ -56,7 +52,7 @@ namespace PropHunt.Mixed.Systems
                 velocity.playerVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
                 // including jump action
                 jump.attemptingJump = input.IsJumping;
-            });
+            }).Schedule();
         }
     }
 }

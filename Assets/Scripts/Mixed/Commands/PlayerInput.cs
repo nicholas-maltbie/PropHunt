@@ -1,9 +1,7 @@
-using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
-using UnityEngine;
 
-namespace PropHunt.Mixed.Commands 
+namespace PropHunt.Mixed.Commands
 {
 
     /// <summary>

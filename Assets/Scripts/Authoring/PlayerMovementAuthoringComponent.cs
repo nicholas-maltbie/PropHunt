@@ -1,7 +1,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
 using UnityEngine;
 
 namespace PropHunt.Authoring

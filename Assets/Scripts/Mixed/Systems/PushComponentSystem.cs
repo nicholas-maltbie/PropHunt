@@ -1,14 +1,10 @@
-
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Physics;
 using Unity.Transforms;
 using PropHunt.Mixed.Components;
-using Unity.Collections;
 using Unity.Physics.Extensions;
-using Unity.Physics.Systems;
-using Unity.Burst;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -38,7 +34,7 @@ namespace PropHunt.Mixed.Systems
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            Entities.WithBurst().ForEach((
+            Entities.ForEach((
                 Entity entity, 
                 int entityInQueryIndex,
                 in DynamicBuffer<PushForce> pushForce) =>
@@ -67,7 +63,7 @@ namespace PropHunt.Mixed.Systems
 
             if (isServer)
             {
-                Entities.WithBurst().ForEach((
+                Entities.ForEach((
                     ref PhysicsVelocity physicsVelocity,
                     in PhysicsMass physicsMass,
                     in Translation translation,
