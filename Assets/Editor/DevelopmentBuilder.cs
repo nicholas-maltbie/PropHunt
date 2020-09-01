@@ -6,12 +6,25 @@ namespace EditorNamespace
     {
         private static BuildOptions BuildOptionsClient()
         {
-            return BuildOptions.Development;
+            EditorUserBuildSettings.development = true;
+            EditorUserBuildSettings.allowDebugging = true;
+            EditorUserBuildSettings.connectProfiler = true;
+
+            return BuildOptions.Development |
+                BuildOptions.ConnectWithProfiler |
+                BuildOptions.AllowDebugging;
         }
 
         private static BuildOptions BuildOptionsServer()
         {
-            return BuildOptions.Development | BuildOptions.EnableHeadlessMode;
+            EditorUserBuildSettings.development = true;
+            EditorUserBuildSettings.allowDebugging = true;
+            EditorUserBuildSettings.connectProfiler = true;
+
+            return BuildOptions.Development |
+                BuildOptions.AllowDebugging |
+                BuildOptions.ConnectWithProfiler |
+                BuildOptions.EnableHeadlessMode;
         }
 
         private static readonly string[] DevelopmentScenes = {"Assets/Scenes/SampleScene.unity"};
