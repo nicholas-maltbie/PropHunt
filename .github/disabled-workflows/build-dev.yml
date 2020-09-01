@@ -1,0 +1,45 @@
+name: Build Development
+
+on: 
+  pull_request: {}
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+
+jobs:
+  buildForSomePlatforms:
+    name: Build ${{ matrix.buildType }} for ${{ matrix.platform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - ""
+        unityVersion:
+          - 2019.4.0f1
+        platform:
+          - Windows64 # Build a Windows 64-bit standalone.
+          - Linux64   # Build a Linux 64-bit standalone.
+        buildType:
+          - Client
+          - Server
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.platform }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-
+            Library-
+      - uses: webbertakken/unity-builder@v1.2
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          buildMethod: EditorNamespace.DevelopmentBuilder.${{ matrix.buildType }}_${{ matrix.platform }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.platform }}-${{ matrix.buildType }}
+          path: Builds/*
