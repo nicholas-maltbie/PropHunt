@@ -104,7 +104,7 @@ namespace EditorNamespace
             BuildPlayerOptions playerOptions = new BuildPlayerOptions();
             playerOptions.options = BuildOptionsClient();
             playerOptions.scenes = DevelopmentScenes;
-            playerOptions.locationPathName = "Builds/Linux64-Client/Linux64-Client.exe";
+            playerOptions.locationPathName = "Builds/Linux64-Client/Linux64-Client.x86_64";
             playerOptions.target = BuildTarget.StandaloneLinux64;
             BuildPipeline.BuildPlayer(playerOptions);
         }
@@ -117,7 +117,7 @@ namespace EditorNamespace
             BuildPlayerOptions playerOptions = new BuildPlayerOptions();
             playerOptions.options = BuildOptionsServer();
             playerOptions.scenes = DevelopmentScenes;
-            playerOptions.locationPathName = "Builds/Linux64-Server/Linux64-Server.exe";
+            playerOptions.locationPathName = "Builds/Linux64-Server/Linux64-Server.x86_64";
             playerOptions.target = BuildTarget.StandaloneLinux64;
             BuildPipeline.BuildPlayer(playerOptions);
         }
