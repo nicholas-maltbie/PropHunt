@@ -53,7 +53,7 @@ namespace EditorNamespace
 
         public static void Server_OSX()
         {
-            BuildPipeline.BuildPlayer(ProdScenes, "OSX-Server/OSX-Server.exe", BuildTarget.StandaloneLinux64, BuildOptionsServer());
+            BuildPipeline.BuildPlayer(ProdScenes, "OSX-Server/OSX-Server.exe", BuildTarget.StandaloneOSX, BuildOptionsServer());
         }
     }
 }
