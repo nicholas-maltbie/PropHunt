@@ -41,8 +41,7 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           buildMethod: EditorNamespace.ProdBuilder.${{ matrix.buildType }}_${{ matrix.platform }}
-          buildsPath: build-${{ matrix.platform }}-${{ matrix.buildType }}
       - uses: actions/upload-artifact@v1
         with:
-          name: Build-${{ matrix.platform }}-${{ matrix.buildType }}
-          path: build-${{ matrix.platform }}-${{ matrix.buildType }}
+          name: ${{ matrix.platform }}-${{ matrix.buildType }}
+          path: ${{ matrix.platform }}-${{ matrix.buildType }}
