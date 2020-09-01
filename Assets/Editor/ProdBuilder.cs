@@ -86,14 +86,6 @@ namespace EditorNamespace
             playerOptions.locationPathName = "Builds/OSX-Client/OSX-Client.exe";
             playerOptions.target = BuildTarget.StandaloneLinux64;
             BuildPipeline.BuildPlayer(playerOptions);
-
-            // move contents of Builds.app folder
-            string sourceFolder = "Builds.app";
-            string destFolder = "Builds";
-            foreach (string filePath in Directory.GetFiles(sourceFolder))
-            {
-                File.Copy(Path.Combine(sourceFolder, filePath), Path.Combine(destFolder, filePath), true);
-            }
         }
 
         public static void Server_OSX()
@@ -104,14 +96,6 @@ namespace EditorNamespace
             playerOptions.locationPathName = "Builds/OSX-Server/OSX-Server.exe";
             playerOptions.target = BuildTarget.StandaloneOSX;
             BuildPipeline.BuildPlayer(playerOptions);
-
-            // move contents of Builds.app folder
-            string sourceFolder = "Builds.app";
-            string destFolder = "Builds";
-            foreach (string filePath in Directory.GetFiles(sourceFolder))
-            {
-                File.Copy(Path.Combine(sourceFolder, filePath), Path.Combine(destFolder, filePath), true);
-            }
         }
     }
 }
