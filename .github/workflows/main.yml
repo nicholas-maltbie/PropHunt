@@ -42,7 +42,7 @@ jobs:
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-  buildForSomePlatforms:
+  buildClientForSomePlatforms:
     name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     strategy:
@@ -73,8 +73,45 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
-          buildsPath: build-${{ matrix.targetPlatform }}
+          buildsPath: build-${{ matrix.targetPlatform }}-Client
       - uses: actions/upload-artifact@v1
         with:
-          name: Build-${{ matrix.targetPlatform }}
-          path: build-${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}-Client
+          path: build-${{ matrix.targetPlatform }}-Client
+  buildServerForSomePlatforms:
+    name: Build for ${{ matrix.targetPlatform }} on version ${{ matrix.unityVersion }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - ""
+        unityVersion:
+          - 2019.4.0f1
+        targetPlatform:
+          - StandaloneOSX       # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows   # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64   # Build a Linux 64-bit standalone.
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ matrix.projectPath }}-
+            Library-
+      - uses: webbertakken/unity-builder@v1.2
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildsPath: build-${{ matrix.targetPlatform }}-Server
+          customParameters: -ServerBuild
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build-${{ matrix.targetPlatform }}-Server
+          path: build-${{ matrix.targetPlatform }}-Server
