@@ -18,32 +18,32 @@ namespace EditorNamespace
 
         public static void Client_Windows()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Windows-Client/Windows-Client.exe", BuildTarget.StandaloneWindows, BuildOptionsClient());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Windows-Client/Windows-Client.exe", BuildTarget.StandaloneWindows, BuildOptionsClient());
         }
 
         public static void Server_Windows()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Windows-Server/Windows-Server.exe", BuildTarget.StandaloneWindows, BuildOptionsServer());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Windows-Server/Windows-Server.exe", BuildTarget.StandaloneWindows, BuildOptionsServer());
         }
 
         public static void Client_Windows64()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Windows64-Client/Windows64-Client.exe", BuildTarget.StandaloneWindows64, BuildOptionsClient());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Windows64-Client/Windows64-Client.exe", BuildTarget.StandaloneWindows64, BuildOptionsClient());
         }
 
         public static void Server_Windows64()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Windows64-Server/Windows64-Server.exe", BuildTarget.StandaloneWindows64, BuildOptionsServer());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Windows64-Server/Windows64-Server.exe", BuildTarget.StandaloneWindows64, BuildOptionsServer());
         }
 
         public static void Client_Linux64()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Linux64-Client/Linux64-Client.exe", BuildTarget.StandaloneLinux64, BuildOptionsClient());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Linux64-Client/Linux64-Client.exe", BuildTarget.StandaloneLinux64, BuildOptionsClient());
         }
 
         public static void Server_Linux64()
         {
-            BuildPipeline.BuildPlayer(DevelopmentScenes, "Linux64-Server/Linux64-Server.exe", BuildTarget.StandaloneLinux64, BuildOptionsServer());
+            BuildPipeline.BuildPlayer(DevelopmentScenes, "Builds/Linux64-Server/Linux64-Server.exe", BuildTarget.StandaloneLinux64, BuildOptionsServer());
         }
     }
 }
