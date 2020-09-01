@@ -1,7 +1,7 @@
 name: Build Prod
 
 on:
-  push: { branches: [master] }
+  push: {}
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
