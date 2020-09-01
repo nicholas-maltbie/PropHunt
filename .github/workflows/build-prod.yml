@@ -75,7 +75,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           buildsPath: build-${{ matrix.targetPlatform }}-Server
-          customParameters: -ServerBuild
+          customParameters: -EnableHeadlessMode
       - uses: actions/upload-artifact@v1
         with:
           name: Build-${{ matrix.targetPlatform }}-Server
