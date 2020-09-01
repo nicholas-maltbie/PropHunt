@@ -1,7 +1,7 @@
 name: Build Development
 
-on:
-  pull_request: {}
+on: []
+  # pull_request: {}
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
