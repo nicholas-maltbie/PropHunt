@@ -44,7 +44,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}-v1.1
 
       - name: Pull lfs data, if not cached
         run: git lfs pull
