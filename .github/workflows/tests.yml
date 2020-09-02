@@ -40,7 +40,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .git/lfs
-          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}-v1.1
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}-v1.2
           # use previous hashes if none is found
           restore-keys: |
             ${{ runner.os }}-lfs-
