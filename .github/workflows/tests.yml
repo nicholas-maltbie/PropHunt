@@ -23,6 +23,10 @@ jobs:
           - editmode
     steps:
       - uses: actions/checkout@v2
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
       - name: Cache Library Folder
         uses: actions/cache@v2
         with:
@@ -31,6 +35,7 @@ jobs:
           restore-keys: |
             Library-${{ matrix.projectPath }}-
             Library-
+
       - name: Cache git lfs
         uses: actions/cache@v2
         with:
@@ -40,8 +45,10 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
+
       - name: Pull lfs data, if not cached
         run: git lfs pull
+
       - uses: webbertakken/unity-test-runner@v1.4
         id: tests
         with:
@@ -49,6 +56,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
+
       - uses: actions/upload-artifact@v1
         with:
           name: Test results for ${{ matrix.testMode }}
