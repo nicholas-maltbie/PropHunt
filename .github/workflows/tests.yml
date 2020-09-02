@@ -23,8 +23,6 @@ jobs:
           - editmode
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
       - name: Cache Library Folder
         uses: actions/cache@v2
         with:
