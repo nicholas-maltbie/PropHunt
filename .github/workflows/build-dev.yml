@@ -42,10 +42,6 @@ jobs:
         with:
           path: .git/lfs
           key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - name: Pull lfs data, if not cached
         run: git lfs pull
