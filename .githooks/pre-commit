@@ -71,9 +71,10 @@ echo ${STAGED_FILES} | xargs -t -l git add
 
 # RESHAPER SECTION END
 
+# REMOVE TRAILING WHITESPACE SECTION START
+
 # Script kindly posted by oldman to github at https://github.com/imoldman/config
 
-# REMOVE TRAILING WHITESPACE SECTION START
 # A git hook script to find and fix trailing whitespace
 # in your commits. Bypass it with the --no-verify option
 # to git-commit

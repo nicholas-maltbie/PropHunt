@@ -62,7 +62,7 @@ namespace PropHunt.Game
         /// </summary>
         protected override void OnUpdate()
         {
-            // Destroy initialize component so only update once. 
+            // Destroy initialize component so only update once.
             EntityManager.DestroyEntity(GetSingletonEntity<InitializeClientServer>());
             foreach ( var world in World.All )
             {
@@ -104,8 +104,8 @@ namespace PropHunt.Game
             GameObjectConversionSystem conversionSystem)
         {
 #if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
-            // Setup server data settings here. 
+            // Setup server data settings here.
 #endif
         }
     }
-} // End namespace Prophunt.Game          
+} // End namespace Prophunt.Game
