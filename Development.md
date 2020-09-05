@@ -24,9 +24,9 @@ Install the proper version of Unity from UnityHub using this unity hub link [uni
 
 # 1.1 Install Related Tools
 
-In order to fully load and edit the project, you must have [Blender](https://www.blender.org/) version 2.8 or more recent. 
-Download for Blender can be found [here](https://www.blender.org/download/). Blender is an open source 
-piece of software used for 3d modeling, animation, and texturing (as well as many other features). 
+In order to fully load and edit the project, you must have [Blender](https://www.blender.org/) version 2.8 or more recent.
+Download for Blender can be found [here](https://www.blender.org/download/). Blender is an open source
+piece of software used for 3d modeling, animation, and texturing (as well as many other features).
 
 # 2. Setting Up the Project
 Now that the proper version of unity has been installed, open the project with UnityHub.
@@ -42,12 +42,16 @@ $ git clone https://github.com/nicholas-maltbie/PropHunt.git
 ```
 
 # 3. Version Control
-Version Control: This project uses a combination of git, git-lfs, and github.
+Version Control: This project uses a combination of git, git-lfs, resharper, and github.
+
+## Setup Git
 
 Ensure that you have git installed. If not here is a [guide to install git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 ```
 git --version
 ```
+
+## Setup Git LFS
 
 Ensure that you also have git lfs installed. It should be setup to auto-track certain types of files as determined in the `.gitattributes` file. If the command to install git-lfs `git lfs install` is giving you trouble, try looking into the [installation guide](https://git-lfs.github.com/)
 ```bash
@@ -55,26 +59,37 @@ Ensure that you also have git lfs installed. It should be setup to auto-track ce
 # May need to run this on linux
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 sudo apt-get install git-lfs
-# Installing git lfs
-git lfs install
-git-lfs --version
+# Pull objects to ensure setup correctly
+git lfs pull
 ```
+
+## Setup Git Hooks and Reshaper
+
+In addition, it is very important that you setup the proper pre-commit hooks. They are included in the `.githooks` directory at the base of the repo. In order to install the pre-commit hooks, you simply have to set the `hooksPath` for this project to be the `.githooks` directory.
+```bash
+# Run this inside the repository after cloning it
+git config core.hooksPath .githooks
+```
+
+## Setup Reshaper
+
+Reshaper will be installed to the directory `.githooks/resharper/bin` the first time you run a commit. If you want to install it directly, use the `.githooks/resharper/install-resharper.sh` file which will install it to the correct location. Every time before a commit the reshaper program will be run using settings from `.editorconfig` and ensure your code has a consistent style with the rest of the project.
 
 # 4. Opening the Project
 
 After you have downloaded the git repo, launch unity hub and navigate to the `Projects` section on the
-menu on the left half of the screen. 
+menu on the left half of the screen.
 
 ![Unity Hub Projects Screen with highlights around the projects and add buttons](https://drive.google.com/uc?export=view&id=1hJgtwej_AGCw9ASVkFL6hH-VzF3Mopya)
 
 From this file menu, navigate to the folder where the
-project has been downloaded. For example 
-`~/projects/PropHunt`. Then hit the `Open` 
+project has been downloaded. For example
+`~/projects/PropHunt`. Then hit the `Open`
 button in the file selector.
 
 ![Selecting Project from file selector](https://drive.google.com/uc?export=view&id=1XbxAoZ4ISadUDGPs6bxxQUUxYnxXlLOa)
 
-After the environment has a chance to load, the project 
+After the environment has a chance to load, the project
 should be listed in the projects area as shown in the image
 below.
 
@@ -86,12 +101,12 @@ below.
 
 Languages: [C#](https://docs.unity3d.com/Manual/CSharpCompiler.html)
 
-The compilers for these are included in Unity but having the `.NET Core SDK` is required for the IDE. Instructions to install `.NET Core SDK`: [Installation Instructions](https://dotnet.microsoft.com/download/dotnet-core/sdk-for-vs-code?utm_source=vs-code&utm_medium=referral&utm_campaign=sdk-install). There should be a `.exe` for windows, a set of commands for linux or mac. 
+The compilers for these are included in Unity but having the `.NET Core SDK` is required for the IDE. Instructions to install `.NET Core SDK`: [Installation Instructions](https://dotnet.microsoft.com/download/dotnet-core/sdk-for-vs-code?utm_source=vs-code&utm_medium=referral&utm_campaign=sdk-install). There should be a `.exe` for windows, a set of commands for linux or mac.
 * **Note** If you are installing for linux, ensure that you have the mono libraries installed. Mono Libraries: [https://www.mono-project.com/download/stable](https://www.mono-project.com/download/stable)
 * **Additional Note** You may need to reboot the computer after installing the `.NET Core SDK`.
 
 Also make sure to be using .NET 4.x compatibility in Unity. This will allow for full use
-of libraries and other features. For more information on how to do this, follow 
+of libraries and other features. For more information on how to do this, follow
 Microsoft's guide to switch [Unity to .NET 4.x](https://docs.microsoft.com/en-us/visualstudio/cross-platform/unity-scripting-upgrade?view=vs-2019).
 
 ## 5.2 Enabling the .NET 4.x Scripting Runtime in Unity
@@ -111,16 +126,16 @@ From Microsoft's article ([Unity to .NET 4.x](https://docs.microsoft.com/en-us/v
 
 If you wish to add new .NET libraries to the project, See Microsoft's page on [Using .NET 4.x in Unity](https://docs.microsoft.com/en-us/visualstudio/cross-platform/unity-scripting-upgrade?view=vs-2019#taking-advantage-of-net-compatibility)
 and the sub section of "taking advance of .NET compatibility".
-You simply have to add the `.dll` file from the 
+You simply have to add the `.dll` file from the
 project package archive. Instructions on how to get this and
-implement these changes are in the article linked above. 
+implement these changes are in the article linked above.
 
 # 6. IDE
 
 The IDE we are using is [VSCode](https://code.visualstudio.com/).
 * Make sure that you have the `.NET Core SDK` installed. [Installation Instructions](https://dotnet.microsoft.com/download/dotnet-core/sdk-for-vs-code?utm_source=vs-code&utm_medium=referral&utm_campaign=sdk-install). (See earlier section [Languages](#Languages) for more information)
 
-To add VSCode as Unity's default editor, select it under: `Edit > Preferences > External Tools > External Script Editor`. 
+To add VSCode as Unity's default editor, select it under: `Edit > Preferences > External Tools > External Script Editor`.
 
 # 7. Switching Unity IDE to VSCode
 
@@ -145,18 +160,18 @@ Edit > Preferences > External Tools > External Script Editor
 # 8. VS Code Extensions
 
 Using the following extensions for VSCode. For information about installing extensions, use [this article](https://code.visualstudio.com/docs/editor/extension-gallery)
-* [C#](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp) by Microsoft. 
-* [Debugger for Unity](https://marketplace.visualstudio.com/items?itemName=Unity.unity-debug) by Unity Technologies. 
+* [C#](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp) by Microsoft.
+* [Debugger for Unity](https://marketplace.visualstudio.com/items?itemName=Unity.unity-debug) by Unity Technologies.
 * [Unity Tools](https://marketplace.visualstudio.com/items?itemName=Tobiah.unity-tools) by Tobiah.
 * [Unity Code Snippets](https://marketplace.visualstudio.com/items?itemName=kleber-swf.unity-code-snippets) by kleber-swf.
 * [Unity Snippets](https://marketplace.visualstudio.com/items?itemName=YclepticStudios.unity-snippets) by YclepticStudios.
-* [C# XML Documentation Comments](https://marketplace.visualstudio.com/items?itemName=k--kato.docomment) by Keisuke Kato. 
+* [C# XML Documentation Comments](https://marketplace.visualstudio.com/items?itemName=k--kato.docomment) by Keisuke Kato.
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker) by Street Side
     Software (because Nick can't spell and properly spelled comments are great).
 
 # 9. Coding Style
 
-As far as coding style, please try to stay consistent with [C# Coding Guidelines](https://wiki.unity3d.com/index.php/Csharp_Coding_Guidelines) from Unity's reference guide. 
+As far as coding style, please try to stay consistent with [C# Coding Guidelines](https://wiki.unity3d.com/index.php/Csharp_Coding_Guidelines) from Unity's reference guide.
 
 
 # 10. Known Issues
