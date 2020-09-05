@@ -1,0 +1,20 @@
+root = true
+[*]
+# Most of the standard properties are supported
+indent_size=4
+max_line_length=100
+
+# Most frequently used .NET-coding-convention properties are supported
+csharp_space_between_parentheses=expressions, type_casts, control_flow_statements
+csharp_style_var_for_built_in_types=true
+
+# ReSharper custom properties for code formatting styles
+resharper_csharp_brace_style=next_line
+resharper_csharp_blank_lines_around_invocable=1
+resharper_csharp_indent_style=spaces
+
+# ReShaper custom properties for spaces in files
+resharper_csharp_extra_spaces=remove_all
+
+# ReShaper custom properties for newline at end of file
+resharper_csharp_insert_final_newline=true

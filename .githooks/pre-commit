@@ -38,12 +38,12 @@ fi
 echo "Formatting files..."
 if [[ "$OSTYPE" == "msys"* ]]; then
     # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --profile="Built-in: Reformat Code" ./PropHunt.sln --include="$INCLUDE_STRING"
+    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     #Cygwin terminal emulator
-    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --profile="Built-in: Reformat Code" ./PropHunt.sln --include="$INCLUDE_STRING"
+    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
 else
-    sh $GIT_HOOKS_DIR/resharper/bin/cleanupcode.sh --profile="Built-in: Reformat Code" ./PropHunt.sln --include="$INCLUDE_STRING"
+    sh $GIT_HOOKS_DIR/resharper/bin/cleanupcode.sh --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
 fi
 
 # Restage files

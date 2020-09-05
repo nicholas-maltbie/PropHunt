@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CleanupCodeOptions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Debug>false</Debug>
+  <Verbosity>INFO</Verbosity>
+  <DisabledSettingsLayers />
+  <SuppressBuildInSettings>false</SuppressBuildInSettings>
+  <Properties />
+  <TargetsForReferences />
+  <TargetsForItems />
+  <Extensions />
+  <CustomSettingFile>.editorconfig</CustomSettingFile>
+  <CleanupProfileName>Built-in: Reformat Code</CleanupProfileName>
+  <CleanupScopeExclude>Assets/Scripts/Generated</CleanupScopeExclude>
+</CleanupCodeOptions>
