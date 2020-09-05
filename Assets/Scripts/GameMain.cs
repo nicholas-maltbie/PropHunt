@@ -64,10 +64,10 @@ namespace PropHunt.Game
         {
             // Destroy initialize component so only update once. 
             EntityManager.DestroyEntity(GetSingletonEntity<InitializeClientServer>());
-            foreach (var world in World.All)
+            foreach ( var world in World.All )
             {
                 // Bind the server and start listening for connections
-                if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
+                if ( world.GetExistingSystem<ServerSimulationSystemGroup>() != null )
                 {
                     NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
                     ep.Port = NetworkPort;
@@ -75,7 +75,7 @@ namespace PropHunt.Game
                 }
 
                 // Auto connect all clients to the server
-                if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
+                if ( world.GetExistingSystem<ClientSimulationSystemGroup>() != null )
                 {
                     // Enable fixed tick rate
                     world.EntityManager.CreateEntity(typeof(FixedClientTickRate));
@@ -100,11 +100,12 @@ namespace PropHunt.Game
         /// <param name="entity">Entity to add attributes to (new entity being created).</param>
         /// <param name="dstManager">Entity manager to configure global settings</param>
         /// <param name="conversionSystem">Conversion settings from game object to entity</param>
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+        public void Convert(Entity entity, EntityManager dstManager,
+            GameObjectConversionSystem conversionSystem)
         {
 #if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
             // Setup server data settings here. 
 #endif
         }
     }
-} // End namespace Prophunt.Game
+} // End namespace Prophunt.Game          
