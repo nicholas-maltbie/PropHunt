@@ -44,26 +44,25 @@ echo "Staged files ${STAGED_FILES}"
 
 # Build edit string, by replacing newlines with semicolons.
 # --diff-filter=d only filters files that are not deleted, which means we won't have trouble adding them afterwards
-INCLUDE_STRING=`git diff --name-only --cached --diff-filter=d | sed ':a;N;$!ba;s/\n/;/g'`
+INCLUDE_STRING=`git diff --name-only --cached --diff-filter=d | sed ':a;N;$!ba;s/\n/;/g' | awk '/*.cs/{print}'`
 echo "Include string: $INCLUDE_STRING"
 
 # If the include string is empty, we're done. This happens e.g. if the commit only consists of deleted files.
 if [[ -z "$INCLUDE_STRING" ]]
 then
     echo "No files to change"
-    exit 0
-fi
-
-# Edit your project files here
-echo "Formatting files..."
-if [[ "$OSTYPE" == "msys"* ]]; then
-    # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
-    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
-elif [[ "$OSTYPE" == "cygwin" ]]; then
-    #Cygwin terminal emulator
-    ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
 else
-    sh $GIT_HOOKS_DIR/resharper/bin/cleanupcode.sh --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
+    # Edit your project files here
+    echo "Formatting files..."
+    if [[ "$OSTYPE" == "msys"* ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
+    elif [[ "$OSTYPE" == "cygwin" ]]; then
+        #Cygwin terminal emulator
+        ${GIT_HOOKS_DIR}/resharper/bin/cleanupcode.exe --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
+    else
+        sh $GIT_HOOKS_DIR/resharper/bin/cleanupcode.sh --config="${GIT_HOOKS_DIR}/resharper/config.xml" ./PropHunt.sln --include="$INCLUDE_STRING"
+    fi
 fi
 
 # Restage files
