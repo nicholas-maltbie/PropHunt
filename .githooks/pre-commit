@@ -15,7 +15,6 @@ trap 'echo "\"${last_command}\" command filed with exit code $?."' ERR
 # If the formatter is not installed, install it now
 if [[ ! -d ${GIT_HOOKS_DIR}/resharper/bin ]]; then
     echo "Resharper not installed, installing to $GIT_HOOKS_DIR/resharper/bin"
-    echo "${GIT_HOOKS_DIR}/resharper/install-resharper.sh"
     "${GIT_HOOKS_DIR}/resharper/install-resharper.sh"
 fi
 
