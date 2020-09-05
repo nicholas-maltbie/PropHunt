@@ -23,8 +23,10 @@ namespace PropHunt.UI
 
         public void OnEnable()
         {
-            this.serverAddress.text = PropHunt.Game.ProphuntClientServerControlSystem.DefaultNetworkAddress;
-            this.serverPort.text = PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort.ToString();
+            this.serverAddress.text =
+                PropHunt.Game.ProphuntClientServerControlSystem.DefaultNetworkAddress;
+            this.serverPort.text =
+                PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort.ToString();
         }
 
         /// <summary>
@@ -54,9 +56,9 @@ namespace PropHunt.UI
             }
             catch
             {
-                UnityEngine.Debug.Log($"Failed to parse IP Address {serverAddress.text} and Port {serverPort.text}");
+                UnityEngine.Debug.Log(
+                    $"Failed to parse IP Address {serverAddress.text} and Port {serverPort.text}");
             }
         }
     }
 }
-
