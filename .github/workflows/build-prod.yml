@@ -1,7 +1,7 @@
 name: Build Prod
 
-on: [push]
-  # push: { branches: [master] }
+on:
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -18,10 +18,10 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         platform:
-          # - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          # - StandaloneWindows # Build a Windows standalone.
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows # Build a Windows standalone.
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          # - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
         buildType:
           - Client
           - Server
