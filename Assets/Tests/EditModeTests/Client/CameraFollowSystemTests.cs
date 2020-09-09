@@ -236,6 +236,15 @@ namespace PropHunt.Tests.Client
             this.AssertCameraTransform(pos2, CameraFollowSystemTests.StartingRotation);
         }
 
+        [Test]
+        /// <summary>
+        /// Test to check github action failure
+        /// </summary>
+        public void FailingTest()
+        {
+            Assert.IsTrue(false);
+        }
+
         /// <summary>
         /// Ensure that the camera follow system will follow a moving object
         /// </summary>
