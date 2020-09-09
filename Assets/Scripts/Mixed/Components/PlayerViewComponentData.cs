@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components
@@ -12,6 +13,12 @@ namespace PropHunt.Mixed.Components
         GhostDefaultComponentAttribute.Type.PredictedClient)]
     public struct PlayerView : IComponentData
     {
+        /// <summary>
+        /// Offset from the actual object position
+        /// </summary>
+        [GhostDefaultField(100, true)]
+        public float3 offset;
+
         /// <summary>
         /// Player view speed in degrees per second
         /// </summary>

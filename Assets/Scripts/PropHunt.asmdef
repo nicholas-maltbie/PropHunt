@@ -1,0 +1,30 @@
+{
+    "name": "PropHunt",
+    "references": [
+        "PropHunt.Scriptable",
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Entities",
+        "Unity.Entities.Editor",
+        "Unity.Entities.Hybrid",
+        "Unity.Mathematics",
+        "Unity.NetCode",
+        "Unity.NetCode.Editor",
+        "Unity.Networking.Transport",
+        "Unity.Physics",
+        "Unity.Rendering.Hybrid",
+        "Unity.Transforms"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "",
+        ""
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
