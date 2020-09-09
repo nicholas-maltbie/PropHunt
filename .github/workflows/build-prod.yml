@@ -18,10 +18,10 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         platform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          - StandaloneWindows # Build a Windows standalone.
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - OSX       # Build a macOS standalone (Intel 64-bit).
+          - Windows   # Build a Windows standalone.
+          - Windows64 # Build a Windows 64-bit standalone.
+          - Linux64   # Build a Linux 64-bit standalone.
         buildType:
           - Client
           - Server
@@ -58,11 +58,9 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.platform }}
-          buildMethod: EditorNamespace.Builder.BuildProject
-          customParameters: -buildType ${{ matrix.buildType }}
+          buildMethod: EditorNamespace.ProdBuilder.${{ matrix.buildType }}_${{ matrix.platform }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.platform }}-${{ matrix.buildType }}
-          path: build
+          path: Builds/*
