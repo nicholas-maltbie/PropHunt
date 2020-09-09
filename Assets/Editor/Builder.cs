@@ -23,7 +23,6 @@
 using System;
 using System.Linq;
 using UnityBuilderAction.Input;
-using UnityBuilderAction.Reporting;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
