@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-Tests-${{ hashFiles('Packages\manifest.json') }}
+          key: Library-Tests-${{ hashFiles('Packages/manifest.json') }}
           restore-keys: |
             Library-Tests-
             Library-
