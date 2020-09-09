@@ -57,6 +57,7 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
+          customParameters: -enableCodeCoverage -coverageResultsPath ${{ matrix.testMode }}-artifacts -coverageOptions generateHtmlReport;generateBadgeReport
 
       - uses: actions/upload-artifact@v1
         with:
