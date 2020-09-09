@@ -60,7 +60,7 @@ jobs:
           customParameters: |
             -enableCodeCoverage
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:+PropHunt.*,-PropHunt.Test*,-EditModeTests,-Assembly*
+            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:+PropHunt.*,-PropHunt.Test*,-EditModeTests
 
       - uses: actions/upload-artifact@v1
         with:
