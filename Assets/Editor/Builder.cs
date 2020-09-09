@@ -71,14 +71,6 @@ namespace EditorNamespace
 
             // Perform build
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildOptions);
-
-            // Summary
-            BuildSummary summary = buildReport.summary;
-            StdOutReporter.ReportSummary(summary);
-
-            // Result
-            BuildResult result = summary.result;
-            StdOutReporter.ExitWithResult(result);
         }
     }
 }
