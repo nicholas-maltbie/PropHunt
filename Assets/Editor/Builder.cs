@@ -24,7 +24,6 @@ using System;
 using System.Linq;
 using UnityBuilderAction.Input;
 using UnityBuilderAction.Reporting;
-using UnityBuilderAction.Versioning;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
@@ -44,6 +43,11 @@ namespace EditorNamespace
             if (options.ContainsKey("buildType") && options["buildType"].Equals("server", StringComparison.OrdinalIgnoreCase))
             {
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
+                Console.WriteLine("Creating Server Build");
+            }
+            else
+            {
+                Console.WriteLine("Creating Client Build");
             }
             if (options.ContainsKey("development"))
             {
@@ -64,14 +68,6 @@ namespace EditorNamespace
                 target = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
                 options = selectedOptions,
             };
-
-            // Set version for this build
-            VersionApplicator.SetVersion(options["buildVersion"]);
-            VersionApplicator.SetAndroidVersionCode(options["androidVersionCode"]);
-            
-            // Apply Android settings
-            if (buildOptions.target == BuildTarget.Android)
-                AndroidSettings.Apply(options);
 
             // Perform build
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildOptions);
