@@ -73,3 +73,6 @@ crashlytics-build.properties
 # Blender backup files
 *.blend[0-9]
 *.blend[0-9].meta
+
+# Temporary asset list for building
+.lfs-assets-id
