@@ -25,14 +25,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       # Lists only the commited files in order to evaluate only those.
-      - name: "list commited files"
-        id: commited-files
-        run: |
-          SHORT_SHA=-${GITHUB_SHA::8}
-          CF="$(git diff-tree --no-commit-id --name-only -r "$SHORT_SHA")"
-          CF="${CF//'%'/'%25'}"
-          CF="${CF//$'\n'/'%0A'}"
-          CF="${CF//$'\r'/'%0D'}"
-          echo ::set-env name=COMMITED_FILES::"$CF"
+      - id: changed_files
+        uses: jitterbit/get-changed-files@v1
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
-      - run: dotnet format . --folder --include "${{ env.COMMITED_FILES }}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
+      - run: dotnet format . --folder --include "${{ steps.files.outputs.all }}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
