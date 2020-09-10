@@ -86,17 +86,22 @@ jobs:
           filename: "${{ env.COVERAGE_FILE }}"
           expression: '//CoverageSession/Summary/@branchCoverage'
       
+      - name: Parse Coverage
+        run: |
+        echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< steps.sequenceCoverage.outputs.result)
+        echo ::set-env name=BRANCH_COVERAGE::$(cut -d "=" -f2- <<< steps.branchCoverage.outputs.result)
+      
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
-            Sequence Coverage: ${{ steps.sequenceCoverage.outputs.result }}
-            Branch Coverage: ${{ steps.branchCoverage.outputs.result }}
+            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}
+            Branch Coverage: ${{ env.BRANCH_COVERAGE }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
       
       - name: Assert Coverage
         run: |
-          python3 -c "assert ${{ steps.sequenceCoverage.outputs.result }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.result }}%'"
-          python3 -c "assert ${{ steps.branchCoverage.outputs.result }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.result }}%'"
+          python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
+          python3 -c "assert ${{ env.BRANCH_COVERAGE }} >= 95, 'Branch coverage must be at least 95%, is only ${{ env.BRANCH_COVERAGE }}%'"
