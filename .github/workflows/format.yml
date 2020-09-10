@@ -24,7 +24,7 @@ jobs:
           dotnet-version: 3.1.301
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: actions/github-script@v3
+      - name: "list commited files"
         id: commited-files
         run: git diff --name-only HEAD^ HEAD | sed ':a;N;$!ba;s/\n/;/g
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
