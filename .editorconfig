@@ -3,7 +3,7 @@
 indent_style = space
 indent_size=4
 max_line_length=140
-insert_final_newline = true
+insert_final_newline = false
 
 # Most frequently used .NET-coding-convention properties are supported
 csharp_space_between_parentheses=expressions, type_casts, control_flow_statements
