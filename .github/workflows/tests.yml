@@ -72,16 +72,16 @@ jobs:
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
       - name: sequenceCoverage
-        uses: mavrosxristoforos/get-xml-info@1.0
+        uses: QwerMike/xpath-action@v1
         with:
-          xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '/CoverageSession/Summary/@sequenceCoverage'
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '/CoverageSession/Summary/@sequenceCoverage'
       
       - name: branchCoverage
-        uses: mavrosxristoforos/get-xml-info@1.0
+        uses: QwerMike/xpath-action@v1
         with:
-          xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '/CoverageSession/Summary[1]@branchCoverage'
+          filename: "${{ env.COVERAGE_FILE }}"
+          filename: '/CoverageSession/Summary/@branchCoverage'
       
       - uses: mshick/add-pr-comment@v1
         with:
