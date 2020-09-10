@@ -22,20 +22,5 @@ jobs:
           dotnet-version: 3.1.301
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: add .dotnet/tools to path
-        run: echo "::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools"
-      - run: dotnet tool install dotnet-format --version 5.0.135301 --add-source https://dotnet.myget.org/F/format/api/v3/index.json
-      - run: dotnet format --folder ./
-      - name: Push formatted files.
-        run: |
-          if [ -z "$(git status --porcelain)" ]; then 
-            echo 'no changes to commit.'
-          else 
-            git config user.name dotnet-format[bot]
-            git config user.email 41898282+dotnet-format[bot]@users.noreply.github.com
-            git add .
-            git commit -m "dotnet format applied."
-            git push
-          fi
+      - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
+      - run: dotnet format . --folder --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
