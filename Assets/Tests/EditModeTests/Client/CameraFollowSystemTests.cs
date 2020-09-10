@@ -272,7 +272,6 @@ namespace PropHunt.Tests.Client
                 // Ensure that camera doesn't move without required singletons
                 this.cameraFollow.Update();
 
-                // Testing remove trailing whitespace.
                 // Ensure position and rotation is correct
                 this.AssertCameraTransform(targetPos, Quaternion.Euler(targetView.pitch, targetView.yaw, 0));
             }
