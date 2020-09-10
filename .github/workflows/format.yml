@@ -24,9 +24,14 @@ jobs:
           dotnet-version: 3.1.301
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      # Lists only the commited files in order to evaluate only those.
       - name: "list commited files"
         id: commited-files
         run: |
-          echo ::set-env name=COMMITED_FILES::git show --name-only
+          CF="$(git show --name-only)"
+          CF="${CF//'%'/'%25'}"
+          CF="${CF//$'\n'/'%0A'}"
+          CF="${CF//$'\r'/'%0D'}"
+          echo ::set-env name="$COMMITED_FILES"::
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
       - run: dotnet format . --folder --include "${{ env.COMMITED_FILES }}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
