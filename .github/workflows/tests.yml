@@ -73,7 +73,7 @@ jobs:
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: "find . -name 'TestCoverageResults_0000.xml'"
+          xml-file: "$(find . -name 'TestCoverageResults_0000.xml')"
           xpath: '/CoverageSession/Summary@sequenceCoverage'
       
       - name: branchCoverage
