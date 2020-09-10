@@ -72,22 +72,29 @@ jobs:
         run: |
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
-      - name: Select Coverage
-        run: |
-          echo ::set-env name=SEQUENCE_COVERAGE::$(cat ${{ env.COVERAGE_FILE }} | xpath '/CoverageSession/Summary/@sequenceCoverage')
-          echo ::set-env name=BRANCH_COVERAGE::$(cat ${{ env.COVERAGE_FILE }} | xpath '/CoverageSession/Summary/@sequenceCoverage')
+      - name: sequenceCoverage
+        uses: QwerMike/xpath-action@v1
+        with:
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '/CoverageSession/Summary/@sequenceCoverage'
+      
+      - name: branchCoverage
+        uses: QwerMike/xpath-action@v1
+        with:
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '/CoverageSession/Summary/@branchCoverage'
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
-            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}
-            Branch Coverage: ${{ env.BRANCH_COVERAGE }}
+            Sequence Coverage: ${{ steps.sequenceCoverage.outputs.result }}
+            Branch Coverage: ${{ steps.branchCoverage.outputs.result }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
       
       - name: Assert Coverage
         run: |
-          python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
-          python3 -c "assert ${{ env.BRANCH_COVERAGE }} >= 95, 'Branch coverage must be at least 95%, is only ${{ env.BRANCH_COVERAGE }}%'"
+          python3 -c "assert ${{ steps.sequenceCoverage.outputs.result }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.result }}%'"
+          python3 -c "assert ${{ steps.branchCoverage.outputs.result }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.result }}%'"
