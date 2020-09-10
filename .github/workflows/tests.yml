@@ -76,15 +76,15 @@ jobs:
         id: sequenceCoverage
         uses: QwerMike/xpath-action@v1
         with:
-          xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '//CoverageSession/Summary/@sequenceCoverage'
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '//CoverageSession/Summary/@sequenceCoverage'
       
       - name: Branch Coverage
         id: branchCoverage
         uses: QwerMike/xpath-action@v1
         with:
-          xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '//CoverageSession/Summary/@branchCoverage'
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '//CoverageSession/Summary/@branchCoverage'
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
