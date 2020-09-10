@@ -28,7 +28,7 @@ jobs:
       - name: "list commited files"
         id: commited-files
         run: |
-          CF="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")"
+          CF="$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)"
           CF="${CF//'%'/'%25'}"
           CF="${CF//$'\n'/'%0A'}"
           CF="${CF//$'\r'/'%0D'}"
