@@ -92,5 +92,3 @@ jobs:
         run: |
           python3 -c "assert ${{ steps.branchCoverage.outputs.info }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.info }}%'"
           python3 -c "assert ${{ steps.sequenceCoverage.outputs.info }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.info }}%'"
-      
-      
