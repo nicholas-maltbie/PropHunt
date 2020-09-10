@@ -27,7 +27,7 @@ jobs:
       - uses: actions/github-script@v3
         id: commited-files
         with:
-          script: git diff --name-only --cached --diff-filter=d HEAD^ HEAD | sed ':a;N;$!ba;s/\n/;/g
+          script: git diff --name-only HEAD^ HEAD | sed ':a;N;$!ba;s/\n/;/g
           result-encoding: string
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
       - run: dotnet format . --folder --include "${{steps.commited-files.outputs.result}}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
