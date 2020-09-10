@@ -26,51 +26,49 @@ using UnityBuilderAction.Input;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 
-namespace EditorNamespace
+namespace EditorNamespace {
+static class Builder
 {
-    static class Builder
+    public static void BuildProject()
     {
-        public static void BuildProject()
+        // Gather values from args
+        var options = ArgumentsParser.GetValidatedOptions();
+
+        // Gather values from project
+        var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
+
+        BuildOptions selectedOptions = BuildOptions.None;
+        if (options.ContainsKey("buildType") && options["buildType"].Equals("server", StringComparison.OrdinalIgnoreCase))
         {
-            // Gather values from args
-            var options = ArgumentsParser.GetValidatedOptions();
-
-            // Gather values from project
-            var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
-
-            BuildOptions selectedOptions = BuildOptions.None;
-            if (options.ContainsKey("buildType") && options["buildType"].Equals("server", StringComparison.OrdinalIgnoreCase))
-            {
-                selectedOptions |= BuildOptions.EnableHeadlessMode;
-                Console.WriteLine("Creating Server Build");
-            }
-            else
-            {
-                Console.WriteLine("Creating Client Build");
-            }
-            if (options.ContainsKey("development"))
-            {
-                EditorUserBuildSettings.development = true;
-                EditorUserBuildSettings.allowDebugging = true;
-                EditorUserBuildSettings.connectProfiler = true;
-
-                selectedOptions |= BuildOptions.Development |
-                    BuildOptions.AllowDebugging |
-                    BuildOptions.ConnectWithProfiler |
-                    BuildOptions.EnableHeadlessMode;
-            }
-
-            // Define BuildPlayer Options
-            var buildOptions = new BuildPlayerOptions
-            {
-                scenes = scenes,
-                locationPathName = options["customBuildPath"],
-                target = (BuildTarget)Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
-                options = selectedOptions,
-            };
-
-            // Perform build
-            BuildReport buildReport = BuildPipeline.BuildPlayer(buildOptions);
+            selectedOptions |= BuildOptions.EnableHeadlessMode;
+            Console.WriteLine("Creating Server Build");
         }
+        else
+        {
+            Console.WriteLine("Creating Client Build");
+        }
+        if (options.ContainsKey("development"))
+        {
+            EditorUserBuildSettings.development = true;
+            EditorUserBuildSettings.allowDebugging = true;
+            EditorUserBuildSettings.connectProfiler = true;
+
+            selectedOptions |= BuildOptions.Development |
+                BuildOptions.AllowDebugging |
+                BuildOptions.ConnectWithProfiler |
+                BuildOptions.EnableHeadlessMode;
+        }
+
+        // Define BuildPlayer Options
+        var buildOptions = new BuildPlayerOptions {
+            scenes = scenes,
+            locationPathName = options["customBuildPath"],
+            target = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
+            options = selectedOptions,
+        };
+
+        // Perform build
+        BuildReport buildReport = BuildPipeline.BuildPlayer(buildOptions);
     }
+}
 }
