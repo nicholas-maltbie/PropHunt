@@ -24,8 +24,5 @@ jobs:
           dotnet-version: 3.1.301
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: "list commited files"
-        id: commited-files
-        run: git show --name-only
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
-      - run: dotnet format . --folder --include "${{steps.commited-files.outputs.output}}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
+      - run: dotnet format . --folder --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
