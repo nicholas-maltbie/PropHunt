@@ -81,7 +81,7 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
-          xpath: '/CoverageSession/Summary[0]@branchCoverage'
+          xpath: '/CoverageSession/Summary[1]@branchCoverage'
       
       - uses: mshick/add-pr-comment@v1
         with:
