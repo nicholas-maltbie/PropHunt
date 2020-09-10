@@ -71,13 +71,11 @@ jobs:
         run: |
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
-      - run: cat "${{ env.COVERAGE_FILE }}"
-      
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '//Summary[@sequenceCoverage]'
+          xpath: '/CoverageSession/Summary/@sequenceCoverage'
       
       - name: branchCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
