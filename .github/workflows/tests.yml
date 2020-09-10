@@ -95,6 +95,7 @@ jobs:
         uses: mshick/add-pr-comment@v1
         with:
           message: |
+            Test Coverage Results:
             Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}
             Branch Coverage: ${{ env.BRANCH_COVERAGE }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
