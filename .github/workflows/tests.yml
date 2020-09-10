@@ -62,37 +62,32 @@ jobs:
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
             -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-PropHunt.Test*,-EditModeTests,-Assembly*;pathFilters:-*/Assets/Scripts/*Generated/*
 
-      - uses: actions/upload-artifact@v1
+      - name: Upload Results
+        uses: actions/upload-artifact@v1
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
       
-      - name: findCoverage
+      - name: Find Coverage
         run: |
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
-      - name: sequenceCoverage
-        uses: QwerMike/xpath-action@v1
-        with:
-          filename: "${{ env.COVERAGE_FILE }}"
-          expression: '/CoverageSession/Summary/@sequenceCoverage'
+      - name: Select Coverage
+        run: |
+          echo ::set-env name=SEQUENCE_COVERAGE::$(cat ${{ env.COVERAGE_FILE }} | xpath '/CoverageSession/Summary/@sequenceCoverage')
+          echo ::set-env name=BRANCH_COVERAGE::$(cat ${{ env.COVERAGE_FILE }} | xpath '/CoverageSession/Summary/@sequenceCoverage')
       
-      - name: branchCoverage
-        uses: QwerMike/xpath-action@v1
-        with:
-          filename: "${{ env.COVERAGE_FILE }}"
-          expression: '/CoverageSession/Summary/@branchCoverage'
-      
-      - uses: mshick/add-pr-comment@v1
+      - name: Add PR Comment
+        uses: mshick/add-pr-comment@v1
         with:
           message: |
-            Sequence Coverage: ${{ steps.sequenceCoverage.outputs.info }}
-            Branch Coverage: ${{ steps.branchCoverage.outputs.info }}
+            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}
+            Branch Coverage: ${{ env.BRANCH_COVERAGE }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
       
       - name: Assert Coverage
         run: |
-          python3 -c "assert ${{ steps.branchCoverage.outputs.info }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.info }}%'"
-          python3 -c "assert ${{ steps.sequenceCoverage.outputs.info }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.info }}%'"
+          python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
+          python3 -c "assert ${{ env.BRANCH_COVERAGE }} >= 95, 'Branch coverage must be at least 95%, is only ${{ BRANCH_COVERAGE }}%'"
