@@ -28,8 +28,8 @@ jobs:
       - name: "list commited files"
         id: commited-files
         run: |
-          SHORT_SHA=${GITHUB_SHA::8}
-          CF=$(git diff-tree --no-commit-id --name-only -r "$SHORT_SHA")
+          SHORT_SHA=-${GITHUB_SHA::8}
+          CF="$(git diff-tree --no-commit-id --name-only -r "$SHORT_SHA")"
           CF="${CF//'%'/'%25'}"
           CF="${CF//$'\n'/'%0A'}"
           CF="${CF//$'\r'/'%0D'}"
