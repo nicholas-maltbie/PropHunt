@@ -18,10 +18,10 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         platform:
-          - OSX       # Build a macOS standalone (Intel 64-bit).
-          - Windows   # Build a Windows standalone.
-          - Windows64 # Build a Windows 64-bit standalone.
-          - Linux64   # Build a Linux 64-bit standalone.
+          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows # Build a Windows standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
         buildType:
           - Client
           - Server
@@ -37,9 +37,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ matrix.platform }}
+          key: Library-${{ matrix.platform }}-${{ hashFiles('Packages/manifest.json') }}-v.1.0
           restore-keys: |
-            Library-${{ matrix.projectPath }}-
+            Library-${{ matrix.platform }}-
             Library-
 
       - name: Cache git lfs
@@ -58,9 +58,11 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
-          buildMethod: EditorNamespace.ProdBuilder.${{ matrix.buildType }}_${{ matrix.platform }}
+          targetPlatform: ${{ matrix.platform }}
+          buildMethod: EditorNamespace.Builder.BuildProject
+          customParameters: -buildType ${{ matrix.buildType }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.platform }}-${{ matrix.buildType }}
-          path: Builds/*
+          path: build
