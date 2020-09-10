@@ -19,7 +19,7 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         testMode:
-          # - PlayMode
+          - PlayMode
           - EditMode
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
+          xml-file: "find . -name 'TestCoverageResults_0000.xml'"
           xpath: '/CoverageSession/Summary@sequenceCoverage'
       
       - name: branchCoverage
