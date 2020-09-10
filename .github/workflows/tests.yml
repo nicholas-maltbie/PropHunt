@@ -81,7 +81,7 @@ jobs:
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ env.COVERAGE_FILE }}"
-          filename: '/CoverageSession/Summary/@branchCoverage'
+          expression: '/CoverageSession/Summary/@branchCoverage'
       
       - uses: mshick/add-pr-comment@v1
         with:
