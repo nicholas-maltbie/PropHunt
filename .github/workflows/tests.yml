@@ -75,7 +75,7 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: "${{ env.COVERAGE_FILE }}"
-          xpath: '/CoverageSession/Summary@sequenceCoverage'
+          xpath: '/CoverageSession/Summary[@sequenceCoverage]'
       
       - name: branchCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
