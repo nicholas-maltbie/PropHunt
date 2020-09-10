@@ -72,29 +72,31 @@ jobs:
         run: |
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
-      - name: sequenceCoverage
-        uses: QwerMike/xpath-action@v1
+      - name: Sequence Coverage
+        id: sequenceCoverage
+        uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          filename: "${{ env.COVERAGE_FILE }}"
-          expression: '/CoverageSession/Summary/@sequenceCoverage'
+          xml-file: "${{ env.COVERAGE_FILE }}"
+          xpath: '/CoverageSession/Summary/@sequenceCoverage'
       
-      - name: branchCoverage
-        uses: QwerMike/xpath-action@v1
+      - name: Branch Coverage
+        id: branchCoverage
+        uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          filename: "${{ env.COVERAGE_FILE }}"
-          expression: '/CoverageSession/Summary/@branchCoverage'
+          xml-file: "${{ env.COVERAGE_FILE }}"
+          xpath: '/CoverageSession/Summary/@branchCoverage'
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
-            Sequence Coverage: ${{ steps.sequenceCoverage.outputs.result }}
-            Branch Coverage: ${{ steps.branchCoverage.outputs.result }}
+            Sequence Coverage: ${{ steps.sequenceCoverage.outputs.info }}
+            Branch Coverage: ${{ steps.branchCoverage.outputs.info }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
       
       - name: Assert Coverage
         run: |
-          python3 -c "assert ${{ steps.sequenceCoverage.outputs.result }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.result }}%'"
-          python3 -c "assert ${{ steps.branchCoverage.outputs.result }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.result }}%'"
+          python3 -c "assert ${{ steps.sequenceCoverage.outputs.info }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ steps.sequenceCoverage.outputs.info }}%'"
+          python3 -c "assert ${{ steps.branchCoverage.outputs.info }} >= 95, 'Branch coverage must be at least 95%, is only ${{ steps.branchCoverage.outputs.info }}%'"
