@@ -70,6 +70,7 @@ jobs:
       - name: findCoverage
         run: |
           echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          cat "${{ env.COVERAGE_FILE }}"
       
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
@@ -80,7 +81,7 @@ jobs:
       - name: branchCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
+          xml-file: "${{ env.COVERAGE_FILE }}"
           xpath: '/CoverageSession/Summary[1]@branchCoverage'
       
       - uses: mshick/add-pr-comment@v1
