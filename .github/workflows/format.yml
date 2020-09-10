@@ -32,6 +32,6 @@ jobs:
           CF="${CF//'%'/'%25'}"
           CF="${CF//$'\n'/'%0A'}"
           CF="${CF//$'\r'/'%0D'}"
-          echo ::set-env name="$COMMITED_FILES"::
+          echo ::set-env name=COMMITED_FILES::"$CF"
       - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
       - run: dotnet format . --folder --include "${{ env.COMMITED_FILES }}" --exclude Assets/Scripts/Generated Library --check # Call format but just do a check to see if everything is in order.
