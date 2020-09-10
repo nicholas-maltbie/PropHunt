@@ -69,7 +69,7 @@ jobs:
       
       - name: findCoverage
         run: |
-          echo ::set-env name=COVERAGE_FILE::$(find . -name "TestCoverageResults_0000.xml")
+          echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
       
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
