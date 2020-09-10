@@ -98,7 +98,7 @@ jobs:
             Test Coverage Results for ${{ matrix.testMode }}:
             Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}%
             Branch Coverage: ${{ env.BRANCH_COVERAGE }}%
-            Link to run results: [https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}](https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }})
+            Link to run results: [https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
