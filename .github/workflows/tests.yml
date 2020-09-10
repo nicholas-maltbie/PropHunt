@@ -67,19 +67,19 @@ jobs:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
       
-      - run: ls ${{ matrix.testMode }}-artifactsPath
+      - run: ls ${{ steps.tests.outputs.artifactsPath }}
       - run: find . -name "TestCoverageResults_0000.xml"
       
       - name: sequenceCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: ${{ matrix.testMode }}-artifacts/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
+          xml-file: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
           xpath: '/CoverageSession/Summary@sequenceCoverage'
       
       - name: branchCoverage
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: ${{ matrix.testMode }}-artifacts/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
+          xml-file: ${{ steps.tests.outputs.artifactsPath }}/workspace-opencov/${{ matrix.testMode }}/TestCoverageResults_0000.xml
           xpath: '/CoverageSession/Summary@branchCoverage'
       
       - uses: mshick/add-pr-comment@v1
