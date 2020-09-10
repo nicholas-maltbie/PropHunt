@@ -88,8 +88,8 @@ jobs:
       
       - name: Parse Coverage
         run: |
-          echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< steps.sequenceCoverage.outputs.result)
-          echo ::set-env name=BRANCH_COVERAGE::$(cut -d "=" -f2- <<< steps.branchCoverage.outputs.result)
+          echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-env name=BRANCH_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.branchCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
