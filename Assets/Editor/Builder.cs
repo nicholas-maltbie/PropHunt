@@ -47,15 +47,14 @@ namespace EditorNamespace
             {
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
                 Console.WriteLine("Creating Server Build");
-                allDefines.Add("UNITY_SERVER");
-                allDefines.Add("UNITY_EDITOR");
-                allDefines.Remove("UNITY_CLIENT");
+                // allDefines.Add("UNITY_SERVER");
+                // allDefines.Remove("UNITY_CLIENT");
             }
             else
             {
                 Console.WriteLine("Creating Client Build");
-                allDefines.Remove("UNITY_SERVER");
-                allDefines.Add("UNITY_CLIENT");
+                // allDefines.Remove("UNITY_SERVER");
+                // allDefines.Add("UNITY_CLIENT");
             }
             PlayerSettings.SetScriptingDefineSymbolsForGroup(
                 EditorUserBuildSettings.selectedBuildTargetGroup,
