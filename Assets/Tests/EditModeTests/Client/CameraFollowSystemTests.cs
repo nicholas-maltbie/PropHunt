@@ -11,7 +11,7 @@ using Unity.NetCode;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace PropHunt.Tests.Client
+namespace PropHunt.EditMode.Tests.Client
 {
     [TestFixture]
     public class CameraFollowSystemTests : ECSTestsFixture

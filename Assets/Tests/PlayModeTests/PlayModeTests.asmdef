@@ -1,0 +1,29 @@
+{
+    "name": "PlayModeTests",
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Tests",
+        "Unity.Entities.Editor.Tests",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "PropHunt.Tests.Utils",
+        "PropHunt",
+        "Unity.Transforms",
+        "Unity.Mathematics",
+        "Unity.NetCode"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Moq.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
