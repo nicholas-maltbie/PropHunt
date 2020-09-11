@@ -67,6 +67,7 @@ public class ProphuntClientServerControlSystem : ComponentSystem
         EntityManager.DestroyEntity(GetSingletonEntity<InitializeClientServer>());
         foreach (var world in World.All)
         {
+#if UNITY_SERVER || UNITY_EDITOR
             // Bind the server and start listening for connections
             if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
             {
@@ -74,6 +75,8 @@ public class ProphuntClientServerControlSystem : ComponentSystem
                 ep.Port = NetworkPort;
                 world.GetExistingSystem<NetworkStreamReceiveSystem>().Listen(ep);
             }
+#endif
+#if UNITY_CLIENT || UNITY_EDITOR
             // Auto connect all clients to the server
             if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
             {
@@ -83,6 +86,7 @@ public class ProphuntClientServerControlSystem : ComponentSystem
                 NetworkEndPoint ep = NetworkEndPoint.Parse(NetworkAddress, NetworkPort);
                 world.GetExistingSystem<NetworkStreamReceiveSystem>().Connect(ep);
             }
+#endif
         }
     }
 }
