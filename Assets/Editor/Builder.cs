@@ -43,12 +43,11 @@ namespace EditorNamespace
             {
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
                 Console.WriteLine("Creating Server Build");
-                Environment.SetEnvironmentVariable("UNITY_SERVER", "true");
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SERVER");
             }
             else
             {
                 Console.WriteLine("Creating Client Build");
-                Environment.SetEnvironmentVariable("UNITY_CLIENT", "true");
             }
             if (options.ContainsKey("development"))
             {
