@@ -19,7 +19,7 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         testMode:
-          - playmode
+          # - playmode
           - editmode
     steps:
       - uses: actions/checkout@v2
@@ -33,10 +33,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-${{ matrix.platform }}
+          key: Library-Tests-${{ hashFiles('Packages/manifest.json') }}
           restore-keys: |
-            Library-${{ matrix.projectPath }}-
-            Library-
+            Library-Tests-
 
       - name: Cache git lfs
         uses: actions/cache@v2
@@ -57,8 +56,54 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
+          customParameters: |
+            -enableCodeCoverage
+            -coverageResultsPath ${{ matrix.testMode }}-artifacts
+            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-PropHunt.Test*,-EditModeTests,-Assembly*;pathFilters:-*/Assets/Scripts/*Generated/*
 
-      - uses: actions/upload-artifact@v1
+      - name: Upload Results
+        uses: actions/upload-artifact@v1
         with:
           name: Test results for ${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
+      
+      - name: Find Coverage
+        run: |
+          echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+      
+      - name: Sequence Coverage
+        id: sequenceCoverage
+        uses: QwerMike/xpath-action@v1
+        with:
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '//CoverageSession/Summary/@sequenceCoverage'
+      
+      - name: Branch Coverage
+        id: branchCoverage
+        uses: QwerMike/xpath-action@v1
+        with:
+          filename: "${{ env.COVERAGE_FILE }}"
+          expression: '//CoverageSession/Summary/@branchCoverage'
+      
+      - name: Parse Coverage
+        run: |
+          echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-env name=BRANCH_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.branchCoverage.outputs.result }})
+      
+      - name: Add PR Comment
+        uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            Test Coverage Results for ${{ matrix.testMode }}:
+            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}%
+            Branch Coverage: ${{ env.BRANCH_COVERAGE }}%
+            Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
+          allow-repeats: false # This is the default
+      
+      # Skip assert coverage step for now
+      # - name: Assert Coverage
+      #   run: |
+      #     python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
+      #     python3 -c "assert ${{ env.BRANCH_COVERAGE }} >= 95, 'Branch coverage must be at least 95%, is only ${{ env.BRANCH_COVERAGE }}%'"

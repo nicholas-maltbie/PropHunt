@@ -18,10 +18,10 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         platform:
-          - StandaloneOSX # Build a macOS standalone (Intel 64-bit).
-          - StandaloneWindows # Build a Windows standalone.
+          - StandaloneOSX       # Build a macOS standalone (Intel 64-bit).
+          - StandaloneWindows   # Build a Windows standalone.
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+          - StandaloneLinux64   # Build a Linux 64-bit standalone.
         buildType:
           - Client
           - Server
@@ -40,7 +40,6 @@ jobs:
           key: Library-${{ matrix.platform }}-${{ hashFiles('Packages/manifest.json') }}-v.1.0
           restore-keys: |
             Library-${{ matrix.platform }}-
-            Library-
 
       - name: Cache git lfs
         uses: actions/cache@v2
