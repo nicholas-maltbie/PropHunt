@@ -19,7 +19,7 @@ jobs:
         unityVersion:
           - 2019.4.0f1
         testMode:
-          # - PlayMode
+          # - playmode
           - editmode
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +36,6 @@ jobs:
           key: Library-Tests-${{ hashFiles('Packages/manifest.json') }}
           restore-keys: |
             Library-Tests-
-            Library-
 
       - name: Cache git lfs
         uses: actions/cache@v2

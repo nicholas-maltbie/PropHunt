@@ -58,7 +58,7 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.platform }}
-          buildMethod: EditorNamespace.Builder.BuildProject	
+          buildMethod: EditorNamespace.Builder.BuildProject
           customParameters: -buildType ${{ matrix.buildType }}
 
       - uses: actions/upload-artifact@v2
