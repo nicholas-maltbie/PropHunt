@@ -54,7 +54,10 @@ namespace EditorNamespace
             {
                 Console.WriteLine("Creating Client Build");
                 // allDefines.Remove("UNITY_SERVER");
-                allDefines.Add("UNITY_CLIENT");
+                if (!allDefines.Contains("UNITY_CLIENT"))
+                {
+                    allDefines.Add("UNITY_CLIENT");
+                }
             }
             PlayerSettings.SetScriptingDefineSymbolsForGroup(
                 EditorUserBuildSettings.selectedBuildTargetGroup,
