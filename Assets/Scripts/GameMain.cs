@@ -55,6 +55,9 @@ public class ProphuntClientServerControlSystem : ComponentSystem
     protected override void OnCreate()
     {
         RequireSingletonForUpdate<InitializeClientServer>();
+#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
+        var initEntity = EntityManager.CreateEntity(typeof(InitializeClientServer));
+#endif
     }
 
     /// <summary>
