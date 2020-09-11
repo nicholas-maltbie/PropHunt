@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityBuilderAction.Input;
 using UnityEditor;
@@ -39,15 +40,29 @@ namespace EditorNamespace
             var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
 
             BuildOptions selectedOptions = BuildOptions.None;
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            List<string> allDefines = definesString.Split(';').ToList();
+
             if (options.ContainsKey("buildType") && options["buildType"].Equals("server", StringComparison.OrdinalIgnoreCase))
             {
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
                 Console.WriteLine("Creating Server Build");
+                // allDefines.Add("UNITY_SERVER");
+                allDefines.Remove("UNITY_CLIENT");
             }
             else
             {
                 Console.WriteLine("Creating Client Build");
+                // allDefines.Remove("UNITY_SERVER");
+                if (!allDefines.Contains("UNITY_CLIENT"))
+                {
+                    allDefines.Add("UNITY_CLIENT");
+                }
             }
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join(";", allDefines.ToArray()));
+
             if (options.ContainsKey("development"))
             {
                 EditorUserBuildSettings.development = true;
@@ -61,10 +76,11 @@ namespace EditorNamespace
             }
 
             // Define BuildPlayer Options
-            var buildOptions = new BuildPlayerOptions {
+            var buildOptions = new BuildPlayerOptions
+            {
                 scenes = scenes,
                 locationPathName = options["customBuildPath"],
-                target = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
+                target = (BuildTarget)Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
                 options = selectedOptions,
             };
 
