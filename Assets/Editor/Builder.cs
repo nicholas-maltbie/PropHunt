@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityBuilderAction.Input;
 using UnityEditor;
@@ -39,17 +40,25 @@ namespace EditorNamespace
             var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
 
             BuildOptions selectedOptions = BuildOptions.None;
+            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            List<string> allDefines = definesString.Split(';').ToList();
+
             if (options.ContainsKey("buildType") && options["buildType"].Equals("server", StringComparison.OrdinalIgnoreCase))
             {
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
                 Console.WriteLine("Creating Server Build");
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "UNITY_SERVER");
+                allDefines.Add("UNITY_SERVER");
             }
             else
             {
                 Console.WriteLine("Creating Client Build");
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "");
+                allDefines.Remove("UNITY_SERVER");
+                allDefines.Add("UNITY_CLIENT");
             }
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                string.Join(";", allDefines.ToArray()));
+
             if (options.ContainsKey("development"))
             {
                 EditorUserBuildSettings.development = true;
