@@ -48,6 +48,7 @@ namespace EditorNamespace
             else
             {
                 Console.WriteLine("Creating Client Build");
+                PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, "");
             }
             if (options.ContainsKey("development"))
             {
@@ -62,10 +63,11 @@ namespace EditorNamespace
             }
 
             // Define BuildPlayer Options
-            var buildOptions = new BuildPlayerOptions {
+            var buildOptions = new BuildPlayerOptions
+            {
                 scenes = scenes,
                 locationPathName = options["customBuildPath"],
-                target = (BuildTarget) Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
+                target = (BuildTarget)Enum.Parse(typeof(BuildTarget), options["buildTarget"]),
                 options = selectedOptions,
             };
 
