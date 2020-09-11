@@ -48,6 +48,7 @@ namespace EditorNamespace
                 selectedOptions |= BuildOptions.EnableHeadlessMode;
                 Console.WriteLine("Creating Server Build");
                 allDefines.Add("UNITY_SERVER");
+                allDefines.Remove("UNITY_CLIENT");
             }
             else
             {
