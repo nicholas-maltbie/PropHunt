@@ -140,6 +140,21 @@ namespace PropHunt.Mixed.Components
         /// Does not need to synced between clients.
         /// </summary>
         public bool onGround;
+
+        /// <summary>
+        /// Index of rigidbody of grounded object
+        /// </summary>
+        public int groundedRBIndex;
+
+        /// <summary>
+        /// Point on which the object is touching the ground
+        /// </summary>
+        public float3 groundedPoint;
+
+        /// <summary>
+        /// Entity hit
+        /// </summary>
+        public Entity hitEntity;
     }
 
     /// <summary>
