@@ -43,7 +43,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 12
   m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,8 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 8e4ec6af3cb77e0438caf9a992fa3a35,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,6 +119,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -1366,24 +1369,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c75b8787d8624691813514d3823a59f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RootPath: /Scripts/Generated
-  SerializerCollectionPath: GhostSerializerCollection.cs
-  DeserializerCollectionPath: GhostDeserializerCollection.cs
-  NamePrefix: Prophunt
   Ghosts:
-  - prefab: {fileID: -2038115422834610797, guid: 9ce66645134d05648a349e8c3c23779d,
+  - prefab: {fileID: 7259411516345178062, guid: a2ac3ff0ec55b8841a46bf0be8b6993d,
       type: 3}
     enabled: 1
   - prefab: {fileID: 7895700625144195435, guid: eee6a4ddc1ceae54c92cfa25bd5a5ef1,
       type: 3}
     enabled: 1
-  - prefab: {fileID: 5902303242071951102, guid: 500369948f8b01346b0c4e2c343e2fe7,
-      type: 3}
-    enabled: 1
-  - prefab: {fileID: 7259411516345178062, guid: a2ac3ff0ec55b8841a46bf0be8b6993d,
-      type: 3}
-    enabled: 1
   - prefab: {fileID: 5911232014463065074, guid: 563546384c88d2240844b477c3d3fac8,
+      type: 3}
+    enabled: 1
+  - prefab: {fileID: -2038115422834610797, guid: 9ce66645134d05648a349e8c3c23779d,
+      type: 3}
+    enabled: 1
+  - prefab: {fileID: 5902303242071951102, guid: 500369948f8b01346b0c4e2c343e2fe7,
       type: 3}
     enabled: 1
 --- !u!1 &585440707

@@ -13,7 +13,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Number identifying who is controlling the player.
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int playerId;
     }
 

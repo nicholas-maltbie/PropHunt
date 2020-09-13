@@ -12,7 +12,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Number identifying which material the entity has referenced.
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int materialId;
     }
 }

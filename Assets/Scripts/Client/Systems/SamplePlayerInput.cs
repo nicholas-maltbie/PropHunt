@@ -20,7 +20,6 @@ namespace PropHunt.Client.Systems
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<NetworkIdComponent>();
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
         }
 
         protected override void OnUpdate()

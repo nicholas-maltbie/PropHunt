@@ -10,11 +10,6 @@ namespace PropHunt.Server.Systems
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class HandleDisconnectSystem : ComponentSystem
     {
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostSendSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             // According to the unity docs

@@ -14,11 +14,6 @@ namespace PropHunt.Client.Systems
     public class JoinGameClientSystem : ComponentSystem
     {
 
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>

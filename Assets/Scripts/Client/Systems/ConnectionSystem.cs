@@ -28,11 +28,6 @@ namespace PropHunt.Client.Systems
             ConnectionSystem.disconnectRequested = true;
         }
 
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) => 

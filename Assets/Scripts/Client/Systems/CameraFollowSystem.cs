@@ -20,7 +20,6 @@ namespace PropHunt.Client.Systems
         {
             Cursor.lockState = CursorLockMode.Locked;
             RequireSingletonForUpdate<NetworkIdComponent>();
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
         }
 
         protected override void OnUpdate()

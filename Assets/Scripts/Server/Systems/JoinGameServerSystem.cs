@@ -18,7 +18,7 @@ namespace PropHunt.Server.Systems
     {
         protected override void OnCreate()
         {
-            RequireSingletonForUpdate<EnableProphuntGhostSendSystemComponent>();
+            // RequireSingletonForUpdate<EnableProphuntGhostSendSystemComponent>();
         }
 
         protected override void OnUpdate()
@@ -30,14 +30,14 @@ namespace PropHunt.Server.Systems
 
                 // Setup the character avatar
                 var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
-                var ghostId = ProphuntGhostSerializerCollection.FindGhostType<TestCharacterSnapshotData>();
-                var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
-                var player = PostUpdateCommands.Instantiate(prefab);
-                PostUpdateCommands.SetComponent(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
-                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
+                // var ghostId = ProphuntGhostSerializerCollection.FindGhostType<TestCharacterSnapshotData>();
+                // var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
+                // var player = PostUpdateCommands.Instantiate(prefab);
+                // PostUpdateCommands.SetComponent(player, new PlayerId { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value});
+                // PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
 
-                PostUpdateCommands.AddBuffer<PlayerInput>(player);
-                PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
+                // PostUpdateCommands.AddBuffer<PlayerInput>(player);
+                // PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
                 
                 PostUpdateCommands.DestroyEntity(reqEnt);
             });

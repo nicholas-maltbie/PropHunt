@@ -95,15 +95,10 @@ namespace PropHunt.Tests.Client
             {
                 World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
             }
-            if (!system.HasSingleton<EnableProphuntGhostReceiveSystemComponent>())
-            {
-                World.EntityManager.CreateEntity(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>());
-            }
             var networkIDEntity = system.GetSingleton<NetworkIdComponent>(); 
 
             // Set singleton data
             system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent {Value = networkId});
-            system.SetSingleton<EnableProphuntGhostReceiveSystemComponent>(new EnableProphuntGhostReceiveSystemComponent());
         }
 
         /// <summary>
@@ -159,10 +154,6 @@ namespace PropHunt.Tests.Client
             if (this.cameraFollow.HasSingleton<NetworkIdComponent>())
             {
                 World.EntityManager.DestroyEntity(World.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<NetworkIdComponent>()));
-            }
-            if (this.cameraFollow.HasSingleton<EnableProphuntGhostReceiveSystemComponent>())
-            {
-                World.EntityManager.DestroyEntity(World.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<EnableProphuntGhostReceiveSystemComponent>()));
             }
 
             // Ensure that camera doesn't move without required singletons

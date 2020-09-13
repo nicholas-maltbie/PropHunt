@@ -56,6 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +81,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3378658210144245526
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,6 +97,7 @@ GameObject:
   - component: {fileID: 2032777291050987007}
   - component: {fileID: 1967619771951168409}
   - component: {fileID: 7895700625144195435}
+  - component: {fileID: 4421601493602290122}
   - component: {fileID: -8328457236669233695}
   m_Layer: 0
   m_Name: TestCharacter
@@ -143,6 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewRotationRate: 180
+  offset: {x: 0, y: 1.7, z: 0}
 --- !u!114 &-8700528946816345019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,346 +391,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultClientInstantiationType: 2
-  RootPath: /Scripts/Mixed/Generated
-  SnapshotDataPath: TestCharacterSnapshotData.cs
-  UpdateSystemPath: TestCharacterGhostUpdateSystem.cs
-  SerializerPath: TestCharacterGhostSerializer.cs
+  DefaultGhostMode: 2
+  SupportedGhostModes: 3
+  OptimizationMode: 0
   Importance: 1
-  PredictingPlayerNetworkId: PropHunt.Mixed.Components.PlayerId.playerId
-  Components:
-  - name: PropHunt.Mixed.Components.KCCGravity
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: gravityAcceleration
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.KCCGrounded
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: maxWalkAngle
-      quantization: 100
-      interpolate: 1
-    - name: groundCheckDistance
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.KCCJumping
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: jumpForce
-      quantization: 100
-      interpolate: 1
-    - name: attemptingJump
-      quantization: -1
-      interpolate: 0
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.KCCMovementSettings
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: moveSpeed
-      quantization: 100
-      interpolate: 1
-    - name: sprintMultiplier
-      quantization: 100
-      interpolate: 1
-    - name: moveMaxBounces
-      quantization: -1
-      interpolate: 0
-    - name: moveAnglePower
-      quantization: 100
-      interpolate: 1
-    - name: movePushPower
-      quantization: 100
-      interpolate: 1
-    - name: movePushDecay
-      quantization: 100
-      interpolate: 1
-    - name: fallMaxBounces
-      quantization: -1
-      interpolate: 0
-    - name: fallPushPower
-      quantization: 100
-      interpolate: 1
-    - name: fallAnglePower
-      quantization: 100
-      interpolate: 1
-    - name: fallPushDecay
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.KCCVelocity
-    interpolatedClient: 0
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: playerVelocity
-      quantization: 100
-      interpolate: 1
-    - name: worldVelocity
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.PlayerId
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: playerId
-      quantization: -1
-      interpolate: 0
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PropHunt.Mixed.Components.PlayerView
-    interpolatedClient: 0
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: viewRotationRate
-      quantization: 100
-      interpolate: 1
-    - name: pitch
-      quantization: 100
-      interpolate: 1
-    - name: yaw
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsCollider
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsGravityFactor
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsMass
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsVelocity
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.LocalToWorld
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Rotation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 1000
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Translation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.PerInstanceCullingTag
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Rendering.RenderBounds
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Rendering.RenderMesh
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Transforms.LocalToParent
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Transforms.LocalToWorld
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Transforms.Parent
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Transforms.Rotation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 1000
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Transforms.Translation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 1
-  - name: Unity.Rendering.PerInstanceCullingTag
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Rendering.RenderBounds
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Rendering.RenderMesh
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.LocalToParent
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.LocalToWorld
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.NonUniformScale
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.Parent
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.Rotation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 1000
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 2
-  - name: Unity.Transforms.Translation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 2
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter
   doNotStrip: 0
+--- !u!114 &4421601493602290122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1fea7091bb9848b191c018d3718ec0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-8328457236669233695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,6 +423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewRotationRate: 180
+  offset: {x: 0, y: 1.7, z: 0}
 --- !u!1 &5362533525206946736
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,6 +479,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -819,3 +504,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
