@@ -170,7 +170,7 @@ namespace Unity.Entities.Tests
 #endif
         IComponentData
         {
-            var type = m_Manager.GetArchetypeChunkComponentType<T>(true);
+            var type = m_Manager.GetComponentTypeHandle<T>(true);
             var chunk = m_Manager.GetChunk(e);
             Assert.AreEqual(version, chunk.GetChangeVersion(type));
             Assert.IsFalse(chunk.DidChange(type, version));
@@ -185,7 +185,7 @@ namespace Unity.Entities.Tests
 
         public void AssetHasBufferChangeVersion<T>(Entity e, uint version) where T : struct, IBufferElementData
         {
-            var type = m_Manager.GetArchetypeChunkBufferType<T>(true);
+            var type = m_Manager.GetBufferTypeHandle<T>(true);
             var chunk = m_Manager.GetChunk(e);
             Assert.AreEqual(version, chunk.GetChangeVersion(type));
             Assert.IsFalse(chunk.DidChange(type, version));
@@ -194,7 +194,7 @@ namespace Unity.Entities.Tests
 
         public void AssetHasSharedChangeVersion<T>(Entity e, uint version) where T : struct, ISharedComponentData
         {
-            var type = m_Manager.GetArchetypeChunkSharedComponentType<T>();
+            var type = m_Manager.GetSharedComponentTypeHandle<T>();
             var chunk = m_Manager.GetChunk(e);
             Assert.AreEqual(version, chunk.GetChangeVersion(type));
             Assert.IsFalse(chunk.DidChange(type, version));

@@ -53,7 +53,7 @@ namespace PropHunt.Mixed.Utilities
         /// tuned for how much to push away while not allowing being shoved into objects.</param>
         /// <returns>The final location of the character.</returns>
         public static unsafe float3 ProjectValidMovement(
-            EntityCommandBuffer.Concurrent commandBuffer,
+            EntityCommandBuffer.ParallelWriter commandBuffer,
             int jobIndex,
             CollisionWorld collisionWorld,
             float3 start,

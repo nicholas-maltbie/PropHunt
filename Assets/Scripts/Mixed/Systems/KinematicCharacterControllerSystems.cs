@@ -100,7 +100,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void  OnUpdate()
         {
-            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             float deltaTime = Time.DeltaTime;
 
