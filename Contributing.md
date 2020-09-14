@@ -49,7 +49,11 @@ See [Creating a pull request](https://help.github.com/en/github/collaborating-wi
 
 As far as coding style, please try to stay consistent with [Csharp Coding Guidelines](https://wiki.unity3d.com/index.php/Csharp_Coding_Guidelines) from Unity's reference guide. 
 
-## 5. Done
+## 5. Style Check
+
+In order to finish your PR, ensure you code follows the style guidelines of the project. The rules for our style are defined in the `.editorconfig` file and there is a pre-commit hook that will execute whenever you make a commit to the repository. In addition there is a github actions workflow that will verify the style of all changed files. 
+
+## 6. Done
 
 If you follow all these steps, we should have a clean, working master branch.
 
