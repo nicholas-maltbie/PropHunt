@@ -33,9 +33,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: Library
-          key: Library-Tests-${{ hashFiles('Packages/manifest.json') }}
-          restore-keys: |
-            Library-Tests-
+          key: Library-Tests-${{ hashFiles('Packages/manifest.json') }}-v1.0
+          # restore-keys: |
+          #   Library-Tests-
 
       - name: Cache git lfs
         uses: actions/cache@v2
