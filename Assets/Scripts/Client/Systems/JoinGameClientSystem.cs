@@ -14,11 +14,6 @@ namespace PropHunt.Client.Systems
     public class JoinGameClientSystem : ComponentSystem
     {
 
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>
@@ -32,7 +27,8 @@ namespace PropHunt.Client.Systems
             // When the player Joins the session
             // We will attach an 'UpdateMaterialComponentData' to all the
             // entities that have a MaterialIdComponentData in order to do an update.
-            Entities.ForEach((Entity ent, ref MaterialIdComponentData mat) => {
+            Entities.ForEach((Entity ent, ref MaterialIdComponentData mat) =>
+            {
                 PostUpdateCommands.AddComponent<UpdateMaterialComponentData>(ent);
             });
         }

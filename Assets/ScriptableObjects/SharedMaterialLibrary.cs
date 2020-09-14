@@ -9,8 +9,9 @@ namespace PropHunt.Scriptable
     }
 
     [System.Serializable]
-    public class SharedMaterial{
+    public class SharedMaterial
+    {
         public Material Material;
         public int MaterialId;
-    } 
+    }
 }

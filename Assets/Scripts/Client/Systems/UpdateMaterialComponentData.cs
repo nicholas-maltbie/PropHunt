@@ -13,11 +13,6 @@ namespace PropHunt.Client.Systems
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class UpdateMaterialSystem : ComponentSystem
     {
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostReceiveSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             var ecb = EntityManager.World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();

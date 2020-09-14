@@ -67,13 +67,13 @@ namespace PropHunt.Mixed.Commands
         public void Deserialize(uint tick, ref DataStreamReader reader)
         {
             this.tick = tick;
-            this.horizMove      = reader.ReadFloat();
-            this.vertMove       = reader.ReadFloat();
-            this.pitchChange    = reader.ReadFloat();
-            this.yawChange      = reader.ReadFloat();
-            this.jump           = reader.ReadByte();
-            this.interact       = reader.ReadByte();
-            this.sprint         = reader.ReadByte();
+            this.horizMove = reader.ReadFloat();
+            this.vertMove = reader.ReadFloat();
+            this.pitchChange = reader.ReadFloat();
+            this.yawChange = reader.ReadFloat();
+            this.jump = reader.ReadByte();
+            this.interact = reader.ReadByte();
+            this.sprint = reader.ReadByte();
         }
 
         public void Serialize(ref DataStreamWriter writer)

@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 7259411516345178060}
   - component: {fileID: 7259411516345178061}
   - component: {fileID: 7259411516345178062}
-  - component: {fileID: 7713541440562654514}
   m_Layer: 0
   m_Name: HorizontalSpinningCylinder
   m_TagString: Untagged
@@ -59,6 +58,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -83,6 +83,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7259411516345178060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,128 +304,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultClientInstantiationType: 0
-  RootPath: /Scripts/Environment/Generated
-  SnapshotDataPath: HorizontalSpinningCylinderSnapshotData.cs
-  UpdateSystemPath: HorizontalSpinningCylinderGhostUpdateSystem.cs
-  SerializerPath: HorizontalSpinningCylinderGhostSerializer.cs
+  DefaultGhostMode: 0
+  SupportedGhostModes: 3
+  OptimizationMode: 0
   Importance: 1
-  PredictingPlayerNetworkId: 
-  Components:
-  - name: PropHunt.Mixed.Components.MovementTracking
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsCollider
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsGravityFactor
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsMass
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsVelocity
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.PerInstanceCullingTag
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.RenderBounds
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.RenderMesh
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.CompositeScale
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.LocalToWorld
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Rotation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 1000
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Translation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
   prefabId: a2ac3ff0ec55b8841a46bf0be8b6993d
   Name: HorizontalSpinningCylinder
   doNotStrip: 0
---- !u!114 &7713541440562654514
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

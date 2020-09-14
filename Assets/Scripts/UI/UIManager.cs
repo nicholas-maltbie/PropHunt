@@ -24,7 +24,7 @@ namespace PropHunt.UI
         /// Name of the previous screen shown
         /// </summary>
         public string oldScreen { get; set; }
-        
+
         /// <summary>
         /// Name of the new screen being changed to
         /// </summary>
@@ -82,13 +82,13 @@ namespace PropHunt.UI
 
             // Setup dictionary of screens
             this.screenLookup = new Dictionary<string, GameObject>();
-            for(int idx = 0; idx < this.screenPrefabs.Count; idx++)
+            for (int idx = 0; idx < this.screenPrefabs.Count; idx++)
             {
                 string screenName = screenPrefabs[idx].name;
                 // instantiate a copy of each screen and set all to disabled except current screen
                 GameObject screen = GameObject.Instantiate(screenPrefabs[idx].gameObject);
                 // Set object parent to this for more organized hierarchy
-                screen.transform.SetParent(this.transform, worldPositionStays : false);
+                screen.transform.SetParent(this.transform, worldPositionStays: false);
                 this.screenLookup[screenName] = screen;
                 if (idx == this.initialScreen)
                 {
@@ -151,7 +151,7 @@ namespace PropHunt.UI
             changeEvent.newScreen = screenName;
 
             this.CurrentScreen = screenName;
-            
+
             // invoke screen change event
             ScreenChangeOccur?.Invoke(this, changeEvent);
         }
@@ -169,4 +169,3 @@ namespace PropHunt.UI
         }
     }
 }
-

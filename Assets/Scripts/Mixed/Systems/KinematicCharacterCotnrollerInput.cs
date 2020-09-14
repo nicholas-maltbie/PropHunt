@@ -14,7 +14,6 @@ namespace PropHunt.Mixed.Systems
     /// commands based on user input.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(PlayerRotationSystem))]
     public class KinematicCharacterControllerInput : SystemBase
     {
@@ -23,7 +22,7 @@ namespace PropHunt.Mixed.Systems
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
-            
+
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref KCCVelocity velocity,

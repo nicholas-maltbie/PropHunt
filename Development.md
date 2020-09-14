@@ -5,7 +5,7 @@ to be able ot edit and change the project.
 
 # 1. Unity Setup
 
-Using [Unity v 2019.4.0f1 (LTS)](https://unity3d.com/unity/whats-new/2019.4.0)
+Using [Unity v 2020.1.5f1](https://unity3d.com/unity/whats-new/2020.1.5)
 * Including build support for Linux, Mac, and Windows.
 
 Install this version of Unity from Unity Hub
@@ -18,7 +18,7 @@ Before you can use Unity hub, you need to setup a license
 * If you do not qualify for a personal license use your company license.
 * For more information about licenses, please check [Unity's License Page](https://store.unity.com/compare-plans)
 
-Install the proper version of Unity from UnityHub using this unity hub link [unityhub://2019.3.15f1/59ff3e03856d](unityhub://2019.3.15f1/59ff3e03856d)
+Install the proper version of Unity from UnityHub using this unity hub link [unityhub://2020.1.5f1/e025938fdedc](unityhub://2020.1.5f1/e025938fdedc)
 * Note, UnityHub must be registered on your system for it to open the Unity Hub App.
 * To do this in linux, just launch the downloaded `UnityHub.AppImage` file.
 

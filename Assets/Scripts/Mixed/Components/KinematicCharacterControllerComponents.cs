@@ -8,19 +8,19 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostDefaultComponent(GhostDefaultComponentAttribute.Type.All)]
+    [GhostComponent]
     public struct KCCMovementSettings : IComponentData
-    {        
+    {
         /// <summary>
         /// Player movement speed in units per second.
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float moveSpeed;
 
         /// <summary>
         /// Multiplier for sprint speed
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float sprintMultiplier;
 
         /// <summary>
@@ -31,49 +31,49 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Max number of bounces per frame when moving
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int moveMaxBounces;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when walking
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float moveAnglePower;
 
         /// <summary>
         /// Power of pushing objects
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float movePushPower;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when moving
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float movePushDecay;
 
         /// <summary>
         /// Max number of bounces per frame when falling
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int fallMaxBounces;
 
         /// <summary>
         /// Weight of object when falling (pushing) onto objects
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushPower;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when falling
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallAnglePower;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when falling
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
     }
 
@@ -85,26 +85,26 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Force of the player jump
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float jumpForce;
 
         /// <summary>
         /// Is the KCC attempting to jump?
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public bool attemptingJump;
     }
 
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostDefaultComponent(GhostDefaultComponentAttribute.Type.All)]
+    [GhostComponent]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
         /// Max angle that the character can walk at
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float maxWalkAngle;
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float groundCheckDistance;
 
         /// <summary>
@@ -161,21 +161,19 @@ namespace PropHunt.Mixed.Components
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostDefaultComponent(
-        GhostDefaultComponentAttribute.Type.Server |
-        GhostDefaultComponentAttribute.Type.PredictedClient)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
         /// Velocity due to player input
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 playerVelocity;
 
         /// <summary>
         /// Velocity due to world forces
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
     }
 
@@ -183,14 +181,14 @@ namespace PropHunt.Mixed.Components
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostDefaultComponent(GhostDefaultComponentAttribute.Type.All)]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct KCCGravity : IComponentData
     {
 
         /// <summary>
         /// Gravity as a three component vector
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 gravityAcceleration;
 
         /// <summary>

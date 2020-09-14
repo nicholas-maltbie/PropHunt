@@ -22,7 +22,8 @@ namespace PropHunt.Authoring
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            dstManager.AddComponentData(entity, new PlayerView(){
+            dstManager.AddComponentData(entity, new PlayerView()
+            {
                 viewRotationRate = this.viewRotationRate,
                 offset = offset
             });

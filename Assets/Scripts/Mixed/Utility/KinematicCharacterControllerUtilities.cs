@@ -53,7 +53,7 @@ namespace PropHunt.Mixed.Utilities
         /// tuned for how much to push away while not allowing being shoved into objects.</param>
         /// <returns>The final location of the character.</returns>
         public static unsafe float3 ProjectValidMovement(
-            EntityCommandBuffer.Concurrent commandBuffer,
+            EntityCommandBuffer.ParallelWriter commandBuffer,
             int jobIndex,
             CollisionWorld collisionWorld,
             float3 start,
@@ -61,8 +61,8 @@ namespace PropHunt.Mixed.Utilities
             PhysicsCollider collider,
             int entityIndex,
             quaternion rotation,
-            float anglePower=2,
-            int maxBounces=1,
+            float anglePower = 2,
+            int maxBounces = 1,
             float pushPower = 25,
             float pushDecay = 0,
             float epsilon = 0.001f)
@@ -86,13 +86,13 @@ namespace PropHunt.Mixed.Utilities
                     Collider = collider.ColliderPtr,
                     Orientation = rotation
                 };
-            
+
                 SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
                     new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
 
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
-                if(!collisionOcurred && hitCollector.NumHits == 0)
+                if (!collisionOcurred && hitCollector.NumHits == 0)
                 {
                     // If there is no hit, target can be returned as final position
                     return target;
@@ -107,9 +107,10 @@ namespace PropHunt.Mixed.Utilities
 
                 // Apply some force to the object hit if it is moveable
                 // Apply force on entity hit
-                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies) {
+                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies)
+                {
                     commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
-                    commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce(){force = movement * pushPower, point = hit.Position});
+                    commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce() { force = movement * pushPower, point = hit.Position });
                     // If pushing something, reduce remaining force significantly
                     remaining *= pushDecay;
                 }

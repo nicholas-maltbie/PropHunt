@@ -15,7 +15,7 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(MovementTrackingSystem))]
     public class PlayerRotationSystem : SystemBase
     {
         protected override void OnUpdate()
@@ -23,7 +23,7 @@ namespace PropHunt.Mixed.Systems
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
-            
+
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref PlayerView view,
@@ -37,7 +37,7 @@ namespace PropHunt.Mixed.Systems
 
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
-                
+
                 view.pitch += deltaTime * -1 * input.pitchChange * view.viewRotationRate;
                 view.yaw += deltaTime * input.yawChange * view.viewRotationRate;
 

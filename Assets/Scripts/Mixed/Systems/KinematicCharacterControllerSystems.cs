@@ -13,11 +13,9 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
-    [UpdateAfter(typeof(GhostPredictionSystemGroup))]
-    [UpdateAfter(typeof(MovementTrackingSystemTrack))]
+    [UpdateAfter(typeof(MovementTrackingSystem))]
     [UpdateBefore(typeof(PushForceGroup))]
-    public class KCCUpdateGroup : ComponentSystemGroup {}
+    public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
@@ -59,7 +57,8 @@ namespace PropHunt.Mixed.Systems
                     bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
                     Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
-                    if(collisionOcurred) {
+                    if (collisionOcurred)
+                    {
                         float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
                         float angleDegrees = math.degrees(angleBetween);
                         grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
@@ -69,7 +68,8 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
                     }
-                    else {
+                    else
+                    {
                         grounded.onGround = false;
                         grounded.distanceToGround = -1;
                         grounded.angle = -1;
@@ -92,15 +92,15 @@ namespace PropHunt.Mixed.Systems
         /// Command buffer system for pushing objects
         /// </summary>
         private EndSimulationEntityCommandBufferSystem commandBufferSystem;
- 
+
         protected override void OnCreate()
         {
-            this.commandBufferSystem =  World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
-        protected override void  OnUpdate()
+        protected override void OnUpdate()
         {
-            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().ToConcurrent();
+            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             float deltaTime = Time.DeltaTime;
 
@@ -111,38 +111,39 @@ namespace PropHunt.Mixed.Systems
                 in KCCVelocity velocity,
                 in PhysicsCollider physicsCollider,
                 in Rotation rotation,
-                in KCCMovementSettings movementSettings) => {
-                    // Adjust character translation due to player movement
-                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                        commandBuffer,
-                        entityInQueryIndex,
-                        physicsWorld.CollisionWorld,
-                        translation.Value,
-                        velocity.playerVelocity * deltaTime,
-                        physicsCollider,
-                        entity.Index,
-                        rotation.Value,
-                        maxBounces : movementSettings.moveMaxBounces,
-                        pushPower  : movementSettings.movePushPower,
-                        pushDecay  : movementSettings.movePushDecay,
-                        anglePower : movementSettings.moveAnglePower
-                    );
-                    // Adjust character translation due to gravity/world forces
-                    translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
-                        commandBuffer,
-                        entityInQueryIndex,
-                        physicsWorld.CollisionWorld,
-                        translation.Value,
-                        velocity.worldVelocity * deltaTime,
-                        physicsCollider,
-                        entity.Index,
-                        rotation.Value,
-                        maxBounces : movementSettings.fallMaxBounces,
-                        pushPower  : movementSettings.fallPushPower,
-                        pushDecay  : movementSettings.fallPushDecay,
-                        anglePower : movementSettings.fallAnglePower
-                    );
-                }
+                in KCCMovementSettings movementSettings) =>
+            {
+                // Adjust character translation due to player movement
+                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                    commandBuffer,
+                    entityInQueryIndex,
+                    physicsWorld.CollisionWorld,
+                    translation.Value,
+                    velocity.playerVelocity * deltaTime,
+                    physicsCollider,
+                    entity.Index,
+                    rotation.Value,
+                    maxBounces: movementSettings.moveMaxBounces,
+                    pushPower: movementSettings.movePushPower,
+                    pushDecay: movementSettings.movePushDecay,
+                    anglePower: movementSettings.moveAnglePower
+                );
+                // Adjust character translation due to gravity/world forces
+                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                    commandBuffer,
+                    entityInQueryIndex,
+                    physicsWorld.CollisionWorld,
+                    translation.Value,
+                    velocity.worldVelocity * deltaTime,
+                    physicsCollider,
+                    entity.Index,
+                    rotation.Value,
+                    maxBounces: movementSettings.fallMaxBounces,
+                    pushPower: movementSettings.fallPushPower,
+                    pushDecay: movementSettings.fallPushDecay,
+                    anglePower: movementSettings.fallAnglePower
+                );
+            }
             ).ScheduleParallel();
 
             this.Dependency.Complete();
@@ -194,7 +195,7 @@ namespace PropHunt.Mixed.Systems
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
                 ref KCCVelocity velocity,
-                in KCCGrounded grounded) => 
+                in KCCGrounded grounded) =>
                 {
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
@@ -228,7 +229,7 @@ namespace PropHunt.Mixed.Systems
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded,
-                in KCCGravity gravity) => 
+                in KCCGravity gravity) =>
                 {
                     // If the player is not grounded, push down by
                     // gravity's acceleration

@@ -10,11 +10,6 @@ namespace PropHunt.Server.Systems
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class HandleDisconnectSystem : ComponentSystem
     {
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<EnableProphuntGhostSendSystemComponent>();
-        }
-
         protected override void OnUpdate()
         {
             // According to the unity docs
@@ -31,8 +26,10 @@ namespace PropHunt.Server.Systems
                 int sourceId = networkId.Value;
                 UnityEngine.Debug.Log($"Player {sourceId} has disconnected due to reason {reason.ToString()}");
 
-                Entities.ForEach((Entity ent, ref PlayerId playerId) => {
-                    if (playerId.playerId == sourceId) {
+                Entities.ForEach((Entity ent, ref PlayerId playerId) =>
+                {
+                    if (playerId.playerId == sourceId)
+                    {
                         PostUpdateCommands.DestroyEntity(ent);
                     }
                 });

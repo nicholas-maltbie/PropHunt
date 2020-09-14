@@ -35,26 +35,26 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Speed at which this platform moves between targets
         /// </summary>
-        [GhostDefaultField(100, true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float speed;
 
         /// <summary>
         /// Method of looping when target list is exhausted
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public PlatformLooping loopMethod;
 
         /// <summary>
         /// Current platform this is moving toward
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int current;
 
         /// <summary>
         /// Direction of next platform being selected. This
         /// is decided by loop method when the list ends
         /// </summary>
-        [GhostDefaultField]
+        [GhostField]
         public int direction;
     }
 }
