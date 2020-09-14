@@ -56,10 +56,10 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-          customParameters: |
-            -enableCodeCoverage
-            -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-PropHunt.Test*,-EditModeTests,-Assembly*;pathFilters:-Assets/NetCodeGenerated/*
+          # customParameters: |
+          #   -enableCodeCoverage
+          #   -coverageResultsPath ${{ matrix.testMode }}-artifacts
+          #   -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-PropHunt.Test*,-EditModeTests,-Assembly*;pathFilters:-Assets/NetCodeGenerated/*
 
       - name: Upload Results
         uses: actions/upload-artifact@v1
