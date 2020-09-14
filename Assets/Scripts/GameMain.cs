@@ -31,6 +31,7 @@ namespace PropHunt.Game
         public static ushort NetworkPort = 25623;
     }
 
+#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class ServerGameSystem : ComponentSystem
     {
@@ -60,7 +61,9 @@ namespace PropHunt.Game
             }
         }
     }
+#endif
 
+#if UNITY_CLIENT || UNITY_EDITOR
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class ClientGameSystem : ComponentSystem
     {
@@ -90,4 +93,5 @@ namespace PropHunt.Game
             }
         }
     }
+#endif
 } // End namespace Prophunt.Game
