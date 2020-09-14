@@ -11,7 +11,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for resolving push forces applied to dynamic objects in the scene
     /// </summary>
-    public class PushForceGroup : ComponentSystemGroup {}
+    public class PushForceGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// System to remove Push Components the frame after they are created
@@ -34,7 +34,7 @@ namespace PropHunt.Mixed.Systems
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
 
             Entities.ForEach((
-                Entity entity, 
+                Entity entity,
                 int entityInQueryIndex,
                 in DynamicBuffer<PushForce> pushForce) =>
                 {

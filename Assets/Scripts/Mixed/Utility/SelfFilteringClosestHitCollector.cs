@@ -6,7 +6,7 @@ namespace PropHunt.Mixed.Utilities
     /// Collider processor to handle filtering out an object to stop
     /// hitting itself.
     /// </summary>
-    public struct SelfFilteringClosestHitCollector<T> : ICollector<T> where T : struct,IQueryResult
+    public struct SelfFilteringClosestHitCollector<T> : ICollector<T> where T : struct, IQueryResult
     {
         /// <summary>
         /// Can this exit early on the current hit object
@@ -28,7 +28,7 @@ namespace PropHunt.Mixed.Utilities
         /// <summary>
         /// Most recent (closest hit object)
         /// </summary>
-        public T ClosestHit {get; private set; }
+        public T ClosestHit { get; private set; }
 
         /// <summary>
         /// Entity index to avoid collisions with.
@@ -71,5 +71,5 @@ namespace PropHunt.Mixed.Utilities
         #endregion
     }
 
-    
+
 }

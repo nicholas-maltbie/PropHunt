@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 using UnityEngine;
- 
+
 namespace PropHunt.Game
 {
     public class ProphuntClientServerControlSystem
@@ -46,7 +46,7 @@ namespace PropHunt.Game
             // Create singleton, require singleton for update so system runs once
             EntityManager.CreateEntity(typeof(InitServerGameComponent));
         }
-    
+
         protected override void OnUpdate()
         {
             // Destroy singleton to prevent system from running again
@@ -78,7 +78,7 @@ namespace PropHunt.Game
             World.EntityManager.CreateEntity(typeof(FixedClientTickRate));
             // EntityManager.CreateEntity(typeof(InitClientGameComponent));
         }
-    
+
         protected override void OnUpdate()
         {
             EntityManager.DestroyEntity(GetSingletonEntity<InitClientGameComponent>());

@@ -27,7 +27,8 @@ namespace PropHunt.Client.Systems
             // When the player Joins the session
             // We will attach an 'UpdateMaterialComponentData' to all the
             // entities that have a MaterialIdComponentData in order to do an update.
-            Entities.ForEach((Entity ent, ref MaterialIdComponentData mat) => {
+            Entities.ForEach((Entity ent, ref MaterialIdComponentData mat) =>
+            {
                 PostUpdateCommands.AddComponent<UpdateMaterialComponentData>(ent);
             });
         }

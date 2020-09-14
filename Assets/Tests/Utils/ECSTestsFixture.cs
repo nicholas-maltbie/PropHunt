@@ -203,7 +203,7 @@ namespace Unity.Entities.Tests
 
         class EntityForEachSystem : ComponentSystem
         {
-            protected override void OnUpdate() {}
+            protected override void OnUpdate() { }
         }
         // This doesn't seem to be used but will leave it for now
         // protected EntityQueryBuilder Entities

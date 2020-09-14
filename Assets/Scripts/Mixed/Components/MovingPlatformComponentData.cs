@@ -35,7 +35,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Speed at which this platform moves between targets
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float speed;
 
         /// <summary>

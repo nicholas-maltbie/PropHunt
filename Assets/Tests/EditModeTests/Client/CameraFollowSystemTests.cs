@@ -95,10 +95,10 @@ namespace PropHunt.Tests.Client
             {
                 World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
             }
-            var networkIDEntity = system.GetSingleton<NetworkIdComponent>(); 
+            var networkIDEntity = system.GetSingleton<NetworkIdComponent>();
 
             // Set singleton data
-            system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent {Value = networkId});
+            system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent { Value = networkId });
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace PropHunt.Tests.Client
             this.cameraFollow.Update();
 
             // Ensure update function has not been invoked
-            cameraFollowMock.Protected().Verify("OnUpdate", Times.Never());;
+            cameraFollowMock.Protected().Verify("OnUpdate", Times.Never()); ;
         }
 
         /// <summary>
@@ -180,8 +180,8 @@ namespace PropHunt.Tests.Client
 
             // Move starting entity
             Vector3 targetPos = new float3(CameraFollowSystemTests.StartingPosition) + new float3(1, 1, 1);
-            m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
-            m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
+            m_Manager.SetComponentData(cameraTarget, new Translation { Value = targetPos });
+            m_Manager.SetComponentData(cameraTarget, new PlayerId { playerId = playerId });
             this.CreateNetworkSingletons(playerId);
 
             // Ensure that camera doesn't move without required singletons
@@ -208,19 +208,19 @@ namespace PropHunt.Tests.Client
             Vector3 pos1 = new Vector3(1, 1, 1);
             Vector3 pos2 = new Vector3(-1, -1, -1);
 
-            m_Manager.SetComponentData(cameraTarget1, new Translation {Value = pos1});
-            m_Manager.SetComponentData(cameraTarget2, new Translation {Value = pos2});
+            m_Manager.SetComponentData(cameraTarget1, new Translation { Value = pos1 });
+            m_Manager.SetComponentData(cameraTarget2, new Translation { Value = pos2 });
 
-            m_Manager.SetComponentData(cameraTarget1, new PlayerId {playerId = playerId});
-            m_Manager.SetComponentData(cameraTarget2, new PlayerId {playerId = notPlayerId});
-            
+            m_Manager.SetComponentData(cameraTarget1, new PlayerId { playerId = playerId });
+            m_Manager.SetComponentData(cameraTarget2, new PlayerId { playerId = notPlayerId });
+
             // Ensure that camera moved to follow target 1
             this.cameraFollow.Update();
             this.AssertCameraTransform(pos1, CameraFollowSystemTests.StartingRotation);
 
             // Change target camera
-            m_Manager.SetComponentData(cameraTarget1, new PlayerId {playerId = notPlayerId});
-            m_Manager.SetComponentData(cameraTarget2, new PlayerId {playerId = playerId});
+            m_Manager.SetComponentData(cameraTarget1, new PlayerId { playerId = notPlayerId });
+            m_Manager.SetComponentData(cameraTarget2, new PlayerId { playerId = playerId });
 
             // Ensure that camera moved to follow target 2
             this.cameraFollow.Update();
@@ -244,7 +244,7 @@ namespace PropHunt.Tests.Client
 
             // Setup track for target position and rotation
             Vector3 targetPos = CameraFollowSystemTests.StartingPosition;
-            PlayerView targetView = new PlayerView() {pitch = 0, yaw = 0};
+            PlayerView targetView = new PlayerView() { pitch = 0, yaw = 0 };
 
             // Setup singletons
             this.CreateNetworkSingletons(playerId);
@@ -256,9 +256,9 @@ namespace PropHunt.Tests.Client
                 targetPos += changePos;
                 targetView.pitch += changePitch;
                 targetView.yaw += changeYaw;
-                m_Manager.SetComponentData(cameraTarget, new Translation {Value = targetPos});
+                m_Manager.SetComponentData(cameraTarget, new Translation { Value = targetPos });
                 m_Manager.SetComponentData(cameraTarget, targetView);
-                m_Manager.SetComponentData(cameraTarget, new PlayerId {playerId = playerId});
+                m_Manager.SetComponentData(cameraTarget, new PlayerId { playerId = playerId });
 
                 // Ensure that camera doesn't move without required singletons
                 this.cameraFollow.Update();

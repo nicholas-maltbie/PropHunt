@@ -39,7 +39,7 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// Is the client currently connected
         /// </summary>
-        public static bool IsConnected {get; private set; }
+        public static bool IsConnected { get; private set; }
 
         /// <summary>
         /// Invoke whenever a disconnect is requested
@@ -59,7 +59,7 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) => 
+            Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
                 ConnectionSystem.IsConnected = EntityManager.HasComponent<NetworkStreamInGame>(ent);
                 if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))

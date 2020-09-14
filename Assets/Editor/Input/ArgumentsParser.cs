@@ -53,7 +53,8 @@ namespace UnityBuilderAction.Input
                 EditorApplication.Exit(121);
             }
 
-            if (!validatedOptions.TryGetValue("customBuildPath", out var customBuildPath)) {
+            if (!validatedOptions.TryGetValue("customBuildPath", out var customBuildPath))
+            {
                 Console.WriteLine("Missing argument -customBuildPath");
                 EditorApplication.Exit(130);
             }

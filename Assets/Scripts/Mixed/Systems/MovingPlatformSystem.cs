@@ -25,7 +25,7 @@ namespace PropHunt.Mixed.Systems
                     float3 currentTarget = targets[movingPlatform.current];
                     float dist = math.distance(translation.Value, currentTarget);
                     float movement = movingPlatform.speed * deltaTime;
-                    if (dist <= movement) 
+                    if (dist <= movement)
                     {
                         // go to next target
                         int nextPlatform = movingPlatform.current + movingPlatform.direction;

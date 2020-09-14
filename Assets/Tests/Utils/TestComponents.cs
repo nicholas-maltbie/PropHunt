@@ -246,7 +246,7 @@ namespace Unity.Entities.Tests
 
         public static implicit operator EcsIntElement(int e)
         {
-            return new EcsIntElement {Value = e};
+            return new EcsIntElement { Value = e };
         }
 
         public int Value;
@@ -286,7 +286,7 @@ namespace Unity.Entities.Tests
 
         public static implicit operator EcsIntStateElement(int e)
         {
-            return new EcsIntStateElement {Value = e};
+            return new EcsIntStateElement { Value = e };
         }
 
         public int Value;
@@ -380,7 +380,7 @@ namespace Unity.Entities.Tests
     }
 
 #if !UNITY_DOTSPLAYER_IL2CPP
-// https://unity3d.atlassian.net/browse/DOTSR-1432
+    // https://unity3d.atlassian.net/browse/DOTSR-1432
 
     public class EcsTestManagedDataEntityCollection : IComponentData
     {

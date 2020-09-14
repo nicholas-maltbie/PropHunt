@@ -10,17 +10,17 @@ namespace PropHunt.Mixed.Components
     /// </summary>
     [GhostComponent]
     public struct KCCMovementSettings : IComponentData
-    {        
+    {
         /// <summary>
         /// Player movement speed in units per second.
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float moveSpeed;
 
         /// <summary>
         /// Multiplier for sprint speed
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float sprintMultiplier;
 
         /// <summary>
@@ -37,19 +37,19 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Decrease in momentum factor due to angle change when walking
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float moveAnglePower;
 
         /// <summary>
         /// Power of pushing objects
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float movePushPower;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when moving
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float movePushDecay;
 
         /// <summary>
@@ -61,19 +61,19 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Weight of object when falling (pushing) onto objects
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushPower;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when falling
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallAnglePower;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when falling
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
     }
 
@@ -85,7 +85,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Force of the player jump
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float jumpForce;
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Max angle that the character can walk at
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float maxWalkAngle;
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float groundCheckDistance;
 
         /// <summary>
@@ -167,13 +167,13 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Velocity due to player input
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 playerVelocity;
 
         /// <summary>
         /// Velocity due to world forces
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
     }
 
@@ -188,7 +188,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Gravity as a three component vector
         /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 gravityAcceleration;
 
         /// <summary>

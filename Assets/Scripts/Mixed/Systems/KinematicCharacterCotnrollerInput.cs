@@ -22,7 +22,7 @@ namespace PropHunt.Mixed.Systems
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
-            
+
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref KCCVelocity velocity,

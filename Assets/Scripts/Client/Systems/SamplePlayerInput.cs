@@ -33,7 +33,7 @@ namespace PropHunt.Client.Systems
                     if (playerId.playerId == localPlayerId)
                     {
                         PostUpdateCommands.AddBuffer<PlayerInput>(ent);
-                        PostUpdateCommands.SetComponent(GetSingletonEntity<CommandTargetComponent>(), new CommandTargetComponent {targetEntity = ent});
+                        PostUpdateCommands.SetComponent(GetSingletonEntity<CommandTargetComponent>(), new CommandTargetComponent { targetEntity = ent });
                     }
                 });
                 return;
@@ -41,27 +41,27 @@ namespace PropHunt.Client.Systems
             var input = default(PlayerInput);
             input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
-            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW) 
+            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW)
             {
                 input.horizMove = Input.GetAxis("Horizontal");
-                input.vertMove  = Input.GetAxis("Vertical");
+                input.vertMove = Input.GetAxis("Vertical");
                 input.pitchChange = Input.GetAxis("Mouse Y");
                 input.yawChange = Input.GetAxis("Mouse X");
-                input.interact = (byte) (Input.GetButtonDown("Interact") ? 1 : 0);
-                input.jump = (byte) (Input.GetButton("Jump") ? 1 : 0);
-                input.sprint = (byte) (Input.GetButton("Sprint") ? 1 : 0);
+                input.interact = (byte)(Input.GetButtonDown("Interact") ? 1 : 0);
+                input.jump = (byte)(Input.GetButton("Jump") ? 1 : 0);
+                input.sprint = (byte)(Input.GetButton("Sprint") ? 1 : 0);
             }
             else
             {
                 input.horizMove = 0;
-                input.vertMove  = 0;
+                input.vertMove = 0;
                 input.pitchChange = 0;
                 input.yawChange = 0;
                 input.interact = 0;
                 input.jump = 0;
                 input.sprint = 0;
             }
-            
+
             var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
             inputBuffer.AddCommandData(input);
         }

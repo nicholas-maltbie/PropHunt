@@ -46,7 +46,7 @@ namespace PropHunt.Server.Systems
             Entities.WithNone<SendRpcCommandRequestComponent>().ForEach((Entity reqEnt, ref JoinGameRequest req, ref ReceiveRpcCommandRequestComponent reqSrc) =>
             {
                 int connectionId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value;
-                
+
                 PostUpdateCommands.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
                 UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", connectionId));
 
@@ -56,13 +56,13 @@ namespace PropHunt.Server.Systems
                 int ghostId = GetPlayerGhostIndex(ghostPrefabs);
                 var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
                 var player = PostUpdateCommands.Instantiate(prefab);
-                PostUpdateCommands.SetComponent(player, new PlayerId { playerId = connectionId});
-                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) } );
+                PostUpdateCommands.SetComponent(player, new PlayerId { playerId = connectionId });
+                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) });
                 PostUpdateCommands.SetComponent(player, new GhostOwnerComponent { NetworkId = connectionId });
 
                 PostUpdateCommands.AddBuffer<PlayerInput>(player);
                 PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
-                
+
                 PostUpdateCommands.DestroyEntity(reqEnt);
             });
         }

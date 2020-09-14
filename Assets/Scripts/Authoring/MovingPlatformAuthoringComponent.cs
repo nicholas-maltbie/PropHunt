@@ -30,7 +30,7 @@ namespace PropHunt.Authoring
 
             foreach (Transform pos in positions)
             {
-                targets.Add(new MovingPlatformTarget(){ target = pos.position } );
+                targets.Add(new MovingPlatformTarget() { target = pos.position });
             }
 
             dstManager.AddComponentData(entity, new MovingPlatform()

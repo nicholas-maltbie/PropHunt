@@ -10,7 +10,7 @@ namespace PropHunt.Client.Systems
     /// Enum to control locking the current player input. This could be for things such
     /// as a pause menu or other options.
     /// </summary>
-    public enum LockedInputState {ALLOW, DENY};
+    public enum LockedInputState { ALLOW, DENY };
 
     /// <summary>
     /// System to manage the available menu and

@@ -6,7 +6,7 @@ namespace PropHunt.UI
     /// <summary>
     /// Action to handle disconnecting from the server
     /// </summary>
-    public class DisconnectAction : MonoBehaviour 
+    public class DisconnectAction : MonoBehaviour
     {
 
         /// <summary>

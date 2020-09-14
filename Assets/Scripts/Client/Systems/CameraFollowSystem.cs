@@ -32,7 +32,8 @@ namespace PropHunt.Client.Systems
                 ForEach(
                     (ref Translation transform, ref Rotation rot, ref PlayerId player, ref PlayerView view) =>
                     {
-                        if (player.playerId == localPlayerId) {
+                        if (player.playerId == localPlayerId)
+                        {
                             position.x = transform.Value.x;
                             position.y = transform.Value.y;
                             position.z = transform.Value.z;

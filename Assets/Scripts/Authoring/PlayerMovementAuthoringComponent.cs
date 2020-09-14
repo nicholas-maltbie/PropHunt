@@ -73,7 +73,8 @@ namespace PropHunt.Authoring
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            dstManager.AddComponentData(entity, new KCCMovementSettings() {
+            dstManager.AddComponentData(entity, new KCCMovementSettings()
+            {
                 moveSpeed = this.moveSpeed,
                 sprintMultiplier = this.sprintMultiplier,
                 moveMaxBounces = this.moveMaxBounces,
@@ -85,18 +86,22 @@ namespace PropHunt.Authoring
                 fallPushPower = this.pushPower,
                 fallPushDecay = this.pushDecay,
             });
-            dstManager.AddComponentData(entity, new KCCJumping() {
+            dstManager.AddComponentData(entity, new KCCJumping()
+            {
                 jumpForce = this.jumpForce,
             });
-            dstManager.AddComponentData(entity, new KCCGrounded() {
+            dstManager.AddComponentData(entity, new KCCGrounded()
+            {
                 maxWalkAngle = this.maxWalkAngle,
                 groundCheckDistance = this.groundCheckDistance,
             });
-            dstManager.AddComponentData(entity, new KCCVelocity() {
+            dstManager.AddComponentData(entity, new KCCVelocity()
+            {
                 playerVelocity = float3.zero,
                 worldVelocity = float3.zero
             });
-            dstManager.AddComponentData(entity, new KCCGravity() {
+            dstManager.AddComponentData(entity, new KCCGravity()
+            {
                 gravityAcceleration = this.gravityForce,
             });
 
