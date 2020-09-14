@@ -1,8 +1,10 @@
 using UnityEngine;
 using Unity.Entities;
-using static PropHunt.Game.ProphuntClientServerControlSystem;
 using UnityEngine.UI;
 using System.Net;
+using static PropHunt.Game.ClientGameSystem;
+using PropHunt.Game;
+using PropHunt.Client.Systems;
 
 namespace PropHunt.UI
 {
@@ -49,8 +51,7 @@ namespace PropHunt.UI
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkAddress = networkAddress;
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = networkPort;
 
-                EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-                var initEntity = em.CreateEntity(typeof(InitializeClientServer));
+                ConnectionSystem.ConnectToServer();
             }
             catch
             {

@@ -2,7 +2,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.NetCode;
-using Unity.Physics;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -10,8 +9,9 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to track moving of objects
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
-    public class MovementTrackingSystemTrack : SystemBase
+    [UpdateAfter(typeof(TransformSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
+    public class MovementTrackingSystem : SystemBase
     {
         protected override void OnUpdate()
         {

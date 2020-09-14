@@ -1560,7 +1560,6 @@ GameObject:
   m_Component:
   - component: {fileID: 719056213}
   - component: {fileID: 719056214}
-  - component: {fileID: 719056215}
   m_Layer: 0
   m_Name: SharedData
   m_TagString: Untagged
@@ -1607,18 +1606,6 @@ MonoBehaviour:
   ConversionMode: 0
   ConversionTarget: -1
   canDestroy: 0
---- !u!114 &719056215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 719056212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 963a17c17bcad654aab357022b155aea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &732744503 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 480558110488250732, guid: 1dbed581fc5070947b76765ee5f861a7,

@@ -14,7 +14,6 @@ namespace PropHunt.Mixed.Systems
     /// commands based on user input.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(PlayerRotationSystem))]
     public class KinematicCharacterControllerInput : SystemBase
     {

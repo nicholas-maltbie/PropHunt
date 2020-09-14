@@ -13,9 +13,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
-    [UpdateAfter(typeof(GhostPredictionSystemGroup))]
-    [UpdateAfter(typeof(MovementTrackingSystemTrack))]
+    [UpdateAfter(typeof(MovementTrackingSystem))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup {}
 

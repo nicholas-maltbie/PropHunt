@@ -11,7 +11,6 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for resolving push forces applied to dynamic objects in the scene
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     public class PushForceGroup : ComponentSystemGroup {}
 
     /// <summary>

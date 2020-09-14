@@ -1,25 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Networking.Transport;
 using Unity.NetCode;
-#if UNITY_EDITOR
-using Unity.NetCode.Editor;
-#endif
-
+using Unity.Networking.Transport;
+using UnityEngine;
+ 
 namespace PropHunt.Game
 {
-
-    /// <summary>
-    /// Prophunt Client Server Control System, operates the client and server
-    /// for network communications setup and disconnect.
-    /// </summary>
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
-    [UpdateBefore(typeof(TickServerSimulationSystem))]
-#endif
-#if !UNITY_SERVER
-    [UpdateBefore(typeof(TickClientSimulationSystem))]
-#endif
-    [UpdateInWorld(UpdateInWorld.TargetWorld.Default)]
-    public class ProphuntClientServerControlSystem : ComponentSystem
+    public class ProphuntClientServerControlSystem
     {
 
         /// <summary>
@@ -35,84 +23,71 @@ namespace PropHunt.Game
         /// <summary>
         /// Network address of server being connected to.
         /// </summary>
-        public static string NetworkAddress;
+        public static string NetworkAddress = DefaultNetworkAddress;
 
         /// <summary>
         /// Port for host connection
         /// </summary>
         public static ushort NetworkPort = 25623;
+    }
 
-        /// <summary>
-        /// Setup struct for initializing server
-        /// </summary>
-        public struct InitializeClientServer : IComponentData
+    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    public class ServerGameSystem : ComponentSystem
+    {
+        // Singleton component to trigger connections once from a control system
+        public struct InitServerGameComponent : IComponentData
         {
         }
 
-        /// <summary>
-        /// Invoked when the object is created
-        /// </summary>
         protected override void OnCreate()
         {
-            RequireSingletonForUpdate<InitializeClientServer>();
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
-            var initEntity = EntityManager.CreateEntity(typeof(InitializeClientServer));
-#endif
+            RequireSingletonForUpdate<InitServerGameComponent>();
+            // Create singleton, require singleton for update so system runs once
+            EntityManager.CreateEntity(typeof(InitServerGameComponent));
         }
-
-        /// <summary>
-        /// Updated every frame, but only do server setup first update after
-        /// having been initialized.
-        /// </summary>
+    
         protected override void OnUpdate()
         {
-            // Destroy initialize component so only update once. 
-            EntityManager.DestroyEntity(GetSingletonEntity<InitializeClientServer>());
-            foreach (var world in World.All)
+            // Destroy singleton to prevent system from running again
+            EntityManager.DestroyEntity(GetSingletonEntity<InitServerGameComponent>());
+            var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
+            if (World.GetExistingSystem<ServerSimulationSystemGroup>() != null)
             {
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
-                // Bind the server and start listening for connections
-                if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
-                {
-                    NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
-                    ep.Port = NetworkPort;
-                    world.GetExistingSystem<NetworkStreamReceiveSystem>().Listen(ep);
-                }
-#endif
-#if !UNITY_SERVER
-                // Auto connect all clients to the server
-                if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
-                {
-                    // Enable fixed tick rate
-                    world.EntityManager.CreateEntity(typeof(FixedClientTickRate));
-                    UnityEngine.Debug.Log($"Connecting to {NetworkAddress}:{NetworkPort}");
-                    NetworkEndPoint ep = NetworkEndPoint.Parse(NetworkAddress, NetworkPort);
-                    world.GetExistingSystem<NetworkStreamReceiveSystem>().Connect(ep);
-                }
-#endif
+                // Server world automatically listens for connections from any host
+                NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
+                ep.Port = ProphuntClientServerControlSystem.NetworkPort;
+                network.Listen(ep);
             }
         }
     }
 
-    /// <summary>
-    /// This is the game main MonoBehaviour. This can be used to configure global
-    /// settings and how the project operates.
-    /// </summary>
-    public class GameMain : UnityEngine.MonoBehaviour, IConvertGameObjectToEntity
+    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    public class ClientGameSystem : ComponentSystem
     {
-        /// <summary>
-        /// This is the setup, can add attributes or set global settings from here.
-        /// Not configurable settings as of yet.
-        /// </summary>
-        /// <param name="entity">Entity to add attributes to (new entity being created).</param>
-        /// <param name="dstManager">Entity manager to configure global settings</param>
-        /// <param name="conversionSystem">Conversion settings from game object to entity</param>
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+        // Singleton component to trigger connections once from a control system
+        public struct InitClientGameComponent : IComponentData
         {
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
-            // Setup server data settings here. 
-#endif
+        }
+
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<InitClientGameComponent>();
+            World.EntityManager.CreateEntity(typeof(FixedClientTickRate));
+            // EntityManager.CreateEntity(typeof(InitClientGameComponent));
+        }
+    
+        protected override void OnUpdate()
+        {
+            EntityManager.DestroyEntity(GetSingletonEntity<InitClientGameComponent>());
+
+            var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
+            if (World.GetExistingSystem<ClientSimulationSystemGroup>() != null)
+            {
+                // Client worlds automatically connect to localhost
+                UnityEngine.Debug.Log($"Connecting to {ProphuntClientServerControlSystem.NetworkAddress}:{ProphuntClientServerControlSystem.NetworkPort}");
+                NetworkEndPoint ep = NetworkEndPoint.Parse(ProphuntClientServerControlSystem.NetworkAddress, ProphuntClientServerControlSystem.NetworkPort);
+                network.Connect(ep);
+            }
         }
     }
-
 } // End namespace Prophunt.Game
