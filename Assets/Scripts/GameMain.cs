@@ -31,7 +31,6 @@ namespace PropHunt.Game
         public static ushort NetworkPort = 25623;
     }
 
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class ServerGameSystem : ComponentSystem
     {
@@ -49,6 +48,7 @@ namespace PropHunt.Game
 
         protected override void OnUpdate()
         {
+#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
             // Destroy singleton to prevent system from running again
             EntityManager.DestroyEntity(GetSingletonEntity<InitServerGameComponent>());
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
@@ -59,11 +59,10 @@ namespace PropHunt.Game
                 ep.Port = ProphuntClientServerControlSystem.NetworkPort;
                 network.Listen(ep);
             }
+#endif
         }
     }
-#endif
 
-#if UNITY_CLIENT || UNITY_EDITOR
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class ClientGameSystem : ComponentSystem
     {
@@ -81,6 +80,7 @@ namespace PropHunt.Game
 
         protected override void OnUpdate()
         {
+#if UNITY_CLIENT || UNITY_EDITOR
             EntityManager.DestroyEntity(GetSingletonEntity<InitClientGameComponent>());
 
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
@@ -91,7 +91,7 @@ namespace PropHunt.Game
                 NetworkEndPoint ep = NetworkEndPoint.Parse(ProphuntClientServerControlSystem.NetworkAddress, ProphuntClientServerControlSystem.NetworkPort);
                 network.Connect(ep);
             }
+#endif
         }
     }
-#endif
 } // End namespace Prophunt.Game
