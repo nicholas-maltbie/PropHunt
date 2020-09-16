@@ -32,7 +32,7 @@ namespace PropHunt.UI
         /// <summary>
         /// Command to start connecting to the server
         /// </summary>
-        public void ConnectedToServer()
+        public void ConnectToServer()
         {
             // Setup variables
             string networkAddress = serverAddress.text;
