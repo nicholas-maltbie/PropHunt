@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using NUnit.Framework;
 using PropHunt.Client.Systems;

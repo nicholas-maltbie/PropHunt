@@ -10,11 +10,16 @@
         "Unity.Physics.Hybrid",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "PropHunt.Tests.Utils",
         "PropHunt",
+        "PropHunt.Generated",
+        "PropHunt.Tests.Utils",
+        "PropHunt.Scriptable",
         "Unity.Transforms",
         "Unity.Mathematics",
-        "Unity.NetCode"
+        "Unity.NetCode",
+        "Unity.NetCode.Editor",
+        "Unity.NetCode.Physics",
+        "Unity.NetCode.TestsUtils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

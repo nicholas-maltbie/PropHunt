@@ -24,7 +24,7 @@
         "",
         ""
     ],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
