@@ -168,7 +168,7 @@ MonoBehaviour:
   fallAnglePower: 1.2
   moveAnglePower: 5
   pushPower: 50
-  moveMaxBounces: 5
+  moveMaxBounces: 3
   fallMaxBounces: 3
   pushDecay: 0
 --- !u!114 &2032777291050987007
@@ -313,23 +313,7 @@ MonoBehaviour:
         Tag06: 0
         Tag07: 0
     m_SerializedVersion: 1
-    m_BelongsTo_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_CollidesWith_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_CustomTags_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_IsTrigger_Deprecated:
-      m_Override: 0
-      m_Value: 0
-    m_RaisesCollisionEvents_Deprecated:
-      m_Override: 0
-      m_Value: 0
   m_SerializedVersion: 1
-  m_ConvexRadius_Deprecated: -1
 --- !u!114 &1967619771951168409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,6 +327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MotionType: 1
+  m_Smoothing: 0
   m_Mass: 1
   m_LinearDamping: 0.01
   m_AngularDamping: 0.05
@@ -391,13 +376,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ForcePrefabConversion: 0
   DefaultGhostMode: 2
   SupportedGhostModes: 3
   OptimizationMode: 0
   Importance: 1
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter
-  doNotStrip: 0
 --- !u!114 &4421601493602290122
 MonoBehaviour:
   m_ObjectHideFlags: 0
