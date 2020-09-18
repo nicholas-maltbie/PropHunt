@@ -44,6 +44,7 @@ namespace PropHunt.Game
             RequireSingletonForUpdate<InitServerGameComponent>();
             // Create singleton, require singleton for update so system runs once
             EntityManager.CreateEntity(typeof(InitServerGameComponent));
+            Debug.Log("Creating server world");
         }
 
         protected override void OnUpdate()
@@ -75,6 +76,7 @@ namespace PropHunt.Game
         {
             RequireSingletonForUpdate<InitClientGameComponent>();
             // EntityManager.CreateEntity(typeof(InitClientGameComponent));
+            Debug.Log("Creating client world");
         }
 
         protected override void OnUpdate()
