@@ -1,30 +1,52 @@
-using System.Collections;
 using NUnit.Framework;
-using PropHunt.Game;
 using PropHunt.PlayMode.Tests.Utility;
+using System.Collections;
+using Unity.Entities.Tests;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine;
+using System.Text.RegularExpressions;
 using static PropHunt.Game.ClientGameSystem;
 
 namespace PropHunt.PlayMode.Tests.CharacterController
 {
     [TestFixture]
-    public class NetworkIntegrationTests
+    public class NetworkIntegrationTests : ECSTestsFixture
     {
         private World clientWorld;
 
         private World serverWorld;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            // var clientGameSystem = this.clientWorld.GetExistingSystem<ClientGameSystem>();
-            // Create entity to auto connect client to server
-            // this.clientWorld.EntityManager.CreateEntity(typeof(InitClientGameComponent));
+            base.Setup();
 
+            // Initialize server world first
+            this.serverWorld = ClientServerBootstrap.CreateServerWorld(base.World, "ServerWorld");
+
+            // Convert scene to an ecs world
+            var serverSettings = GameObjectConversionSettings.FromWorld(this.serverWorld, new BlobAssetStore());
+            // Scene activeScene = SceneManager.GetActiveScene();
+            // Unity.Entities.GameObjectConversionUtility.ConvertScene(activeScene, serverSettings);
+            this.serverWorld.EntityManager.CompleteAllJobs();
+            // Debug.Log($"Num entities in server world: {this.serverWorld.EntityManager.GetAllEntities().Length}");
+            // Debug.Log(this.serverWorld.EntityManager.UniversalQuery.GetSingleton<GhostPrefabCollectionComponent>());
+
+            // Ensure main camera still exists
+            if (Camera.main == null)
+            {
+                var camera = GameObject.Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
+                var cameraComponent = camera.AddComponent<Camera>();
+                camera.tag = "MainCamera";
+            }
+
+            // Then initialize client world
+            this.clientWorld = ClientServerBootstrap.CreateClientWorld(base.World, "ClientWorld");
+
+            LogAssert.ignoreFailingMessages = true;
         }
 
         [UnitySetUp]
@@ -33,19 +55,14 @@ namespace PropHunt.PlayMode.Tests.CharacterController
             SceneManager.LoadScene("SampleScene");
 
             yield return new WaitForSceneLoaded("SampleScene");
-
-            var defaultWorld = World.DefaultGameObjectInjectionWorld;
-            // Initialize server world first
-            this.serverWorld = ClientServerBootstrap.CreateServerWorld(defaultWorld, "ServerWorld");
-
-            // Then initialize client world
-            this.clientWorld = ClientServerBootstrap.CreateClientWorld(defaultWorld, "ClientWorld");
         }
 
         [UnityTest]
         public IEnumerator TestCode()
         {
             // Make a connect request
+            LogAssert.Expect(LogType.Exception, "GetSingleton<Unity.NetCode.NetworkSnapshotAckComponent>() requires that exactly one Unity.NetCode.NetworkSnapshotAckComponent exist that match this query, but there are 0.");
+            LogAssert.Expect(LogType.Error, new Regex(@"Large serverTick prediction error. Server tick rollback to \d* delta: -\d*"));
 
             yield return null;
 

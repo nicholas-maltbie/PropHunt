@@ -26,6 +26,11 @@ namespace PropHunt.Client.Systems
         {
             int localPlayerId = GetSingleton<NetworkIdComponent>().Value;
 
+            // Skip function if no main camera exists
+            if (Camera.main == null) 
+            {
+                return;
+            }
             float3 position = Camera.main.transform.position;
             quaternion rotation = Camera.main.transform.rotation;
             Entities.
