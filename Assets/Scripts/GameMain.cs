@@ -74,7 +74,6 @@ namespace PropHunt.Game
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<InitClientGameComponent>();
-            World.EntityManager.CreateEntity(typeof(FixedClientTickRate));
             // EntityManager.CreateEntity(typeof(InitClientGameComponent));
         }
 

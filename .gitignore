@@ -79,3 +79,8 @@ crashlytics-build.properties
 
 # Ignore Code Coverage Results
 CodeCoverage
+
+# Scene dependency cache for unity
+/[Aa]ssets/SceneDependencyCache
+/[Aa]ssets/SceneDependencyCache/*
+/[Aa]ssets/SceneDependencyCache.meta

@@ -91,14 +91,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.2",
+      "version": "2.0.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.1",
+      "version": "1.2.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -131,11 +131,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode": {
-      "version": "0.3.0-preview.3",
+      "version": "0.4.0-preview.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.transport": "0.4.0-preview.3",
+        "com.unity.transport": "0.4.1-preview.1",
         "com.unity.burst": "1.3.0",
         "com.unity.collections": "0.12.0-preview.13",
         "com.unity.entities": "0.14.0-preview.18"
@@ -159,14 +159,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.physics": {
-      "version": "0.4.1-preview",
+      "version": "0.5.0-preview.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.3.0",
-        "com.unity.collections": "0.9.0-preview.6",
-        "com.unity.entities": "0.11.1-preview.4",
-        "com.unity.jobs": "0.2.10-preview.12",
+        "com.unity.burst": "1.3.2",
+        "com.unity.collections": "0.11.0-preview.17",
+        "com.unity.entities": "0.13.0-preview.24",
+        "com.unity.jobs": "0.4.0-preview.18",
         "com.unity.mathematics": "1.1.0",
         "com.unity.test-framework": "1.1.11",
         "com.unity.test-framework.performance": "2.2.0-preview",
@@ -308,7 +308,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "0.4.0-preview.3",
+      "version": "0.4.1-preview.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {
