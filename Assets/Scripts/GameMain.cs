@@ -67,6 +67,11 @@ namespace PropHunt.Game
     [UpdateInWorld(UpdateInWorld.TargetWorld.Client)]
     public class ClientGameSystem : ComponentSystem
     {
+<<<<<<< HEAD
+=======
+        public static bool autoConnectClient = true;
+
+>>>>>>> debugging build
         // Singleton component to trigger connections once from a control system
         public struct InitClientGameComponent : IComponentData
         {

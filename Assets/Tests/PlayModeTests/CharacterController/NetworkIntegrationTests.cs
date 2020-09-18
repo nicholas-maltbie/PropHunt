@@ -65,10 +65,6 @@ namespace PropHunt.PlayMode.Tests.CharacterController
             LogAssert.Expect(LogType.Error, new Regex(@"Large serverTick prediction error. Server tick rollback to \d* delta: -\d*"));
 
             yield return null;
-
-            this.clientWorld.EntityManager.CreateEntity(typeof(InitClientGameComponent));
-
-            yield return new WaitForSeconds(3);
         }
     }
 }
