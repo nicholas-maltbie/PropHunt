@@ -58,7 +58,7 @@ namespace PropHunt.Mixed.Commands
 
         protected override void OnUpdate()
         {
-            var sendJob = new SendRpc{data = InitJobData()};
+            var sendJob = new SendRpc { data = InitJobData() };
             ScheduleJobData(sendJob);
         }
     }

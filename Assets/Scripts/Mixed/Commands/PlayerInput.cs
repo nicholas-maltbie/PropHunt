@@ -62,7 +62,7 @@ namespace PropHunt.Mixed.Commands
         /// </summary>
         public bool IsSprinting => this.sprint == 1;
 
-        uint ICommandData.Tick 
+        uint ICommandData.Tick
         {
             get { return this.tick; }
             set { this.tick = value; }
