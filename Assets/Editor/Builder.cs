@@ -31,65 +31,6 @@ namespace EditorNamespace
 {
     static class Builder
     {
-        [MenuItem("MyBuilds/Build Windows")]
-        public static void BuildWindows()
-        {
-            var scenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(s => s.path).ToArray();
-            BuildOptions selectedOptions = BuildOptions.Development |
-                BuildOptions.AllowDebugging |
-                BuildOptions.ConnectWithProfiler;
-            string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-
-            // Build Client
-
-            // Set build settings for client
-            List<string> clientDefines = definesString.Split(';').ToList();
-            clientDefines.Add("UNITY_CLIENT");
-            clientDefines.Remove("UNITY_EDITOR");
-
-            var clientBuildOptions = new BuildPlayerOptions
-            {
-                scenes = scenes,
-                locationPathName = "Builds/Windows-Client64/PropHunt.exe",
-                target = BuildTarget.StandaloneWindows64,
-                options = selectedOptions,
-            };
-
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup,
-                string.Join(";", clientDefines.ToArray()));
-            
-            // Create client
-            BuildPipeline.BuildPlayer(clientBuildOptions);
-
-            // Build Server
-
-            // Set build settings for server
-            List<string> serverDefines = definesString.Split(';').ToList();
-            // serverDefines.Add("UNITY_SERVER"); this is broken?
-            serverDefines.Remove("UNITY_EDITOR");
-
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup,
-                string.Join(";", serverDefines.ToArray()));
-            
-            var serverBuildOptions = new BuildPlayerOptions
-            {
-                scenes = scenes,
-                locationPathName = "Builds/Windows-Server64/PropHunt.exe",
-                target = BuildTarget.StandaloneWindows64,
-                options = selectedOptions | BuildOptions.EnableHeadlessMode,
-            };
-
-            // Create server
-            BuildPipeline.BuildPlayer(serverBuildOptions);
-
-            // Reset build settings
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup,
-                definesString);
-        }
-
         public static void BuildProject()
         {
             // Gather values from args

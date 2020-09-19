@@ -1,0 +1,18 @@
+{
+    "Dependencies": [
+        "GlobalObjectId_V1-1-cde9103834337084e926c30dcf87c1df-93214019566545601-0"
+    ],
+    "Components": [
+        {
+            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
+            "$version": 1,
+            "Platform": "Linux",
+            "Configuration": 1,
+            "Incremental": false
+        },
+        {
+            "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
+            "OutputDirectory": "Builds/Linux-Client"
+        }
+    ]
+}

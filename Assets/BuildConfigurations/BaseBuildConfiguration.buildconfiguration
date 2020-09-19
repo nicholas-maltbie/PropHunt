@@ -14,24 +14,15 @@
             "SceneInfos": [
                 {
                     "Scene": "GlobalObjectId_V1-1-6035518946234ad46b9a729d7c3667a9-102900000-0",
-                    "AutoLoad": true
+                    "AutoLoad": false
                 }
             ]
         },
         {
-            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
-            "$version": 1,
-            "Platform": "Windows",
-            "Configuration": 1,
-            "Incremental": false
-        },
-        {
-            "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
-            "OutputDirectory": "Builds/Windows-Client"
-        },
-        {
-            "$type": "NetCodeConversionSettings, Unity.NetCode.Authoring.Hybrid",
-            "Target": 2
+            "$type": "Unity.Build.Classic.ClassicScriptingSettings, Unity.Build.Classic",
+            "ScriptingBackend": 0,
+            "Il2CppCompilerConfiguration": 1,
+            "UseIncrementalGC": false
         }
     ]
 }
