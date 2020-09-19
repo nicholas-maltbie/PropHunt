@@ -7,6 +7,38 @@ using static PropHunt.Game.ClientGameSystem;
 namespace PropHunt.Client.Systems
 {
     /// <summary>
+    /// System to clear all ghosts on the client
+    /// </summary>
+    [UpdateBefore(typeof(ConnectionSystem))]
+    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    public class ClearClientGhostEntities : SystemBase
+    {
+        protected EndSimulationEntityCommandBufferSystem commandBufferSystem;
+
+        public struct ClientClearGhosts : IComponentData { };
+
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<ClientClearGhosts>();
+            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
+        protected override void OnUpdate()
+        {
+            var buffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
+            // Also delete the existing ghost objects
+            Entities.ForEach((
+                Entity ent,
+                int entityInQueryIndex,
+                ref GhostComponent ghost) =>
+            {
+                buffer.DestroyEntity(entityInQueryIndex, ent);
+            }).ScheduleParallel();
+            this.commandBufferSystem.CreateCommandBuffer().DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
+        }
+    }
+
+    /// <summary>
     /// Secondary class to create connection object ot connect to the server
     /// </summary>
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
@@ -25,6 +57,7 @@ namespace PropHunt.Client.Systems
     /// <summary>
     /// System to handle disconnecting client from the server
     /// </summary>
+    [UpdateBefore(typeof(GhostReceiveSystem))]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class ConnectionSystem : ComponentSystem
     {
@@ -76,8 +109,8 @@ namespace PropHunt.Client.Systems
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
                 {
                     EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
+                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
                 });
-                // Also delete the existing network scene
                 ConnectionSystem.disconnectRequested = false;
             }
         }
