@@ -59,6 +59,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -83,6 +84,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &7560659512777369435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,23 +227,7 @@ MonoBehaviour:
         Tag06: 0
         Tag07: 0
     m_SerializedVersion: 1
-    m_BelongsTo_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_CollidesWith_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_CustomTags_Deprecated:
-      m_Override: 0
-      m_Value: 
-    m_IsTrigger_Deprecated:
-      m_Override: 0
-      m_Value: 0
-    m_RaisesCollisionEvents_Deprecated:
-      m_Override: 0
-      m_Value: 0
   m_SerializedVersion: 1
-  m_ConvexRadius_Deprecated: -1
 --- !u!114 &5215049662655914753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MotionType: 0
+  m_Smoothing: 0
   m_Mass: 10
   m_LinearDamping: 0.01
   m_AngularDamping: 0.05
@@ -316,111 +303,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultClientInstantiationType: 0
-  RootPath: /Scripts/Mixed/Generated
-  SnapshotDataPath: CubeSnapshotData.cs
-  UpdateSystemPath: CubeGhostUpdateSystem.cs
-  SerializerPath: CubeGhostSerializer.cs
+  ForcePrefabConversion: 0
+  DefaultGhostMode: 0
+  SupportedGhostModes: 3
+  OptimizationMode: 0
   Importance: 1
-  PredictingPlayerNetworkId: Unity.Transforms.Rotation.Value
-  Components:
-  - name: PropHunt.Mixed.Components.MaterialIdComponentData
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: materialId
-      quantization: -1
-      interpolate: 0
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsCollider
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsDamping
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsMass
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Physics.PhysicsVelocity
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.PerInstanceCullingTag
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.RenderBounds
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Rendering.RenderMesh
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.LocalToWorld
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Rotation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 1000
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
-  - name: Unity.Transforms.Translation
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: 100
-      interpolate: 1
-    manualFieldList: 0
-    entityIndex: 0
   prefabId: 9ce66645134d05648a349e8c3c23779d
   Name: Cube
-  doNotStrip: 0

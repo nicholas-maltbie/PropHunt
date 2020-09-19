@@ -1,5 +1,7 @@
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Scenes;
+using UnityEngine;
 using static PropHunt.Game.ClientGameSystem;
 
 namespace PropHunt.Client.Systems
@@ -70,10 +72,12 @@ namespace PropHunt.Client.Systems
 
             if (ConnectionSystem.disconnectRequested)
             {
+                Debug.Log("Attempting to disconnect");
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
                 {
                     EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
                 });
+                // Also delete the existing network scene
                 ConnectionSystem.disconnectRequested = false;
             }
         }

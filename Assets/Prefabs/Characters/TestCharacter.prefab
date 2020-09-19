@@ -166,11 +166,11 @@ MonoBehaviour:
   maxWalkAngle: 45
   groundCheckDistance: 0.01
   fallAnglePower: 1.2
-  moveAnglePower: 5
+  moveAnglePower: 2
   pushPower: 50
   moveMaxBounces: 3
   fallMaxBounces: 3
-  pushDecay: 0
+  pushDecay: 0.1
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
