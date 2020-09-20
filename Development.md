@@ -55,10 +55,16 @@ Ensure that you also have git lfs installed. It should be setup to auto-track ce
 # May need to run this on linux
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 sudo apt-get install git-lfs
-# Installing git lfs
-git lfs install
-git-lfs --version
 ```
+
+## 3.1 GitHooks Setup
+
+Once git-lfs is installed, you can setup the githooks for the project from the `.githooks` directory. In order to do this, use the following command to reconfigure the `core.hooksPath` for your repository
+```bash
+git config --local core.hooksPath .githooks
+```
+
+This will setup the tools. Ensure you also complete step 5.1 to properly install dotnet. The tool `dotnet format` will be automatically installed and used to check and verify the formatting of your C# files when working with the project using settings form the `.editorconfig` file in the repository. If you want to install dotnet format before making a commit, use the command `dotnet restore` from the base of the repository and it will install the tool.
 
 # 4. Opening the Project
 
@@ -157,7 +163,7 @@ Using the following extensions for VSCode. For information about installing exte
 # 9. Coding Style
 
 As far as coding style, please try to stay consistent with [C# Coding Guidelines](https://wiki.unity3d.com/index.php/Csharp_Coding_Guidelines) from Unity's reference guide. 
-
+There is a tool in the repo installed as part of the githooks called `dotnet format` that will verify the style of your code with every commit and whenever you make a pull request to the github repository.
 
 # 10. Known Issues
 
