@@ -84,3 +84,7 @@ CodeCoverage
 /[Aa]ssets/SceneDependencyCache
 /[Aa]ssets/SceneDependencyCache/*
 /[Aa]ssets/SceneDependencyCache.meta
+
+# Temporary assets creating for builds
+/[Aa]ssets/StreamingAssets
+/[Aa]ssets/StreamingAssets.meta

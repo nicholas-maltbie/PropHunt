@@ -1,15 +1,9 @@
 {
     "Dependencies": [
-        "GlobalObjectId_V1-1-97420748f47a01643b6c35810cc13eb7-93214019566545601-0"
+        "GlobalObjectId_V1-1-97420748f47a01643b6c35810cc13eb7-93214019566545601-0",
+        "GlobalObjectId_V1-1-d98cc5f1cdd47ff4b866624b2a54842e-93214019566545601-0"
     ],
     "Components": [
-        {
-            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
-            "$version": 1,
-            "Platform": "Windows",
-            "Configuration": 1,
-            "Incremental": false
-        },
         {
             "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
             "OutputDirectory": "Builds/WIn64-Server"
