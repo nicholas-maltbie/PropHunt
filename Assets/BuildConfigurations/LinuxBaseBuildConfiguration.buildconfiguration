@@ -1,0 +1,12 @@
+{
+    "Dependencies": [],
+    "Components": [
+        {
+            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
+            "$version": 1,
+            "Platform": "Linux",
+            "Configuration": 1,
+            "Incremental": false
+        }
+    ]
+}

@@ -46,6 +46,21 @@ namespace PropHunt.Mixed.Commands
     /// </summary>
     public class JoinGameRequestSystem : RpcCommandRequestSystem<JoinGameRequest, JoinGameRequest>
     {
+        [BurstCompile]
+        protected struct SendRpc : IJobEntityBatch
+        {
+            public SendRpcData data;
+            public void Execute(ArchetypeChunk chunk, int orderIndex)
+            {
+                data.Execute(chunk, orderIndex);
+            }
+        }
+
+        protected override void OnUpdate()
+        {
+            var sendJob = new SendRpc { data = InitJobData() };
+            ScheduleJobData(sendJob);
+        }
     }
 
 }

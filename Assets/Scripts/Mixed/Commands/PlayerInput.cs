@@ -7,10 +7,8 @@ namespace PropHunt.Mixed.Commands
     /// <summary>
     /// Player Input to control a user character. 
     /// </summary>
-    public struct PlayerInput : ICommandData<PlayerInput>
+    public struct PlayerInput : ICommandData
     {
-        public uint Tick => tick;
-
         /// <summary>
         /// Tick on which this input ocurred
         /// </summary>
@@ -64,6 +62,12 @@ namespace PropHunt.Mixed.Commands
         /// </summary>
         public bool IsSprinting => this.sprint == 1;
 
+        uint ICommandData.Tick
+        {
+            get { return this.tick; }
+            set { this.tick = value; }
+        }
+
         public void Deserialize(uint tick, ref DataStreamReader reader)
         {
             this.tick = tick;
@@ -98,13 +102,4 @@ namespace PropHunt.Mixed.Commands
             Serialize(ref writer);
         }
     }
-
-    public class NetCubeSendCommandSystem : CommandSendSystem<PlayerInput>
-    {
-    }
-
-    public class NetCubeReceiveCommandSystem : CommandReceiveSystem<PlayerInput>
-    {
-    }
-
 }

@@ -1,0 +1,11 @@
+{
+    "Dependencies": [
+        "GlobalObjectId_V1-1-b74454cb3eef742438936c9136197908-93214019566545601-0"
+    ],
+    "Components": [
+        {
+            "$type": "NetCodeConversionSettings, Unity.NetCode.Authoring.Hybrid",
+            "Target": 2
+        }
+    ]
+}

@@ -71,8 +71,7 @@ namespace EditorNamespace
 
                 selectedOptions |= BuildOptions.Development |
                     BuildOptions.AllowDebugging |
-                    BuildOptions.ConnectWithProfiler |
-                    BuildOptions.EnableHeadlessMode;
+                    BuildOptions.ConnectWithProfiler;
             }
 
             // Define BuildPlayer Options
@@ -86,6 +85,11 @@ namespace EditorNamespace
 
             // Perform build
             BuildReport buildReport = BuildPipeline.BuildPlayer(buildOptions);
+
+            // Reset build defines
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(
+                EditorUserBuildSettings.selectedBuildTargetGroup,
+                definesString);
         }
     }
 }

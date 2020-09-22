@@ -24,7 +24,7 @@ namespace PropHunt.Server.Systems
 
         protected override void OnCreate()
         {
-            // RequireSingletonForUpdate<EnableProphuntGhostSendSystemComponent>();
+            // RequireSingletonForUpdate<GhostPrefabCollectionComponent>();
         }
 
         protected int GetPlayerGhostIndex(DynamicBuffer<GhostPrefabBuffer> ghostPrefabBuffers)
@@ -51,10 +51,10 @@ namespace PropHunt.Server.Systems
                 UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", connectionId));
 
                 // Setup the character avatar
-                var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
-                DynamicBuffer<GhostPrefabBuffer> ghostPrefabs = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs);
+                Entity ghostCollection = GetSingletonEntity<GhostPrefabCollectionComponent>();
+                DynamicBuffer<GhostPrefabBuffer> ghostPrefabs = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection);
                 int ghostId = GetPlayerGhostIndex(ghostPrefabs);
-                var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
+                var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection)[ghostId].Value;
                 var player = PostUpdateCommands.Instantiate(prefab);
                 PostUpdateCommands.SetComponent(player, new PlayerId { playerId = connectionId });
                 PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) });

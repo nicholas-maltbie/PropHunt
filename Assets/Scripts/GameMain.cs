@@ -44,11 +44,11 @@ namespace PropHunt.Game
             RequireSingletonForUpdate<InitServerGameComponent>();
             // Create singleton, require singleton for update so system runs once
             EntityManager.CreateEntity(typeof(InitServerGameComponent));
+            Debug.Log("Creating server world");
         }
 
         protected override void OnUpdate()
         {
-#if !UNITY_CLIENT || UNITY_SERVER || UNITY_EDITOR
             // Destroy singleton to prevent system from running again
             EntityManager.DestroyEntity(GetSingletonEntity<InitServerGameComponent>());
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
@@ -59,7 +59,6 @@ namespace PropHunt.Game
                 ep.Port = ProphuntClientServerControlSystem.NetworkPort;
                 network.Listen(ep);
             }
-#endif
         }
     }
 
@@ -74,13 +73,12 @@ namespace PropHunt.Game
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<InitClientGameComponent>();
-            World.EntityManager.CreateEntity(typeof(FixedClientTickRate));
             // EntityManager.CreateEntity(typeof(InitClientGameComponent));
+            Debug.Log("Creating client world");
         }
 
         protected override void OnUpdate()
         {
-#if UNITY_CLIENT || UNITY_EDITOR
             EntityManager.DestroyEntity(GetSingletonEntity<InitClientGameComponent>());
 
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
@@ -91,7 +89,6 @@ namespace PropHunt.Game
                 NetworkEndPoint ep = NetworkEndPoint.Parse(ProphuntClientServerControlSystem.NetworkAddress, ProphuntClientServerControlSystem.NetworkPort);
                 network.Connect(ep);
             }
-#endif
         }
     }
 } // End namespace Prophunt.Game

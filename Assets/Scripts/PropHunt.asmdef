@@ -13,6 +13,7 @@
         "Unity.Networking.Transport",
         "Unity.Physics",
         "Unity.Rendering.Hybrid",
+        "Unity.Scenes",
         "Unity.Transforms"
     ],
     "includePlatforms": [],
