@@ -32,7 +32,6 @@ namespace PropHunt.Game
     }
 
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
-    [UpdateInWorld(UpdateInWorld.TargetWorld.Server)]
     public class ServerGameSystem : ComponentSystem
     {
         // Singleton component to trigger connections once from a control system
@@ -64,7 +63,6 @@ namespace PropHunt.Game
     }
 
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    [UpdateInWorld(UpdateInWorld.TargetWorld.Client)]
     public class ClientGameSystem : ComponentSystem
     {
         // Singleton component to trigger connections once from a control system

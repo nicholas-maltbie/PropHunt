@@ -263,7 +263,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8304234071310501127}
-        m_MethodName: ConnectedToServer
+        m_MethodName: ConnectToServer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
