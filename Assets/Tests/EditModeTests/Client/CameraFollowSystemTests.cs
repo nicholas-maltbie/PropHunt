@@ -115,6 +115,22 @@ namespace PropHunt.EditMode.Tests.Client
         }
 
         /// <summary>
+        /// Checking functionality when camera does not exist.
+        /// </summary>
+        [Test]
+        public void NoCameraExists()
+        {
+            // Make singletons for follow
+            CreateNetworkSingletons(1);
+
+            // Remove main camera
+            GameObject.DestroyImmediate(this.camera);
+
+            // Do an update step for the system
+            this.cameraFollow.Update();
+        }
+
+        /// <summary>
         /// Assert that the camera exists
         /// </summary>
         [Test]
