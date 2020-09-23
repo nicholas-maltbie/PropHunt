@@ -51,9 +51,6 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
             yield return new WaitForConnected(connectionManager);
             Assert.IsTrue(ConnectionSystem.IsConnected);
 
-            // Let the simulation run for a few seconds
-            yield return new WaitForSeconds(3);
-
             // Make a disconnect request
             ConnectionSystem.DisconnectFromServer();
             yield return new WaitForConnected(connectionManager, state : false);

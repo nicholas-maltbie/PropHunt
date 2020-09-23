@@ -70,19 +70,19 @@ namespace PropHunt.PlayMode.Tests.CharacterController
             playerView.viewRotationRate = 180f;
             playerView.offset = Vector3.zero;
 
-            PhysicsShapeAuthoring physicsShape = this.player.AddComponent<PhysicsShapeAuthoring>();
-            physicsShape.CollidesWith = PhysicsCategoryTags.Everything;
-            physicsShape.Friction = new PhysicsMaterialCoefficient(){Value = 1};
-            physicsShape.Restitution = new PhysicsMaterialCoefficient(){Value = 1};
-            physicsShape.SetCapsule(new CapsuleGeometryAuthoring(){
-                Orientation = Quaternion.Euler(-90, 0, -90),
-                Center = new float3(0, 1, 0),
-                Height = 2,
-                Radius = 0.5f
-            });
+            // PhysicsShapeAuthoring physicsShape = this.player.AddComponent<PhysicsShapeAuthoring>();
+            // physicsShape.CollidesWith = PhysicsCategoryTags.Everything;
+            // physicsShape.Friction = new PhysicsMaterialCoefficient(){Value = 1};
+            // physicsShape.Restitution = new PhysicsMaterialCoefficient(){Value = 1};
+            // physicsShape.SetCapsule(new CapsuleGeometryAuthoring(){
+            //     Orientation = Quaternion.Euler(-90, 0, -90),
+            //     Center = new float3(0, 1, 0),
+            //     Height = 2,
+            //     Radius = 0.5f
+            // });
 
-            PhysicsBodyAuthoring physicsBody = this.player.AddComponent<PhysicsBodyAuthoring>();
-            physicsBody.MotionType = BodyMotionType.Kinematic;
+            // PhysicsBodyAuthoring physicsBody = this.player.AddComponent<PhysicsBodyAuthoring>();
+            // physicsBody.MotionType = BodyMotionType.Kinematic;
 
             PlayerIdAuthoringComponent playerId = this.player.AddComponent<PlayerIdAuthoringComponent>();
 
