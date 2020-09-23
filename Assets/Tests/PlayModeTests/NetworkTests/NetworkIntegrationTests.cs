@@ -9,8 +9,10 @@ using UnityEngine.TestTools;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using static PropHunt.Game.ClientGameSystem;
+using PropHunt.Client.Systems;
+using PropHunt.Game;
 
-namespace PropHunt.PlayMode.Tests.CharacterController
+namespace PropHunt.PlayMode.Tests.NetworkTests
 {
     [TestFixture]
     public class NetworkIntegrationTests : ECSTestsFixture
@@ -29,11 +31,7 @@ namespace PropHunt.PlayMode.Tests.CharacterController
 
             // Convert scene to an ecs world
             var serverSettings = GameObjectConversionSettings.FromWorld(this.serverWorld, new BlobAssetStore());
-            // Scene activeScene = SceneManager.GetActiveScene();
-            // Unity.Entities.GameObjectConversionUtility.ConvertScene(activeScene, serverSettings);
             this.serverWorld.EntityManager.CompleteAllJobs();
-            // Debug.Log($"Num entities in server world: {this.serverWorld.EntityManager.GetAllEntities().Length}");
-            // Debug.Log(this.serverWorld.EntityManager.UniversalQuery.GetSingleton<GhostPrefabCollectionComponent>());
 
             // Ensure main camera still exists
             if (Camera.main == null)
@@ -45,8 +43,7 @@ namespace PropHunt.PlayMode.Tests.CharacterController
 
             // Then initialize client world
             this.clientWorld = ClientServerBootstrap.CreateClientWorld(base.World, "ClientWorld");
-
-            LogAssert.ignoreFailingMessages = true;
+            this.clientWorld.EntityManager.CompleteAllJobs();
         }
 
         [UnitySetUp]
@@ -58,13 +55,25 @@ namespace PropHunt.PlayMode.Tests.CharacterController
         }
 
         [UnityTest]
-        public IEnumerator TestCode()
+        public IEnumerator ConnectionTest()
         {
-            // Make a connect request
-            LogAssert.Expect(LogType.Exception, "GetSingleton<Unity.NetCode.NetworkSnapshotAckComponent>() requires that exactly one Unity.NetCode.NetworkSnapshotAckComponent exist that match this query, but there are 0.");
-            LogAssert.Expect(LogType.Error, new Regex(@"Large serverTick prediction error. Server tick rollback to \d* delta: -\d*"));
+            ConnectionSystem connectionManager = this.clientWorld.GetExistingSystem<ConnectionSystem>();
 
             yield return null;
+            // Make a connect request
+            ConnectionSystem.ConnectToServer();
+            yield return new WaitForConnected(connectionManager);
+            Assert.IsTrue(ConnectionSystem.IsConnected);
+
+            // Let the simulation run for a few seconds
+            yield return new WaitForSeconds(3);
+
+            // Make a disconnect request
+            ConnectionSystem.DisconnectFromServer();
+            yield return new WaitForConnected(connectionManager, state : false);
+            Assert.IsFalse(ConnectionSystem.IsConnected);
+
+
         }
     }
 }

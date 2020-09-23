@@ -73,7 +73,6 @@ namespace PropHunt.Game
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<InitClientGameComponent>();
-            // EntityManager.CreateEntity(typeof(InitClientGameComponent));
             Debug.Log("Creating client world");
         }
 

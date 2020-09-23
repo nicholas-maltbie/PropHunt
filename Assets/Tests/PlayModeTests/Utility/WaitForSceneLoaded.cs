@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 namespace PropHunt.PlayMode.Tests.Utility
 {
+    /// <summary>
+    /// Wait until a scene is loaded
+    /// </summary>
     public class WaitForSceneLoaded : CustomYieldInstruction
     {
         readonly string sceneName;
