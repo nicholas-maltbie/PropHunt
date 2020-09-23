@@ -6,28 +6,14 @@ using PropHunt.Authoring;
 using Unity.Entities;
 using Unity.Physics.Authoring;
 using Unity.Mathematics;
-using PropHunt.Mixed.Systems;
 using Unity.Physics.Systems;
-using PropHunt.Client.Systems;
+using Unity.Entities.Tests;
+using Unity.NetCode;
 
 namespace PropHunt.PlayMode.Tests.CharacterController
 {
-    public class TestSystem : ComponentSystem
-    {
-        public Entity entity;
-
-        protected override void OnUpdate()
-        {
-            if (entity != Entity.Null)
-            {
-                PostUpdateCommands.Instantiate(entity);
-                entity = Entity.Null;
-            }
-        }
-    }
-
     [TestFixture]
-    public class KinematicCharacterControllerTest
+    public class KinematicCharacterControllerTest : ECSTestsFixture
     {
         private Entity playerEntity;
 
@@ -37,33 +23,32 @@ namespace PropHunt.PlayMode.Tests.CharacterController
 
         private GameObject environment;
 
-        private World world;
+        private World serverWorld;
 
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
-            var settings = GameObjectConversionSettings.FromWorld(this.world, new BlobAssetStore());
+            base.Setup();
+
+            // Initialize server world first
+            this.serverWorld = ClientServerBootstrap.CreateServerWorld(base.World, "ServerWorld");
+
+            this.buildPhysicsWorld = this.serverWorld.GetExistingSystem<BuildPhysicsWorld>();
+            this.buildPhysicsWorld.EntityManager.CompleteAllJobs();
+            Debug.Log($"Num bodies: {buildPhysicsWorld.PhysicsWorld.NumBodies}");
+
+            var settings = GameObjectConversionSettings.FromWorld(this.serverWorld, new BlobAssetStore());
             this.playerEntity = Unity.Entities.GameObjectConversionUtility.ConvertGameObjectHierarchy(this.player, settings);
             var environmentEntity = Unity.Entities.GameObjectConversionUtility.ConvertGameObjectHierarchy(this.environment, settings);
-            Debug.Log(this.world.EntityManager.GetComponentTypes(this.playerEntity));
+            Debug.Log(this.serverWorld.EntityManager.GetComponentTypes(this.playerEntity));
 
-            // var physicsWorld = buildPhysicsWorld.PhysicsWorld;
-
-            // Debug.Log($"Num bodies: {physicsWorld.NumBodies}");
-            var test = this.world.GetOrCreateSystem<TestSystem>();
-            test.entity = this.playerEntity;
-            test.Update();
-
-            GameObject.Destroy(this.player);
-            GameObject.Destroy(this.environment);
+            this.buildPhysicsWorld.EntityManager.CompleteAllJobs();
+            Debug.Log($"Num bodies: {buildPhysicsWorld.PhysicsWorld.NumBodies}");
         }
 
         [UnitySetUp]
         public IEnumerator UnitySetup()
         {
-            this.world = World.DefaultGameObjectInjectionWorld;
-            this.buildPhysicsWorld = this.world.GetOrCreateSystem<BuildPhysicsWorld>();
-
             // Spawn a character
             this.player = GameObject.Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
             
@@ -112,16 +97,6 @@ namespace PropHunt.PlayMode.Tests.CharacterController
             yield return null;
         }
 
-        private void UpdateKCCSystems()
-        {
-            this.world.GetOrCreateSystem<KCCGroundedSystem>().Update();
-            this.world.GetOrCreateSystem<KCCGravitySystem>().Update();
-            this.world.GetOrCreateSystem<KCCJumpSystem>().Update();
-            this.world.GetOrCreateSystem<KCCMoveWithGroundSystem>().Update();
-            this.world.GetOrCreateSystem<KCCMovementSystem>().Update();
-            this.world.GetOrCreateSystem<CameraFollowSystem>().Update();
-        }
-
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
         // `yield return null;` to skip a frame.
         [UnityTest]
@@ -130,17 +105,26 @@ namespace PropHunt.PlayMode.Tests.CharacterController
             // Use the Assert class to test conditions.
             // Use yield to skip a frame.
             yield return null;
-            yield return null;
+            
+            // Some entity conditions
+            Debug.Log(this.serverWorld.EntityManager.GetAllEntities().Length);
+            foreach(Entity ent in this.serverWorld.EntityManager.GetAllEntities())
+            {
+                string componentTypes = "";
+                foreach (var componentType in this.serverWorld.EntityManager.GetComponentTypes(ent))
+                {
+                    componentTypes += componentType.ToString() + ", ";
+                }
 
-            // this.world.
-
-            this.UpdateKCCSystems();
-            this.world.Update();
-            // this.world.EntityManager.CompleteAllJobs();
-            // yield return new WaitForFixedUpdate();
-            // world.EntityManager.CreateEntity(typeof(FixedClientTickRate));
+                Debug.Log($"Entity: {ent.Index}: {componentTypes}");
+            }
 
             Debug.Log(this.buildPhysicsWorld.PhysicsWorld.NumBodies);
+
+            for (int i = 0; i < 100; i++)
+            {
+                yield return null;
+            }
         }
     }
 }

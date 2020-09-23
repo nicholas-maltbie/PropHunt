@@ -7,10 +7,7 @@ using Unity.NetCode;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine;
-using System.Text.RegularExpressions;
-using static PropHunt.Game.ClientGameSystem;
 using PropHunt.Client.Systems;
-using PropHunt.Game;
 
 namespace PropHunt.PlayMode.Tests.NetworkTests
 {
@@ -28,18 +25,7 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
 
             // Initialize server world first
             this.serverWorld = ClientServerBootstrap.CreateServerWorld(base.World, "ServerWorld");
-
-            // Convert scene to an ecs world
-            var serverSettings = GameObjectConversionSettings.FromWorld(this.serverWorld, new BlobAssetStore());
             this.serverWorld.EntityManager.CompleteAllJobs();
-
-            // Ensure main camera still exists
-            if (Camera.main == null)
-            {
-                var camera = GameObject.Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
-                var cameraComponent = camera.AddComponent<Camera>();
-                camera.tag = "MainCamera";
-            }
 
             // Then initialize client world
             this.clientWorld = ClientServerBootstrap.CreateClientWorld(base.World, "ClientWorld");
