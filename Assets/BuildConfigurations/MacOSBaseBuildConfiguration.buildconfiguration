@@ -4,8 +4,8 @@
         {
             "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
             "$version": 1,
-            "Platform": "Windows",
-            "Configuration": 1,
+            "Platform": "OSX",
+            "Configuration": 2,
             "Incremental": false
         }
     ]
