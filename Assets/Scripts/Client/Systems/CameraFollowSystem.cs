@@ -27,7 +27,7 @@ namespace PropHunt.Client.Systems
             int localPlayerId = GetSingleton<NetworkIdComponent>().Value;
 
             // Skip function if no main camera exists
-            if (Camera.main == null) 
+            if (Camera.main == null)
             {
                 return;
             }
