@@ -51,12 +51,12 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
             yield return new WaitForConnected(connectionManager);
             Assert.IsTrue(ConnectionSystem.IsConnected);
 
+            yield return null;
+
             // Make a disconnect request
             ConnectionSystem.DisconnectFromServer();
             yield return new WaitForConnected(connectionManager, state : false);
             Assert.IsFalse(ConnectionSystem.IsConnected);
-
-
         }
     }
 }

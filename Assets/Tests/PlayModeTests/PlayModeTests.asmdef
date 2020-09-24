@@ -19,15 +19,15 @@
         "Unity.NetCode",
         "Unity.NetCode.Editor",
         "Unity.NetCode.Physics",
-        "Unity.NetCode.TestsUtils"
+        "Unity.NetCode.TestsUtils",
+        "Unity.Scenes"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "Moq.dll"
+        "nunit.framework.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [
