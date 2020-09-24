@@ -75,6 +75,12 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
+
+        /// <summary>
+        /// Center of the character for pushing out of objects relative to the character transform
+        /// </summary>
+        [GhostField]
+        public float3 characterCenter;
     }
 
     /// <summary>

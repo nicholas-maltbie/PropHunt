@@ -3,10 +3,10 @@ using PropHunt.Mixed.Utilities;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -41,8 +41,7 @@ namespace PropHunt.Mixed.Systems
                 in Translation translation,
                 in Rotation rotation) =>
                 {
-                    SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                        new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                    var hitCollector = FilteringClosestHitCollector<ColliderCastHit>.GetSelfFilteringCollector(entity.Index, 1.0f, physicsWorld.CollisionWorld);
 
                     float3 from = translation.Value;
                     float3 to = from + gravity.Down * grounded.groundCheckDistance;
@@ -86,6 +85,83 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
+    /// Pushes kinematic character controllers out of objects they are stuck in
+    /// </summary>
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(KCCGroundedSystem))]
+    [UpdateBefore(typeof(KCCMovementSystem))]
+    public class KCCPushOverlappingSystem : SystemBase
+    {
+        protected override void OnUpdate()
+        {
+            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+
+            Entities.ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in PhysicsCollider collider,
+                in KCCGrounded grounded,
+                in KCCMovementSettings movementSettings
+            ) => {
+                // Get all objects overlapping with our character's collider
+
+                // Do a collider cast that ignore our collider and will hit the target collider
+                //  to find the point of collision with that object
+                
+                // For each set of overlapping object and point of collision, 
+                //  Draw a ray from the center of the character collider to 
+                //  the point of collision
+                
+                // If the ray intersects the other object before it reaches the edge of our own collider,
+                //  then we know that we are overlapping with the object
+                
+                // Push our character collider out of the object(s) we are overlapping with
+
+                if(!grounded.onGround)
+                {
+                    return;
+                }
+
+                float3 hitPoint = grounded.groundedPoint;
+                int hitObject = grounded.hitEntity.Index;
+                int selfIndex = entity.Index;
+
+                var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
+                    selfIndex, -1, 1.0f, physicsWorld.CollisionWorld);
+
+                float3 center = translation.Value + movementSettings.characterCenter;
+
+                var input = new RaycastInput()
+                {
+                    Filter = collider.Value.Value.Filter,
+                    Start = center,
+                    End = hitPoint,
+                };
+
+                bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+                Debug.DrawLine(center, hitPoint, Color.red, 1f);
+
+                if (collisionOcurred)
+                {
+                    // Hit something
+                    var raycastHit = hitCollector.ClosestHit;
+                    // Get the distance of overlap (1 - hit fraction) * distance
+                    float3 direction = hitPoint - center;
+                    float distance = math.length(direction);
+                    float overlapDistance = (1 - raycastHit.Fraction) * distance;
+                    // Add a small push to overlap
+                    overlapDistance += KCCUtils.Epsilon;
+                    // Get movement in direction opposite of raycast
+                    float3 push = math.normalizesafe(-direction) * overlapDistance;
+                    // Push character collider by this much
+                    translation.Value = translation.Value + push;
+                }
+            }).ScheduleParallel();
+        }
+    }
+
+    /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
@@ -117,7 +193,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings movementSettings) =>
             {
                 // Adjust character translation due to player movement
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
@@ -132,7 +208,7 @@ namespace PropHunt.Mixed.Systems
                     anglePower: movementSettings.moveAnglePower
                 );
                 // Adjust character translation due to gravity/world forces
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
