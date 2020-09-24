@@ -15,12 +15,15 @@ namespace PropHunt.PlayMode.Tests.Utility
 
         public bool TimedOut => timedOut;
 
-        public override bool keepWaiting {
-            get {
+        public override bool keepWaiting
+        {
+            get
+            {
                 var scene = SceneManager.GetSceneByName(sceneName);
                 var sceneLoaded = scene.IsValid() && scene.isLoaded;
 
-                if (Time.realtimeSinceStartup - startTime >= timeout) {
+                if (Time.realtimeSinceStartup - startTime >= timeout)
+                {
                     timedOut = true;
                 }
 

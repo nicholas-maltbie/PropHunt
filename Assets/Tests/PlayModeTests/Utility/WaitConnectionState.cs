@@ -16,9 +16,12 @@ namespace PropHunt.PlayMode.Tests.Utility
 
         public bool TimedOut => timedOut;
 
-        public override bool keepWaiting {
-            get {
-                if (Time.realtimeSinceStartup - startTime >= timeout) {
+        public override bool keepWaiting
+        {
+            get
+            {
+                if (Time.realtimeSinceStartup - startTime >= timeout)
+                {
                     timedOut = true;
                 }
 
