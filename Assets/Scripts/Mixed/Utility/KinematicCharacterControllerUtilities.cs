@@ -8,8 +8,13 @@ namespace PropHunt.Mixed.Utilities
     /// <summary>
     /// Class for kinematic character controller utilities
     /// </summary>
-    public static class KinematicCharacterControllerUtilities
+    public static class KCCUtils
     {
+        /// <summary>
+        /// Small distance for acccounting for non deterministic simulation and float errors
+        /// </summary>
+        public static readonly float Epsilon = 0.001f;
+
         /// <summary>
         /// Maximum angle between an object and a character 
         /// </summary>
@@ -87,8 +92,7 @@ namespace PropHunt.Mixed.Utilities
                     Orientation = rotation
                 };
 
-                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
+                var hitCollector = FilteringClosestHitCollector<ColliderCastHit>.GetSelfFilteringCollector(entityIndex, 1.0f, collisionWorld);
 
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
@@ -118,8 +122,8 @@ namespace PropHunt.Mixed.Utilities
                 // Get angle between surface normal and remaining movement
                 float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
                 // Normalize angle between to be between 0 and 1
-                angleBetween = math.min(KinematicCharacterControllerUtilities.MaxAngleShoveRadians, math.abs(angleBetween));
-                float normalizedAngle = angleBetween / KinematicCharacterControllerUtilities.MaxAngleShoveRadians;
+                angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
+                float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
                 // Create angle factor using 1 / (1 + normalizedAngle)
                 float angleFactor = 1.0f / (1.0f + normalizedAngle);
                 // If the character hit something
