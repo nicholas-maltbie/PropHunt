@@ -66,7 +66,7 @@ namespace PropHunt.Mixed.Utilities
             int hitIndex = collisionWorld.Bodies[hit.RigidBodyIndex].Entity.Index;
             // Ignore if index is part of hit index or if
             // allowed is defined and does not contain this index
-            if (ignore == hitIndex) //|| (allow != AllowAll && allow != hitIndex))
+            if (ignore == hitIndex || (allow != AllowAll && allow != hitIndex))
             {
                 return false;
             }

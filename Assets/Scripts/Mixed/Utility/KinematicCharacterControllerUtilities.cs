@@ -37,6 +37,7 @@ namespace PropHunt.Mixed.Utilities
         /// <param name="collider">Collider controlling the character</param>
         /// <param name="entityIndex">Index of this entity</param>
         /// <param name="rotation">Current character rotation</param>
+        /// <param name="physicsMassAccessor">Accessor to physics mass components</param>
         /// <param name="anglePower">Power to raise decay of movement due to
         /// changes in angle between intended movement and angle of surface.
         /// Will be angleFactor= 1 / (1 + normAngle) where normAngle is a normalized value
@@ -66,6 +67,7 @@ namespace PropHunt.Mixed.Utilities
             PhysicsCollider collider,
             int entityIndex,
             quaternion rotation,
+            ComponentDataFromEntity<PhysicsMass> physicsMassGetter,
             float anglePower = 2,
             int maxBounces = 1,
             float pushPower = 25,
@@ -109,9 +111,12 @@ namespace PropHunt.Mixed.Utilities
                 // Push slightly along normal to stop from getting caught in walls
                 from = from + hit.SurfaceNormal * epsilon;
 
-                // Apply some force to the object hit if it is moveable
-                // Apply force on entity hit
-                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies)
+                // Apply some force to the object hit if it is moveable, Apply force on entity hit
+                //   Need to ignore kinematic rigidbodies
+                //     Kinematic rigidbodies have a InverseInertia of (0,0,0) as they do not have a mass
+                bool isKinematic = physicsMassGetter.HasComponent(hit.Entity) &&
+                    float3.Equals(physicsMassGetter[hit.Entity].InverseInertia, float3.zero);
+                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies && !isKinematic)
                 {
                     commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
                     commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce() { force = movement * pushPower, point = hit.Position });
