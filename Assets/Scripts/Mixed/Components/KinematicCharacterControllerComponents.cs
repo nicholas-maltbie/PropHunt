@@ -161,6 +161,21 @@ namespace PropHunt.Mixed.Components
         /// Entity hit
         /// </summary>
         public Entity hitEntity;
+
+        /// <summary>
+        /// Was this on the ground previous frame
+        /// </summary>
+        public bool previousOnGround;
+
+        /// <summary>
+        /// Angle of previously hit object
+        /// </summary>
+        public float previousAngle;
+
+        /// <summary>
+        /// Was this falling the previous frame
+        /// </summary>
+        public bool PreviousFalling => !this.previousOnGround || this.previousAngle > this.maxWalkAngle;
     }
 
     /// <summary>
@@ -181,6 +196,11 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
+
+        /// <summary>
+        /// Velocity of floor for following grounded components, used as a holding variable
+        /// </summary>
+        public float3 floorVelocity;
     }
 
     /// <summary>

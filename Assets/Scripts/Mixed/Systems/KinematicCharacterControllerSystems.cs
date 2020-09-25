@@ -15,6 +15,8 @@ namespace PropHunt.Mixed.Systems
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
     [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(TransformSystemGroup))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
@@ -56,6 +58,9 @@ namespace PropHunt.Mixed.Systems
 
                     bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
                     Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
+
+                    grounded.previousAngle = grounded.angle;
+                    grounded.previousOnGround = grounded.onGround;
 
                     if (collisionOcurred)
                     {
@@ -106,7 +111,7 @@ namespace PropHunt.Mixed.Systems
                 // The closest object to the ground is already computed by the KCC Grounded
                 // System and component, reuse this calculation as it will also find the closest overlapping object
                 // Only push out of one object per frame to make this easier.
-                if (!grounded.onGround || grounded.distanceToGround > KCCUtils.Epsilon)
+                if (grounded.Falling || grounded.distanceToGround > KCCUtils.Epsilon)
                 {
                     return;
                 }
@@ -152,10 +157,6 @@ namespace PropHunt.Mixed.Systems
                     float3 push = math.normalizesafe(-direction) * overlapDistance;
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
-
-                    // Also push by the normal of the surface hit
-                    // This helps ensure movement doesn't hit the objects we are standing on and get stuck
-                    translation.Value = translation.Value + raycastHit.SurfaceNormal * KCCUtils.Epsilon;
                 }
             }).ScheduleParallel();
         }
@@ -277,19 +278,34 @@ namespace PropHunt.Mixed.Systems
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
                 ref KCCVelocity velocity,
+                ref Translation translation,
                 in KCCGrounded grounded) =>
                 {
+                    // Displacement of floor
+                    float3 displacement = float3.zero;
+
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
                     if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint) / deltaTime;
+                        displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+                        translation.Value += displacement;
+                        velocity.worldVelocity = float3.zero;
                     }
                     else if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
                     }
+                    // If was grounded previous frame and no longer falling, add previous floor velocity to
+                    //  current world velocity as if you jump off with that momentum
+                    else if (grounded.Falling && !grounded.PreviousFalling)
+                    {
+                        velocity.worldVelocity += velocity.floorVelocity;
+                    }
+
+                    // Set velocity of floor
+                    velocity.floorVelocity = displacement / deltaTime;
                 }
             ).ScheduleParallel();
         }
