@@ -98,27 +98,19 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCPushOverlappingSystem : SystemBase
     {
-        protected override void OnUpdate()
+        protected unsafe override void OnUpdate()
         {
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
             Entities.ForEach((
-                Entity entity,
-                int entityInQueryIndex,
-                ref Translation translation,
-                in PhysicsCollider collider,
-                in KCCGrounded grounded,
-                in KCCMovementSettings movementSettings
-            ) =>
+                    Entity entity,
+                    int entityInQueryIndex,
+                    ref Translation translation,
+                    in PhysicsCollider collider,
+                    in KCCGrounded grounded,
+                    in KCCMovementSettings movementSettings
+                ) =>
             {
-                // The closest object to the ground is already computed by the KCC Grounded
-                // System and component, reuse this calculation as it will also find the closest overlapping object
-                // Only push out of one object per frame to make this easier.
-                if (grounded.Falling || grounded.distanceToGround > KCCUtils.Epsilon)
-                {
-                    return;
-                }
-
                 // Draw a ray from the center of the character collider to 
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
@@ -154,14 +146,12 @@ namespace PropHunt.Mixed.Systems
                     float3 direction = hitPoint - center;
                     float distance = math.length(direction);
                     float overlapDistance = (1 - raycastHit.Fraction) * distance;
-                    // Add a small push to overlap
-                    overlapDistance += KCCUtils.Epsilon;
-                    // Get movement in direction opposite of raycast
-                    float3 push = math.normalizesafe(-direction) * overlapDistance;
+                    // Get movement in direction touching object`
+                    float3 push = math.normalizesafe(-direction) * (overlapDistance);
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }
-            }).ScheduleParallel();
+            }).Schedule();
         }
     }
 
