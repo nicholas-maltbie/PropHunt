@@ -11,6 +11,17 @@ namespace PropHunt.Mixed.Utilities
     public static class KCCUtils
     {
         /// <summary>
+        /// Check if a physics mass is kinematic
+        /// </summary>
+        /// <param name="mass">Physics mass to verify</param>
+        /// <returns>True if kinematic, false otherwise</returns>
+        public static bool IsKinematic(PhysicsMass mass)
+        {
+            float3 intertia = mass.InverseInertia;
+            return intertia.x == 0 && intertia.y == 0 && intertia.z == 0;
+        }
+
+        /// <summary>
         /// Small distance for acccounting for non deterministic simulation and float errors
         /// </summary>
         public static readonly float Epsilon = 0.001f;
@@ -112,10 +123,7 @@ namespace PropHunt.Mixed.Utilities
                 from = from + hit.SurfaceNormal * epsilon;
 
                 // Apply some force to the object hit if it is moveable, Apply force on entity hit
-                //   Need to ignore kinematic rigidbodies
-                //     Kinematic rigidbodies have a InverseInertia of (0,0,0) as they do not have a mass
-                bool isKinematic = physicsMassGetter.HasComponent(hit.Entity) &&
-                    float3.Equals(physicsMassGetter[hit.Entity].InverseInertia, float3.zero);
+                bool isKinematic = physicsMassGetter.HasComponent(hit.Entity) && IsKinematic(physicsMassGetter[hit.Entity]);
                 if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies && !isKinematic)
                 {
                     commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
