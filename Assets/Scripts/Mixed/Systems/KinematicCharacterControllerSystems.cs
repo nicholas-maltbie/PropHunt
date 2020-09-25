@@ -104,35 +104,32 @@ namespace PropHunt.Mixed.Systems
                 in PhysicsCollider collider,
                 in KCCGrounded grounded,
                 in KCCMovementSettings movementSettings
-            ) => {
-                // Get all objects overlapping with our character's collider
-
-                // Do a collider cast that ignore our collider and will hit the target collider
-                //  to find the point of collision with that object
-                
-                // For each set of overlapping object and point of collision, 
-                //  Draw a ray from the center of the character collider to 
-                //  the point of collision
-                
-                // If the ray intersects the other object before it reaches the edge of our own collider,
-                //  then we know that we are overlapping with the object
-                
-                // Push our character collider out of the object(s) we are overlapping with
-
-                if(!grounded.onGround)
+            ) =>
+            {
+                // The closest object to the ground is already computed by the KCC Grounded
+                // System and component, reuse this calculation as it will also find the closest overlapping object
+                // Only push out of one object per frame to make this easier.
+                if (!grounded.onGround || grounded.distanceToGround > KCCUtils.Epsilon)
                 {
                     return;
                 }
 
+                // Draw a ray from the center of the character collider to 
+                //  the point of collision
+                // If the ray intersects the other object before it reaches the edge of our own collider,
+                //  then we know that we are overlapping with the object
                 float3 hitPoint = grounded.groundedPoint;
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
 
+                // Hit collector to only collide with our object and the object we overlap with
                 var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
-                    selfIndex, -1, 1.0f, physicsWorld.CollisionWorld);
+                    selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
 
+                // Compute the center of our collider
                 float3 center = translation.Value + movementSettings.characterCenter;
 
+                // Draw a ray from the center of the character to the hit object
                 var input = new RaycastInput()
                 {
                     Filter = collider.Value.Value.Filter,
@@ -140,9 +137,10 @@ namespace PropHunt.Mixed.Systems
                     End = hitPoint,
                 };
 
+                // Do the raycast computation
                 bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
-                Debug.DrawLine(center, hitPoint, Color.red, 1f);
 
+                // Push our character collider out of the object we are overlapping with
                 if (collisionOcurred)
                 {
                     // Hit something
@@ -159,6 +157,7 @@ namespace PropHunt.Mixed.Systems
                     translation.Value = translation.Value + push;
 
                     // Also push by the normal of the surface hit
+                    // This helps ensure movement doesn't hit the objects we are standing on and get stuck
                     translation.Value = translation.Value + raycastHit.SurfaceNormal * KCCUtils.Epsilon;
                 }
             }).ScheduleParallel();
