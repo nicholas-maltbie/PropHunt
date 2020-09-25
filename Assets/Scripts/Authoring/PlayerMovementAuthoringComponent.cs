@@ -87,11 +87,6 @@ namespace PropHunt.Authoring
         /// </summary>
         public Vector3 centerOffset = new Vector3(0, 1, 0);
 
-        /// <summary>
-        /// Distance (in unity units) that a character can be snapped down onto the ground
-        /// </summary>
-        public float groundSnapDistance = 0.1f;
-
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new KCCMovementSettings()

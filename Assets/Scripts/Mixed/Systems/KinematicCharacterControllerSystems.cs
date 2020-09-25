@@ -1,5 +1,6 @@
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -156,6 +157,9 @@ namespace PropHunt.Mixed.Systems
                     float3 push = math.normalizesafe(-direction) * overlapDistance;
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
+
+                    // Also push by the normal of the surface hit
+                    translation.Value = translation.Value + raycastHit.SurfaceNormal * KCCUtils.Epsilon;
                 }
             }).ScheduleParallel();
         }
@@ -181,9 +185,10 @@ namespace PropHunt.Mixed.Systems
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             float deltaTime = Time.DeltaTime;
 
-            Entities.ForEach((
+            Entities.WithReadOnly(physicsMassGetter).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -202,6 +207,7 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.moveMaxBounces,
                     pushPower: movementSettings.movePushPower,
                     pushDecay: movementSettings.movePushDecay,
@@ -217,6 +223,7 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.fallMaxBounces,
                     pushPower: movementSettings.fallPushPower,
                     pushDecay: movementSettings.fallPushDecay,
