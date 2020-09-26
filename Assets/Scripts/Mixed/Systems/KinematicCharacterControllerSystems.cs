@@ -152,7 +152,7 @@ namespace PropHunt.Mixed.Systems
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }
-            }).Schedule();
+            }).ScheduleParallel();
         }
     }
 
