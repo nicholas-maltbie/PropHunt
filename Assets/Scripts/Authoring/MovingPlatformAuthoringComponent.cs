@@ -24,6 +24,11 @@ namespace PropHunt.Authoring
         /// </summary>
         public float speed = 1;
 
+        /// <summary>
+        /// Delay when moving between platforms
+        /// </summary>
+        public float delayBetweenPlatforms = 1;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             DynamicBuffer<MovingPlatformTarget> targets = dstManager.AddBuffer<MovingPlatformTarget>(entity);
@@ -38,7 +43,9 @@ namespace PropHunt.Authoring
                 speed = this.speed,
                 direction = 1,
                 loopMethod = this.loopMethod,
-                current = 0
+                current = 0,
+                delayBetweenPlatforms = this.delayBetweenPlatforms,
+                elapsedWaiting = 0,
             });
         }
     }

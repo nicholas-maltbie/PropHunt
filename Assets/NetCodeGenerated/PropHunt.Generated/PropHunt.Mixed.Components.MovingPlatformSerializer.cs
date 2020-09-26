@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 13999026439373390310,
+                GhostFieldsHash = 11084296481022776949,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MovingPlatform>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MovingPlatform>(),
@@ -55,9 +55,10 @@ namespace PropHunt.Generated
             public int speed;
             public int loopMethod;
             public int current;
+            public int delayBetweenPlatforms;
             public int direction;
         }
-        public const int ChangeMaskBits = 4;
+        public const int ChangeMaskBits = 5;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -70,6 +71,7 @@ namespace PropHunt.Generated
                 snapshot.speed = (int) math.round(component.speed * 100);
                 snapshot.loopMethod = (int) component.loopMethod;
                 snapshot.current = (int) component.current;
+                snapshot.delayBetweenPlatforms = (int) math.round(component.delayBetweenPlatforms * 100);
                 snapshot.direction = (int) component.direction;
             }
         }
@@ -91,6 +93,9 @@ namespace PropHunt.Generated
                         snapshotAfter.speed * 0.01f, snapshotInterpolationFactor);
                 component.loopMethod = (PropHunt.Mixed.Components.PlatformLooping) snapshotBefore.loopMethod;
                 component.current = (int) snapshotBefore.current;
+                component.delayBetweenPlatforms =
+                    math.lerp(snapshotBefore.delayBetweenPlatforms * 0.01f,
+                        snapshotAfter.delayBetweenPlatforms * 0.01f, snapshotInterpolationFactor);
                 component.direction = (int) snapshotBefore.direction;
             }
         }
@@ -103,6 +108,7 @@ namespace PropHunt.Generated
             component.speed = backup.speed;
             component.loopMethod = backup.loopMethod;
             component.current = backup.current;
+            component.delayBetweenPlatforms = backup.delayBetweenPlatforms;
             component.direction = backup.direction;
         }
 
@@ -116,6 +122,7 @@ namespace PropHunt.Generated
             snapshot.speed = predictor.PredictInt(snapshot.speed, baseline1.speed, baseline2.speed);
             snapshot.loopMethod = predictor.PredictInt(snapshot.loopMethod, baseline1.loopMethod, baseline2.loopMethod);
             snapshot.current = predictor.PredictInt(snapshot.current, baseline1.current, baseline2.current);
+            snapshot.delayBetweenPlatforms = predictor.PredictInt(snapshot.delayBetweenPlatforms, baseline1.delayBetweenPlatforms, baseline2.delayBetweenPlatforms);
             snapshot.direction = predictor.PredictInt(snapshot.direction, baseline1.direction, baseline2.direction);
         }
         [BurstCompile]
@@ -128,8 +135,9 @@ namespace PropHunt.Generated
             changeMask = (snapshot.speed != baseline.speed) ? 1u : 0;
             changeMask |= (snapshot.loopMethod != baseline.loopMethod) ? (1u<<1) : 0;
             changeMask |= (snapshot.current != baseline.current) ? (1u<<2) : 0;
-            changeMask |= (snapshot.direction != baseline.direction) ? (1u<<3) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 4);
+            changeMask |= (snapshot.delayBetweenPlatforms != baseline.delayBetweenPlatforms) ? (1u<<3) : 0;
+            changeMask |= (snapshot.direction != baseline.direction) ? (1u<<4) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 5);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -145,6 +153,8 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 2)) != 0)
                 writer.WritePackedIntDelta(snapshot.current, baseline.current, compressionModel);
             if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedIntDelta(snapshot.delayBetweenPlatforms, baseline.delayBetweenPlatforms, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
                 writer.WritePackedIntDelta(snapshot.direction, baseline.direction, compressionModel);
         }
         [BurstCompile]
@@ -167,6 +177,10 @@ namespace PropHunt.Generated
             else
                 snapshot.current = baseline.current;
             if ((changeMask & (1 << 3)) != 0)
+                snapshot.delayBetweenPlatforms = reader.ReadPackedIntDelta(baseline.delayBetweenPlatforms, compressionModel);
+            else
+                snapshot.delayBetweenPlatforms = baseline.delayBetweenPlatforms;
+            if ((changeMask & (1 << 4)) != 0)
                 snapshot.direction = reader.ReadPackedIntDelta(baseline.direction, compressionModel);
             else
                 snapshot.direction = baseline.direction;
@@ -185,6 +199,8 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.current - backup.current));
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.delayBetweenPlatforms - backup.delayBetweenPlatforms));
+            ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.direction - backup.direction));
             ++errorIndex;
         }
@@ -202,6 +218,10 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("current"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("delayBetweenPlatforms"));
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));

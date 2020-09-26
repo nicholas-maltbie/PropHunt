@@ -24,12 +24,19 @@ namespace PropHunt.Mixed.Systems
                 in Translation translation,
                 in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
                 {
+                    if (movingPlatform.elapsedWaiting < movingPlatform.delayBetweenPlatforms)
+                    {
+                        movingPlatform.elapsedWaiting += deltaTime;
+                        pv.Linear = 0;
+                        return;
+                    }
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
                     float3 currentTarget = targets[movingPlatform.current];
                     float dist = math.distance(translation.Value, currentTarget);
                     float movement = movingPlatform.speed * deltaTime;
                     if (dist <= movement)
                     {
+                        movingPlatform.elapsedWaiting = 0;
                         // go to next target
                         int nextPlatform = movingPlatform.current + movingPlatform.direction;
                         // Adjust by current rule if out of bounds

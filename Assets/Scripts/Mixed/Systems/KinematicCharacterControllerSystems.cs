@@ -8,6 +8,7 @@ using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 using UnityEngine;
+using Unity.NetCode;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -94,8 +95,8 @@ namespace PropHunt.Mixed.Systems
     /// Pushes kinematic character controllers out of objects they are stuck in
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCGroundedSystem))]
-    [UpdateBefore(typeof(KCCMovementSystem))]
+    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
+    [UpdateBefore(typeof(KCCGravitySystem))]
     public class KCCPushOverlappingSystem : SystemBase
     {
         protected unsafe override void OnUpdate()
@@ -268,7 +269,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCGroundedSystem))]
-    [UpdateBefore(typeof(KCCGravitySystem))]
+    [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCMoveWithGroundSystem : SystemBase
     {
         protected override void OnUpdate()

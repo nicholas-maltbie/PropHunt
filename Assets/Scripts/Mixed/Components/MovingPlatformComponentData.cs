@@ -51,6 +51,17 @@ namespace PropHunt.Mixed.Components
         public int current;
 
         /// <summary>
+        /// Delay between moving to different platforms
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float delayBetweenPlatforms;
+
+        /// <summary>
+        /// Elapsed time waiting between platforms
+        /// </summary>
+        public float elapsedWaiting;
+
+        /// <summary>
         /// Direction of next platform being selected. This
         /// is decided by loop method when the list ends
         /// </summary>
