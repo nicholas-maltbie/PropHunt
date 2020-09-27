@@ -74,6 +74,8 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Duration of jumping grace period
         ///     - Player can jump while not grounded, as long as they haven't been grounded longer than this amount of time
+        ///     - Make sure the value of jumpGraceTime < jumpCooldown. 
+        ///       Otherwise, double jumps are possible.
         /// </summary>
         public float jumpGraceTime = 0.0f;
 
@@ -89,8 +91,6 @@ namespace PropHunt.Authoring
 
         /// <summary>
         /// Time elapsed since last jump. 
-        ///     - Make sure the value of timeElapsedSinceJump > jumpCooldown. 
-        ///       Otherwise, double jumps are possible
         /// </summary>
         public float timeElapsedSinceJump = 0.11f;
 
