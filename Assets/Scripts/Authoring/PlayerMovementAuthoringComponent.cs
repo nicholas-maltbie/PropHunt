@@ -82,17 +82,7 @@ namespace PropHunt.Authoring
         /// <summary>
         /// Time spent falling
         /// </summary>
-        public float elapsedFallTime = 0.0f;
-
-        /// <summary>
-        /// Time spent falling
-        /// </summary>
         public float jumpCooldown = 0.1f;
-
-        /// <summary>
-        /// Time elapsed since last jump. 
-        /// </summary>
-        public float timeElapsedSinceJump = 0.11f;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -114,13 +104,11 @@ namespace PropHunt.Authoring
                 jumpForce = this.jumpForce,
                 jumpGraceTime = this.jumpGraceTime,
                 jumpCooldown = this.jumpCooldown,
-                timeElapsedSinceJump = this.timeElapsedSinceJump,
             });
             dstManager.AddComponentData(entity, new KCCGrounded()
             {
                 maxWalkAngle = this.maxWalkAngle,
                 groundCheckDistance = this.groundCheckDistance,
-                elapsedFallTime = this.elapsedFallTime,
             });
             dstManager.AddComponentData(entity, new KCCVelocity()
             {

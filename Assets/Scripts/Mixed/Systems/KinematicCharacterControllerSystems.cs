@@ -179,13 +179,12 @@ namespace PropHunt.Mixed.Systems
                         velocity.worldVelocity += gravity.Up * jumping.jumpForce;
                         jumping.timeElapsedSinceJump = 0.0f;
                     }
-                    // Otherwise, do nothing
-
-                    // Track jumping cooldown
-                    if (jumping.timeElapsedSinceJump < jumping.jumpCooldown)
+                    // Track jumping cooldown if not jumping
+                    else if (jumping.timeElapsedSinceJump < jumping.jumpCooldown)
                     {
                         jumping.timeElapsedSinceJump += deltaTime;
                     }
+                    // Otherwise do nothing
                 }
             ).ScheduleParallel();
         }
