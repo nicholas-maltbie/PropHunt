@@ -71,6 +71,19 @@ namespace PropHunt.Authoring
         /// </summary>
         public float pushDecay = 0.0f;
 
+        /// <summary>
+        /// Duration of jumping grace period
+        ///     - Player can jump while not grounded, as long as they haven't been grounded longer than this amount of time
+        ///     - Make sure the value of jumpGraceTime < jumpCooldown. 
+        ///       Otherwise, double jumps are possible.
+        /// </summary>
+        public float jumpGraceTime = 0.0f;
+
+        /// <summary>
+        /// Time spent falling
+        /// </summary>
+        public float jumpCooldown = 0.1f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new KCCMovementSettings()
@@ -89,6 +102,8 @@ namespace PropHunt.Authoring
             dstManager.AddComponentData(entity, new KCCJumping()
             {
                 jumpForce = this.jumpForce,
+                jumpGraceTime = this.jumpGraceTime,
+                jumpCooldown = this.jumpCooldown,
             });
             dstManager.AddComponentData(entity, new KCCGrounded()
             {

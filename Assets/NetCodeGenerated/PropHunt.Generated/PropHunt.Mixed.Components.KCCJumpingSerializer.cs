@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 270396784890700208,
+                GhostFieldsHash = 4539255436592233441,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCJumping>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCJumping>(),
@@ -54,8 +54,11 @@ namespace PropHunt.Generated
         {
             public int jumpForce;
             public uint attemptingJump;
+            public int jumpGraceTime;
+            public int jumpCooldown;
+            public int timeElapsedSinceJump;
         }
-        public const int ChangeMaskBits = 2;
+        public const int ChangeMaskBits = 5;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -67,6 +70,9 @@ namespace PropHunt.Generated
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.jumpForce = (int) math.round(component.jumpForce * 100);
                 snapshot.attemptingJump = component.attemptingJump?1u:0;
+                snapshot.jumpGraceTime = (int) math.round(component.jumpGraceTime * 100);
+                snapshot.jumpCooldown = (int) math.round(component.jumpCooldown * 100);
+                snapshot.timeElapsedSinceJump = (int) math.round(component.timeElapsedSinceJump * 100);
             }
         }
         [BurstCompile]
@@ -86,6 +92,15 @@ namespace PropHunt.Generated
                     math.lerp(snapshotBefore.jumpForce * 0.01f,
                         snapshotAfter.jumpForce * 0.01f, snapshotInterpolationFactor);
                 component.attemptingJump = snapshotBefore.attemptingJump != 0;
+                component.jumpGraceTime =
+                    math.lerp(snapshotBefore.jumpGraceTime * 0.01f,
+                        snapshotAfter.jumpGraceTime * 0.01f, snapshotInterpolationFactor);
+                component.jumpCooldown =
+                    math.lerp(snapshotBefore.jumpCooldown * 0.01f,
+                        snapshotAfter.jumpCooldown * 0.01f, snapshotInterpolationFactor);
+                component.timeElapsedSinceJump =
+                    math.lerp(snapshotBefore.timeElapsedSinceJump * 0.01f,
+                        snapshotAfter.timeElapsedSinceJump * 0.01f, snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
@@ -96,6 +111,9 @@ namespace PropHunt.Generated
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCJumping>(backupData, 0);
             component.jumpForce = backup.jumpForce;
             component.attemptingJump = backup.attemptingJump;
+            component.jumpGraceTime = backup.jumpGraceTime;
+            component.jumpCooldown = backup.jumpCooldown;
+            component.timeElapsedSinceJump = backup.timeElapsedSinceJump;
         }
 
         [BurstCompile]
@@ -107,6 +125,9 @@ namespace PropHunt.Generated
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.jumpForce = predictor.PredictInt(snapshot.jumpForce, baseline1.jumpForce, baseline2.jumpForce);
             snapshot.attemptingJump = (uint)predictor.PredictInt((int)snapshot.attemptingJump, (int)baseline1.attemptingJump, (int)baseline2.attemptingJump);
+            snapshot.jumpGraceTime = predictor.PredictInt(snapshot.jumpGraceTime, baseline1.jumpGraceTime, baseline2.jumpGraceTime);
+            snapshot.jumpCooldown = predictor.PredictInt(snapshot.jumpCooldown, baseline1.jumpCooldown, baseline2.jumpCooldown);
+            snapshot.timeElapsedSinceJump = predictor.PredictInt(snapshot.timeElapsedSinceJump, baseline1.timeElapsedSinceJump, baseline2.timeElapsedSinceJump);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -117,7 +138,10 @@ namespace PropHunt.Generated
             uint changeMask;
             changeMask = (snapshot.jumpForce != baseline.jumpForce) ? 1u : 0;
             changeMask |= (snapshot.attemptingJump != baseline.attemptingJump) ? (1u<<1) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
+            changeMask |= (snapshot.jumpGraceTime != baseline.jumpGraceTime) ? (1u<<2) : 0;
+            changeMask |= (snapshot.jumpCooldown != baseline.jumpCooldown) ? (1u<<3) : 0;
+            changeMask |= (snapshot.timeElapsedSinceJump != baseline.timeElapsedSinceJump) ? (1u<<4) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 5);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -130,6 +154,12 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.jumpForce, baseline.jumpForce, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedUIntDelta(snapshot.attemptingJump, baseline.attemptingJump, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.jumpGraceTime, baseline.jumpGraceTime, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedIntDelta(snapshot.jumpCooldown, baseline.jumpCooldown, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
+                writer.WritePackedIntDelta(snapshot.timeElapsedSinceJump, baseline.timeElapsedSinceJump, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -146,6 +176,18 @@ namespace PropHunt.Generated
                 snapshot.attemptingJump = reader.ReadPackedUIntDelta(baseline.attemptingJump, compressionModel);
             else
                 snapshot.attemptingJump = baseline.attemptingJump;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.jumpGraceTime = reader.ReadPackedIntDelta(baseline.jumpGraceTime, compressionModel);
+            else
+                snapshot.jumpGraceTime = baseline.jumpGraceTime;
+            if ((changeMask & (1 << 3)) != 0)
+                snapshot.jumpCooldown = reader.ReadPackedIntDelta(baseline.jumpCooldown, compressionModel);
+            else
+                snapshot.jumpCooldown = baseline.jumpCooldown;
+            if ((changeMask & (1 << 4)) != 0)
+                snapshot.timeElapsedSinceJump = reader.ReadPackedIntDelta(baseline.timeElapsedSinceJump, compressionModel);
+            else
+                snapshot.timeElapsedSinceJump = baseline.timeElapsedSinceJump;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -159,6 +201,12 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], (component.attemptingJump != backup.attemptingJump) ? 1 : 0);
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.jumpGraceTime - backup.jumpGraceTime));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.jumpCooldown - backup.jumpCooldown));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.timeElapsedSinceJump - backup.timeElapsedSinceJump));
+            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -170,6 +218,18 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("attemptingJump"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("jumpGraceTime"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("jumpCooldown"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("timeElapsedSinceJump"));
             ++nameCount;
             return nameCount;
         }

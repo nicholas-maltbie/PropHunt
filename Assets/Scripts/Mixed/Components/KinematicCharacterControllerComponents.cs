@@ -93,6 +93,28 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField]
         public bool attemptingJump;
+
+        /// <summary>
+        /// Duration of jumping grace period
+        ///     - Player can jump while not grounded, as long as they haven't been grounded longer than this amount of time
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float jumpGraceTime;
+
+        /// <summary>
+        /// Minimum time between jumps
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float jumpCooldown;
+
+        /// <summary>
+        /// Time elapsed since last jump. 
+        /// Used in conjunction with jumpCooldown
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float timeElapsedSinceJump;
+
+
     }
 
     /// <summary>
@@ -155,6 +177,12 @@ namespace PropHunt.Mixed.Components
         /// Entity hit
         /// </summary>
         public Entity hitEntity;
+
+        /// <summary>
+        /// Time spent falling
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float elapsedFallTime;
     }
 
     /// <summary>
