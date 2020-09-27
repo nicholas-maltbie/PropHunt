@@ -164,7 +164,8 @@ MonoBehaviour:
   gravityForce: {x: 0, y: -9.8, z: 0}
   jumpForce: 5
   maxWalkAngle: 45
-  groundCheckDistance: 0.05
+  groundCheckDistance: 0.1
+  groundFallingDistance: 0.05
   fallAnglePower: 1.2
   moveAnglePower: 2
   pushPower: 50
@@ -384,7 +385,7 @@ MonoBehaviour:
   ForcePrefabConversion: 0
   DefaultGhostMode: 2
   SupportedGhostModes: 3
-  OptimizationMode: 0
+  OptimizationMode: 1
   Importance: 1
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter

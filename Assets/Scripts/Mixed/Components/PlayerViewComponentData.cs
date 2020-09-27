@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player view component data, holds the attitude of the player's
     /// view to match a camera to.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted)]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct PlayerView : IComponentData
     {
         /// <summary>

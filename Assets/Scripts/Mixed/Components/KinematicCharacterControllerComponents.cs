@@ -139,13 +139,20 @@ namespace PropHunt.Mixed.Components
         /// Is the character currently falling (not on the ground or on the ground and
         /// it's too steep)
         /// </summary>
-        public bool Falling => !this.onGround || this.angle > this.maxWalkAngle;
+        public bool Falling => !(this.onGround && this.distanceToGround <= this.groundFallingDistance) || this.angle > this.maxWalkAngle;
 
         /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float groundCheckDistance;
+
+        /// <summary>
+        /// Threshold for when the player will stop falling onto the ground. Should be a value smaller
+        /// than or equal to groundCheckDistance.
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float groundFallingDistance;
 
         /// <summary>
         /// Angle between the ground the the player's 'up' vector (-gravity fector).
@@ -189,6 +196,13 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float elapsedFallTime;
+
+        /// <summary>
+        /// Distance to ground on the previous frame
+        /// </summary>
+        public float previousDistanceToGround;
+
+        /// <summary>
         /// Was this on the ground previous frame
         /// </summary>
         public bool previousOnGround;
@@ -201,14 +215,14 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Was this falling the previous frame
         /// </summary>
-        public bool PreviousFalling => !this.previousOnGround || this.previousAngle > this.maxWalkAngle;
+        public bool PreviousFalling => !(this.previousOnGround && this.previousDistanceToGround <= this.groundFallingDistance) || this.previousAngle > this.maxWalkAngle;
     }
 
     /// <summary>
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted)]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>

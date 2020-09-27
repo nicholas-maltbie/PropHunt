@@ -42,6 +42,11 @@ namespace PropHunt.Authoring
         public float groundCheckDistance = 0.1f;
 
         /// <summary>
+        /// Distance to which the player will continue falling towards the ground
+        /// </summary>
+        public float groundFallingDistance = 0.01f;
+
+        /// <summary>
         /// Decrease in momentum factor due to angle change when falling
         /// </summary>
         public float fallAnglePower = 1.2f;
@@ -113,6 +118,7 @@ namespace PropHunt.Authoring
             {
                 maxWalkAngle = this.maxWalkAngle,
                 groundCheckDistance = this.groundCheckDistance,
+                groundFallingDistance = this.groundFallingDistance,
             });
             dstManager.AddComponentData(entity, new KCCVelocity()
             {

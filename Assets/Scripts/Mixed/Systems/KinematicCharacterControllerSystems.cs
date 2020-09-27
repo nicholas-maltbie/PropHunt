@@ -1,14 +1,11 @@
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
-using UnityEngine;
-using Unity.NetCode;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -63,6 +60,7 @@ namespace PropHunt.Mixed.Systems
 
                     grounded.previousAngle = grounded.angle;
                     grounded.previousOnGround = grounded.onGround;
+                    grounded.previousDistanceToGround = grounded.distanceToGround;
 
                     if (collisionOcurred)
                     {
