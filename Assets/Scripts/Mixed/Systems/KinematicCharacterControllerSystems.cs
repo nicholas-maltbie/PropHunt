@@ -31,6 +31,7 @@ namespace PropHunt.Mixed.Systems
         protected unsafe override void OnUpdate()
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            float deltaTime = Time.DeltaTime;
 
             Entities.ForEach((
                 Entity entity,
@@ -67,6 +68,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
+                        grounded.elapsedFallTime = 0;
                     }
                     else
                     {
@@ -76,6 +78,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
+                        grounded.elapsedFallTime += deltaTime;
                     }
                 }
             ).ScheduleParallel();
@@ -163,18 +166,26 @@ namespace PropHunt.Mixed.Systems
     {
         protected override void OnUpdate()
         {
+            float deltaTime = Time.DeltaTime;
             Entities.ForEach((
                 ref KCCVelocity velocity,
-                in KCCJumping jumping,
+                ref KCCJumping jumping,
                 in KCCGrounded grounded,
                 in KCCGravity gravity) =>
                 {
                     // If the KCC is attempting to jump and is grounded, jump
-                    if (jumping.attemptingJump && !grounded.Falling)
+                    if (jumping.attemptingJump && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
                     {
                         velocity.worldVelocity += gravity.Up * jumping.jumpForce;
+                        jumping.timeElapsedSinceJump = 0.0f;
                     }
                     // Otherwise, do nothing
+
+                    // Track jumping cooldown
+                    if (jumping.timeElapsedSinceJump < jumping.jumpCooldown)
+                    {
+                        jumping.timeElapsedSinceJump += deltaTime;
+                    }
                 }
             ).ScheduleParallel();
         }

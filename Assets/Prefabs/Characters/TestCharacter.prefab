@@ -171,6 +171,10 @@ MonoBehaviour:
   moveMaxBounces: 3
   fallMaxBounces: 3
   pushDecay: 0.1
+  jumpGraceTime: 0.1
+  elapsedFallTime: 0
+  jumpCooldown: 0.3
+  timeElapsedSinceJump: 0
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
