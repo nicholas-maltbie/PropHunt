@@ -9,7 +9,6 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to track moving of objects
     /// </summary>
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(GhostSimulationSystemGroup))]
     public class MovementTrackingSystem : SystemBase
     {

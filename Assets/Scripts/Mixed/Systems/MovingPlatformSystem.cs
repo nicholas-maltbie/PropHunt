@@ -10,6 +10,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
+    [UpdateBefore(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(MovementTrackingSystem))]
     public class MovingPlatformSystem : SystemBase
     {
@@ -17,15 +18,15 @@ namespace PropHunt.Mixed.Systems
         {
             float deltaTime = Time.DeltaTime;
             Entities.ForEach((
-                ref PhysicsVelocity pv,
+                // ref PhysicsVelocity pv,
                 ref MovingPlatform movingPlatform,
-                in Translation translation,
+                ref Translation translation,
                 in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
                 {
                     if (movingPlatform.elapsedWaiting < movingPlatform.delayBetweenPlatforms)
                     {
                         movingPlatform.elapsedWaiting += deltaTime;
-                        pv.Linear = 0;
+                        // pv.Linear = 0;
                         return;
                     }
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
@@ -60,7 +61,7 @@ namespace PropHunt.Mixed.Systems
                     // Move toward current platform by speed
                     float3 dir = math.normalizesafe(currentTarget - translation.Value);
                     // Set physics velocity based on speed and direction
-                    pv.Linear = dir * movingPlatform.speed;
+                    translation.Value += dir * movingPlatform.speed * deltaTime;
                 }
             ).ScheduleParallel();
         }

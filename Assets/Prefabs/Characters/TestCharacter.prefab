@@ -177,6 +177,8 @@ MonoBehaviour:
   jumpCooldown: 0.3
   timeElapsedSinceJump: 0
   centerOffset: {x: 0, y: 1, z: 0}
+  pushDecay: 0
+  maxPush: 2
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,7 +386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 2
-  SupportedGhostModes: 3
+  SupportedGhostModes: 2
   OptimizationMode: 1
   Importance: 1
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1

@@ -49,6 +49,7 @@ namespace PropHunt.Client.Systems
             if (ConnectionSystem.connectRequested)
             {
                 EntityManager.CreateEntity(typeof(InitClientGameComponent));
+                EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
                 ConnectionSystem.connectRequested = false;
             }
         }
@@ -109,7 +110,6 @@ namespace PropHunt.Client.Systems
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
                 {
                     EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
-                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
                 });
                 ConnectionSystem.disconnectRequested = false;
             }
