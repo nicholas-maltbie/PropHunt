@@ -60,6 +60,7 @@ namespace PropHunt.Mixed.Systems
                     grounded.previousAngle = grounded.angle;
                     grounded.previousOnGround = grounded.onGround;
                     grounded.previousDistanceToGround = grounded.distanceToGround;
+                    grounded.previousHit = grounded.hitEntity;
 
                     if (collisionOcurred)
                     {
@@ -278,9 +279,12 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
+            var commandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer().AsParallelWriter();
 
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
+                Entity entity,
+                int entityInQueryIndex,
                 ref KCCVelocity velocity,
                 ref Translation translation,
                 in KCCGrounded grounded) =>
@@ -290,22 +294,22 @@ namespace PropHunt.Mixed.Systems
 
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
-                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
-                    {
-                        MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
-                        // translation.Value += displacement;
-                        // velocity.worldVelocity = float3.zero;
-                    }
                     if (!grounded.Falling)
                     {
+                        if (this.HasComponent<MovementTracking>(grounded.hitEntity))
+                        {
+                            MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
+                            displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+
+                            translation.Value += displacement;
+                        }
                         velocity.worldVelocity = float3.zero;
                     }
                     // If was grounded previous frame and no longer falling, add previous floor velocity to
                     //  current world velocity as if you jump off with that momentum
-                    else if (!grounded.StandingOnGround && !grounded.PreviousStandingOnGround)
+                    else if (grounded.Falling && !grounded.PreviousFalling)
                     {
-                        // velocity.worldVelocity += velocity.floorVelocity;
+                        velocity.worldVelocity += velocity.floorVelocity;
                     }
 
                     // Set velocity of floor

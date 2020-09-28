@@ -86,6 +86,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
+    [GhostComponent]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -190,6 +191,11 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float elapsedFallTime;
+
+        /// <summary>
+        /// Entity standing on the previous frame
+        /// </summary>
+        public Entity previousHit;
 
         /// <summary>
         /// Normal vector of the plane hit by the character on the ground.

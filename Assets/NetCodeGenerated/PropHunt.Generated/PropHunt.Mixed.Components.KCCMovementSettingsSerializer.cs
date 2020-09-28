@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 752026306206115913,
+                GhostFieldsHash = 4005859780901124212,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCMovementSettings>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCMovementSettings>(),
@@ -62,9 +62,7 @@ namespace PropHunt.Generated
             public int fallPushPower;
             public int fallAnglePower;
             public int fallPushDecay;
-            public float characterCenter_x;
-            public float characterCenter_y;
-            public float characterCenter_z;
+            public int maxPush;
         }
         public const int ChangeMaskBits = 11;
         [BurstCompile]
@@ -86,9 +84,7 @@ namespace PropHunt.Generated
                 snapshot.fallPushPower = (int) math.round(component.fallPushPower * 100);
                 snapshot.fallAnglePower = (int) math.round(component.fallAnglePower * 100);
                 snapshot.fallPushDecay = (int) math.round(component.fallPushDecay * 100);
-                snapshot.characterCenter_x = component.characterCenter.x;
-                snapshot.characterCenter_y = component.characterCenter.y;
-                snapshot.characterCenter_z = component.characterCenter.z;
+                snapshot.maxPush = (int) math.round(component.maxPush * 100);
             }
         }
         [BurstCompile]
@@ -130,7 +126,7 @@ namespace PropHunt.Generated
                 component.fallPushDecay =
                     math.lerp(snapshotBefore.fallPushDecay * 0.01f,
                         snapshotAfter.fallPushDecay * 0.01f, snapshotInterpolationFactor);
-                component.characterCenter = new float3(snapshotBefore.characterCenter_x, snapshotBefore.characterCenter_y, snapshotBefore.characterCenter_z);
+                component.maxPush = snapshotBefore.maxPush * 0.01f;
             }
         }
         [BurstCompile]
@@ -149,9 +145,7 @@ namespace PropHunt.Generated
             component.fallPushPower = backup.fallPushPower;
             component.fallAnglePower = backup.fallAnglePower;
             component.fallPushDecay = backup.fallPushDecay;
-            component.characterCenter.x = backup.characterCenter.x;
-            component.characterCenter.y = backup.characterCenter.y;
-            component.characterCenter.z = backup.characterCenter.z;
+            component.maxPush = backup.maxPush;
         }
 
         [BurstCompile]
@@ -171,6 +165,7 @@ namespace PropHunt.Generated
             snapshot.fallPushPower = predictor.PredictInt(snapshot.fallPushPower, baseline1.fallPushPower, baseline2.fallPushPower);
             snapshot.fallAnglePower = predictor.PredictInt(snapshot.fallAnglePower, baseline1.fallAnglePower, baseline2.fallAnglePower);
             snapshot.fallPushDecay = predictor.PredictInt(snapshot.fallPushDecay, baseline1.fallPushDecay, baseline2.fallPushDecay);
+            snapshot.maxPush = predictor.PredictInt(snapshot.maxPush, baseline1.maxPush, baseline2.maxPush);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -189,9 +184,7 @@ namespace PropHunt.Generated
             changeMask |= (snapshot.fallPushPower != baseline.fallPushPower) ? (1u<<7) : 0;
             changeMask |= (snapshot.fallAnglePower != baseline.fallAnglePower) ? (1u<<8) : 0;
             changeMask |= (snapshot.fallPushDecay != baseline.fallPushDecay) ? (1u<<9) : 0;
-            changeMask |= (snapshot.characterCenter_x != baseline.characterCenter_x) ? (1u<<10) : 0;
-            changeMask |= (snapshot.characterCenter_y != baseline.characterCenter_y) ? (1u<<10) : 0;
-            changeMask |= (snapshot.characterCenter_z != baseline.characterCenter_z) ? (1u<<10) : 0;
+            changeMask |= (snapshot.maxPush != baseline.maxPush) ? (1u<<10) : 0;
             GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 11);
         }
         [BurstCompile]
@@ -222,11 +215,7 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 9)) != 0)
                 writer.WritePackedIntDelta(snapshot.fallPushDecay, baseline.fallPushDecay, compressionModel);
             if ((changeMask & (1 << 10)) != 0)
-                writer.WritePackedFloatDelta(snapshot.characterCenter_x, baseline.characterCenter_x, compressionModel);
-            if ((changeMask & (1 << 10)) != 0)
-                writer.WritePackedFloatDelta(snapshot.characterCenter_y, baseline.characterCenter_y, compressionModel);
-            if ((changeMask & (1 << 10)) != 0)
-                writer.WritePackedFloatDelta(snapshot.characterCenter_z, baseline.characterCenter_z, compressionModel);
+                writer.WritePackedIntDelta(snapshot.maxPush, baseline.maxPush, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -276,17 +265,9 @@ namespace PropHunt.Generated
             else
                 snapshot.fallPushDecay = baseline.fallPushDecay;
             if ((changeMask & (1 << 10)) != 0)
-                snapshot.characterCenter_x = reader.ReadPackedFloatDelta(baseline.characterCenter_x, compressionModel);
+                snapshot.maxPush = reader.ReadPackedIntDelta(baseline.maxPush, compressionModel);
             else
-                snapshot.characterCenter_x = baseline.characterCenter_x;
-            if ((changeMask & (1 << 10)) != 0)
-                snapshot.characterCenter_y = reader.ReadPackedFloatDelta(baseline.characterCenter_y, compressionModel);
-            else
-                snapshot.characterCenter_y = baseline.characterCenter_y;
-            if ((changeMask & (1 << 10)) != 0)
-                snapshot.characterCenter_z = reader.ReadPackedFloatDelta(baseline.characterCenter_z, compressionModel);
-            else
-                snapshot.characterCenter_z = baseline.characterCenter_z;
+                snapshot.maxPush = baseline.maxPush;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -316,7 +297,7 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.fallPushDecay - backup.fallPushDecay));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.characterCenter, backup.characterCenter));
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.maxPush - backup.maxPush));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -364,7 +345,7 @@ namespace PropHunt.Generated
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("characterCenter"));
+            names.Append(new FixedString64("maxPush"));
             ++nameCount;
             return nameCount;
         }
