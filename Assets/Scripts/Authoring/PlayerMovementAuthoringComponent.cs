@@ -88,9 +88,11 @@ namespace PropHunt.Authoring
         /// Time spent falling
         /// </summary>
         public float jumpCooldown = 0.1f;
-        /// Center of the character collider
+
+        /// <summary>
+        /// Maximum distance to push a character in a frame, should be the character's diameter
         /// </summary>
-        public Vector3 centerOffset = new Vector3(0, 1, 0);
+        public float maxPush = 2;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -106,7 +108,7 @@ namespace PropHunt.Authoring
                 fallAnglePower = this.fallAnglePower,
                 fallPushPower = this.pushPower,
                 fallPushDecay = this.pushDecay,
-                characterCenter = this.centerOffset,
+                maxPush = this.maxPush,
             });
             dstManager.AddComponentData(entity, new KCCJumping()
             {

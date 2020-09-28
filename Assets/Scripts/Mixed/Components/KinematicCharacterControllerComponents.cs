@@ -77,10 +77,10 @@ namespace PropHunt.Mixed.Components
         public float fallPushDecay;
 
         /// <summary>
-        /// Center of the character for pushing out of objects relative to the character transform
+        /// Maximum that a character can be pushed during a single frame (should be the diameter of the character or so)
         /// </summary>
-        [GhostField]
-        public float3 characterCenter;
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float maxPush;
     }
 
     /// <summary>

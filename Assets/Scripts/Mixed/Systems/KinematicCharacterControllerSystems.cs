@@ -122,16 +122,13 @@ namespace PropHunt.Mixed.Systems
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
                 float3 hitPoint = grounded.groundedPoint;
-                float3 sourcePoint = hitPoint + grounded.surfaceNormal * 2;
+                float3 sourcePoint = hitPoint + grounded.surfaceNormal * movementSettings.maxPush;
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
 
                 // Hit collector to only collide with our object and the object we overlap with
                 var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
                     selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
-
-                // Compute the center of our collider
-                // float3 center = translation.Value + movementSettings.characterCenter;
 
                 // Draw a ray from the center of the character to the hit object
                 var input = new RaycastInput()
