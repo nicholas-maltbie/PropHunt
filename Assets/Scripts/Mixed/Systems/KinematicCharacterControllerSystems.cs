@@ -84,7 +84,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
                         grounded.elapsedFallTime += deltaTime;
-                        grounded.surfaceNormal = float3.zero;;
+                        grounded.surfaceNormal = float3.zero; ;
                     }
                 }
             ).ScheduleParallel();
@@ -110,7 +110,8 @@ namespace PropHunt.Mixed.Systems
                 in PhysicsCollider collider,
                 in KCCGrounded grounded,
                 in KCCMovementSettings movementSettings
-            ) => {
+            ) =>
+            {
                 // Skip case when the character is not on the ground, or when
                 //  the distance to the ground is greater than zero (aka not overlapping).
                 if (!grounded.onGround || grounded.distanceToGround > 0)
