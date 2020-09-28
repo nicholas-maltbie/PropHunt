@@ -136,12 +136,6 @@ namespace PropHunt.Mixed.Components
         public float maxWalkAngle;
 
         /// <summary>
-        /// Is the character currently falling (not on the ground or on the ground and
-        /// it's too steep)
-        /// </summary>
-        public bool Falling => !(this.onGround && this.distanceToGround <= this.groundFallingDistance) || this.angle > this.maxWalkAngle;
-
-        /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
@@ -198,6 +192,11 @@ namespace PropHunt.Mixed.Components
         public float elapsedFallTime;
 
         /// <summary>
+        /// Normal vector of the plane hit by the character on the ground.
+        /// </summary>
+        public float3 surfaceNormal;
+
+        /// <summary>
         /// Distance to ground on the previous frame
         /// </summary>
         public float previousDistanceToGround;
@@ -213,9 +212,25 @@ namespace PropHunt.Mixed.Components
         public float previousAngle;
 
         /// <summary>
+        /// Is the character standing within a certian distance of the ground.
+        /// </summary>
+        public bool StandingOnGround => this.onGround && this.distanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
+        /// Is the character currently falling (not on the ground or on the ground and
+        /// it's too steep)
+        /// </summary>
+        public bool Falling => !StandingOnGround || this.angle > this.maxWalkAngle;
+
+        /// <summary>
+        /// Is the character standing within a certian distance of the ground in the previous frame.
+        /// </summary>
+        public bool PreviousStandingOnGround => this.previousOnGround && this.previousDistanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
         /// Was this falling the previous frame
         /// </summary>
-        public bool PreviousFalling => !(this.previousOnGround && this.previousDistanceToGround <= this.groundFallingDistance) || this.previousAngle > this.maxWalkAngle;
+        public bool PreviousFalling => !this.PreviousStandingOnGround || this.previousAngle > this.maxWalkAngle;
     }
 
     /// <summary>

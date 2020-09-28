@@ -3,6 +3,7 @@ using PropHunt.Mixed.Utilities;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
@@ -12,10 +13,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateAfter(typeof(MovementTrackingSystem))]
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(TransformSystemGroup))]
-    [UpdateBefore(typeof(PushForceGroup))]
+    [UpdateAfter(typeof(KinematicCharacterControllerInput))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
@@ -73,6 +72,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
                         grounded.elapsedFallTime = 0;
+                        grounded.surfaceNormal = hit.SurfaceNormal;
                     }
                     else
                     {
@@ -83,6 +83,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
                         grounded.elapsedFallTime += deltaTime;
+                        grounded.surfaceNormal = float3.zero;;
                     }
                 }
             ).ScheduleParallel();
@@ -102,19 +103,26 @@ namespace PropHunt.Mixed.Systems
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
             Entities.ForEach((
-                    Entity entity,
-                    int entityInQueryIndex,
-                    ref Translation translation,
-                    in PhysicsCollider collider,
-                    in KCCGrounded grounded,
-                    in KCCMovementSettings movementSettings
-                ) =>
-            {
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in PhysicsCollider collider,
+                in KCCGrounded grounded,
+                in KCCMovementSettings movementSettings
+            ) => {
+                // Skip case when the character is not on the ground, or when
+                //  the distance to the ground is greater than zero (aka not overlapping).
+                if (!grounded.onGround || grounded.distanceToGround > 0)
+                {
+                    return;
+                }
+
                 // Draw a ray from the center of the character collider to 
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
                 float3 hitPoint = grounded.groundedPoint;
+                float3 sourcePoint = hitPoint + grounded.surfaceNormal * 2;
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
 
@@ -123,13 +131,13 @@ namespace PropHunt.Mixed.Systems
                     selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
 
                 // Compute the center of our collider
-                float3 center = translation.Value + movementSettings.characterCenter;
+                // float3 center = translation.Value + movementSettings.characterCenter;
 
                 // Draw a ray from the center of the character to the hit object
                 var input = new RaycastInput()
                 {
                     Filter = collider.Value.Value.Filter,
-                    Start = center,
+                    Start = sourcePoint,
                     End = hitPoint,
                 };
 
@@ -142,13 +150,13 @@ namespace PropHunt.Mixed.Systems
                     // Hit something
                     var raycastHit = hitCollector.ClosestHit;
                     // Get the distance of overlap (1 - hit fraction) * distance
-                    float3 direction = hitPoint - center;
+                    float3 direction = hitPoint - sourcePoint;
                     float distance = math.length(direction);
                     float overlapDistance = (1 - raycastHit.Fraction) * distance;
                     // Get movement in direction touching object`
-                    float3 push = math.normalizesafe(-direction) * (overlapDistance);
+                    float3 push = math.normalizesafe(-direction) * overlapDistance;
                     // Push character collider by this much
-                    translation.Value = translation.Value + push;
+                    translation.Value += push;
                 }
             }).ScheduleParallel();
         }
@@ -289,18 +297,18 @@ namespace PropHunt.Mixed.Systems
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
                         displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
-                        translation.Value += displacement;
-                        velocity.worldVelocity = float3.zero;
+                        // translation.Value += displacement;
+                        // velocity.worldVelocity = float3.zero;
                     }
-                    else if (!grounded.Falling)
+                    if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
                     }
                     // If was grounded previous frame and no longer falling, add previous floor velocity to
                     //  current world velocity as if you jump off with that momentum
-                    else if (grounded.Falling && !grounded.PreviousFalling)
+                    else if (!grounded.StandingOnGround && !grounded.PreviousStandingOnGround)
                     {
-                        velocity.worldVelocity += velocity.floorVelocity;
+                        // velocity.worldVelocity += velocity.floorVelocity;
                     }
 
                     // Set velocity of floor

@@ -15,7 +15,7 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class PlayerRotationSystem : SystemBase
     {
         protected override void OnUpdate()
