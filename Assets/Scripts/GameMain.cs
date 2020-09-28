@@ -9,7 +9,6 @@ namespace PropHunt.Game
 {
     public class ProphuntClientServerControlSystem
     {
-
         /// <summary>
         /// Network address for local connection (loopback)
         /// </summary>
