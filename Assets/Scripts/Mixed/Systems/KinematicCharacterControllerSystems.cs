@@ -13,7 +13,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
@@ -91,6 +91,7 @@ namespace PropHunt.Mixed.Systems
                     if (grounded.Falling)
                     {
                         grounded.elapsedFallTime += deltaTime;
+                        grounded.surfaceNormal = float3.zero;
                     }
                     else
                     {
@@ -210,6 +211,76 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
+    /// Pushes kinematic character controllers out of objects they are stuck in
+    /// </summary>
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
+    [UpdateBefore(typeof(KCCGravitySystem))]
+    public class KCCPushOverlappingSystem : SystemBase
+    {
+        protected unsafe override void OnUpdate()
+        {
+            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+
+            Entities.ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in PhysicsCollider collider,
+                in KCCGrounded grounded,
+                in KCCMovementSettings movementSettings
+            ) =>
+            {
+                // Skip case when the character is not on the ground, or when
+                //  the distance to the ground is greater than zero (aka not overlapping).
+                if (!grounded.onGround || grounded.distanceToGround > 0)
+                {
+                    return;
+                }
+
+                // Draw a ray from the center of the character collider to 
+                //  the point of collision
+                // If the ray intersects the other object before it reaches the edge of our own collider,
+                //  then we know that we are overlapping with the object
+                float3 hitPoint = grounded.groundedPoint;
+                float3 sourcePoint = hitPoint + grounded.surfaceNormal * movementSettings.maxPush;
+                int hitObject = grounded.hitEntity.Index;
+                int selfIndex = entity.Index;
+
+                // Hit collector to only collide with our object and the object we overlap with
+                var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
+                    selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
+
+                // Draw a ray from the center of the character to the hit object
+                var input = new RaycastInput()
+                {
+                    Filter = collider.Value.Value.Filter,
+                    Start = sourcePoint,
+                    End = hitPoint,
+                };
+
+                // Do the raycast computation
+                bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+
+                // Push our character collider out of the object we are overlapping with
+                if (collisionOcurred)
+                {
+                    // Hit something
+                    var raycastHit = hitCollector.ClosestHit;
+                    // Get the distance of overlap (1 - hit fraction) * distance
+                    float3 direction = hitPoint - sourcePoint;
+                    float distance = math.length(direction);
+                    float overlapDistance = (1 - raycastHit.Fraction) * distance;
+                    // Get movement in direction touching object`
+                    float3 push = math.normalizesafe(-direction) * overlapDistance;
+                    // Push character collider by this much
+                    translation.Value = translation.Value + push;
+                }
+            }).ScheduleParallel();
+        }
+    }
+
+    /// <summary>
     /// System to move character with ground
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
@@ -230,7 +301,7 @@ namespace PropHunt.Mixed.Systems
                     float3 displacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
-                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
+                    if (grounded.StandingOnGround && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
                         displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
@@ -238,11 +309,11 @@ namespace PropHunt.Mixed.Systems
                         translation.Value += displacement;
                     }
                     
-                    if (!grounded.Falling)
+                    if (grounded.StandingOnGround)
                     {
                         velocity.worldVelocity = float3.zero;
                     }
-                    else if (grounded.Falling && !grounded.PreviousFalling)
+                    else if (!grounded.StandingOnGround && grounded.PreviousStandingOnGround)
                     {
                         velocity.worldVelocity += velocity.floorVelocity;
                     }
