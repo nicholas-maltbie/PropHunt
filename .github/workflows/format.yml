@@ -24,5 +24,7 @@ jobs:
         with:
           repo-token: ${{ github.token }}
           pattern: '^.*\.(cs|CS)$'
-      - run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
-      - run: dotnet format . --folder --include ${{ steps.changed_files.outputs.files_created }} ${{ steps.changed_files.outputs.files_updated }} --exclude Assets/NetCodeGenerated Library --check # Call format but just do a check to see if everything is in order.
+      - name: Format Csharp files
+        if: steps.changed_files.outputs.files_created != '' || steps.changed_files.outputs.files_updated != ''
+        run: dotnet tool restore # Restore dotnet tools. This handles cache implicitly.
+        run: dotnet format . --folder --include ${{ steps.changed_files.outputs.files_created }} ${{ steps.changed_files.outputs.files_updated }} --exclude Assets/NetCodeGenerated Library --check # Call format but just do a check to see if everything is in order.
