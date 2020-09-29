@@ -243,7 +243,8 @@ namespace PropHunt.Mixed.Systems
                 // Account for movement due to moving floor
                 if (floorMovementGetter.HasComponent(entity))
                 {
-                    previousDisplacement = floorMovementGetter[entity].frameDisplacement;
+                    // Seems to broken for now, will ignore as it works without this feature
+                    // previousDisplacement = floorMovementGetter[entity].frameDisplacement;
                 }
 
                 // Draw a ray from the center of the character collider to 
