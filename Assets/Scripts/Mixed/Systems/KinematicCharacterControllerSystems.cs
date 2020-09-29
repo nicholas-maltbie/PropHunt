@@ -58,6 +58,11 @@ namespace PropHunt.Mixed.Systems
                     bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
                     Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
+                    grounded.previousAngle = grounded.angle;
+                    grounded.previousOnGround = grounded.onGround;
+                    grounded.previousDistanceToGround = grounded.distanceToGround;
+                    grounded.previousHit = grounded.hitEntity;
+
                     if (collisionOcurred)
                     {
                         float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
@@ -68,6 +73,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
+                        grounded.surfaceNormal = hit.SurfaceNormal;
                     }
                     else
                     {
@@ -77,6 +83,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
+                        grounded.surfaceNormal = float3.zero;
                     }
 
                     // Falling is generated from other values, can be falling
@@ -114,9 +121,10 @@ namespace PropHunt.Mixed.Systems
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             float deltaTime = Time.DeltaTime;
 
-            Entities.ForEach((
+            Entities.WithReadOnly(physicsMassGetter).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -126,7 +134,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings movementSettings) =>
             {
                 // Adjust character translation due to player movement
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
@@ -135,13 +143,14 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.moveMaxBounces,
                     pushPower: movementSettings.movePushPower,
                     pushDecay: movementSettings.movePushDecay,
                     anglePower: movementSettings.moveAnglePower
                 );
                 // Adjust character translation due to gravity/world forces
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
@@ -150,6 +159,7 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.fallMaxBounces,
                     pushPower: movementSettings.fallPushPower,
                     pushDecay: movementSettings.fallPushDecay,

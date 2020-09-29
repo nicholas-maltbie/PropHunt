@@ -17,6 +17,7 @@ namespace PropHunt.Generated
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCVelocityGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCGravityGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMaterialIdComponentDataGhostComponentSerializer.State);
+            ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMovementTrackingGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMovingPlatformGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsPlayerIdGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsPlayerViewGhostComponentSerializer.State);

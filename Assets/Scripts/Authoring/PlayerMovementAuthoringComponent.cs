@@ -84,6 +84,16 @@ namespace PropHunt.Authoring
         /// </summary>
         public float jumpCooldown = 0.1f;
 
+        /// <summary>
+        /// Distance to which the player will continue falling towards the ground
+        /// </summary>
+        public float groundFallingDistance = 0.01f;
+
+        /// <summary>
+        /// Maximum distance to push a character in a frame, should be the character's diameter
+        /// </summary>
+        public float maxPush = 2;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new KCCMovementSettings()
@@ -98,6 +108,7 @@ namespace PropHunt.Authoring
                 fallAnglePower = this.fallAnglePower,
                 fallPushPower = this.pushPower,
                 fallPushDecay = this.pushDecay,
+                maxPush = this.maxPush,
             });
             dstManager.AddComponentData(entity, new KCCJumping()
             {
@@ -109,6 +120,7 @@ namespace PropHunt.Authoring
             {
                 maxWalkAngle = this.maxWalkAngle,
                 groundCheckDistance = this.groundCheckDistance,
+                groundFallingDistance = this.groundFallingDistance,
             });
             dstManager.AddComponentData(entity, new KCCVelocity()
             {

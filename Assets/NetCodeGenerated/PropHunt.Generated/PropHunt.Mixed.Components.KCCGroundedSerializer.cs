@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 17884505960735121,
+                GhostFieldsHash = 11975939360750824860,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCGrounded>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCGrounded>(),
@@ -54,9 +54,10 @@ namespace PropHunt.Generated
         {
             public int maxWalkAngle;
             public int groundCheckDistance;
+            public int groundFallingDistance;
             public int elapsedFallTime;
         }
-        public const int ChangeMaskBits = 3;
+        public const int ChangeMaskBits = 4;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -68,6 +69,7 @@ namespace PropHunt.Generated
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.maxWalkAngle = (int) math.round(component.maxWalkAngle * 100);
                 snapshot.groundCheckDistance = (int) math.round(component.groundCheckDistance * 100);
+                snapshot.groundFallingDistance = (int) math.round(component.groundFallingDistance * 100);
                 snapshot.elapsedFallTime = (int) math.round(component.elapsedFallTime * 100);
             }
         }
@@ -90,6 +92,9 @@ namespace PropHunt.Generated
                 component.groundCheckDistance =
                     math.lerp(snapshotBefore.groundCheckDistance * 0.01f,
                         snapshotAfter.groundCheckDistance * 0.01f, snapshotInterpolationFactor);
+                component.groundFallingDistance =
+                    math.lerp(snapshotBefore.groundFallingDistance * 0.01f,
+                        snapshotAfter.groundFallingDistance * 0.01f, snapshotInterpolationFactor);
                 component.elapsedFallTime =
                     math.lerp(snapshotBefore.elapsedFallTime * 0.01f,
                         snapshotAfter.elapsedFallTime * 0.01f, snapshotInterpolationFactor);
@@ -103,6 +108,7 @@ namespace PropHunt.Generated
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCGrounded>(backupData, 0);
             component.maxWalkAngle = backup.maxWalkAngle;
             component.groundCheckDistance = backup.groundCheckDistance;
+            component.groundFallingDistance = backup.groundFallingDistance;
             component.elapsedFallTime = backup.elapsedFallTime;
         }
 
@@ -115,6 +121,7 @@ namespace PropHunt.Generated
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.maxWalkAngle = predictor.PredictInt(snapshot.maxWalkAngle, baseline1.maxWalkAngle, baseline2.maxWalkAngle);
             snapshot.groundCheckDistance = predictor.PredictInt(snapshot.groundCheckDistance, baseline1.groundCheckDistance, baseline2.groundCheckDistance);
+            snapshot.groundFallingDistance = predictor.PredictInt(snapshot.groundFallingDistance, baseline1.groundFallingDistance, baseline2.groundFallingDistance);
             snapshot.elapsedFallTime = predictor.PredictInt(snapshot.elapsedFallTime, baseline1.elapsedFallTime, baseline2.elapsedFallTime);
         }
         [BurstCompile]
@@ -126,8 +133,9 @@ namespace PropHunt.Generated
             uint changeMask;
             changeMask = (snapshot.maxWalkAngle != baseline.maxWalkAngle) ? 1u : 0;
             changeMask |= (snapshot.groundCheckDistance != baseline.groundCheckDistance) ? (1u<<1) : 0;
-            changeMask |= (snapshot.elapsedFallTime != baseline.elapsedFallTime) ? (1u<<2) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 3);
+            changeMask |= (snapshot.groundFallingDistance != baseline.groundFallingDistance) ? (1u<<2) : 0;
+            changeMask |= (snapshot.elapsedFallTime != baseline.elapsedFallTime) ? (1u<<3) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 4);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -141,6 +149,8 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedIntDelta(snapshot.groundCheckDistance, baseline.groundCheckDistance, compressionModel);
             if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.groundFallingDistance, baseline.groundFallingDistance, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
                 writer.WritePackedIntDelta(snapshot.elapsedFallTime, baseline.elapsedFallTime, compressionModel);
         }
         [BurstCompile]
@@ -159,6 +169,10 @@ namespace PropHunt.Generated
             else
                 snapshot.groundCheckDistance = baseline.groundCheckDistance;
             if ((changeMask & (1 << 2)) != 0)
+                snapshot.groundFallingDistance = reader.ReadPackedIntDelta(baseline.groundFallingDistance, compressionModel);
+            else
+                snapshot.groundFallingDistance = baseline.groundFallingDistance;
+            if ((changeMask & (1 << 3)) != 0)
                 snapshot.elapsedFallTime = reader.ReadPackedIntDelta(baseline.elapsedFallTime, compressionModel);
             else
                 snapshot.elapsedFallTime = baseline.elapsedFallTime;
@@ -175,6 +189,8 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundCheckDistance - backup.groundCheckDistance));
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundFallingDistance - backup.groundFallingDistance));
+            ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.elapsedFallTime - backup.elapsedFallTime));
             ++errorIndex;
         }
@@ -188,6 +204,10 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("groundCheckDistance"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("groundFallingDistance"));
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));

@@ -1,6 +1,7 @@
 
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
 using UnityEngine;
 
 namespace PropHunt.Mixed.Components
@@ -9,37 +10,43 @@ namespace PropHunt.Mixed.Components
     /// Component to track an object's displacement and rotation during a frame
     /// </summary>
     [GenerateAuthoringComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct MovementTracking : IComponentData
     {
         /// <summary>
         /// Current measured position of an object
         /// </summary>
-        private float3 position;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 position;
 
         /// <summary>
         /// Previously measured position of an object (previous frame)
         /// </summary>
-        private float3 previousPosition;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 previousPosition;
 
         /// <summary>
         /// An object's current attitude (rotation)
         /// </summary>
-        private quaternion attitude;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public quaternion attitude;
 
         /// <summary>
         /// Previously measured attitude of an object (previous frame)
         /// </summary>
-        private quaternion previousAttitude;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public quaternion previousAttitude;
 
         /// <summary>
         /// Number of times this tracking component has been updated
         /// </summary>
-        private int updates;
+        [GhostField]
+        public int updates;
 
         /// <summary>
         /// Has this been properly initialized? (needs at least two samples to be initialized)
         /// </summary>
-        private bool Initialized => updates >= 2;
+        public bool Initialized => updates >= 2;
 
         /// <summary>
         /// Finds the change in attitude (expressed as a quaternion) between

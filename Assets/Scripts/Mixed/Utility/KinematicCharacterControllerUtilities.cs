@@ -8,12 +8,28 @@ namespace PropHunt.Mixed.Utilities
     /// <summary>
     /// Class for kinematic character controller utilities
     /// </summary>
-    public static class KinematicCharacterControllerUtilities
+    public static class KCCUtils
     {
         /// <summary>
         /// Maximum angle between an object and a character 
         /// </summary>
         public static readonly float MaxAngleShoveRadians = math.radians(90.0f);
+
+        /// <summary>
+        /// Check if a physics mass is kinematic
+        /// </summary>
+        /// <param name="mass">Physics mass to verify</param>
+        /// <returns>True if kinematic, false otherwise</returns>
+        public static bool IsKinematic(PhysicsMass mass)
+        {
+            float3 intertia = mass.InverseInertia;
+            return intertia.x == 0 && intertia.y == 0 && intertia.z == 0;
+        }
+
+        /// <summary>
+        /// Small distance for acccounting for non deterministic simulation and float errors
+        /// </summary>
+        public static readonly float Epsilon = 0.001f;
 
         /// <summary>
         /// Gets the final position of a character attempting to move from a starting
@@ -32,6 +48,7 @@ namespace PropHunt.Mixed.Utilities
         /// <param name="collider">Collider controlling the character</param>
         /// <param name="entityIndex">Index of this entity</param>
         /// <param name="rotation">Current character rotation</param>
+        /// <param name="physicsMassAccessor">Accessor to physics mass components</param>
         /// <param name="anglePower">Power to raise decay of movement due to
         /// changes in angle between intended movement and angle of surface.
         /// Will be angleFactor= 1 / (1 + normAngle) where normAngle is a normalized value
@@ -61,6 +78,7 @@ namespace PropHunt.Mixed.Utilities
             PhysicsCollider collider,
             int entityIndex,
             quaternion rotation,
+            ComponentDataFromEntity<PhysicsMass> physicsMassGetter,
             float anglePower = 2,
             int maxBounces = 1,
             float pushPower = 25,
@@ -105,9 +123,9 @@ namespace PropHunt.Mixed.Utilities
                 // Push slightly along normal to stop from getting caught in walls
                 from = from + hit.SurfaceNormal * epsilon;
 
-                // Apply some force to the object hit if it is moveable
-                // Apply force on entity hit
-                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies)
+                // Apply some force to the object hit if it is moveable, Apply force on entity hit
+                bool isKinematic = physicsMassGetter.HasComponent(hit.Entity) && IsKinematic(physicsMassGetter[hit.Entity]);
+                if (hit.RigidBodyIndex < collisionWorld.NumDynamicBodies && !isKinematic)
                 {
                     commandBuffer.AddBuffer<PushForce>(jobIndex, hit.Entity);
                     commandBuffer.AppendToBuffer(jobIndex, hit.Entity, new PushForce() { force = movement * pushPower, point = hit.Position });
@@ -118,8 +136,8 @@ namespace PropHunt.Mixed.Utilities
                 // Get angle between surface normal and remaining movement
                 float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
                 // Normalize angle between to be between 0 and 1
-                angleBetween = math.min(KinematicCharacterControllerUtilities.MaxAngleShoveRadians, math.abs(angleBetween));
-                float normalizedAngle = angleBetween / KinematicCharacterControllerUtilities.MaxAngleShoveRadians;
+                angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
+                float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
                 // Create angle factor using 1 / (1 + normalizedAngle)
                 float angleFactor = 1.0f / (1.0f + normalizedAngle);
                 // If the character hit something

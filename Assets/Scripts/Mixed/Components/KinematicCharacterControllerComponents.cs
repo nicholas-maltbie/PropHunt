@@ -75,11 +75,18 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
+
+        /// <summary>
+        /// Maximum that a character can be pushed during a single frame (should be the diameter of the character or so)
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float maxPush;
     }
 
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
+    [GhostComponent]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -113,8 +120,6 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float timeElapsedSinceJump;
-
-
     }
 
     /// <summary>
@@ -130,16 +135,16 @@ namespace PropHunt.Mixed.Components
         public float maxWalkAngle;
 
         /// <summary>
-        /// Is the character currently falling (not on the ground or on the ground and
-        /// it's too steep)
-        /// </summary>
-        public bool Falling => !this.onGround || this.angle > this.maxWalkAngle;
-
-        /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float groundCheckDistance;
+
+        /// Threshold for when the player will stop falling onto the ground. Should be a value smaller
+        /// than or equal to groundCheckDistance.
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float groundFallingDistance;
 
         /// <summary>
         /// Angle between the ground the the player's 'up' vector (-gravity fector).
@@ -183,13 +188,59 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float elapsedFallTime;
+
+        /// <summary>
+        /// Entity standing on the previous frame
+        /// </summary>
+        public Entity previousHit;
+
+        /// <summary>
+        /// Normal vector of the plane hit by the character on the ground.
+        /// </summary>
+        public float3 surfaceNormal;
+
+        /// <summary>
+        /// Distance to ground on the previous frame
+        /// </summary>
+        public float previousDistanceToGround;
+
+        /// <summary>
+        /// Was this on the ground previous frame
+        /// </summary>
+        public bool previousOnGround;
+
+        /// <summary>
+        /// Angle of previously hit object
+        /// </summary>
+        public float previousAngle;
+
+        /// <summary>
+        /// Is the character standing within a certian distance of the ground.
+        /// </summary>
+        public bool StandingOnGround => this.onGround && this.distanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
+        /// Is the character currently falling (not on the ground or on the ground and
+        /// it's too steep)
+        /// </summary>
+        public bool Falling => !StandingOnGround || this.angle > this.maxWalkAngle;
+
+        /// <summary>
+        /// Is the character standing within a certian distance of the ground in the previous frame.
+        /// </summary>
+        public bool PreviousStandingOnGround => this.previousOnGround && this.previousDistanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
+        /// Was this falling the previous frame
+        /// </summary>
+        public bool PreviousFalling => !this.PreviousStandingOnGround || this.previousAngle > this.maxWalkAngle;
     }
 
     /// <summary>
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted)]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
