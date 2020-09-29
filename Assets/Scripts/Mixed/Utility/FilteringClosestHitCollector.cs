@@ -83,4 +83,4 @@ namespace PropHunt.Mixed.Utilities
         /// </summary>
         public static readonly int AllowAll = -1;
     }
-} 
+}

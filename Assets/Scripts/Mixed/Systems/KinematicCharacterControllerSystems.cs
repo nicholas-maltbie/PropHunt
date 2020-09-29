@@ -308,7 +308,7 @@ namespace PropHunt.Mixed.Systems
 
                         translation.Value += displacement;
                     }
-                    
+
                     if (grounded.StandingOnGround)
                     {
                         velocity.worldVelocity = float3.zero;

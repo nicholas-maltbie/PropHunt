@@ -57,17 +57,5 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField]
         public int direction;
-
-        /// <summary>
-        /// Delay between moving to different platforms
-        /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public float delayBetweenPlatforms;
-
-        /// <summary>
-        /// Elapsed time waiting between platforms
-        /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public float elapsedWaiting;
     }
 }
