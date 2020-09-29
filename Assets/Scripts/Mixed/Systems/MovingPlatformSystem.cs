@@ -2,7 +2,6 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -18,7 +17,6 @@ namespace PropHunt.Mixed.Systems
         {
             float deltaTime = Time.DeltaTime;
             Entities.ForEach((
-                // ref PhysicsVelocity pv,
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
                 in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
@@ -26,7 +24,6 @@ namespace PropHunt.Mixed.Systems
                     if (movingPlatform.elapsedWaiting < movingPlatform.delayBetweenPlatforms)
                     {
                         movingPlatform.elapsedWaiting += deltaTime;
-                        // pv.Linear = 0;
                         return;
                     }
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();

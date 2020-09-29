@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 1463799967129362517,
+                GhostFieldsHash = 12720449746730225717,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MovementTracking>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MovementTracking>(),
@@ -52,20 +52,20 @@ namespace PropHunt.Generated
         public static readonly GhostComponentSerializer.State State;
         public struct Snapshot
         {
-            public float position_x;
-            public float position_y;
-            public float position_z;
-            public float previousPosition_x;
-            public float previousPosition_y;
-            public float previousPosition_z;
-            public float attitudeX;
-            public float attitudeY;
-            public float attitudeZ;
-            public float attitudeW;
-            public float previousAttitudeX;
-            public float previousAttitudeY;
-            public float previousAttitudeZ;
-            public float previousAttitudeW;
+            public int position_x;
+            public int position_y;
+            public int position_z;
+            public int previousPosition_x;
+            public int previousPosition_y;
+            public int previousPosition_z;
+            public int attitudeX;
+            public int attitudeY;
+            public int attitudeZ;
+            public int attitudeW;
+            public int previousAttitudeX;
+            public int previousAttitudeY;
+            public int previousAttitudeZ;
+            public int previousAttitudeW;
             public int updates;
         }
         public const int ChangeMaskBits = 5;
@@ -78,20 +78,20 @@ namespace PropHunt.Generated
                 ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData, snapshotOffset + snapshotStride*i);
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovementTracking>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
-                snapshot.position_x = component.position.x;
-                snapshot.position_y = component.position.y;
-                snapshot.position_z = component.position.z;
-                snapshot.previousPosition_x = component.previousPosition.x;
-                snapshot.previousPosition_y = component.previousPosition.y;
-                snapshot.previousPosition_z = component.previousPosition.z;
-                snapshot.attitudeX = component.attitude.value.x;
-                snapshot.attitudeY = component.attitude.value.y;
-                snapshot.attitudeZ = component.attitude.value.z;
-                snapshot.attitudeW = component.attitude.value.w;
-                snapshot.previousAttitudeX = component.previousAttitude.value.x;
-                snapshot.previousAttitudeY = component.previousAttitude.value.y;
-                snapshot.previousAttitudeZ = component.previousAttitude.value.z;
-                snapshot.previousAttitudeW = component.previousAttitude.value.w;
+                snapshot.position_x = (int) math.round(component.position.x * 100);
+                snapshot.position_y = (int) math.round(component.position.y * 100);
+                snapshot.position_z = (int) math.round(component.position.z * 100);
+                snapshot.previousPosition_x = (int) math.round(component.previousPosition.x * 100);
+                snapshot.previousPosition_y = (int) math.round(component.previousPosition.y * 100);
+                snapshot.previousPosition_z = (int) math.round(component.previousPosition.z * 100);
+                snapshot.attitudeX = (int)math.round(component.attitude.value.x * 100);
+                snapshot.attitudeY = (int)math.round(component.attitude.value.y * 100);
+                snapshot.attitudeZ = (int)math.round(component.attitude.value.z * 100);
+                snapshot.attitudeW = (int)math.round(component.attitude.value.w * 100);
+                snapshot.previousAttitudeX = (int)math.round(component.previousAttitude.value.x * 100);
+                snapshot.previousAttitudeY = (int)math.round(component.previousAttitude.value.y * 100);
+                snapshot.previousAttitudeZ = (int)math.round(component.previousAttitude.value.z * 100);
+                snapshot.previousAttitudeW = (int)math.round(component.previousAttitude.value.w * 100);
                 snapshot.updates = (int) component.updates;
             }
         }
@@ -108,10 +108,22 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovementTracking>(componentData, componentStride*i);
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
-                component.position = new float3(snapshotBefore.position_x, snapshotBefore.position_y, snapshotBefore.position_z);
-                component.previousPosition = new float3(snapshotBefore.previousPosition_x, snapshotBefore.previousPosition_y, snapshotBefore.previousPosition_z);
-                component.attitude = new quaternion(snapshotBefore.attitudeX, snapshotBefore.attitudeY, snapshotBefore.attitudeZ, snapshotBefore.attitudeW);
-                component.previousAttitude = new quaternion(snapshotBefore.previousAttitudeX, snapshotBefore.previousAttitudeY, snapshotBefore.previousAttitudeZ, snapshotBefore.previousAttitudeW);
+                component.position = math.lerp(
+                    new float3(snapshotBefore.position_x * 0.01f, snapshotBefore.position_y * 0.01f, snapshotBefore.position_z * 0.01f),
+                    new float3(snapshotAfter.position_x * 0.01f, snapshotAfter.position_y * 0.01f, snapshotAfter.position_z * 0.01f),
+                    snapshotInterpolationFactor);
+                component.previousPosition = math.lerp(
+                    new float3(snapshotBefore.previousPosition_x * 0.01f, snapshotBefore.previousPosition_y * 0.01f, snapshotBefore.previousPosition_z * 0.01f),
+                    new float3(snapshotAfter.previousPosition_x * 0.01f, snapshotAfter.previousPosition_y * 0.01f, snapshotAfter.previousPosition_z * 0.01f),
+                    snapshotInterpolationFactor);
+                component.attitude = math.slerp(
+                    math.normalize(new quaternion(snapshotBefore.attitudeX * 0.01f, snapshotBefore.attitudeY * 0.01f, snapshotBefore.attitudeZ * 0.01f, snapshotBefore.attitudeW * 0.01f)),
+                    math.normalize(new quaternion(snapshotAfter.attitudeX * 0.01f, snapshotAfter.attitudeY * 0.01f, snapshotAfter.attitudeZ * 0.01f, snapshotAfter.attitudeW * 0.01f)),
+                    snapshotInterpolationFactor);
+                component.previousAttitude = math.slerp(
+                    math.normalize(new quaternion(snapshotBefore.previousAttitudeX * 0.01f, snapshotBefore.previousAttitudeY * 0.01f, snapshotBefore.previousAttitudeZ * 0.01f, snapshotBefore.previousAttitudeW * 0.01f)),
+                    math.normalize(new quaternion(snapshotAfter.previousAttitudeX * 0.01f, snapshotAfter.previousAttitudeY * 0.01f, snapshotAfter.previousAttitudeZ * 0.01f, snapshotAfter.previousAttitudeW * 0.01f)),
+                    snapshotInterpolationFactor);
                 component.updates = (int) snapshotBefore.updates;
             }
         }
@@ -139,6 +151,20 @@ namespace PropHunt.Generated
             ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData);
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
+            snapshot.position_x = predictor.PredictInt(snapshot.position_x, baseline1.position_x, baseline2.position_x);
+            snapshot.position_y = predictor.PredictInt(snapshot.position_y, baseline1.position_y, baseline2.position_y);
+            snapshot.position_z = predictor.PredictInt(snapshot.position_z, baseline1.position_z, baseline2.position_z);
+            snapshot.previousPosition_x = predictor.PredictInt(snapshot.previousPosition_x, baseline1.previousPosition_x, baseline2.previousPosition_x);
+            snapshot.previousPosition_y = predictor.PredictInt(snapshot.previousPosition_y, baseline1.previousPosition_y, baseline2.previousPosition_y);
+            snapshot.previousPosition_z = predictor.PredictInt(snapshot.previousPosition_z, baseline1.previousPosition_z, baseline2.previousPosition_z);
+            snapshot.attitudeX = predictor.PredictInt(snapshot.attitudeX, baseline1.attitudeX, baseline2.attitudeX);
+            snapshot.attitudeY = predictor.PredictInt(snapshot.attitudeY, baseline1.attitudeY, baseline2.attitudeY);
+            snapshot.attitudeZ = predictor.PredictInt(snapshot.attitudeZ, baseline1.attitudeZ, baseline2.attitudeZ);
+            snapshot.attitudeW = predictor.PredictInt(snapshot.attitudeW, baseline1.attitudeW, baseline2.attitudeW);
+            snapshot.previousAttitudeX = predictor.PredictInt(snapshot.previousAttitudeX, baseline1.previousAttitudeX, baseline2.previousAttitudeX);
+            snapshot.previousAttitudeY = predictor.PredictInt(snapshot.previousAttitudeY, baseline1.previousAttitudeY, baseline2.previousAttitudeY);
+            snapshot.previousAttitudeZ = predictor.PredictInt(snapshot.previousAttitudeZ, baseline1.previousAttitudeZ, baseline2.previousAttitudeZ);
+            snapshot.previousAttitudeW = predictor.PredictInt(snapshot.previousAttitudeW, baseline1.previousAttitudeW, baseline2.previousAttitudeW);
             snapshot.updates = predictor.PredictInt(snapshot.updates, baseline1.updates, baseline2.updates);
         }
         [BurstCompile]
@@ -173,30 +199,30 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedFloatDelta(snapshot.position_x, baseline.position_x, compressionModel);
+                writer.WritePackedIntDelta(snapshot.position_x, baseline.position_x, compressionModel);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedFloatDelta(snapshot.position_y, baseline.position_y, compressionModel);
+                writer.WritePackedIntDelta(snapshot.position_y, baseline.position_y, compressionModel);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedFloatDelta(snapshot.position_z, baseline.position_z, compressionModel);
+                writer.WritePackedIntDelta(snapshot.position_z, baseline.position_z, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedFloatDelta(snapshot.previousPosition_x, baseline.previousPosition_x, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousPosition_x, baseline.previousPosition_x, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedFloatDelta(snapshot.previousPosition_y, baseline.previousPosition_y, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousPosition_y, baseline.previousPosition_y, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedFloatDelta(snapshot.previousPosition_z, baseline.previousPosition_z, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousPosition_z, baseline.previousPosition_z, compressionModel);
             if ((changeMask & (1 << 2)) != 0)
             {
-                writer.WritePackedFloatDelta(snapshot.attitudeX, baseline.attitudeX, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.attitudeY, baseline.attitudeY, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.attitudeZ, baseline.attitudeZ, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.attitudeW, baseline.attitudeW, compressionModel);
+                writer.WritePackedIntDelta(snapshot.attitudeX, baseline.attitudeX, compressionModel);
+                writer.WritePackedIntDelta(snapshot.attitudeY, baseline.attitudeY, compressionModel);
+                writer.WritePackedIntDelta(snapshot.attitudeZ, baseline.attitudeZ, compressionModel);
+                writer.WritePackedIntDelta(snapshot.attitudeW, baseline.attitudeW, compressionModel);
             }
             if ((changeMask & (1 << 3)) != 0)
             {
-                writer.WritePackedFloatDelta(snapshot.previousAttitudeX, baseline.previousAttitudeX, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.previousAttitudeY, baseline.previousAttitudeY, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.previousAttitudeZ, baseline.previousAttitudeZ, compressionModel);
-                writer.WritePackedFloatDelta(snapshot.previousAttitudeW, baseline.previousAttitudeW, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousAttitudeX, baseline.previousAttitudeX, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousAttitudeY, baseline.previousAttitudeY, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousAttitudeZ, baseline.previousAttitudeZ, compressionModel);
+                writer.WritePackedIntDelta(snapshot.previousAttitudeW, baseline.previousAttitudeW, compressionModel);
             }
             if ((changeMask & (1 << 4)) != 0)
                 writer.WritePackedIntDelta(snapshot.updates, baseline.updates, compressionModel);
@@ -209,35 +235,35 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.position_x = reader.ReadPackedFloatDelta(baseline.position_x, compressionModel);
+                snapshot.position_x = reader.ReadPackedIntDelta(baseline.position_x, compressionModel);
             else
                 snapshot.position_x = baseline.position_x;
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.position_y = reader.ReadPackedFloatDelta(baseline.position_y, compressionModel);
+                snapshot.position_y = reader.ReadPackedIntDelta(baseline.position_y, compressionModel);
             else
                 snapshot.position_y = baseline.position_y;
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.position_z = reader.ReadPackedFloatDelta(baseline.position_z, compressionModel);
+                snapshot.position_z = reader.ReadPackedIntDelta(baseline.position_z, compressionModel);
             else
                 snapshot.position_z = baseline.position_z;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.previousPosition_x = reader.ReadPackedFloatDelta(baseline.previousPosition_x, compressionModel);
+                snapshot.previousPosition_x = reader.ReadPackedIntDelta(baseline.previousPosition_x, compressionModel);
             else
                 snapshot.previousPosition_x = baseline.previousPosition_x;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.previousPosition_y = reader.ReadPackedFloatDelta(baseline.previousPosition_y, compressionModel);
+                snapshot.previousPosition_y = reader.ReadPackedIntDelta(baseline.previousPosition_y, compressionModel);
             else
                 snapshot.previousPosition_y = baseline.previousPosition_y;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.previousPosition_z = reader.ReadPackedFloatDelta(baseline.previousPosition_z, compressionModel);
+                snapshot.previousPosition_z = reader.ReadPackedIntDelta(baseline.previousPosition_z, compressionModel);
             else
                 snapshot.previousPosition_z = baseline.previousPosition_z;
             if ((changeMask & (1 << 2)) != 0)
             {
-                snapshot.attitudeX = reader.ReadPackedFloatDelta(baseline.attitudeX, compressionModel);
-                snapshot.attitudeY = reader.ReadPackedFloatDelta(baseline.attitudeY, compressionModel);
-                snapshot.attitudeZ = reader.ReadPackedFloatDelta(baseline.attitudeZ, compressionModel);
-                snapshot.attitudeW = reader.ReadPackedFloatDelta(baseline.attitudeW, compressionModel);
+                snapshot.attitudeX = reader.ReadPackedIntDelta(baseline.attitudeX, compressionModel);
+                snapshot.attitudeY = reader.ReadPackedIntDelta(baseline.attitudeY, compressionModel);
+                snapshot.attitudeZ = reader.ReadPackedIntDelta(baseline.attitudeZ, compressionModel);
+                snapshot.attitudeW = reader.ReadPackedIntDelta(baseline.attitudeW, compressionModel);
             }
             else
             {
@@ -248,10 +274,10 @@ namespace PropHunt.Generated
             }
             if ((changeMask & (1 << 3)) != 0)
             {
-                snapshot.previousAttitudeX = reader.ReadPackedFloatDelta(baseline.previousAttitudeX, compressionModel);
-                snapshot.previousAttitudeY = reader.ReadPackedFloatDelta(baseline.previousAttitudeY, compressionModel);
-                snapshot.previousAttitudeZ = reader.ReadPackedFloatDelta(baseline.previousAttitudeZ, compressionModel);
-                snapshot.previousAttitudeW = reader.ReadPackedFloatDelta(baseline.previousAttitudeW, compressionModel);
+                snapshot.previousAttitudeX = reader.ReadPackedIntDelta(baseline.previousAttitudeX, compressionModel);
+                snapshot.previousAttitudeY = reader.ReadPackedIntDelta(baseline.previousAttitudeY, compressionModel);
+                snapshot.previousAttitudeZ = reader.ReadPackedIntDelta(baseline.previousAttitudeZ, compressionModel);
+                snapshot.previousAttitudeW = reader.ReadPackedIntDelta(baseline.previousAttitudeW, compressionModel);
             }
             else
             {

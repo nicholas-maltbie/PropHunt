@@ -16,25 +16,25 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Current measured position of an object
         /// </summary>
-        [GhostField]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 position;
 
         /// <summary>
         /// Previously measured position of an object (previous frame)
         /// </summary>
-        [GhostField]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 previousPosition;
 
         /// <summary>
         /// An object's current attitude (rotation)
         /// </summary>
-        [GhostField]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public quaternion attitude;
 
         /// <summary>
         /// Previously measured attitude of an object (previous frame)
         /// </summary>
-        [GhostField]
+        [GhostField(Quantization = 100, Interpolate = true)]
         public quaternion previousAttitude;
 
         /// <summary>

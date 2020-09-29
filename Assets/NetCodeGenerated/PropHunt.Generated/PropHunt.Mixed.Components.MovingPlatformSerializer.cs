@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 11084296481022776949,
+                GhostFieldsHash = 270396784890700208,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MovingPlatform>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MovingPlatform>(),
@@ -53,12 +53,9 @@ namespace PropHunt.Generated
         public struct Snapshot
         {
             public int speed;
-            public int loopMethod;
             public int current;
-            public int delayBetweenPlatforms;
-            public int direction;
         }
-        public const int ChangeMaskBits = 5;
+        public const int ChangeMaskBits = 2;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -69,10 +66,7 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovingPlatform>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.speed = (int) math.round(component.speed * 100);
-                snapshot.loopMethod = (int) component.loopMethod;
                 snapshot.current = (int) component.current;
-                snapshot.delayBetweenPlatforms = (int) math.round(component.delayBetweenPlatforms * 100);
-                snapshot.direction = (int) component.direction;
             }
         }
         [BurstCompile]
@@ -91,12 +85,7 @@ namespace PropHunt.Generated
                 component.speed =
                     math.lerp(snapshotBefore.speed * 0.01f,
                         snapshotAfter.speed * 0.01f, snapshotInterpolationFactor);
-                component.loopMethod = (PropHunt.Mixed.Components.PlatformLooping) snapshotBefore.loopMethod;
                 component.current = (int) snapshotBefore.current;
-                component.delayBetweenPlatforms =
-                    math.lerp(snapshotBefore.delayBetweenPlatforms * 0.01f,
-                        snapshotAfter.delayBetweenPlatforms * 0.01f, snapshotInterpolationFactor);
-                component.direction = (int) snapshotBefore.direction;
             }
         }
         [BurstCompile]
@@ -106,10 +95,7 @@ namespace PropHunt.Generated
             ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovingPlatform>(componentData, 0);
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovingPlatform>(backupData, 0);
             component.speed = backup.speed;
-            component.loopMethod = backup.loopMethod;
             component.current = backup.current;
-            component.delayBetweenPlatforms = backup.delayBetweenPlatforms;
-            component.direction = backup.direction;
         }
 
         [BurstCompile]
@@ -120,10 +106,7 @@ namespace PropHunt.Generated
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.speed = predictor.PredictInt(snapshot.speed, baseline1.speed, baseline2.speed);
-            snapshot.loopMethod = predictor.PredictInt(snapshot.loopMethod, baseline1.loopMethod, baseline2.loopMethod);
             snapshot.current = predictor.PredictInt(snapshot.current, baseline1.current, baseline2.current);
-            snapshot.delayBetweenPlatforms = predictor.PredictInt(snapshot.delayBetweenPlatforms, baseline1.delayBetweenPlatforms, baseline2.delayBetweenPlatforms);
-            snapshot.direction = predictor.PredictInt(snapshot.direction, baseline1.direction, baseline2.direction);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -133,11 +116,8 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask;
             changeMask = (snapshot.speed != baseline.speed) ? 1u : 0;
-            changeMask |= (snapshot.loopMethod != baseline.loopMethod) ? (1u<<1) : 0;
-            changeMask |= (snapshot.current != baseline.current) ? (1u<<2) : 0;
-            changeMask |= (snapshot.delayBetweenPlatforms != baseline.delayBetweenPlatforms) ? (1u<<3) : 0;
-            changeMask |= (snapshot.direction != baseline.direction) ? (1u<<4) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 5);
+            changeMask |= (snapshot.current != baseline.current) ? (1u<<1) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -149,13 +129,7 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 0)) != 0)
                 writer.WritePackedIntDelta(snapshot.speed, baseline.speed, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedIntDelta(snapshot.loopMethod, baseline.loopMethod, compressionModel);
-            if ((changeMask & (1 << 2)) != 0)
                 writer.WritePackedIntDelta(snapshot.current, baseline.current, compressionModel);
-            if ((changeMask & (1 << 3)) != 0)
-                writer.WritePackedIntDelta(snapshot.delayBetweenPlatforms, baseline.delayBetweenPlatforms, compressionModel);
-            if ((changeMask & (1 << 4)) != 0)
-                writer.WritePackedIntDelta(snapshot.direction, baseline.direction, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -169,21 +143,9 @@ namespace PropHunt.Generated
             else
                 snapshot.speed = baseline.speed;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.loopMethod = reader.ReadPackedIntDelta(baseline.loopMethod, compressionModel);
-            else
-                snapshot.loopMethod = baseline.loopMethod;
-            if ((changeMask & (1 << 2)) != 0)
                 snapshot.current = reader.ReadPackedIntDelta(baseline.current, compressionModel);
             else
                 snapshot.current = baseline.current;
-            if ((changeMask & (1 << 3)) != 0)
-                snapshot.delayBetweenPlatforms = reader.ReadPackedIntDelta(baseline.delayBetweenPlatforms, compressionModel);
-            else
-                snapshot.delayBetweenPlatforms = baseline.delayBetweenPlatforms;
-            if ((changeMask & (1 << 4)) != 0)
-                snapshot.direction = reader.ReadPackedIntDelta(baseline.direction, compressionModel);
-            else
-                snapshot.direction = baseline.direction;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -195,13 +157,7 @@ namespace PropHunt.Generated
             int errorIndex = 0;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.speed - backup.speed));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.loopMethod - backup.loopMethod));
-            ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.current - backup.current));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.delayBetweenPlatforms - backup.delayBetweenPlatforms));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.direction - backup.direction));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -213,19 +169,7 @@ namespace PropHunt.Generated
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("loopMethod"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
             names.Append(new FixedString64("current"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("delayBetweenPlatforms"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("direction"));
             ++nameCount;
             return nameCount;
         }

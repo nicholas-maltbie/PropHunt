@@ -19,19 +19,20 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Target for a moving platform
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.All)]
+    [GhostComponent]
     public struct MovingPlatformTarget : IBufferElementData
     {
         /// <summary>
         /// Position of target
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 target;
     }
 
     /// <summary>
     /// Moving platform component data for current state
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.All)]
+    [GhostComponent]
     public struct MovingPlatform : IComponentData
     {
         /// <summary>
@@ -43,7 +44,6 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Method of looping when target list is exhausted
         /// </summary>
-        [GhostField]
         public PlatformLooping loopMethod;
 
         /// <summary>
@@ -55,7 +55,6 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Delay between moving to different platforms
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float delayBetweenPlatforms;
 
         /// <summary>
@@ -67,7 +66,6 @@ namespace PropHunt.Mixed.Components
         /// Direction of next platform being selected. This
         /// is decided by loop method when the list ends
         /// </summary>
-        [GhostField]
         public int direction;
     }
 }
