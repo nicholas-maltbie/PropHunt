@@ -224,19 +224,30 @@ namespace PropHunt.Mixed.Systems
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
                 ref KCCVelocity velocity,
+                ref Translation translation,
                 in KCCGrounded grounded) =>
                 {
+                    float3 displacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
                     if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint) / deltaTime;
+                        displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+
+                        translation.Value += displacement;
                     }
-                    else if (!grounded.Falling)
+                    
+                    if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
                     }
+                    else if (grounded.Falling && !grounded.PreviousFalling)
+                    {
+                        velocity.worldVelocity += velocity.floorVelocity;
+                    }
+                    // Set velocity of floor
+                    velocity.floorVelocity = displacement / deltaTime;
                 }
             ).ScheduleParallel();
         }

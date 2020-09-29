@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 6104341673800988698,
+                GhostFieldsHash = 12527914010386873159,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCVelocity>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCVelocity>(),
@@ -58,8 +58,11 @@ namespace PropHunt.Generated
             public int worldVelocity_x;
             public int worldVelocity_y;
             public int worldVelocity_z;
+            public int floorVelocity_x;
+            public int floorVelocity_y;
+            public int floorVelocity_z;
         }
-        public const int ChangeMaskBits = 2;
+        public const int ChangeMaskBits = 3;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -75,6 +78,9 @@ namespace PropHunt.Generated
                 snapshot.worldVelocity_x = (int) math.round(component.worldVelocity.x * 100);
                 snapshot.worldVelocity_y = (int) math.round(component.worldVelocity.y * 100);
                 snapshot.worldVelocity_z = (int) math.round(component.worldVelocity.z * 100);
+                snapshot.floorVelocity_x = (int) math.round(component.floorVelocity.x * 100);
+                snapshot.floorVelocity_y = (int) math.round(component.floorVelocity.y * 100);
+                snapshot.floorVelocity_z = (int) math.round(component.floorVelocity.z * 100);
             }
         }
         [BurstCompile]
@@ -98,6 +104,10 @@ namespace PropHunt.Generated
                     new float3(snapshotBefore.worldVelocity_x * 0.01f, snapshotBefore.worldVelocity_y * 0.01f, snapshotBefore.worldVelocity_z * 0.01f),
                     new float3(snapshotAfter.worldVelocity_x * 0.01f, snapshotAfter.worldVelocity_y * 0.01f, snapshotAfter.worldVelocity_z * 0.01f),
                     snapshotInterpolationFactor);
+                component.floorVelocity = math.lerp(
+                    new float3(snapshotBefore.floorVelocity_x * 0.01f, snapshotBefore.floorVelocity_y * 0.01f, snapshotBefore.floorVelocity_z * 0.01f),
+                    new float3(snapshotAfter.floorVelocity_x * 0.01f, snapshotAfter.floorVelocity_y * 0.01f, snapshotAfter.floorVelocity_z * 0.01f),
+                    snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
@@ -112,6 +122,9 @@ namespace PropHunt.Generated
             component.worldVelocity.x = backup.worldVelocity.x;
             component.worldVelocity.y = backup.worldVelocity.y;
             component.worldVelocity.z = backup.worldVelocity.z;
+            component.floorVelocity.x = backup.floorVelocity.x;
+            component.floorVelocity.y = backup.floorVelocity.y;
+            component.floorVelocity.z = backup.floorVelocity.z;
         }
 
         [BurstCompile]
@@ -127,6 +140,9 @@ namespace PropHunt.Generated
             snapshot.worldVelocity_x = predictor.PredictInt(snapshot.worldVelocity_x, baseline1.worldVelocity_x, baseline2.worldVelocity_x);
             snapshot.worldVelocity_y = predictor.PredictInt(snapshot.worldVelocity_y, baseline1.worldVelocity_y, baseline2.worldVelocity_y);
             snapshot.worldVelocity_z = predictor.PredictInt(snapshot.worldVelocity_z, baseline1.worldVelocity_z, baseline2.worldVelocity_z);
+            snapshot.floorVelocity_x = predictor.PredictInt(snapshot.floorVelocity_x, baseline1.floorVelocity_x, baseline2.floorVelocity_x);
+            snapshot.floorVelocity_y = predictor.PredictInt(snapshot.floorVelocity_y, baseline1.floorVelocity_y, baseline2.floorVelocity_y);
+            snapshot.floorVelocity_z = predictor.PredictInt(snapshot.floorVelocity_z, baseline1.floorVelocity_z, baseline2.floorVelocity_z);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -141,7 +157,10 @@ namespace PropHunt.Generated
             changeMask |= (snapshot.worldVelocity_x != baseline.worldVelocity_x) ? (1u<<1) : 0;
             changeMask |= (snapshot.worldVelocity_y != baseline.worldVelocity_y) ? (1u<<1) : 0;
             changeMask |= (snapshot.worldVelocity_z != baseline.worldVelocity_z) ? (1u<<1) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
+            changeMask |= (snapshot.floorVelocity_x != baseline.floorVelocity_x) ? (1u<<2) : 0;
+            changeMask |= (snapshot.floorVelocity_y != baseline.floorVelocity_y) ? (1u<<2) : 0;
+            changeMask |= (snapshot.floorVelocity_z != baseline.floorVelocity_z) ? (1u<<2) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 3);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -162,6 +181,12 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.worldVelocity_y, baseline.worldVelocity_y, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedIntDelta(snapshot.worldVelocity_z, baseline.worldVelocity_z, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.floorVelocity_x, baseline.floorVelocity_x, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.floorVelocity_y, baseline.floorVelocity_y, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.floorVelocity_z, baseline.floorVelocity_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -194,6 +219,18 @@ namespace PropHunt.Generated
                 snapshot.worldVelocity_z = reader.ReadPackedIntDelta(baseline.worldVelocity_z, compressionModel);
             else
                 snapshot.worldVelocity_z = baseline.worldVelocity_z;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.floorVelocity_x = reader.ReadPackedIntDelta(baseline.floorVelocity_x, compressionModel);
+            else
+                snapshot.floorVelocity_x = baseline.floorVelocity_x;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.floorVelocity_y = reader.ReadPackedIntDelta(baseline.floorVelocity_y, compressionModel);
+            else
+                snapshot.floorVelocity_y = baseline.floorVelocity_y;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.floorVelocity_z = reader.ReadPackedIntDelta(baseline.floorVelocity_z, compressionModel);
+            else
+                snapshot.floorVelocity_z = baseline.floorVelocity_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -207,6 +244,8 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.worldVelocity, backup.worldVelocity));
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.floorVelocity, backup.floorVelocity));
+            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -218,6 +257,10 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("worldVelocity"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("floorVelocity"));
             ++nameCount;
             return nameCount;
         }

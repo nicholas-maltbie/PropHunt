@@ -254,6 +254,12 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
+
+        /// <summary>
+        /// Velocity of floor player is standing on
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 floorVelocity;
     }
 
     /// <summary>
