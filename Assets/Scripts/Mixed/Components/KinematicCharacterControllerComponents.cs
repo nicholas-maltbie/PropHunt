@@ -254,12 +254,25 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
+    }
 
+    /// <summary>
+    /// Movement of floor for the course of a frame and moving a character
+    /// </summary>
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    public struct FloorMovement : IComponentData
+    {
         /// <summary>
         /// Velocity of floor player is standing on
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float3 floorVelocity;
+
+        /// <summary>
+        /// Displacement of a character in the current frame
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 frameDisplacement;
     }
 
     /// <summary>

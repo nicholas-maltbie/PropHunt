@@ -221,8 +221,9 @@ namespace PropHunt.Mixed.Systems
         protected unsafe override void OnUpdate()
         {
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var floorMovementGetter = GetComponentDataFromEntity<FloorMovement>(true);
 
-            Entities.ForEach((
+            Entities.WithReadOnly(floorMovementGetter).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -238,11 +239,18 @@ namespace PropHunt.Mixed.Systems
                     return;
                 }
 
+                float3 previousDisplacement = float3.zero;
+                // Account for movement due to moving floor
+                if (floorMovementGetter.HasComponent(entity))
+                {
+                    previousDisplacement = floorMovementGetter[entity].frameDisplacement;
+                }
+
                 // Draw a ray from the center of the character collider to 
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
-                float3 hitPoint = grounded.groundedPoint;
+                float3 hitPoint = grounded.groundedPoint + previousDisplacement;
                 float3 sourcePoint = hitPoint + grounded.surfaceNormal * movementSettings.maxPush;
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
@@ -296,29 +304,30 @@ namespace PropHunt.Mixed.Systems
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 ref Translation translation,
+                ref FloorMovement floor,
                 in KCCGrounded grounded) =>
                 {
-                    float3 displacement = float3.zero;
+                    floor.frameDisplacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
-                    if (grounded.StandingOnGround && this.HasComponent<MovementTracking>(grounded.hitEntity))
+                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+                        floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
 
-                        translation.Value += displacement;
+                        translation.Value += floor.frameDisplacement;
                     }
 
-                    if (grounded.StandingOnGround)
+                    if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
                     }
-                    else if (!grounded.StandingOnGround && grounded.PreviousStandingOnGround)
+                    else if (grounded.Falling && !grounded.PreviousFalling)
                     {
-                        velocity.worldVelocity += velocity.floorVelocity;
+                        velocity.worldVelocity += floor.floorVelocity;
                     }
                     // Set velocity of floor
-                    velocity.floorVelocity = displacement / deltaTime;
+                    floor.floorVelocity = floor.frameDisplacement / deltaTime;
                 }
             ).ScheduleParallel();
         }

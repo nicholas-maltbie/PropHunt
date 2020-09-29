@@ -15,16 +15,16 @@ using PropHunt.Mixed.Components;
 namespace PropHunt.Generated
 {
     [BurstCompile]
-    public struct PropHuntMixedComponentsKCCVelocityGhostComponentSerializer
+    public struct PropHuntMixedComponentsFloorMovementGhostComponentSerializer
     {
-        static PropHuntMixedComponentsKCCVelocityGhostComponentSerializer()
+        static PropHuntMixedComponentsFloorMovementGhostComponentSerializer()
         {
             State = new GhostComponentSerializer.State
             {
                 GhostFieldsHash = 6104341673800988698,
                 ExcludeFromComponentCollectionHash = 0,
-                ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCVelocity>(),
-                ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCVelocity>(),
+                ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.FloorMovement>(),
+                ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.FloorMovement>(),
                 SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                 ChangeMaskBits = ChangeMaskBits,
                 SendMask = GhostComponentSerializer.SendMask.Predicted,
@@ -52,12 +52,12 @@ namespace PropHunt.Generated
         public static readonly GhostComponentSerializer.State State;
         public struct Snapshot
         {
-            public int playerVelocity_x;
-            public int playerVelocity_y;
-            public int playerVelocity_z;
-            public int worldVelocity_x;
-            public int worldVelocity_y;
-            public int worldVelocity_z;
+            public int floorVelocity_x;
+            public int floorVelocity_y;
+            public int floorVelocity_z;
+            public int frameDisplacement_x;
+            public int frameDisplacement_y;
+            public int frameDisplacement_z;
         }
         public const int ChangeMaskBits = 2;
         [BurstCompile]
@@ -67,14 +67,14 @@ namespace PropHunt.Generated
             for (int i = 0; i < count; ++i)
             {
                 ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData, snapshotOffset + snapshotStride*i);
-                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, componentStride*i);
+                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
-                snapshot.playerVelocity_x = (int) math.round(component.playerVelocity.x * 100);
-                snapshot.playerVelocity_y = (int) math.round(component.playerVelocity.y * 100);
-                snapshot.playerVelocity_z = (int) math.round(component.playerVelocity.z * 100);
-                snapshot.worldVelocity_x = (int) math.round(component.worldVelocity.x * 100);
-                snapshot.worldVelocity_y = (int) math.round(component.worldVelocity.y * 100);
-                snapshot.worldVelocity_z = (int) math.round(component.worldVelocity.z * 100);
+                snapshot.floorVelocity_x = (int) math.round(component.floorVelocity.x * 100);
+                snapshot.floorVelocity_y = (int) math.round(component.floorVelocity.y * 100);
+                snapshot.floorVelocity_z = (int) math.round(component.floorVelocity.z * 100);
+                snapshot.frameDisplacement_x = (int) math.round(component.frameDisplacement.x * 100);
+                snapshot.frameDisplacement_y = (int) math.round(component.frameDisplacement.y * 100);
+                snapshot.frameDisplacement_z = (int) math.round(component.frameDisplacement.z * 100);
             }
         }
         [BurstCompile]
@@ -87,16 +87,16 @@ namespace PropHunt.Generated
                 ref var snapshotBefore = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotInterpolationData.SnapshotBefore, snapshotOffset);
                 ref var snapshotAfter = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotInterpolationData.SnapshotAfter, snapshotOffset);
                 float snapshotInterpolationFactor = snapshotInterpolationData.InterpolationFactor;
-                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, componentStride*i);
+                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(componentData, componentStride*i);
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
-                component.playerVelocity = math.lerp(
-                    new float3(snapshotBefore.playerVelocity_x * 0.01f, snapshotBefore.playerVelocity_y * 0.01f, snapshotBefore.playerVelocity_z * 0.01f),
-                    new float3(snapshotAfter.playerVelocity_x * 0.01f, snapshotAfter.playerVelocity_y * 0.01f, snapshotAfter.playerVelocity_z * 0.01f),
+                component.floorVelocity = math.lerp(
+                    new float3(snapshotBefore.floorVelocity_x * 0.01f, snapshotBefore.floorVelocity_y * 0.01f, snapshotBefore.floorVelocity_z * 0.01f),
+                    new float3(snapshotAfter.floorVelocity_x * 0.01f, snapshotAfter.floorVelocity_y * 0.01f, snapshotAfter.floorVelocity_z * 0.01f),
                     snapshotInterpolationFactor);
-                component.worldVelocity = math.lerp(
-                    new float3(snapshotBefore.worldVelocity_x * 0.01f, snapshotBefore.worldVelocity_y * 0.01f, snapshotBefore.worldVelocity_z * 0.01f),
-                    new float3(snapshotAfter.worldVelocity_x * 0.01f, snapshotAfter.worldVelocity_y * 0.01f, snapshotAfter.worldVelocity_z * 0.01f),
+                component.frameDisplacement = math.lerp(
+                    new float3(snapshotBefore.frameDisplacement_x * 0.01f, snapshotBefore.frameDisplacement_y * 0.01f, snapshotBefore.frameDisplacement_z * 0.01f),
+                    new float3(snapshotAfter.frameDisplacement_x * 0.01f, snapshotAfter.frameDisplacement_y * 0.01f, snapshotAfter.frameDisplacement_z * 0.01f),
                     snapshotInterpolationFactor);
             }
         }
@@ -104,14 +104,14 @@ namespace PropHunt.Generated
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.RestoreFromBackupDelegate))]
         private static void RestoreFromBackup(IntPtr componentData, IntPtr backupData)
         {
-            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, 0);
-            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(backupData, 0);
-            component.playerVelocity.x = backup.playerVelocity.x;
-            component.playerVelocity.y = backup.playerVelocity.y;
-            component.playerVelocity.z = backup.playerVelocity.z;
-            component.worldVelocity.x = backup.worldVelocity.x;
-            component.worldVelocity.y = backup.worldVelocity.y;
-            component.worldVelocity.z = backup.worldVelocity.z;
+            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(componentData, 0);
+            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(backupData, 0);
+            component.floorVelocity.x = backup.floorVelocity.x;
+            component.floorVelocity.y = backup.floorVelocity.y;
+            component.floorVelocity.z = backup.floorVelocity.z;
+            component.frameDisplacement.x = backup.frameDisplacement.x;
+            component.frameDisplacement.y = backup.frameDisplacement.y;
+            component.frameDisplacement.z = backup.frameDisplacement.z;
         }
 
         [BurstCompile]
@@ -121,12 +121,12 @@ namespace PropHunt.Generated
             ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData);
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
-            snapshot.playerVelocity_x = predictor.PredictInt(snapshot.playerVelocity_x, baseline1.playerVelocity_x, baseline2.playerVelocity_x);
-            snapshot.playerVelocity_y = predictor.PredictInt(snapshot.playerVelocity_y, baseline1.playerVelocity_y, baseline2.playerVelocity_y);
-            snapshot.playerVelocity_z = predictor.PredictInt(snapshot.playerVelocity_z, baseline1.playerVelocity_z, baseline2.playerVelocity_z);
-            snapshot.worldVelocity_x = predictor.PredictInt(snapshot.worldVelocity_x, baseline1.worldVelocity_x, baseline2.worldVelocity_x);
-            snapshot.worldVelocity_y = predictor.PredictInt(snapshot.worldVelocity_y, baseline1.worldVelocity_y, baseline2.worldVelocity_y);
-            snapshot.worldVelocity_z = predictor.PredictInt(snapshot.worldVelocity_z, baseline1.worldVelocity_z, baseline2.worldVelocity_z);
+            snapshot.floorVelocity_x = predictor.PredictInt(snapshot.floorVelocity_x, baseline1.floorVelocity_x, baseline2.floorVelocity_x);
+            snapshot.floorVelocity_y = predictor.PredictInt(snapshot.floorVelocity_y, baseline1.floorVelocity_y, baseline2.floorVelocity_y);
+            snapshot.floorVelocity_z = predictor.PredictInt(snapshot.floorVelocity_z, baseline1.floorVelocity_z, baseline2.floorVelocity_z);
+            snapshot.frameDisplacement_x = predictor.PredictInt(snapshot.frameDisplacement_x, baseline1.frameDisplacement_x, baseline2.frameDisplacement_x);
+            snapshot.frameDisplacement_y = predictor.PredictInt(snapshot.frameDisplacement_y, baseline1.frameDisplacement_y, baseline2.frameDisplacement_y);
+            snapshot.frameDisplacement_z = predictor.PredictInt(snapshot.frameDisplacement_z, baseline1.frameDisplacement_z, baseline2.frameDisplacement_z);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -135,12 +135,12 @@ namespace PropHunt.Generated
             ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData);
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask;
-            changeMask = (snapshot.playerVelocity_x != baseline.playerVelocity_x) ? 1u : 0;
-            changeMask |= (snapshot.playerVelocity_y != baseline.playerVelocity_y) ? (1u<<0) : 0;
-            changeMask |= (snapshot.playerVelocity_z != baseline.playerVelocity_z) ? (1u<<0) : 0;
-            changeMask |= (snapshot.worldVelocity_x != baseline.worldVelocity_x) ? (1u<<1) : 0;
-            changeMask |= (snapshot.worldVelocity_y != baseline.worldVelocity_y) ? (1u<<1) : 0;
-            changeMask |= (snapshot.worldVelocity_z != baseline.worldVelocity_z) ? (1u<<1) : 0;
+            changeMask = (snapshot.floorVelocity_x != baseline.floorVelocity_x) ? 1u : 0;
+            changeMask |= (snapshot.floorVelocity_y != baseline.floorVelocity_y) ? (1u<<0) : 0;
+            changeMask |= (snapshot.floorVelocity_z != baseline.floorVelocity_z) ? (1u<<0) : 0;
+            changeMask |= (snapshot.frameDisplacement_x != baseline.frameDisplacement_x) ? (1u<<1) : 0;
+            changeMask |= (snapshot.frameDisplacement_y != baseline.frameDisplacement_y) ? (1u<<1) : 0;
+            changeMask |= (snapshot.frameDisplacement_z != baseline.frameDisplacement_z) ? (1u<<1) : 0;
             GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
         }
         [BurstCompile]
@@ -151,17 +151,17 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedIntDelta(snapshot.playerVelocity_x, baseline.playerVelocity_x, compressionModel);
+                writer.WritePackedIntDelta(snapshot.floorVelocity_x, baseline.floorVelocity_x, compressionModel);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedIntDelta(snapshot.playerVelocity_y, baseline.playerVelocity_y, compressionModel);
+                writer.WritePackedIntDelta(snapshot.floorVelocity_y, baseline.floorVelocity_y, compressionModel);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedIntDelta(snapshot.playerVelocity_z, baseline.playerVelocity_z, compressionModel);
+                writer.WritePackedIntDelta(snapshot.floorVelocity_z, baseline.floorVelocity_z, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedIntDelta(snapshot.worldVelocity_x, baseline.worldVelocity_x, compressionModel);
+                writer.WritePackedIntDelta(snapshot.frameDisplacement_x, baseline.frameDisplacement_x, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedIntDelta(snapshot.worldVelocity_y, baseline.worldVelocity_y, compressionModel);
+                writer.WritePackedIntDelta(snapshot.frameDisplacement_y, baseline.frameDisplacement_y, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedIntDelta(snapshot.worldVelocity_z, baseline.worldVelocity_z, compressionModel);
+                writer.WritePackedIntDelta(snapshot.frameDisplacement_z, baseline.frameDisplacement_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -171,41 +171,41 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.playerVelocity_x = reader.ReadPackedIntDelta(baseline.playerVelocity_x, compressionModel);
+                snapshot.floorVelocity_x = reader.ReadPackedIntDelta(baseline.floorVelocity_x, compressionModel);
             else
-                snapshot.playerVelocity_x = baseline.playerVelocity_x;
+                snapshot.floorVelocity_x = baseline.floorVelocity_x;
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.playerVelocity_y = reader.ReadPackedIntDelta(baseline.playerVelocity_y, compressionModel);
+                snapshot.floorVelocity_y = reader.ReadPackedIntDelta(baseline.floorVelocity_y, compressionModel);
             else
-                snapshot.playerVelocity_y = baseline.playerVelocity_y;
+                snapshot.floorVelocity_y = baseline.floorVelocity_y;
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.playerVelocity_z = reader.ReadPackedIntDelta(baseline.playerVelocity_z, compressionModel);
+                snapshot.floorVelocity_z = reader.ReadPackedIntDelta(baseline.floorVelocity_z, compressionModel);
             else
-                snapshot.playerVelocity_z = baseline.playerVelocity_z;
+                snapshot.floorVelocity_z = baseline.floorVelocity_z;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.worldVelocity_x = reader.ReadPackedIntDelta(baseline.worldVelocity_x, compressionModel);
+                snapshot.frameDisplacement_x = reader.ReadPackedIntDelta(baseline.frameDisplacement_x, compressionModel);
             else
-                snapshot.worldVelocity_x = baseline.worldVelocity_x;
+                snapshot.frameDisplacement_x = baseline.frameDisplacement_x;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.worldVelocity_y = reader.ReadPackedIntDelta(baseline.worldVelocity_y, compressionModel);
+                snapshot.frameDisplacement_y = reader.ReadPackedIntDelta(baseline.frameDisplacement_y, compressionModel);
             else
-                snapshot.worldVelocity_y = baseline.worldVelocity_y;
+                snapshot.frameDisplacement_y = baseline.frameDisplacement_y;
             if ((changeMask & (1 << 1)) != 0)
-                snapshot.worldVelocity_z = reader.ReadPackedIntDelta(baseline.worldVelocity_z, compressionModel);
+                snapshot.frameDisplacement_z = reader.ReadPackedIntDelta(baseline.frameDisplacement_z, compressionModel);
             else
-                snapshot.worldVelocity_z = baseline.worldVelocity_z;
+                snapshot.frameDisplacement_z = baseline.frameDisplacement_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.ReportPredictionErrorsDelegate))]
         private static void ReportPredictionErrors(IntPtr componentData, IntPtr backupData, ref UnsafeList<float> errors)
         {
-            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, 0);
-            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(backupData, 0);
+            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(componentData, 0);
+            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.FloorMovement>(backupData, 0);
             int errorIndex = 0;
-            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.playerVelocity, backup.playerVelocity));
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.floorVelocity, backup.floorVelocity));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.worldVelocity, backup.worldVelocity));
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.frameDisplacement, backup.frameDisplacement));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -213,11 +213,11 @@ namespace PropHunt.Generated
             int nameCount = 0;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("playerVelocity"));
+            names.Append(new FixedString64("floorVelocity"));
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("worldVelocity"));
+            names.Append(new FixedString64("frameDisplacement"));
             ++nameCount;
             return nameCount;
         }
