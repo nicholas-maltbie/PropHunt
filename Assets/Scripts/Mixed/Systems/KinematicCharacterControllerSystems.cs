@@ -215,7 +215,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
-    [UpdateBefore(typeof(KCCGravitySystem))]
+    [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCPushOverlappingSystem : SystemBase
     {
         protected unsafe override void OnUpdate()
@@ -244,14 +244,14 @@ namespace PropHunt.Mixed.Systems
                 if (floorMovementGetter.HasComponent(entity))
                 {
                     // Seems to broken for now, will ignore as it works without this feature
-                    // previousDisplacement = floorMovementGetter[entity].frameDisplacement;
+                    previousDisplacement = floorMovementGetter[entity].frameDisplacement;
                 }
 
                 // Draw a ray from the center of the character collider to 
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
-                float3 hitPoint = grounded.groundedPoint + previousDisplacement;
+                float3 hitPoint = grounded.groundedPoint + previousDisplacement - grounded.surfaceNormal * KCCUtils.Epsilon;
                 float3 sourcePoint = hitPoint + grounded.surfaceNormal * movementSettings.maxPush;
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
@@ -280,8 +280,10 @@ namespace PropHunt.Mixed.Systems
                     float3 direction = hitPoint - sourcePoint;
                     float distance = math.length(direction);
                     float overlapDistance = (1 - raycastHit.Fraction) * distance;
-                    // Get movement in direction touching object`
-                    float3 push = math.normalizesafe(-direction) * overlapDistance;
+                    // UnityEngine.Debug.DrawLine(sourcePoint, raycastHit.Position, UnityEngine.Color.red);
+                    // UnityEngine.Debug.DrawLine(raycastHit.Position, hitPoint, UnityEngine.Color.cyan);
+                    // Get movement in direction touching object
+                    float3 push = grounded.surfaceNormal * (overlapDistance + KCCUtils.Epsilon);
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }

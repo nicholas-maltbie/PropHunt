@@ -10,7 +10,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class MovingPlatformSystem : SystemBase
     {
         protected override void OnUpdate()

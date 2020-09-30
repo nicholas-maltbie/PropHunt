@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CategoryNames:
   - Player
-  - 
-  - 
+  - StaticEnvironment
+  - MovingEnvironment
   - 
   - 
   - 

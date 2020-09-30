@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCMovementSettings : IComponentData
     {
         /// <summary>
@@ -86,7 +86,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -125,7 +125,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
@@ -279,7 +279,7 @@ namespace PropHunt.Mixed.Components
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.All)]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCGravity : IComponentData
     {
 
