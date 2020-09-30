@@ -68,7 +68,6 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
-                        grounded.elapsedFallTime = 0;
                     }
                     else
                     {
@@ -78,7 +77,17 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
+                    }
+
+                    // Falling is generated from other values, can be falling
+                    //  if hitting a steep slope on the ground.
+                    if (grounded.Falling)
+                    {
                         grounded.elapsedFallTime += deltaTime;
+                    }
+                    else
+                    {
+                        grounded.elapsedFallTime = 0;
                     }
                 }
             ).ScheduleParallel();
