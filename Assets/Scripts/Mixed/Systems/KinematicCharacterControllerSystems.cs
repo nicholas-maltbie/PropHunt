@@ -174,7 +174,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCGravity gravity) =>
                 {
                     // If the KCC is attempting to jump and is grounded, jump
-                    if (jumping.attemptingJump && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
+                    if (jumping.attemptingJump && !grounded.Falling && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
                     {
                         velocity.worldVelocity += gravity.Up * jumping.jumpForce;
                         jumping.timeElapsedSinceJump = 0.0f;

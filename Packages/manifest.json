@@ -19,6 +19,8 @@
     "com.unity.platforms.linux": "0.8.0-preview.7",
     "com.unity.platforms.macos": "0.8.0-preview.7",
     "com.unity.platforms.windows": "0.8.0-preview.7",
+    "com.unity.probuilder": "4.4.0",
+    "com.unity.progrids": "3.0.3-preview.6",
     "com.unity.purchasing": "2.1.0",
     "com.unity.rendering.hybrid": "0.8.0-preview.19",
     "com.unity.scriptablebuildpipeline": "1.12.0",

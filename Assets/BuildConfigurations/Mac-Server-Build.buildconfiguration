@@ -6,7 +6,7 @@
     "Components": [
         {
             "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
-            "OutputDirectory": "Builds/OSX-Client"
+            "OutputDirectory": "Builds/OSX-Server"
         }
     ]
 }

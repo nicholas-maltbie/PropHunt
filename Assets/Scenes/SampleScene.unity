@@ -153,7 +153,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -325,15 +325,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _SceneAsset: {fileID: 102900000, guid: c2ae074e91d5fbc4b9bb01e6e09688bd, type: 3}
+  _SceneAsset: {fileID: 102900000, guid: b87b09da0ba3ab147b3c1f9d5ca1dff3, type: 3}
   _HierarchyColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   AutoLoadScene: 1
   _SceneGUID:
     Value:
-      x: 3832605228
-      y: 1287609625
-      z: 1846590363
-      w: 3683150094
+      x: 2911942539
+      y: 1102723760
+      z: 3656500151
+      w: 1073552069
 --- !u!1 &889946975
 GameObject:
   m_ObjectHideFlags: 0
