@@ -1,0 +1,38 @@
+{
+    "name": "PlayModeTests",
+    "references": [
+        "Unity.Entities",
+        "Unity.Entities.Tests",
+        "Unity.Entities.Editor.Tests",
+        "Unity.Entities.Hybrid",
+        "Unity.Physics",
+        "Unity.Physics.Editor",
+        "Unity.Physics.Hybrid",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "PropHunt",
+        "PropHunt.Generated",
+        "PropHunt.Tests.Utils",
+        "PropHunt.Scriptable",
+        "Unity.Transforms",
+        "Unity.Mathematics",
+        "Unity.NetCode",
+        "Unity.NetCode.Editor",
+        "Unity.NetCode.Physics",
+        "Unity.NetCode.TestsUtils",
+        "Unity.Scenes"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

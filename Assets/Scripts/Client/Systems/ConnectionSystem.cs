@@ -96,13 +96,15 @@ namespace PropHunt.Client.Systems
         {
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
-                ConnectionSystem.IsConnected = EntityManager.HasComponent<NetworkStreamInGame>(ent);
+                if (EntityManager.HasComponent<NetworkStreamInGame>(ent))
+                {
+                    ConnectionSystem.IsConnected = true;
+                }
                 if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
                     ConnectionSystem.IsConnected = false;
                 }
             });
-
             if (ConnectionSystem.disconnectRequested)
             {
                 Debug.Log("Attempting to disconnect");

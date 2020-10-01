@@ -24,7 +24,7 @@ namespace PropHunt.Server.Systems
 
         protected override void OnCreate()
         {
-            // RequireSingletonForUpdate<GhostPrefabCollectionComponent>();
+            RequireSingletonForUpdate<GhostPrefabCollectionComponent>();
         }
 
         protected int GetPlayerGhostIndex(DynamicBuffer<GhostPrefabBuffer> ghostPrefabBuffers)

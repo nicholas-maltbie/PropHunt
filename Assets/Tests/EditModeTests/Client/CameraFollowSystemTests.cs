@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using NUnit.Framework;
 using PropHunt.Client.Systems;
@@ -11,7 +10,7 @@ using Unity.NetCode;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace PropHunt.Tests.Client
+namespace PropHunt.EditMode.Tests.Client
 {
     [TestFixture]
     public class CameraFollowSystemTests : ECSTestsFixture
@@ -113,6 +112,22 @@ namespace PropHunt.Tests.Client
                 typeof(PlayerId),
                 typeof(PlayerView)
             );
+        }
+
+        /// <summary>
+        /// Checking functionality when camera does not exist.
+        /// </summary>
+        [Test]
+        public void NoCameraExists()
+        {
+            // Make singletons for follow
+            CreateNetworkSingletons(1);
+
+            // Remove main camera
+            GameObject.DestroyImmediate(this.camera);
+
+            // Do an update step for the system
+            this.cameraFollow.Update();
         }
 
         /// <summary>

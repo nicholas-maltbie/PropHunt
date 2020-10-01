@@ -81,17 +81,16 @@ jobs:
           filename: "${{ env.COVERAGE_FILE }}"
           expression: '//CoverageSession/Summary/@sequenceCoverage'
       
-      - name: Branch Coverage
-        id: branchCoverage
-        uses: QwerMike/xpath-action@v1
-        with:
-          filename: "${{ env.COVERAGE_FILE }}"
-          expression: '//CoverageSession/Summary/@branchCoverage'
+      # - name: Branch Coverage
+      #   id: branchCoverage
+      #   uses: QwerMike/xpath-action@v1
+      #   with:
+      #     filename: "${{ env.COVERAGE_FILE }}"
+      #     expression: '//CoverageSession/Summary/@branchCoverage'
       
       - name: Parse Coverage
         run: |
           echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
-          echo ::set-env name=BRANCH_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.branchCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
@@ -99,7 +98,6 @@ jobs:
           message: |
             Test Coverage Results for ${{ matrix.testMode }}:
             Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}%
-            Branch Coverage: ${{ env.BRANCH_COVERAGE }}%
             Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
@@ -109,4 +107,3 @@ jobs:
       # - name: Assert Coverage
       #   run: |
       #     python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
-      #     python3 -c "assert ${{ env.BRANCH_COVERAGE }} >= 95, 'Branch coverage must be at least 95%, is only ${{ env.BRANCH_COVERAGE }}%'"
