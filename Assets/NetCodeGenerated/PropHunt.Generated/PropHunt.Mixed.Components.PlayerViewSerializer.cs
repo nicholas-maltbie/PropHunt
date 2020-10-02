@@ -27,7 +27,7 @@ namespace PropHunt.Generated
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.PlayerView>(),
                 SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                 ChangeMaskBits = ChangeMaskBits,
-                SendMask = GhostComponentSerializer.SendMask.Predicted,
+                SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
                 SendForChildEntities = 1,
                 CopyToSnapshot =
                     new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),

@@ -5,6 +5,7 @@ using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Commands;
 using UnityEngine;
 using Unity.Burst;
+using PropHunt.Client.Components;
 
 namespace PropHunt.Client.Systems
 {
@@ -61,6 +62,13 @@ namespace PropHunt.Client.Systems
                 input.jump = 0;
                 input.sprint = 0;
             }
+
+            Entities.ForEach((ref LocalView localView) =>
+                {
+                    localView.pitch += input.pitchChange;
+                    localView.yaw += input.yawChange;
+                }
+            );
 
             var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
             inputBuffer.AddCommandData(input);

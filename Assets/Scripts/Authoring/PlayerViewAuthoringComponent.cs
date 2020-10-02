@@ -1,3 +1,4 @@
+using PropHunt.Client.Components;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using UnityEngine;
@@ -25,8 +26,9 @@ namespace PropHunt.Authoring
             dstManager.AddComponentData(entity, new PlayerView()
             {
                 viewRotationRate = this.viewRotationRate,
-                offset = offset
+                offset = offset,
             });
+            dstManager.AddComponentData(entity, new LocalView(){});
         }
     }
 }

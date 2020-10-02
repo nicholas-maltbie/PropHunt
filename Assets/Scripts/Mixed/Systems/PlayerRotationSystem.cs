@@ -53,7 +53,5 @@ namespace PropHunt.Mixed.Systems
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
             }).ScheduleParallel();
         }
-
     }
-
 }
