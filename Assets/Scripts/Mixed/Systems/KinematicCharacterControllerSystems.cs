@@ -310,6 +310,7 @@ namespace PropHunt.Mixed.Systems
                 ref FloorMovement floor,
                 in KCCGrounded grounded) =>
                 {
+                    float3 tempVelocity = floor.floorVelocity;
                     floor.frameDisplacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
@@ -339,7 +340,7 @@ namespace PropHunt.Mixed.Systems
                     }
                     else if (grounded.Falling && !grounded.PreviousFalling)
                     {
-                        velocity.worldVelocity += floor.floorVelocity;
+                        velocity.worldVelocity += tempVelocity;
                     }
                 }
             ).ScheduleParallel();
