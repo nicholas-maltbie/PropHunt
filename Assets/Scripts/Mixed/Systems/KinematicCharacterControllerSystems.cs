@@ -90,7 +90,6 @@ namespace PropHunt.Mixed.Systems
                     if (grounded.Falling)
                     {
                         grounded.elapsedFallTime += deltaTime;
-                        grounded.surfaceNormal = float3.zero;
                     }
                     else
                     {
@@ -270,6 +269,7 @@ namespace PropHunt.Mixed.Systems
 
                 // Do the raycast computation
                 bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+                UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
 
                 // Push our character collider out of the object we are overlapping with
                 if (collisionOcurred)
