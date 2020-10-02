@@ -23,11 +23,13 @@ namespace PropHunt.Mixed.Systems
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
+            var isClient = World.GetExistingSystem<ClientSimulationSystemGroup>() != null;
 
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref PlayerView view,
                 ref Rotation rot,
+                in PlayerId playerId,
                 in PredictedGhostComponent prediction) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
@@ -38,16 +40,10 @@ namespace PropHunt.Mixed.Systems
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
 
-                view.pitch += deltaTime * -1 * input.pitchChange * view.viewRotationRate;
-                view.yaw += deltaTime * input.yawChange * view.viewRotationRate;
-
-                if (view.pitch > 90)
+                if (!isClient)
                 {
-                    view.pitch = 90;
-                }
-                else if (view.pitch < -90)
-                {
-                    view.pitch = -90;
+                    view.pitch = input.targetPitch;
+                    view.yaw = input.targetYaw;
                 }
 
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;

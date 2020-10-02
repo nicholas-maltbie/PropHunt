@@ -19,8 +19,8 @@ namespace PropHunt.Generated
             writer.WriteUInt(data.tick);
             writer.WriteFloat(data.horizMove);
             writer.WriteFloat(data.vertMove);
-            writer.WriteFloat(data.pitchChange);
-            writer.WriteFloat(data.yawChange);
+            writer.WriteFloat(data.targetYaw);
+            writer.WriteFloat(data.targetPitch);
             writer.WriteUInt(data.jump);
             writer.WriteUInt(data.interact);
             writer.WriteUInt(data.sprint);
@@ -31,8 +31,8 @@ namespace PropHunt.Generated
             data.tick = (uint) reader.ReadUInt();
             data.horizMove = reader.ReadFloat();
             data.vertMove = reader.ReadFloat();
-            data.pitchChange = reader.ReadFloat();
-            data.yawChange = reader.ReadFloat();
+            data.targetYaw = reader.ReadFloat();
+            data.targetPitch = reader.ReadFloat();
             data.jump = (byte) reader.ReadUInt();
             data.interact = (byte) reader.ReadUInt();
             data.sprint = (byte) reader.ReadUInt();
@@ -43,8 +43,8 @@ namespace PropHunt.Generated
             writer.WritePackedUIntDelta(data.tick, baseline.tick, compressionModel);
             writer.WritePackedFloatDelta(data.horizMove, baseline.horizMove, compressionModel);
             writer.WritePackedFloatDelta(data.vertMove, baseline.vertMove, compressionModel);
-            writer.WritePackedFloatDelta(data.pitchChange, baseline.pitchChange, compressionModel);
-            writer.WritePackedFloatDelta(data.yawChange, baseline.yawChange, compressionModel);
+            writer.WritePackedFloatDelta(data.targetYaw, baseline.targetYaw, compressionModel);
+            writer.WritePackedFloatDelta(data.targetPitch, baseline.targetPitch, compressionModel);
             writer.WritePackedUIntDelta(data.jump, baseline.jump, compressionModel);
             writer.WritePackedUIntDelta(data.interact, baseline.interact, compressionModel);
             writer.WritePackedUIntDelta(data.sprint, baseline.sprint, compressionModel);
@@ -55,8 +55,8 @@ namespace PropHunt.Generated
             data.tick = (uint) reader.ReadPackedUIntDelta(baseline.tick, compressionModel);
             data.horizMove = reader.ReadPackedFloatDelta(baseline.horizMove, compressionModel);
             data.vertMove = reader.ReadPackedFloatDelta(baseline.vertMove, compressionModel);
-            data.pitchChange = reader.ReadPackedFloatDelta(baseline.pitchChange, compressionModel);
-            data.yawChange = reader.ReadPackedFloatDelta(baseline.yawChange, compressionModel);
+            data.targetYaw = reader.ReadPackedFloatDelta(baseline.targetYaw, compressionModel);
+            data.targetPitch = reader.ReadPackedFloatDelta(baseline.targetPitch, compressionModel);
             data.jump = (byte) reader.ReadPackedUIntDelta(baseline.jump, compressionModel);
             data.interact = (byte) reader.ReadPackedUIntDelta(baseline.interact, compressionModel);
             data.sprint = (byte) reader.ReadPackedUIntDelta(baseline.sprint, compressionModel);

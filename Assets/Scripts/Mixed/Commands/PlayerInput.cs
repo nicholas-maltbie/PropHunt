@@ -18,25 +18,28 @@ namespace PropHunt.Mixed.Commands
         /// Horizontal (strafe) movement value (between 0-1).
         /// </summary>
         public float horizMove;
+
         /// <summary>
         /// Vertical (forward backward) movement value (between 0-1).
         /// </summary>
         public float vertMove;
 
         /// <summary>
-        /// Change in pitch (up and down) of the player's view.
+        /// Current value for player view Yaw.
         /// </summary>
-        public float pitchChange;
+        public float targetYaw;
+
         /// <summary>
-        /// Change in yaw (left and right) of the player's view.
+        /// Current value for player view Pitch.
         /// </summary>
-        public float yawChange;
+        public float targetPitch;
 
         /// <summary>
         /// Is the player attempting to jump at this tick.
         /// 1 is jumping, 0 is not jumping.
         /// </summary>
         public byte jump;
+
         /// <summary>
         /// Is the character currently attempting to jump as a boolean.
         /// </summary>
@@ -47,6 +50,7 @@ namespace PropHunt.Mixed.Commands
         /// 1 is interacting, 0 is not interacting.
         /// </summary>
         public byte interact;
+
         /// <summary>
         /// Is the character currently attempting to interact as a boolean.
         /// </summary>
@@ -57,6 +61,7 @@ namespace PropHunt.Mixed.Commands
         /// 1 is sprinting, 0 is not sprinting;
         /// </summary>
         public byte sprint;
+
         /// <summary>
         /// Is the character currently attempting to jump as a boolean
         /// </summary>
@@ -73,8 +78,8 @@ namespace PropHunt.Mixed.Commands
             this.tick = tick;
             this.horizMove = reader.ReadFloat();
             this.vertMove = reader.ReadFloat();
-            this.pitchChange = reader.ReadFloat();
-            this.yawChange = reader.ReadFloat();
+            this.targetPitch = reader.ReadFloat();
+            this.targetYaw = reader.ReadFloat();
             this.jump = reader.ReadByte();
             this.interact = reader.ReadByte();
             this.sprint = reader.ReadByte();
@@ -84,8 +89,8 @@ namespace PropHunt.Mixed.Commands
         {
             writer.WriteFloat(this.horizMove);
             writer.WriteFloat(this.vertMove);
-            writer.WriteFloat(this.pitchChange);
-            writer.WriteFloat(this.yawChange);
+            writer.WriteFloat(this.targetPitch);
+            writer.WriteFloat(this.targetYaw);
             writer.WriteByte(this.jump);
             writer.WriteByte(this.interact);
             writer.WriteByte(this.sprint);

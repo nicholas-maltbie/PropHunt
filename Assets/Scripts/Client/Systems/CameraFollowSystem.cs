@@ -1,4 +1,3 @@
-using PropHunt.Client.Components;
 using PropHunt.Mixed.Components;
 using Unity.Burst;
 using Unity.Entities;
@@ -26,7 +25,6 @@ namespace PropHunt.Client.Systems
         protected override void OnUpdate()
         {
             int localPlayerId = GetSingleton<NetworkIdComponent>().Value;
-            var localViewGetter = GetComponentDataFromEntity<LocalView>();
 
             // Skip function if no main camera exists
             if (Camera.main == null)
@@ -45,15 +43,7 @@ namespace PropHunt.Client.Systems
                             position.y = transform.Value.y;
                             position.z = transform.Value.z;
                             position += view.offset;
-                            if (localViewGetter.HasComponent(ent))
-                            {
-                                LocalView localView = localViewGetter[ent];
-                                rotation.value = quaternion.Euler(math.radians(localView.pitch), math.radians(localView.yaw), 0).value;
-                            }
-                            else
-                            {
-                                rotation.value = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0).value;
-                            }
+                            rotation.value = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0).value;
                         }
                     }
                 );
