@@ -68,7 +68,6 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
-                        grounded.elapsedFallTime = 0;
                     }
                     else
                     {
@@ -78,7 +77,17 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
+                    }
+
+                    // Falling is generated from other values, can be falling
+                    //  if hitting a steep slope on the ground.
+                    if (grounded.Falling)
+                    {
                         grounded.elapsedFallTime += deltaTime;
+                    }
+                    else
+                    {
+                        grounded.elapsedFallTime = 0;
                     }
                 }
             ).ScheduleParallel();
@@ -174,7 +183,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCGravity gravity) =>
                 {
                     // If the KCC is attempting to jump and is grounded, jump
-                    if (jumping.attemptingJump && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
+                    if (jumping.attemptingJump && !grounded.Falling && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
                     {
                         velocity.worldVelocity += gravity.Up * jumping.jumpForce;
                         jumping.timeElapsedSinceJump = 0.0f;
