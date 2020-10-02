@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 15088479763335051885,
+                GhostFieldsHash = 11975939360750824860,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCGrounded>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCGrounded>(),
@@ -55,22 +55,9 @@ namespace PropHunt.Generated
             public int maxWalkAngle;
             public int groundCheckDistance;
             public int groundFallingDistance;
-            public int angle;
-            public int distanceToGround;
-            public uint onGround;
-            public int groundedRBIndex;
-            public int groundedPoint_x;
-            public int groundedPoint_y;
-            public int groundedPoint_z;
             public int elapsedFallTime;
-            public int surfaceNormal_x;
-            public int surfaceNormal_y;
-            public int surfaceNormal_z;
-            public int previousDistanceToGround;
-            public uint previousOnGround;
-            public int previousAngle;
         }
-        public const int ChangeMaskBits = 13;
+        public const int ChangeMaskBits = 4;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -83,20 +70,7 @@ namespace PropHunt.Generated
                 snapshot.maxWalkAngle = (int) math.round(component.maxWalkAngle * 100);
                 snapshot.groundCheckDistance = (int) math.round(component.groundCheckDistance * 100);
                 snapshot.groundFallingDistance = (int) math.round(component.groundFallingDistance * 100);
-                snapshot.angle = (int) math.round(component.angle * 100);
-                snapshot.distanceToGround = (int) math.round(component.distanceToGround * 100);
-                snapshot.onGround = component.onGround?1u:0;
-                snapshot.groundedRBIndex = (int) component.groundedRBIndex;
-                snapshot.groundedPoint_x = (int) math.round(component.groundedPoint.x * 100);
-                snapshot.groundedPoint_y = (int) math.round(component.groundedPoint.y * 100);
-                snapshot.groundedPoint_z = (int) math.round(component.groundedPoint.z * 100);
                 snapshot.elapsedFallTime = (int) math.round(component.elapsedFallTime * 100);
-                snapshot.surfaceNormal_x = (int) math.round(component.surfaceNormal.x * 100);
-                snapshot.surfaceNormal_y = (int) math.round(component.surfaceNormal.y * 100);
-                snapshot.surfaceNormal_z = (int) math.round(component.surfaceNormal.z * 100);
-                snapshot.previousDistanceToGround = (int) math.round(component.previousDistanceToGround * 100);
-                snapshot.previousOnGround = component.previousOnGround?1u:0;
-                snapshot.previousAngle = (int) math.round(component.previousAngle * 100);
             }
         }
         [BurstCompile]
@@ -121,32 +95,9 @@ namespace PropHunt.Generated
                 component.groundFallingDistance =
                     math.lerp(snapshotBefore.groundFallingDistance * 0.01f,
                         snapshotAfter.groundFallingDistance * 0.01f, snapshotInterpolationFactor);
-                component.angle =
-                    math.lerp(snapshotBefore.angle * 0.01f,
-                        snapshotAfter.angle * 0.01f, snapshotInterpolationFactor);
-                component.distanceToGround =
-                    math.lerp(snapshotBefore.distanceToGround * 0.01f,
-                        snapshotAfter.distanceToGround * 0.01f, snapshotInterpolationFactor);
-                component.onGround = snapshotBefore.onGround != 0;
-                component.groundedRBIndex = (int) snapshotBefore.groundedRBIndex;
-                component.groundedPoint = math.lerp(
-                    new float3(snapshotBefore.groundedPoint_x * 0.01f, snapshotBefore.groundedPoint_y * 0.01f, snapshotBefore.groundedPoint_z * 0.01f),
-                    new float3(snapshotAfter.groundedPoint_x * 0.01f, snapshotAfter.groundedPoint_y * 0.01f, snapshotAfter.groundedPoint_z * 0.01f),
-                    snapshotInterpolationFactor);
                 component.elapsedFallTime =
                     math.lerp(snapshotBefore.elapsedFallTime * 0.01f,
                         snapshotAfter.elapsedFallTime * 0.01f, snapshotInterpolationFactor);
-                component.surfaceNormal = math.lerp(
-                    new float3(snapshotBefore.surfaceNormal_x * 0.01f, snapshotBefore.surfaceNormal_y * 0.01f, snapshotBefore.surfaceNormal_z * 0.01f),
-                    new float3(snapshotAfter.surfaceNormal_x * 0.01f, snapshotAfter.surfaceNormal_y * 0.01f, snapshotAfter.surfaceNormal_z * 0.01f),
-                    snapshotInterpolationFactor);
-                component.previousDistanceToGround =
-                    math.lerp(snapshotBefore.previousDistanceToGround * 0.01f,
-                        snapshotAfter.previousDistanceToGround * 0.01f, snapshotInterpolationFactor);
-                component.previousOnGround = snapshotBefore.previousOnGround != 0;
-                component.previousAngle =
-                    math.lerp(snapshotBefore.previousAngle * 0.01f,
-                        snapshotAfter.previousAngle * 0.01f, snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
@@ -158,20 +109,7 @@ namespace PropHunt.Generated
             component.maxWalkAngle = backup.maxWalkAngle;
             component.groundCheckDistance = backup.groundCheckDistance;
             component.groundFallingDistance = backup.groundFallingDistance;
-            component.angle = backup.angle;
-            component.distanceToGround = backup.distanceToGround;
-            component.onGround = backup.onGround;
-            component.groundedRBIndex = backup.groundedRBIndex;
-            component.groundedPoint.x = backup.groundedPoint.x;
-            component.groundedPoint.y = backup.groundedPoint.y;
-            component.groundedPoint.z = backup.groundedPoint.z;
             component.elapsedFallTime = backup.elapsedFallTime;
-            component.surfaceNormal.x = backup.surfaceNormal.x;
-            component.surfaceNormal.y = backup.surfaceNormal.y;
-            component.surfaceNormal.z = backup.surfaceNormal.z;
-            component.previousDistanceToGround = backup.previousDistanceToGround;
-            component.previousOnGround = backup.previousOnGround;
-            component.previousAngle = backup.previousAngle;
         }
 
         [BurstCompile]
@@ -184,20 +122,7 @@ namespace PropHunt.Generated
             snapshot.maxWalkAngle = predictor.PredictInt(snapshot.maxWalkAngle, baseline1.maxWalkAngle, baseline2.maxWalkAngle);
             snapshot.groundCheckDistance = predictor.PredictInt(snapshot.groundCheckDistance, baseline1.groundCheckDistance, baseline2.groundCheckDistance);
             snapshot.groundFallingDistance = predictor.PredictInt(snapshot.groundFallingDistance, baseline1.groundFallingDistance, baseline2.groundFallingDistance);
-            snapshot.angle = predictor.PredictInt(snapshot.angle, baseline1.angle, baseline2.angle);
-            snapshot.distanceToGround = predictor.PredictInt(snapshot.distanceToGround, baseline1.distanceToGround, baseline2.distanceToGround);
-            snapshot.onGround = (uint)predictor.PredictInt((int)snapshot.onGround, (int)baseline1.onGround, (int)baseline2.onGround);
-            snapshot.groundedRBIndex = predictor.PredictInt(snapshot.groundedRBIndex, baseline1.groundedRBIndex, baseline2.groundedRBIndex);
-            snapshot.groundedPoint_x = predictor.PredictInt(snapshot.groundedPoint_x, baseline1.groundedPoint_x, baseline2.groundedPoint_x);
-            snapshot.groundedPoint_y = predictor.PredictInt(snapshot.groundedPoint_y, baseline1.groundedPoint_y, baseline2.groundedPoint_y);
-            snapshot.groundedPoint_z = predictor.PredictInt(snapshot.groundedPoint_z, baseline1.groundedPoint_z, baseline2.groundedPoint_z);
             snapshot.elapsedFallTime = predictor.PredictInt(snapshot.elapsedFallTime, baseline1.elapsedFallTime, baseline2.elapsedFallTime);
-            snapshot.surfaceNormal_x = predictor.PredictInt(snapshot.surfaceNormal_x, baseline1.surfaceNormal_x, baseline2.surfaceNormal_x);
-            snapshot.surfaceNormal_y = predictor.PredictInt(snapshot.surfaceNormal_y, baseline1.surfaceNormal_y, baseline2.surfaceNormal_y);
-            snapshot.surfaceNormal_z = predictor.PredictInt(snapshot.surfaceNormal_z, baseline1.surfaceNormal_z, baseline2.surfaceNormal_z);
-            snapshot.previousDistanceToGround = predictor.PredictInt(snapshot.previousDistanceToGround, baseline1.previousDistanceToGround, baseline2.previousDistanceToGround);
-            snapshot.previousOnGround = (uint)predictor.PredictInt((int)snapshot.previousOnGround, (int)baseline1.previousOnGround, (int)baseline2.previousOnGround);
-            snapshot.previousAngle = predictor.PredictInt(snapshot.previousAngle, baseline1.previousAngle, baseline2.previousAngle);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -209,21 +134,8 @@ namespace PropHunt.Generated
             changeMask = (snapshot.maxWalkAngle != baseline.maxWalkAngle) ? 1u : 0;
             changeMask |= (snapshot.groundCheckDistance != baseline.groundCheckDistance) ? (1u<<1) : 0;
             changeMask |= (snapshot.groundFallingDistance != baseline.groundFallingDistance) ? (1u<<2) : 0;
-            changeMask |= (snapshot.angle != baseline.angle) ? (1u<<3) : 0;
-            changeMask |= (snapshot.distanceToGround != baseline.distanceToGround) ? (1u<<4) : 0;
-            changeMask |= (snapshot.onGround != baseline.onGround) ? (1u<<5) : 0;
-            changeMask |= (snapshot.groundedRBIndex != baseline.groundedRBIndex) ? (1u<<6) : 0;
-            changeMask |= (snapshot.groundedPoint_x != baseline.groundedPoint_x) ? (1u<<7) : 0;
-            changeMask |= (snapshot.groundedPoint_y != baseline.groundedPoint_y) ? (1u<<7) : 0;
-            changeMask |= (snapshot.groundedPoint_z != baseline.groundedPoint_z) ? (1u<<7) : 0;
-            changeMask |= (snapshot.elapsedFallTime != baseline.elapsedFallTime) ? (1u<<8) : 0;
-            changeMask |= (snapshot.surfaceNormal_x != baseline.surfaceNormal_x) ? (1u<<9) : 0;
-            changeMask |= (snapshot.surfaceNormal_y != baseline.surfaceNormal_y) ? (1u<<9) : 0;
-            changeMask |= (snapshot.surfaceNormal_z != baseline.surfaceNormal_z) ? (1u<<9) : 0;
-            changeMask |= (snapshot.previousDistanceToGround != baseline.previousDistanceToGround) ? (1u<<10) : 0;
-            changeMask |= (snapshot.previousOnGround != baseline.previousOnGround) ? (1u<<11) : 0;
-            changeMask |= (snapshot.previousAngle != baseline.previousAngle) ? (1u<<12) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 13);
+            changeMask |= (snapshot.elapsedFallTime != baseline.elapsedFallTime) ? (1u<<3) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 4);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -239,33 +151,7 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 2)) != 0)
                 writer.WritePackedIntDelta(snapshot.groundFallingDistance, baseline.groundFallingDistance, compressionModel);
             if ((changeMask & (1 << 3)) != 0)
-                writer.WritePackedIntDelta(snapshot.angle, baseline.angle, compressionModel);
-            if ((changeMask & (1 << 4)) != 0)
-                writer.WritePackedIntDelta(snapshot.distanceToGround, baseline.distanceToGround, compressionModel);
-            if ((changeMask & (1 << 5)) != 0)
-                writer.WritePackedUIntDelta(snapshot.onGround, baseline.onGround, compressionModel);
-            if ((changeMask & (1 << 6)) != 0)
-                writer.WritePackedIntDelta(snapshot.groundedRBIndex, baseline.groundedRBIndex, compressionModel);
-            if ((changeMask & (1 << 7)) != 0)
-                writer.WritePackedIntDelta(snapshot.groundedPoint_x, baseline.groundedPoint_x, compressionModel);
-            if ((changeMask & (1 << 7)) != 0)
-                writer.WritePackedIntDelta(snapshot.groundedPoint_y, baseline.groundedPoint_y, compressionModel);
-            if ((changeMask & (1 << 7)) != 0)
-                writer.WritePackedIntDelta(snapshot.groundedPoint_z, baseline.groundedPoint_z, compressionModel);
-            if ((changeMask & (1 << 8)) != 0)
                 writer.WritePackedIntDelta(snapshot.elapsedFallTime, baseline.elapsedFallTime, compressionModel);
-            if ((changeMask & (1 << 9)) != 0)
-                writer.WritePackedIntDelta(snapshot.surfaceNormal_x, baseline.surfaceNormal_x, compressionModel);
-            if ((changeMask & (1 << 9)) != 0)
-                writer.WritePackedIntDelta(snapshot.surfaceNormal_y, baseline.surfaceNormal_y, compressionModel);
-            if ((changeMask & (1 << 9)) != 0)
-                writer.WritePackedIntDelta(snapshot.surfaceNormal_z, baseline.surfaceNormal_z, compressionModel);
-            if ((changeMask & (1 << 10)) != 0)
-                writer.WritePackedIntDelta(snapshot.previousDistanceToGround, baseline.previousDistanceToGround, compressionModel);
-            if ((changeMask & (1 << 11)) != 0)
-                writer.WritePackedUIntDelta(snapshot.previousOnGround, baseline.previousOnGround, compressionModel);
-            if ((changeMask & (1 << 12)) != 0)
-                writer.WritePackedIntDelta(snapshot.previousAngle, baseline.previousAngle, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -287,61 +173,9 @@ namespace PropHunt.Generated
             else
                 snapshot.groundFallingDistance = baseline.groundFallingDistance;
             if ((changeMask & (1 << 3)) != 0)
-                snapshot.angle = reader.ReadPackedIntDelta(baseline.angle, compressionModel);
-            else
-                snapshot.angle = baseline.angle;
-            if ((changeMask & (1 << 4)) != 0)
-                snapshot.distanceToGround = reader.ReadPackedIntDelta(baseline.distanceToGround, compressionModel);
-            else
-                snapshot.distanceToGround = baseline.distanceToGround;
-            if ((changeMask & (1 << 5)) != 0)
-                snapshot.onGround = reader.ReadPackedUIntDelta(baseline.onGround, compressionModel);
-            else
-                snapshot.onGround = baseline.onGround;
-            if ((changeMask & (1 << 6)) != 0)
-                snapshot.groundedRBIndex = reader.ReadPackedIntDelta(baseline.groundedRBIndex, compressionModel);
-            else
-                snapshot.groundedRBIndex = baseline.groundedRBIndex;
-            if ((changeMask & (1 << 7)) != 0)
-                snapshot.groundedPoint_x = reader.ReadPackedIntDelta(baseline.groundedPoint_x, compressionModel);
-            else
-                snapshot.groundedPoint_x = baseline.groundedPoint_x;
-            if ((changeMask & (1 << 7)) != 0)
-                snapshot.groundedPoint_y = reader.ReadPackedIntDelta(baseline.groundedPoint_y, compressionModel);
-            else
-                snapshot.groundedPoint_y = baseline.groundedPoint_y;
-            if ((changeMask & (1 << 7)) != 0)
-                snapshot.groundedPoint_z = reader.ReadPackedIntDelta(baseline.groundedPoint_z, compressionModel);
-            else
-                snapshot.groundedPoint_z = baseline.groundedPoint_z;
-            if ((changeMask & (1 << 8)) != 0)
                 snapshot.elapsedFallTime = reader.ReadPackedIntDelta(baseline.elapsedFallTime, compressionModel);
             else
                 snapshot.elapsedFallTime = baseline.elapsedFallTime;
-            if ((changeMask & (1 << 9)) != 0)
-                snapshot.surfaceNormal_x = reader.ReadPackedIntDelta(baseline.surfaceNormal_x, compressionModel);
-            else
-                snapshot.surfaceNormal_x = baseline.surfaceNormal_x;
-            if ((changeMask & (1 << 9)) != 0)
-                snapshot.surfaceNormal_y = reader.ReadPackedIntDelta(baseline.surfaceNormal_y, compressionModel);
-            else
-                snapshot.surfaceNormal_y = baseline.surfaceNormal_y;
-            if ((changeMask & (1 << 9)) != 0)
-                snapshot.surfaceNormal_z = reader.ReadPackedIntDelta(baseline.surfaceNormal_z, compressionModel);
-            else
-                snapshot.surfaceNormal_z = baseline.surfaceNormal_z;
-            if ((changeMask & (1 << 10)) != 0)
-                snapshot.previousDistanceToGround = reader.ReadPackedIntDelta(baseline.previousDistanceToGround, compressionModel);
-            else
-                snapshot.previousDistanceToGround = baseline.previousDistanceToGround;
-            if ((changeMask & (1 << 11)) != 0)
-                snapshot.previousOnGround = reader.ReadPackedUIntDelta(baseline.previousOnGround, compressionModel);
-            else
-                snapshot.previousOnGround = baseline.previousOnGround;
-            if ((changeMask & (1 << 12)) != 0)
-                snapshot.previousAngle = reader.ReadPackedIntDelta(baseline.previousAngle, compressionModel);
-            else
-                snapshot.previousAngle = baseline.previousAngle;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -357,25 +191,7 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundFallingDistance - backup.groundFallingDistance));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.angle - backup.angle));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.distanceToGround - backup.distanceToGround));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], (component.onGround != backup.onGround) ? 1 : 0);
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundedRBIndex - backup.groundedRBIndex));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.groundedPoint, backup.groundedPoint));
-            ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.elapsedFallTime - backup.elapsedFallTime));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.surfaceNormal, backup.surfaceNormal));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.previousDistanceToGround - backup.previousDistanceToGround));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], (component.previousOnGround != backup.previousOnGround) ? 1 : 0);
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.previousAngle - backup.previousAngle));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -395,43 +211,7 @@ namespace PropHunt.Generated
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("angle"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("distanceToGround"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("onGround"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("groundedRBIndex"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("groundedPoint"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
             names.Append(new FixedString64("elapsedFallTime"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("surfaceNormal"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("previousDistanceToGround"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("previousOnGround"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("previousAngle"));
             ++nameCount;
             return nameCount;
         }
