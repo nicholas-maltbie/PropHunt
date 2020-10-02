@@ -1,12 +1,13 @@
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
+using PropHunt.Mixed.Systems;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
 
-namespace PropHunt.Mixed.Systems
+namespace PropHunt.Server.Systems
 {
 
     /// <summary>
@@ -15,7 +16,7 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class PlayerRotationSystem : SystemBase
     {
@@ -40,13 +41,8 @@ namespace PropHunt.Mixed.Systems
 
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
-
-                if (!isClient)
-                {
-                    view.pitch = input.targetPitch;
-                    view.yaw = input.targetYaw;
-                }
-
+                view.pitch = input.targetPitch;
+                view.yaw = input.targetYaw;
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
             }).ScheduleParallel();
         }
