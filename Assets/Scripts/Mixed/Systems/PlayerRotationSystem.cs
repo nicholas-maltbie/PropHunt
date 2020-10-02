@@ -16,6 +16,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class PlayerRotationSystem : SystemBase
     {
         protected override void OnUpdate()
