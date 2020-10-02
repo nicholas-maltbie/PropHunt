@@ -3,7 +3,6 @@ using PropHunt.Mixed.Utilities;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
@@ -283,7 +282,7 @@ namespace PropHunt.Mixed.Systems
                     // UnityEngine.Debug.DrawLine(sourcePoint, raycastHit.Position, UnityEngine.Color.red);
                     // UnityEngine.Debug.DrawLine(raycastHit.Position, hitPoint, UnityEngine.Color.cyan);
                     // Get movement in direction touching object
-                    float3 push = grounded.surfaceNormal * (overlapDistance + KCCUtils.Epsilon);
+                    float3 push = grounded.surfaceNormal * (overlapDistance + KCCUtils.Epsilon * 2);
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }

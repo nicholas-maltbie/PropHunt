@@ -1,8 +1,6 @@
-
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace PropHunt.Mixed.Components
 {
@@ -14,50 +12,51 @@ namespace PropHunt.Mixed.Components
     public struct MovementTracking : IComponentData
     {
         /// <summary>
+        /// Should momentum be transferred to players
+        /// </summary>
+        [GhostField]
+        public bool avoidTransferMomentum;
+
+        /// <summary>
         /// Current measured position of an object
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public float3 position;
+        private float3 position;
 
         /// <summary>
         /// Previously measured position of an object (previous frame)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public float3 previousPosition;
+        private float3 previousPosition;
 
         /// <summary>
         /// An object's current attitude (rotation)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public quaternion attitude;
+        private quaternion attitude;
 
         /// <summary>
         /// Previously measured attitude of an object (previous frame)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        public quaternion previousAttitude;
+        private quaternion previousAttitude;
 
         /// <summary>
         /// Number of times this tracking component has been updated
         /// </summary>
-        [GhostField]
-        public int updates;
+        private int updates;
 
         /// <summary>
         /// Has this been properly initialized? (needs at least two samples to be initialized)
         /// </summary>
-        public bool Initialized => updates >= 2;
+        private bool Initialized => updates >= 2;
 
         /// <summary>
         /// Finds the change in attitude (expressed as a quaternion) between
         /// the current and previous attitude. QFinal * Inv(QInitial)
         /// </summary>
-        public quaternion ChangeAttitude => Initialized ? math.mul(attitude, math.inverse(previousAttitude)) : quaternion.identity;
+        private quaternion ChangeAttitude => Initialized ? math.mul(attitude, math.inverse(previousAttitude)) : quaternion.identity;
 
         /// <summary>
         /// Displacement between current and previous frames
         /// </summary>
-        public float3 Displacement => Initialized ? position - previousPosition : float3.zero;
+        private float3 Displacement => Initialized ? position - previousPosition : float3.zero;
 
         /// <summary>
         /// Gets the absolute displacement of a point relative to the
