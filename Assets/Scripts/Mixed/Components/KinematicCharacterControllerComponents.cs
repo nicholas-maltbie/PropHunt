@@ -77,7 +77,7 @@ namespace PropHunt.Mixed.Components
         public float fallPushDecay;
 
         /// <summary>
-        /// Maximum that a character can be pushed during a single frame (should be the diameter of the character or so)
+        /// Maximum that a character can be pushed per second (should be the diameter of the character or so)
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = false)]
         public float maxPush;

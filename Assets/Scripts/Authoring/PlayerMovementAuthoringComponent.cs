@@ -90,7 +90,7 @@ namespace PropHunt.Authoring
         public float groundFallingDistance = 0.01f;
 
         /// <summary>
-        /// Maximum distance to push a character in a frame, should be the character's diameter
+        /// Maximum distance to push a character per second, should be the character's diameter
         /// </summary>
         public float maxPush = 2;
 

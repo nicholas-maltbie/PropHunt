@@ -173,11 +173,8 @@ MonoBehaviour:
   pushDecay: 0.1
   jumpGraceTime: 0.1
   jumpCooldown: 0.3
-<<<<<<< HEAD
-=======
   groundFallingDistance: 0.01
-  maxPush: 0.5
->>>>>>> Fixed sample configuration for camera and pushing through walls
+  maxPush: 10
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0

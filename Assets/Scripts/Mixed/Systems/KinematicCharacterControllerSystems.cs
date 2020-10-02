@@ -221,6 +221,7 @@ namespace PropHunt.Mixed.Systems
         {
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             var floorMovementGetter = GetComponentDataFromEntity<FloorMovement>(true);
+            float deltaTime = Time.DeltaTime;
 
             Entities.WithReadOnly(floorMovementGetter).ForEach((
                 Entity entity,
@@ -251,7 +252,7 @@ namespace PropHunt.Mixed.Systems
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
                 float3 hitPoint = grounded.groundedPoint + previousDisplacement - grounded.surfaceNormal * KCCUtils.Epsilon;
-                float3 sourcePoint = hitPoint + grounded.surfaceNormal * movementSettings.maxPush;
+                float3 sourcePoint = hitPoint + grounded.surfaceNormal * (movementSettings.maxPush * deltaTime);
                 int hitObject = grounded.hitEntity.Index;
                 int selfIndex = entity.Index;
 
@@ -318,6 +319,18 @@ namespace PropHunt.Mixed.Systems
                         floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
 
                         translation.Value += floor.frameDisplacement;
+                        if (track.avoidTransferMomentum)
+                        {
+                            floor.floorVelocity = float3.zero;
+                        }
+                        else
+                        {
+                            floor.floorVelocity = floor.frameDisplacement / deltaTime;
+                        }
+                    }
+                    else
+                    {
+                        floor.floorVelocity = float3.zero;
                     }
 
                     if (!grounded.Falling)
@@ -328,8 +341,6 @@ namespace PropHunt.Mixed.Systems
                     {
                         velocity.worldVelocity += floor.floorVelocity;
                     }
-                    // Set velocity of floor
-                    floor.floorVelocity = floor.frameDisplacement / deltaTime;
                 }
             ).ScheduleParallel();
         }
