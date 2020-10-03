@@ -21,13 +21,13 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 6104341673800988698,
+                GhostFieldsHash = 4041310980984577592,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.PlayerView>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.PlayerView>(),
                 SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                 ChangeMaskBits = ChangeMaskBits,
-                SendMask = GhostComponentSerializer.SendMask.Predicted,
+                SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
                 SendForChildEntities = 1,
                 CopyToSnapshot =
                     new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
@@ -56,10 +56,8 @@ namespace PropHunt.Generated
             public int offset_y;
             public int offset_z;
             public int viewRotationRate;
-            public int pitch;
-            public int yaw;
         }
-        public const int ChangeMaskBits = 4;
+        public const int ChangeMaskBits = 2;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -73,8 +71,6 @@ namespace PropHunt.Generated
                 snapshot.offset_y = (int) math.round(component.offset.y * 100);
                 snapshot.offset_z = (int) math.round(component.offset.z * 100);
                 snapshot.viewRotationRate = (int) math.round(component.viewRotationRate * 100);
-                snapshot.pitch = (int) math.round(component.pitch * 100);
-                snapshot.yaw = (int) math.round(component.yaw * 100);
             }
         }
         [BurstCompile]
@@ -90,19 +86,8 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.PlayerView>(componentData, componentStride*i);
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
-                component.offset = math.lerp(
-                    new float3(snapshotBefore.offset_x * 0.01f, snapshotBefore.offset_y * 0.01f, snapshotBefore.offset_z * 0.01f),
-                    new float3(snapshotAfter.offset_x * 0.01f, snapshotAfter.offset_y * 0.01f, snapshotAfter.offset_z * 0.01f),
-                    snapshotInterpolationFactor);
-                component.viewRotationRate =
-                    math.lerp(snapshotBefore.viewRotationRate * 0.01f,
-                        snapshotAfter.viewRotationRate * 0.01f, snapshotInterpolationFactor);
-                component.pitch =
-                    math.lerp(snapshotBefore.pitch * 0.01f,
-                        snapshotAfter.pitch * 0.01f, snapshotInterpolationFactor);
-                component.yaw =
-                    math.lerp(snapshotBefore.yaw * 0.01f,
-                        snapshotAfter.yaw * 0.01f, snapshotInterpolationFactor);
+                component.offset = new float3(snapshotBefore.offset_x * 0.01f, snapshotBefore.offset_y * 0.01f, snapshotBefore.offset_z * 0.01f);
+                component.viewRotationRate = snapshotBefore.viewRotationRate * 0.01f;
             }
         }
         [BurstCompile]
@@ -115,8 +100,6 @@ namespace PropHunt.Generated
             component.offset.y = backup.offset.y;
             component.offset.z = backup.offset.z;
             component.viewRotationRate = backup.viewRotationRate;
-            component.pitch = backup.pitch;
-            component.yaw = backup.yaw;
         }
 
         [BurstCompile]
@@ -130,8 +113,6 @@ namespace PropHunt.Generated
             snapshot.offset_y = predictor.PredictInt(snapshot.offset_y, baseline1.offset_y, baseline2.offset_y);
             snapshot.offset_z = predictor.PredictInt(snapshot.offset_z, baseline1.offset_z, baseline2.offset_z);
             snapshot.viewRotationRate = predictor.PredictInt(snapshot.viewRotationRate, baseline1.viewRotationRate, baseline2.viewRotationRate);
-            snapshot.pitch = predictor.PredictInt(snapshot.pitch, baseline1.pitch, baseline2.pitch);
-            snapshot.yaw = predictor.PredictInt(snapshot.yaw, baseline1.yaw, baseline2.yaw);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -144,9 +125,7 @@ namespace PropHunt.Generated
             changeMask |= (snapshot.offset_y != baseline.offset_y) ? (1u<<0) : 0;
             changeMask |= (snapshot.offset_z != baseline.offset_z) ? (1u<<0) : 0;
             changeMask |= (snapshot.viewRotationRate != baseline.viewRotationRate) ? (1u<<1) : 0;
-            changeMask |= (snapshot.pitch != baseline.pitch) ? (1u<<2) : 0;
-            changeMask |= (snapshot.yaw != baseline.yaw) ? (1u<<3) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 4);
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -163,10 +142,6 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.offset_z, baseline.offset_z, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedIntDelta(snapshot.viewRotationRate, baseline.viewRotationRate, compressionModel);
-            if ((changeMask & (1 << 2)) != 0)
-                writer.WritePackedIntDelta(snapshot.pitch, baseline.pitch, compressionModel);
-            if ((changeMask & (1 << 3)) != 0)
-                writer.WritePackedIntDelta(snapshot.yaw, baseline.yaw, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -191,14 +166,6 @@ namespace PropHunt.Generated
                 snapshot.viewRotationRate = reader.ReadPackedIntDelta(baseline.viewRotationRate, compressionModel);
             else
                 snapshot.viewRotationRate = baseline.viewRotationRate;
-            if ((changeMask & (1 << 2)) != 0)
-                snapshot.pitch = reader.ReadPackedIntDelta(baseline.pitch, compressionModel);
-            else
-                snapshot.pitch = baseline.pitch;
-            if ((changeMask & (1 << 3)) != 0)
-                snapshot.yaw = reader.ReadPackedIntDelta(baseline.yaw, compressionModel);
-            else
-                snapshot.yaw = baseline.yaw;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -212,10 +179,6 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.viewRotationRate - backup.viewRotationRate));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.pitch - backup.pitch));
-            ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.yaw - backup.yaw));
-            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -227,14 +190,6 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("viewRotationRate"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("pitch"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("yaw"));
             ++nameCount;
             return nameCount;
         }

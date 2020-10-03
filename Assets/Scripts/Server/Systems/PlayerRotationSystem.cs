@@ -1,12 +1,13 @@
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
+using PropHunt.Mixed.Systems;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Transforms;
 
-namespace PropHunt.Mixed.Systems
+namespace PropHunt.Server.Systems
 {
 
     /// <summary>
@@ -15,7 +16,8 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class PlayerRotationSystem : SystemBase
     {
         protected override void OnUpdate()
@@ -23,11 +25,13 @@ namespace PropHunt.Mixed.Systems
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = group.PredictingTick;
             var deltaTime = Time.DeltaTime;
+            var isClient = World.GetExistingSystem<ClientSimulationSystemGroup>() != null;
 
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref PlayerView view,
                 ref Rotation rot,
+                in PlayerId playerId,
                 in PredictedGhostComponent prediction) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
@@ -37,23 +41,10 @@ namespace PropHunt.Mixed.Systems
 
                 PlayerInput input;
                 inputBuffer.GetDataAtTick(tick, out input);
-
-                view.pitch += deltaTime * -1 * input.pitchChange * view.viewRotationRate;
-                view.yaw += deltaTime * input.yawChange * view.viewRotationRate;
-
-                if (view.pitch > 90)
-                {
-                    view.pitch = 90;
-                }
-                else if (view.pitch < -90)
-                {
-                    view.pitch = -90;
-                }
-
+                view.pitch = input.targetPitch;
+                view.yaw = input.targetYaw;
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
             }).ScheduleParallel();
         }
-
     }
-
 }

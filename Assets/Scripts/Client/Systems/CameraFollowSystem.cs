@@ -35,7 +35,7 @@ namespace PropHunt.Client.Systems
             quaternion rotation = Camera.main.transform.rotation;
             Entities.
                 ForEach(
-                    (ref Translation transform, ref Rotation rot, ref PlayerId player, ref PlayerView view) =>
+                    (Entity ent, ref Translation transform, ref Rotation rot, ref PlayerId player, ref PlayerView view) =>
                     {
                         if (player.playerId == localPlayerId)
                         {
