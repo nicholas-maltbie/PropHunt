@@ -297,7 +297,7 @@ MonoBehaviour:
   SupportedGhostModes: 1
   OptimizationMode: 0
   Importance: 1
-  prefabId: 
+  prefabId: 568da5fbb592558478a9f165d1b86797
   Name: Block
 --- !u!114 &486005314371101127
 MonoBehaviour:
