@@ -21,13 +21,13 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 16673179541463299350,
+                GhostFieldsHash = 4005859780901124212,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCMovementSettings>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCMovementSettings>(),
                 SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                 ChangeMaskBits = ChangeMaskBits,
-                SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
+                SendMask = GhostComponentSerializer.SendMask.Predicted,
                 SendForChildEntities = 1,
                 CopyToSnapshot =
                     new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
@@ -62,8 +62,9 @@ namespace PropHunt.Generated
             public int fallPushPower;
             public int fallAnglePower;
             public int fallPushDecay;
+            public int maxPush;
         }
-        public const int ChangeMaskBits = 10;
+        public const int ChangeMaskBits = 11;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -83,6 +84,7 @@ namespace PropHunt.Generated
                 snapshot.fallPushPower = (int) math.round(component.fallPushPower * 100);
                 snapshot.fallAnglePower = (int) math.round(component.fallAnglePower * 100);
                 snapshot.fallPushDecay = (int) math.round(component.fallPushDecay * 100);
+                snapshot.maxPush = (int) math.round(component.maxPush * 100);
             }
         }
         [BurstCompile]
@@ -124,6 +126,7 @@ namespace PropHunt.Generated
                 component.fallPushDecay =
                     math.lerp(snapshotBefore.fallPushDecay * 0.01f,
                         snapshotAfter.fallPushDecay * 0.01f, snapshotInterpolationFactor);
+                component.maxPush = snapshotBefore.maxPush * 0.01f;
             }
         }
         [BurstCompile]
@@ -142,6 +145,7 @@ namespace PropHunt.Generated
             component.fallPushPower = backup.fallPushPower;
             component.fallAnglePower = backup.fallAnglePower;
             component.fallPushDecay = backup.fallPushDecay;
+            component.maxPush = backup.maxPush;
         }
 
         [BurstCompile]
@@ -161,6 +165,7 @@ namespace PropHunt.Generated
             snapshot.fallPushPower = predictor.PredictInt(snapshot.fallPushPower, baseline1.fallPushPower, baseline2.fallPushPower);
             snapshot.fallAnglePower = predictor.PredictInt(snapshot.fallAnglePower, baseline1.fallAnglePower, baseline2.fallAnglePower);
             snapshot.fallPushDecay = predictor.PredictInt(snapshot.fallPushDecay, baseline1.fallPushDecay, baseline2.fallPushDecay);
+            snapshot.maxPush = predictor.PredictInt(snapshot.maxPush, baseline1.maxPush, baseline2.maxPush);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -179,7 +184,8 @@ namespace PropHunt.Generated
             changeMask |= (snapshot.fallPushPower != baseline.fallPushPower) ? (1u<<7) : 0;
             changeMask |= (snapshot.fallAnglePower != baseline.fallAnglePower) ? (1u<<8) : 0;
             changeMask |= (snapshot.fallPushDecay != baseline.fallPushDecay) ? (1u<<9) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 10);
+            changeMask |= (snapshot.maxPush != baseline.maxPush) ? (1u<<10) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 11);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -208,6 +214,8 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.fallAnglePower, baseline.fallAnglePower, compressionModel);
             if ((changeMask & (1 << 9)) != 0)
                 writer.WritePackedIntDelta(snapshot.fallPushDecay, baseline.fallPushDecay, compressionModel);
+            if ((changeMask & (1 << 10)) != 0)
+                writer.WritePackedIntDelta(snapshot.maxPush, baseline.maxPush, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -256,6 +264,10 @@ namespace PropHunt.Generated
                 snapshot.fallPushDecay = reader.ReadPackedIntDelta(baseline.fallPushDecay, compressionModel);
             else
                 snapshot.fallPushDecay = baseline.fallPushDecay;
+            if ((changeMask & (1 << 10)) != 0)
+                snapshot.maxPush = reader.ReadPackedIntDelta(baseline.maxPush, compressionModel);
+            else
+                snapshot.maxPush = baseline.maxPush;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -284,6 +296,8 @@ namespace PropHunt.Generated
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.fallAnglePower - backup.fallAnglePower));
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.fallPushDecay - backup.fallPushDecay));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.maxPush - backup.maxPush));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -328,6 +342,10 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("fallPushDecay"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("maxPush"));
             ++nameCount;
             return nameCount;
         }

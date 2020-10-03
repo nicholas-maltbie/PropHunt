@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCMovementSettings : IComponentData
     {
         /// <summary>
@@ -75,11 +75,18 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
+
+        /// <summary>
+        /// Maximum that a character can be pushed per second (should be the diameter of the character or so)
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float maxPush;
     }
 
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -113,14 +120,12 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float timeElapsedSinceJump;
-
-
     }
 
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
@@ -130,16 +135,16 @@ namespace PropHunt.Mixed.Components
         public float maxWalkAngle;
 
         /// <summary>
-        /// Is the character currently falling (not on the ground or on the ground and
-        /// it's too steep)
-        /// </summary>
-        public bool Falling => !this.onGround || this.angle > this.maxWalkAngle;
-
-        /// <summary>
         /// Distance to check if character is thouching ground
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float groundCheckDistance;
+
+        /// Threshold for when the player will stop falling onto the ground. Should be a value smaller
+        /// than or equal to groundCheckDistance.
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float groundFallingDistance;
 
         /// <summary>
         /// Angle between the ground the the player's 'up' vector (-gravity fector).
@@ -183,13 +188,59 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = true)]
         public float elapsedFallTime;
+
+        /// <summary>
+        /// Entity standing on the previous frame
+        /// </summary>
+        public Entity previousHit;
+
+        /// <summary>
+        /// Normal vector of the plane hit by the character on the ground.
+        /// </summary>
+        public float3 surfaceNormal;
+
+        /// <summary>
+        /// Distance to ground on the previous frame
+        /// </summary>
+        public float previousDistanceToGround;
+
+        /// <summary>
+        /// Was this on the ground previous frame
+        /// </summary>
+        public bool previousOnGround;
+
+        /// <summary>
+        /// Angle of previously hit object
+        /// </summary>
+        public float previousAngle;
+
+        /// <summary>
+        /// Is the character standing within a certian distance of the ground.
+        /// </summary>
+        public bool StandingOnGround => this.onGround && this.distanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
+        /// Is the character currently falling (not on the ground or on the ground and
+        /// it's too steep)
+        /// </summary>
+        public bool Falling => !StandingOnGround || this.angle > this.maxWalkAngle;
+
+        /// <summary>
+        /// Is the character standing within a certian distance of the ground in the previous frame.
+        /// </summary>
+        public bool PreviousStandingOnGround => this.previousOnGround && this.previousDistanceToGround <= this.groundFallingDistance;
+
+        /// <summary>
+        /// Was this falling the previous frame
+        /// </summary>
+        public bool PreviousFalling => !this.PreviousStandingOnGround || this.previousAngle > this.maxWalkAngle;
     }
 
     /// <summary>
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted)]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
@@ -206,10 +257,29 @@ namespace PropHunt.Mixed.Components
     }
 
     /// <summary>
+    /// Movement of floor for the course of a frame and moving a character
+    /// </summary>
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    public struct FloorMovement : IComponentData
+    {
+        /// <summary>
+        /// Velocity of floor player is standing on
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 floorVelocity;
+
+        /// <summary>
+        /// Displacement of a character in the current frame
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 frameDisplacement;
+    }
+
+    /// <summary>
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.All)]
+    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
     public struct KCCGravity : IComponentData
     {
 

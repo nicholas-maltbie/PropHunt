@@ -30,6 +30,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Moving platform component data for current state
     /// </summary>
+    [GhostComponent]
     public struct MovingPlatform : IComponentData
     {
         /// <summary>

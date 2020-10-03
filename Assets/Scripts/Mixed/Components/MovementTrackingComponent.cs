@@ -1,7 +1,6 @@
-
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
+using Unity.NetCode;
 
 namespace PropHunt.Mixed.Components
 {
@@ -9,8 +8,15 @@ namespace PropHunt.Mixed.Components
     /// Component to track an object's displacement and rotation during a frame
     /// </summary>
     [GenerateAuthoringComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct MovementTracking : IComponentData
     {
+        /// <summary>
+        /// Should momentum be transferred to players
+        /// </summary>
+        [GhostField]
+        public bool avoidTransferMomentum;
+
         /// <summary>
         /// Current measured position of an object
         /// </summary>
@@ -45,12 +51,12 @@ namespace PropHunt.Mixed.Components
         /// Finds the change in attitude (expressed as a quaternion) between
         /// the current and previous attitude. QFinal * Inv(QInitial)
         /// </summary>
-        public quaternion ChangeAttitude => Initialized ? math.mul(attitude, math.inverse(previousAttitude)) : quaternion.identity;
+        private quaternion ChangeAttitude => Initialized ? math.mul(attitude, math.inverse(previousAttitude)) : quaternion.identity;
 
         /// <summary>
         /// Displacement between current and previous frames
         /// </summary>
-        public float3 Displacement => Initialized ? position - previousPosition : float3.zero;
+        private float3 Displacement => Initialized ? position - previousPosition : float3.zero;
 
         /// <summary>
         /// Gets the absolute displacement of a point relative to the

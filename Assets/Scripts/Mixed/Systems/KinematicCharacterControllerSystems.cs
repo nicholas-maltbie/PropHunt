@@ -3,7 +3,6 @@ using PropHunt.Mixed.Utilities;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
@@ -13,7 +12,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateAfter(typeof(MovementTrackingSystem))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(PushForceGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
@@ -58,6 +57,11 @@ namespace PropHunt.Mixed.Systems
                     bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
                     Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
+                    grounded.previousAngle = grounded.angle;
+                    grounded.previousOnGround = grounded.onGround;
+                    grounded.previousDistanceToGround = grounded.distanceToGround;
+                    grounded.previousHit = grounded.hitEntity;
+
                     if (collisionOcurred)
                     {
                         float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
@@ -68,6 +72,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = hit.RigidBodyIndex;
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
+                        grounded.surfaceNormal = hit.SurfaceNormal;
                     }
                     else
                     {
@@ -77,6 +82,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedRBIndex = -1;
                         grounded.groundedPoint = float3.zero;
                         grounded.hitEntity = Entity.Null;
+                        grounded.surfaceNormal = float3.zero;
                     }
 
                     // Falling is generated from other values, can be falling
@@ -114,9 +120,10 @@ namespace PropHunt.Mixed.Systems
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             float deltaTime = Time.DeltaTime;
 
-            Entities.ForEach((
+            Entities.WithReadOnly(physicsMassGetter).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -126,7 +133,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings movementSettings) =>
             {
                 // Adjust character translation due to player movement
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
@@ -135,13 +142,14 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.moveMaxBounces,
                     pushPower: movementSettings.movePushPower,
                     pushDecay: movementSettings.movePushDecay,
                     anglePower: movementSettings.moveAnglePower
                 );
                 // Adjust character translation due to gravity/world forces
-                translation.Value = KinematicCharacterControllerUtilities.ProjectValidMovement(
+                translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
@@ -150,6 +158,7 @@ namespace PropHunt.Mixed.Systems
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
+                    physicsMassGetter,
                     maxBounces: movementSettings.fallMaxBounces,
                     pushPower: movementSettings.fallPushPower,
                     pushDecay: movementSettings.fallPushDecay,
@@ -200,6 +209,89 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
+    /// Pushes kinematic character controllers out of objects they are stuck in
+    /// </summary>
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
+    [UpdateBefore(typeof(KCCMovementSystem))]
+    public class KCCPushOverlappingSystem : SystemBase
+    {
+        protected unsafe override void OnUpdate()
+        {
+            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var floorMovementGetter = GetComponentDataFromEntity<FloorMovement>(true);
+            float deltaTime = Time.DeltaTime;
+
+            Entities.WithReadOnly(floorMovementGetter).ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                in PhysicsCollider collider,
+                in KCCGrounded grounded,
+                in KCCMovementSettings movementSettings
+            ) =>
+            {
+                // Skip case when the character is not on the ground, or when
+                //  the distance to the ground is greater than zero (aka not overlapping).
+                if (!grounded.onGround || grounded.distanceToGround > 0)
+                {
+                    return;
+                }
+
+                float3 previousDisplacement = float3.zero;
+                // Account for movement due to moving floor
+                if (floorMovementGetter.HasComponent(entity))
+                {
+                    // Seems to broken for now, will ignore as it works without this feature
+                    previousDisplacement = floorMovementGetter[entity].frameDisplacement;
+                }
+
+                // Draw a ray from the center of the character collider to 
+                //  the point of collision
+                // If the ray intersects the other object before it reaches the edge of our own collider,
+                //  then we know that we are overlapping with the object
+                float3 hitPoint = grounded.groundedPoint + previousDisplacement - grounded.surfaceNormal * KCCUtils.Epsilon;
+                float3 sourcePoint = hitPoint + grounded.surfaceNormal * (movementSettings.maxPush * deltaTime);
+                int hitObject = grounded.hitEntity.Index;
+                int selfIndex = entity.Index;
+
+                // Hit collector to only collide with our object and the object we overlap with
+                var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
+                    selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
+
+                // Draw a ray from the center of the character to the hit object
+                var input = new RaycastInput()
+                {
+                    Filter = collider.Value.Value.Filter,
+                    Start = sourcePoint,
+                    End = hitPoint,
+                };
+
+                // Do the raycast computation
+                bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+                UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
+
+                // Push our character collider out of the object we are overlapping with
+                if (collisionOcurred)
+                {
+                    // Hit something
+                    var raycastHit = hitCollector.ClosestHit;
+                    // Get the distance of overlap (1 - hit fraction) * distance
+                    float3 direction = hitPoint - sourcePoint;
+                    float distance = math.length(direction);
+                    float overlapDistance = (1 - raycastHit.Fraction) * distance;
+                    // UnityEngine.Debug.DrawLine(sourcePoint, raycastHit.Position, UnityEngine.Color.red);
+                    // UnityEngine.Debug.DrawLine(raycastHit.Position, hitPoint, UnityEngine.Color.cyan);
+                    // Get movement in direction touching object
+                    float3 push = grounded.surfaceNormal * (overlapDistance + KCCUtils.Epsilon * 2);
+                    // Push character collider by this much
+                    translation.Value = translation.Value + push;
+                }
+            }).ScheduleParallel();
+        }
+    }
+
+    /// <summary>
     /// System to move character with ground
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
@@ -214,18 +306,41 @@ namespace PropHunt.Mixed.Systems
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
                 ref KCCVelocity velocity,
+                ref Translation translation,
+                ref FloorMovement floor,
                 in KCCGrounded grounded) =>
                 {
+                    float3 tempVelocity = floor.floorVelocity;
+                    floor.frameDisplacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
                     // to handle server lag and difference between positions
                     if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        velocity.worldVelocity = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint) / deltaTime;
+                        floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+
+                        translation.Value += floor.frameDisplacement;
+                        if (track.avoidTransferMomentum)
+                        {
+                            floor.floorVelocity = float3.zero;
+                        }
+                        else
+                        {
+                            floor.floorVelocity = floor.frameDisplacement / deltaTime;
+                        }
                     }
-                    else if (!grounded.Falling)
+                    else
+                    {
+                        floor.floorVelocity = float3.zero;
+                    }
+
+                    if (!grounded.Falling)
                     {
                         velocity.worldVelocity = float3.zero;
+                    }
+                    else if (grounded.Falling && !grounded.PreviousFalling)
+                    {
+                        velocity.worldVelocity += tempVelocity;
                     }
                 }
             ).ScheduleParallel();
