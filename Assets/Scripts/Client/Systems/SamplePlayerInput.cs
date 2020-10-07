@@ -28,7 +28,7 @@ namespace PropHunt.Client.Systems
         {
             var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
             var localPlayerId = GetSingleton<NetworkIdComponent>().Value;
-            if (localInput == Entity.Null)
+            if (localInput == Entity.Null || !EntityManager.Exists(localInput))
             {
                 Entities.WithNone<PlayerInput>().ForEach((Entity ent, ref PlayerId playerId) =>
                 {

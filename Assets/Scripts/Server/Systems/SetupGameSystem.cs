@@ -1,15 +1,8 @@
-using System;
-using PropHunt.Mixed.Commands;
-using PropHunt.Mixed.Components;
 using PropHunt.SceneManagement;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics.Systems;
 using Unity.Scenes;
-using Unity.Transforms;
-using UnityEngine;
 
 namespace PropHunt.Server.Systems
 {

@@ -372,7 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 1
+  SupportedGhostModes: 2
   OptimizationMode: 0
   Importance: 1
   prefabId: 563546384c88d2240844b477c3d3fac8
@@ -389,3 +389,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  avoidTransferMomentum: 0
