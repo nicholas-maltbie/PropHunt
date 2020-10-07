@@ -42,7 +42,7 @@ namespace PropHunt.Client.Systems
                     }
                 ).ScheduleParallel();
 
-                World.GetOrCreateSystem<SceneSystem>().UnloadScene(SubSceneReferences.Instance.GetSceneByName("TestRoom").SceneGUID);
+                // World.GetOrCreateSystem<SceneSystem>().UnloadScene(SubSceneReferences.Instance.GetSceneByName("TestRoom").SceneGUID);
                 this.commandBufferSystem.CreateCommandBuffer().DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
             }
         }
