@@ -1,3 +1,4 @@
+using PropHunt.Client.Components;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Scenes;
@@ -39,17 +40,58 @@ namespace PropHunt.Client.Systems
     }
 
     /// <summary>
+    /// System to handle disconnecting from the server
+    /// </summary>
+    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateAfter(typeof(ConnectToServerSystem))]
+    public class DisconnectFromServerSystem : ComponentSystem
+    {
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<ConnectionComponent>();
+        }
+
+        protected override void OnUpdate()
+        {
+            var connectionSingleton = GetSingleton<ConnectionComponent>();
+            if (connectionSingleton.requestDisconnect)
+            {
+                Debug.Log("Attempting to disconnect");
+                Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
+                {
+                    EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
+                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
+                });
+                connectionSingleton.requestDisconnect = false;
+                connectionSingleton.attemptingDisconnect = true;
+
+                SetSingleton(connectionSingleton);
+            }
+        }
+    }
+
+    /// <summary>
     /// Secondary class to create connection object ot connect to the server
     /// </summary>
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    public class CreateConnectObjectSystem : ComponentSystem
+    [UpdateAfter(typeof(ConnectionSystem))]
+    public class ConnectToServerSystem : ComponentSystem
     {
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<ConnectionComponent>();
+        }
+
         protected override void OnUpdate()
         {
-            if (ConnectionSystem.connectRequested)
+            var connectionSingleton = GetSingleton<ConnectionComponent>();
+            if (connectionSingleton.requestConnect)
             {
                 EntityManager.CreateEntity(typeof(InitClientGameComponent));
-                ConnectionSystem.connectRequested = false;
+                connectionSingleton.requestConnect = false;
+                connectionSingleton.attemptingConnect = true;
+
+                SetSingleton(connectionSingleton);
             }
         }
     }
@@ -62,26 +104,21 @@ namespace PropHunt.Client.Systems
     public class ConnectionSystem : ComponentSystem
     {
         /// <summary>
-        /// Has a disconnect been requested
+        /// Is the player attempting to connect to the server
         /// </summary>
-        public static bool disconnectRequested;
+        private static bool requestConnect;
 
         /// <summary>
-        /// Has a connection been requested
+        /// Is the player attempting to disconnect from the server
         /// </summary>
-        public static bool connectRequested;
-
-        /// <summary>
-        /// Is the client currently connected
-        /// </summary>
-        public static bool IsConnected { get; private set; }
+        private static bool requestDisconnect;
 
         /// <summary>
         /// Invoke whenever a disconnect is requested
         /// </summary>
         public static void DisconnectFromServer()
         {
-            ConnectionSystem.disconnectRequested = true;
+            ConnectionSystem.requestDisconnect = true;
         }
 
         /// <summary>
@@ -89,32 +126,47 @@ namespace PropHunt.Client.Systems
         /// </summary>
         public static void ConnectToServer()
         {
-            ConnectionSystem.connectRequested = true;
+            ConnectionSystem.requestConnect = true;
+        }
+
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<ConnectionComponent>();
+            EntityManager.CreateEntity(typeof(ConnectionComponent));
         }
 
         protected override void OnUpdate()
         {
+            var connectionSingleton = GetSingleton<ConnectionComponent>();
+            
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
                 if (EntityManager.HasComponent<NetworkStreamInGame>(ent))
                 {
-                    ConnectionSystem.IsConnected = true;
+                    connectionSingleton.isConnected = true;
+                    connectionSingleton.attemptingConnect = false;
                 }
                 if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
-                    ConnectionSystem.IsConnected = false;
+                    connectionSingleton.isConnected = false;
+                    connectionSingleton.attemptingDisconnect = false;
                 }
             });
-            if (ConnectionSystem.disconnectRequested)
+
+            // Load static components into connection entity
+            if (ConnectionSystem.requestConnect)
             {
-                Debug.Log("Attempting to disconnect");
-                Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
-                {
-                    EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
-                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
-                });
-                ConnectionSystem.disconnectRequested = false;
+                connectionSingleton.requestConnect = ConnectionSystem.requestConnect;
+                ConnectionSystem.requestConnect = false;
             }
+            if (ConnectionSystem.requestDisconnect)
+            {
+                connectionSingleton.requestDisconnect = ConnectionSystem.requestDisconnect;
+                ConnectionSystem.requestDisconnect = false;
+
+            }
+
+            SetSingleton(connectionSingleton);
         }
     }
 

@@ -1,3 +1,4 @@
+using PropHunt.Client.Components;
 using PropHunt.UI;
 using Unity.Burst;
 using Unity.Entities;
@@ -55,6 +56,7 @@ namespace PropHunt.Client.Systems
         {
             // Add listener to screen change events
             UIManager.ScreenChangeOccur += this.HandleScreenChangeEvent;
+            RequireSingletonForUpdate<ConnectionComponent>();
         }
 
         protected override void OnDestroy()
@@ -76,7 +78,8 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            bool currentlyConnected = ConnectionSystem.IsConnected;
+            var connectionSingleton = GetSingleton<ConnectionComponent>();
+            bool currentlyConnected = connectionSingleton.isConnected;
 
             // This should only act while in game
             if (!currentlyConnected)

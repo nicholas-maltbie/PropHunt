@@ -6,8 +6,8 @@ using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
-using UnityEngine;
 using PropHunt.Client.Systems;
+using PropHunt.Client.Components;
 
 namespace PropHunt.PlayMode.Tests.NetworkTests
 {
@@ -49,14 +49,14 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
             // Make a connect request
             ConnectionSystem.ConnectToServer();
             yield return new WaitForConnected(connectionManager);
-            Assert.IsTrue(ConnectionSystem.IsConnected);
+            Assert.IsTrue(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
 
             yield return null;
 
             // Make a disconnect request
             ConnectionSystem.DisconnectFromServer();
             yield return new WaitForConnected(connectionManager, state: false);
-            Assert.IsFalse(ConnectionSystem.IsConnected);
+            Assert.IsFalse(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
         }
     }
 }
