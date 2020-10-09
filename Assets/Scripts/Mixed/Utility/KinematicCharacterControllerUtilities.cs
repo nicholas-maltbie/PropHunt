@@ -137,39 +137,43 @@ namespace PropHunt.Mixed.Utilities
                     remaining *= pushDecay;
                 }
 
-                // Get angle between surface normal and remaining movement
-                float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
-                // Normalize angle between to be between 0 and 1
-                angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
-                float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
-                // Create angle factor using 1 / (1 + normalizedAngle)
-                float angleFactor = 1.0f / (1.0f + normalizedAngle);
-                // If the character hit something
-                // Reduce the momentum by the remaining movement that ocurred
-                remaining *= (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
-                // Rotate the remaining remaining movement to be projected along the plane 
-                // of the surface hit (emulate pushing against the object)
-                // A is our vector and B is normal of plane
-                // A || B = B × (A×B / |B|) / |B|
-                // From http://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
-                float3 planeNormal = hit.SurfaceNormal;
-                float momentumLeft = math.length(remaining);
-                remaining = math.cross(planeNormal, math.cross(remaining, planeNormal) / math.length(planeNormal)) / math.length(planeNormal);
-                remaining = math.normalizesafe(remaining) * momentumLeft;
-                // Track number of times the character has bounced
-                bounces++;
-                
                 float distanceToFeet = hit.Position.y - from.y;
                 UnityEngine.Debug.DrawLine(from, hit.Position, UnityEngine.Color.cyan);
                 UnityEngine.Debug.DrawLine(hit.Position, hit.Position - new float3(0, distanceToFeet, 0), UnityEngine.Color.green);
                 // Snap character vertically up if they hit something
                 //  close enough to their feet
-                if (distanceToFeet < verticalSnapUp)
+                if (distanceToFeet > 0 && distanceToFeet < verticalSnapUp)
                 {
                     // Increment vertical (y) value of new position by
                     //  the distance to the feet of the character
                     from = from + new float3(0, distanceToFeet, 0);
+                    UnityEngine.Debug.Log($"Snapping character up by {distanceToFeet}");
                 }
+                // Only decay angle power when not climbing stairs
+                else
+                {
+                    // Get angle between surface normal and remaining movement
+                    float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
+                    // Normalize angle between to be between 0 and 1
+                    angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
+                    float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
+                    // Create angle factor using 1 / (1 + normalizedAngle)
+                    float angleFactor = 1.0f / (1.0f + normalizedAngle);
+                    // If the character hit something
+                    // Reduce the momentum by the remaining movement that ocurred
+                    remaining *= (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
+                    // Rotate the remaining remaining movement to be projected along the plane 
+                    // of the surface hit (emulate pushing against the object)
+                    // A is our vector and B is normal of plane
+                    // A || B = B × (A×B / |B|) / |B|
+                    // From http://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
+                    float3 planeNormal = hit.SurfaceNormal;
+                    float momentumLeft = math.length(remaining);
+                    remaining = math.cross(planeNormal, math.cross(remaining, planeNormal) / math.length(planeNormal)) / math.length(planeNormal);
+                    remaining = math.normalizesafe(remaining) * momentumLeft;
+                }
+                // Track number of times the character has bounced
+                bounces++;
             }
             return from;
         }

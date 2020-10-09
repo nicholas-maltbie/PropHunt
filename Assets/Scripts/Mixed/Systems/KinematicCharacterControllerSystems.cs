@@ -160,7 +160,7 @@ namespace PropHunt.Mixed.Systems
                     entity.Index,
                     rotation.Value,
                     physicsMassGetter,
-                    verticalSnapUp: movementSettings.stepOffset,
+                    verticalSnapUp: 0,
                     maxBounces: movementSettings.fallMaxBounces,
                     pushPower: movementSettings.fallPushPower,
                     pushDecay: movementSettings.fallPushDecay,
