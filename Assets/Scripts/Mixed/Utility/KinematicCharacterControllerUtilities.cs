@@ -11,6 +11,29 @@ namespace PropHunt.Mixed.Utilities
     public static class KCCUtils
     {
         /// <summary>
+        /// Check if a character can jump from their current grounded and jumping states
+        /// </summary>
+        /// <param name="jumping">Current jumping state</param>
+        /// <param name="grounded">Current grounded state</param>
+        public static bool CanJump(KCCJumping jumping, KCCGrounded grounded)
+        {
+            return !grounded.Falling && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown;
+        }
+
+        /// <summary>
+        /// Checks if a character is moving along a given line (direction). Will
+        /// return true if the player has some positive motion along the given line in any axis
+        /// in either the world or player velocity
+        /// </summary>
+        /// <param name="velocity">Player velocity (world and input)</param>
+        /// <param name="axis">Direction to check if the player is moving along</param>
+        /// <returns>True if the player has some motion along that line</returns>
+        public static bool HasMovementAlongAxis(KCCVelocity velocity, float3 axis)
+        {
+            return math.dot(velocity.worldVelocity, axis) > 0 || math.dot(velocity.playerVelocity, axis) > 0;
+        }
+
+        /// <summary>
         /// Maximum angle between an object and a character 
         /// </summary>
         public static readonly float MaxAngleShoveRadians = math.radians(90.0f);
@@ -51,6 +74,7 @@ namespace PropHunt.Mixed.Utilities
         /// <param name="physicsMassAccessor">Accessor to physics mass components</param>
         /// <param name="verticalSnapUp">Amount of distance the player can 'snap' vertically
         /// up when walking up stairs</param>
+        /// <param name="gravityDirection">Direction of gravity for snapping vertically</param>
         /// <param name="anglePower">Power to raise decay of movement due to
         /// changes in angle between intended movement and angle of surface.
         /// Will be angleFactor= 1 / (1 + normAngle) where normAngle is a normalized value
@@ -82,6 +106,7 @@ namespace PropHunt.Mixed.Utilities
             quaternion rotation,
             ComponentDataFromEntity<PhysicsMass> physicsMassGetter,
             float verticalSnapUp,
+            float3 gravityDirection,
             float anglePower = 2,
             int maxBounces = 1,
             float pushPower = 25,
@@ -115,7 +140,6 @@ namespace PropHunt.Mixed.Utilities
 
                 if (!collisionOcurred && hitCollector.NumHits == 0)
                 {
-                    UnityEngine.Debug.DrawLine(from, target, UnityEngine.Color.red);
                     // If there is no hit, target can be returned as final position
                     return target;
                 }
@@ -126,6 +150,8 @@ namespace PropHunt.Mixed.Utilities
                 from = from + remaining * hit.Fraction;
                 // Push slightly along normal to stop from getting caught in walls
                 from = from + hit.SurfaceNormal * epsilon;
+                // Decrease remaining movement by 
+                remaining *= (1 - hit.Fraction);
 
                 // Apply some force to the object hit if it is moveable, Apply force on entity hit
                 bool isKinematic = physicsMassGetter.HasComponent(hit.Entity) && IsKinematic(physicsMassGetter[hit.Entity]);
@@ -137,19 +163,21 @@ namespace PropHunt.Mixed.Utilities
                     remaining *= pushDecay;
                 }
 
-                float distanceToFeet = hit.Position.y - from.y;
-                UnityEngine.Debug.DrawLine(from, hit.Position, UnityEngine.Color.cyan);
-                UnityEngine.Debug.DrawLine(hit.Position, hit.Position - new float3(0, distanceToFeet, 0), UnityEngine.Color.green);
+                // Normal vector of the plane the character is standing on
+                float3 planeNormal = hit.SurfaceNormal;
+
                 // Snap character vertically up if they hit something
                 //  close enough to their feet
+                float distanceToFeet = hit.Position.y - from.y;
                 if (distanceToFeet > 0 && distanceToFeet < verticalSnapUp)
                 {
                     // Increment vertical (y) value of new position by
                     //  the distance to the feet of the character
-                    from = from + new float3(0, distanceToFeet, 0);
-                    UnityEngine.Debug.Log($"Snapping character up by {distanceToFeet}");
+                    from = from - distanceToFeet * math.normalizesafe(gravityDirection);
+                    // Project rest of movement onto plane perpendicular to gravity
+                    planeNormal = -gravityDirection;
                 }
-                // Only decay angle power when not climbing stairs
+                // Only apply angular change if hitting something
                 else
                 {
                     // Get angle between surface normal and remaining movement
@@ -161,21 +189,32 @@ namespace PropHunt.Mixed.Utilities
                     float angleFactor = 1.0f / (1.0f + normalizedAngle);
                     // If the character hit something
                     // Reduce the momentum by the remaining movement that ocurred
-                    remaining *= (1 - hit.Fraction) * math.pow(angleFactor, anglePower);
-                    // Rotate the remaining remaining movement to be projected along the plane 
-                    // of the surface hit (emulate pushing against the object)
-                    // A is our vector and B is normal of plane
-                    // A || B = B × (A×B / |B|) / |B|
-                    // From http://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
-                    float3 planeNormal = hit.SurfaceNormal;
-                    float momentumLeft = math.length(remaining);
-                    remaining = math.cross(planeNormal, math.cross(remaining, planeNormal) / math.length(planeNormal)) / math.length(planeNormal);
-                    remaining = math.normalizesafe(remaining) * momentumLeft;
+                    remaining *= math.pow(angleFactor, anglePower);
                 }
+                // Rotate the remaining remaining movement to be projected along the plane 
+                // of the surface hit (emulate pushing against the object)
+                float momentumLeft = math.length(remaining);
+                remaining = ProjectVectorOntoPlane(remaining, planeNormal);
+                remaining = math.normalizesafe(remaining) * momentumLeft;
+
                 // Track number of times the character has bounced
                 bounces++;
             }
             return from;
+        }
+
+        /// <summary>
+        /// Projects a vector onto a plane
+        /// </summary>
+        /// <param name="vector">Vector to project</param>
+        /// <param name="planeNormal">plane to project vector onto</param>
+        /// <returns>Projected vector onto plane</returns>
+        public static float3 ProjectVectorOntoPlane(float3 vector, float3 planeNormal)
+        {
+            // A is our vector and B is normal of plane
+            // A || B = B × (A×B / |B|) / |B|
+            // From http://www.euclideanspace.com/maths/geometry/elements/plane/lineOnPlane/index.htm
+            return math.cross(planeNormal, math.cross(vector, planeNormal) / math.length(planeNormal)) / math.length(planeNormal);
         }
     }
 }

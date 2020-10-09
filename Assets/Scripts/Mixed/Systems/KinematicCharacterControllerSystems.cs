@@ -101,6 +101,64 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
+    /// This snaps characters down onto the ground if they are floating within a small distance
+    /// of the ground.
+    /// </summary>
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(KCCMovementSystem))]
+    public class SnapCharacterDown : SystemBase
+    {
+        protected unsafe override void OnUpdate()
+        {
+            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+
+            Entities.ForEach((
+                Entity entity,
+                ref Translation translation,
+                in Rotation rotation,
+                in KCCGravity gravity,
+                in KCCGrounded grounded,
+                in KCCVelocity velocity,
+                in KCCMovementSettings settings,
+                in PhysicsCollider collider) =>
+            {
+                // Don't snap down if jumping or was not grounded this frame
+                //  Or if they are moving up (either in world or player velocity)
+                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || !grounded.Falling)
+                {
+                    return;
+                }
+
+                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+
+                float3 from = translation.Value;
+                float3 to = from + gravity.Down * settings.stepOffset;
+
+                var input = new ColliderCastInput()
+                {
+                    End = to,
+                    Start = from,
+                    Collider = collider.ColliderPtr,
+                    Orientation = rotation.Value
+                };
+
+                bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
+                Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
+                float distanceToGround = hit.Fraction * settings.stepOffset;
+
+                if (collisionOcurred && distanceToGround > KCCUtils.Epsilon)
+                {
+                    // Shift character down to that location (plus some wiggle epsilon room)
+                    translation.Value = translation.Value + gravity.Down * (distanceToGround - KCCUtils.Epsilon * 2);
+                }
+            }).ScheduleParallel();
+
+            this.Dependency.Complete();
+        }
+    }
+
+    /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
@@ -121,17 +179,21 @@ namespace PropHunt.Mixed.Systems
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
+            var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
             float deltaTime = Time.DeltaTime;
 
-            Entities.WithReadOnly(physicsMassGetter).ForEach((
+            Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
                 in KCCVelocity velocity,
+                in KCCGravity gravity,
                 in PhysicsCollider physicsCollider,
                 in Rotation rotation,
                 in KCCMovementSettings movementSettings) =>
             {
+                float verticalSnapMove = !kccGroundedGetter[entity].Falling || !kccGroundedGetter[entity].PreviousFalling ? movementSettings.stepOffset : 0;
+
                 // Adjust character translation due to player movement
                 translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
@@ -143,7 +205,8 @@ namespace PropHunt.Mixed.Systems
                     entity.Index,
                     rotation.Value,
                     physicsMassGetter,
-                    verticalSnapUp: movementSettings.stepOffset,
+                    verticalSnapUp: verticalSnapMove,
+                    gravityDirection: gravity.Down,
                     maxBounces: movementSettings.moveMaxBounces,
                     pushPower: movementSettings.movePushPower,
                     pushDecay: movementSettings.movePushDecay,
@@ -161,6 +224,7 @@ namespace PropHunt.Mixed.Systems
                     rotation.Value,
                     physicsMassGetter,
                     verticalSnapUp: 0,
+                    gravityDirection: gravity.Down,
                     maxBounces: movementSettings.fallMaxBounces,
                     pushPower: movementSettings.fallPushPower,
                     pushDecay: movementSettings.fallPushDecay,
@@ -194,7 +258,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCGravity gravity) =>
                 {
                     // If the KCC is attempting to jump and is grounded, jump
-                    if (jumping.attemptingJump && !grounded.Falling && grounded.elapsedFallTime <= jumping.jumpGraceTime && jumping.timeElapsedSinceJump >= jumping.jumpCooldown)
+                    if (jumping.attemptingJump && KCCUtils.CanJump(jumping, grounded))
                     {
                         velocity.worldVelocity += gravity.Up * jumping.jumpForce;
                         jumping.timeElapsedSinceJump = 0.0f;
@@ -271,7 +335,7 @@ namespace PropHunt.Mixed.Systems
 
                 // Do the raycast computation
                 bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
-                UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
+                // UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
 
                 // Push our character collider out of the object we are overlapping with
                 if (collisionOcurred)
