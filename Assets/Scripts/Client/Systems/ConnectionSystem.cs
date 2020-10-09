@@ -1,12 +1,22 @@
+using System;
 using PropHunt.Client.Components;
 using Unity.Entities;
 using Unity.NetCode;
-using Unity.Scenes;
 using UnityEngine;
 using static PropHunt.Game.ClientGameSystem;
 
 namespace PropHunt.Client.Systems
 {
+    /// <summary>
+    /// class to hold arguments for listening to connection from server
+    /// </summary>
+    public class ListenConnect : EventArgs { }
+
+    /// <summary>
+    /// class to hold arguments for listening to disconnection from server
+    /// </summary>
+    public class ListenDisconnect : EventArgs { }
+
     /// <summary>
     /// System to clear all ghosts on the client
     /// </summary>
@@ -104,6 +114,16 @@ namespace PropHunt.Client.Systems
     public class ConnectionSystem : ComponentSystem
     {
         /// <summary>
+        /// Events for when connecting to server
+        /// </summary>
+        public static event EventHandler<ListenConnect> OnConnect;
+
+        /// <summary>
+        /// Events for when disconnecting from server
+        /// </summary>
+        public static event EventHandler<ListenDisconnect> OnDisconnect;
+
+        /// <summary>
         /// Is the player attempting to connect to the server
         /// </summary>
         private static bool requestConnect;
@@ -118,7 +138,7 @@ namespace PropHunt.Client.Systems
         /// </summary>
         public static void DisconnectFromServer()
         {
-            ConnectionSystem.requestDisconnect = true;
+            requestDisconnect = true;
         }
 
         /// <summary>
@@ -126,7 +146,7 @@ namespace PropHunt.Client.Systems
         /// </summary>
         public static void ConnectToServer()
         {
-            ConnectionSystem.requestConnect = true;
+            requestConnect = true;
         }
 
         protected override void OnCreate()
@@ -138,32 +158,33 @@ namespace PropHunt.Client.Systems
         protected override void OnUpdate()
         {
             var connectionSingleton = GetSingleton<ConnectionComponent>();
-            
+
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
                 if (EntityManager.HasComponent<NetworkStreamInGame>(ent))
                 {
                     connectionSingleton.isConnected = true;
                     connectionSingleton.attemptingConnect = false;
+                    OnConnect?.Invoke(this, new ListenConnect());
                 }
                 if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
                     connectionSingleton.isConnected = false;
                     connectionSingleton.attemptingDisconnect = false;
+                    OnDisconnect?.Invoke(this, new ListenDisconnect());
                 }
             });
 
             // Load static components into connection entity
-            if (ConnectionSystem.requestConnect)
+            if (requestConnect)
             {
-                connectionSingleton.requestConnect = ConnectionSystem.requestConnect;
-                ConnectionSystem.requestConnect = false;
+                connectionSingleton.requestConnect = requestConnect;
+                requestConnect = false;
             }
-            if (ConnectionSystem.requestDisconnect)
+            if (requestDisconnect)
             {
-                connectionSingleton.requestDisconnect = ConnectionSystem.requestDisconnect;
-                ConnectionSystem.requestDisconnect = false;
-
+                connectionSingleton.requestDisconnect = requestDisconnect;
+                requestDisconnect = false;
             }
 
             SetSingleton(connectionSingleton);
