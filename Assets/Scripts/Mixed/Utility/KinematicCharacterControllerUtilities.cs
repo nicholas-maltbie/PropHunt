@@ -49,6 +49,8 @@ namespace PropHunt.Mixed.Utilities
         /// <param name="entityIndex">Index of this entity</param>
         /// <param name="rotation">Current character rotation</param>
         /// <param name="physicsMassAccessor">Accessor to physics mass components</param>
+        /// <param name="verticalSnapUp">Amount of distance the player can 'snap' vertically
+        /// up when walking up stairs</param>
         /// <param name="anglePower">Power to raise decay of movement due to
         /// changes in angle between intended movement and angle of surface.
         /// Will be angleFactor= 1 / (1 + normAngle) where normAngle is a normalized value
@@ -79,6 +81,7 @@ namespace PropHunt.Mixed.Utilities
             int entityIndex,
             quaternion rotation,
             ComponentDataFromEntity<PhysicsMass> physicsMassGetter,
+            float verticalSnapUp,
             float anglePower = 2,
             int maxBounces = 1,
             float pushPower = 25,
@@ -112,6 +115,7 @@ namespace PropHunt.Mixed.Utilities
 
                 if (!collisionOcurred && hitCollector.NumHits == 0)
                 {
+                    UnityEngine.Debug.DrawLine(from, target, UnityEngine.Color.red);
                     // If there is no hit, target can be returned as final position
                     return target;
                 }
@@ -154,6 +158,18 @@ namespace PropHunt.Mixed.Utilities
                 remaining = math.normalizesafe(remaining) * momentumLeft;
                 // Track number of times the character has bounced
                 bounces++;
+                
+                float distanceToFeet = hit.Position.y - from.y;
+                UnityEngine.Debug.DrawLine(from, hit.Position, UnityEngine.Color.cyan);
+                UnityEngine.Debug.DrawLine(hit.Position, hit.Position - new float3(0, distanceToFeet, 0), UnityEngine.Color.green);
+                // Snap character vertically up if they hit something
+                //  close enough to their feet
+                if (distanceToFeet < verticalSnapUp)
+                {
+                    // Increment vertical (y) value of new position by
+                    //  the distance to the feet of the character
+                    from = from + new float3(0, distanceToFeet, 0);
+                }
             }
             return from;
         }

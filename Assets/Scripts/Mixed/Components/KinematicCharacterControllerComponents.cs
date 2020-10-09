@@ -81,6 +81,13 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = false)]
         public float maxPush;
+
+        /// <summary>
+        /// Maximum amount a character can snap up when hitting steps/stairs (also any other object they hit very close
+        /// th their feet).
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float stepOffset;
     }
 
     /// <summary>
