@@ -106,7 +106,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMovementSystem))]
-    public class SnapCharacterDown : SystemBase
+    public class SnapKCCDown : SystemBase
     {
         protected unsafe override void OnUpdate()
         {
@@ -123,9 +123,8 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings settings,
                 in PhysicsCollider collider) =>
             {
-                // Don't snap down if jumping or was not grounded this frame
-                //  Or if they are moving up (either in world or player velocity)
-                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || grounded.Falling)
+                // Don't snap down if they are moving up (either in world or player velocity)
+                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up))
                 {
                     return;
                 }
@@ -376,6 +375,7 @@ namespace PropHunt.Mixed.Systems
                 ref KCCVelocity velocity,
                 ref Translation translation,
                 ref FloorMovement floor,
+                in KCCGravity gravity,
                 in KCCGrounded grounded) =>
                 {
                     float3 tempVelocity = floor.floorVelocity;
@@ -402,7 +402,8 @@ namespace PropHunt.Mixed.Systems
                         floor.floorVelocity = float3.zero;
                     }
 
-                    if (!grounded.Falling)
+                    bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
+                    if (!grounded.Falling && !movingUp)
                     {
                         velocity.worldVelocity = float3.zero;
                     }

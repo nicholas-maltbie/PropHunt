@@ -175,11 +175,11 @@ MonoBehaviour:
   pushDecay: 0.1
   jumpGraceTime: 0.1
   jumpCooldown: 0.3
-  groundFallingDistance: 0.01
+  groundFallingDistance: 0.1
   maxPush: 10
-  stepOffset: 0.2
-  snapDownOffset: 0.25
-  snapDownSpeed: 0.35
+  stepOffset: 0.25
+  snapDownOffset: 0.35
+  snapDownSpeed: 3.5
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
