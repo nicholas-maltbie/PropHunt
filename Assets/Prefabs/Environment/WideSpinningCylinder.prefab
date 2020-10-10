@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &1478092551271358659
+--- !u!1001 &8946602438521402706
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,12 +10,12 @@ PrefabInstance:
     - target: {fileID: 5902303242071951096, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
       propertyPath: m_Name
-      value: WideSpinningCylinder Variant
+      value: WideSpinningCylinder
       objectReference: {fileID: 0}
     - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
@@ -70,17 +70,22 @@ PrefabInstance:
     - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 14.5
+      value: 12.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 14.5
+      value: 12.2
       objectReference: {fileID: 0}
     - target: {fileID: 5902303242071951102, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
       propertyPath: prefabId
-      value: 346c6915d03871c44a8a6d9fff10a070
+      value: d6e0448f05ba0a648b0e470dc9d08050
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 500369948f8b01346b0c4e2c343e2fe7, type: 3}

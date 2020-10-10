@@ -177,7 +177,7 @@ MonoBehaviour:
   jumpCooldown: 0.3
   groundFallingDistance: 0.01
   maxPush: 10
-  stepOffset: 0.45
+  stepOffset: 0.2
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
