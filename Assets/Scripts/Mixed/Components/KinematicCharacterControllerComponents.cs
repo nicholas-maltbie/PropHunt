@@ -88,6 +88,18 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization = 100, Interpolate = false)]
         public float stepOffset;
+
+        /// <summary>
+        /// Maximum distance a player can be 'snapped' down per frame
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float snapDownOffset;
+
+        /// <summary>
+        /// Maximum rate at which a player can be 'snapped' down in meters per second
+        /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
+        public float snapDownSpeed;
     }
 
     /// <summary>

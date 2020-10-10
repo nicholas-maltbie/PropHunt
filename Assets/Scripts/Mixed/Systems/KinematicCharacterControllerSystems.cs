@@ -112,6 +112,7 @@ namespace PropHunt.Mixed.Systems
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
+            float deltaTime = Time.DeltaTime;
             Entities.ForEach((
                 Entity entity,
                 ref Translation translation,
@@ -124,7 +125,7 @@ namespace PropHunt.Mixed.Systems
             {
                 // Don't snap down if jumping or was not grounded this frame
                 //  Or if they are moving up (either in world or player velocity)
-                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || !grounded.Falling)
+                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || grounded.Falling)
                 {
                     return;
                 }
@@ -133,7 +134,7 @@ namespace PropHunt.Mixed.Systems
                     new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
 
                 float3 from = translation.Value;
-                float3 to = from + gravity.Down * settings.stepOffset;
+                float3 to = from + gravity.Down * settings.snapDownOffset;
 
                 var input = new ColliderCastInput()
                 {
@@ -145,10 +146,11 @@ namespace PropHunt.Mixed.Systems
 
                 bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
                 Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
-                float distanceToGround = hit.Fraction * settings.stepOffset;
+                float distanceToGround = hit.Fraction * settings.snapDownOffset;
 
                 if (collisionOcurred && distanceToGround > KCCUtils.Epsilon)
                 {
+                    float cappedSpeed = math.min(distanceToGround, settings.snapDownSpeed * deltaTime);
                     // Shift character down to that location (plus some wiggle epsilon room)
                     translation.Value = translation.Value + gravity.Down * (distanceToGround - KCCUtils.Epsilon * 2);
                 }

@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 312259944347493178,
+                GhostFieldsHash = 900570075592301358,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCMovementSettings>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCMovementSettings>(),
@@ -64,8 +64,10 @@ namespace PropHunt.Generated
             public int fallPushDecay;
             public int maxPush;
             public int stepOffset;
+            public int snapDownOffset;
+            public int snapDownSpeed;
         }
-        public const int ChangeMaskBits = 12;
+        public const int ChangeMaskBits = 14;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -87,6 +89,8 @@ namespace PropHunt.Generated
                 snapshot.fallPushDecay = (int) math.round(component.fallPushDecay * 100);
                 snapshot.maxPush = (int) math.round(component.maxPush * 100);
                 snapshot.stepOffset = (int) math.round(component.stepOffset * 100);
+                snapshot.snapDownOffset = (int) math.round(component.snapDownOffset * 100);
+                snapshot.snapDownSpeed = (int) math.round(component.snapDownSpeed * 100);
             }
         }
         [BurstCompile]
@@ -130,6 +134,8 @@ namespace PropHunt.Generated
                         snapshotAfter.fallPushDecay * 0.01f, snapshotInterpolationFactor);
                 component.maxPush = snapshotBefore.maxPush * 0.01f;
                 component.stepOffset = snapshotBefore.stepOffset * 0.01f;
+                component.snapDownOffset = snapshotBefore.snapDownOffset * 0.01f;
+                component.snapDownSpeed = snapshotBefore.snapDownSpeed * 0.01f;
             }
         }
         [BurstCompile]
@@ -150,6 +156,8 @@ namespace PropHunt.Generated
             component.fallPushDecay = backup.fallPushDecay;
             component.maxPush = backup.maxPush;
             component.stepOffset = backup.stepOffset;
+            component.snapDownOffset = backup.snapDownOffset;
+            component.snapDownSpeed = backup.snapDownSpeed;
         }
 
         [BurstCompile]
@@ -171,6 +179,8 @@ namespace PropHunt.Generated
             snapshot.fallPushDecay = predictor.PredictInt(snapshot.fallPushDecay, baseline1.fallPushDecay, baseline2.fallPushDecay);
             snapshot.maxPush = predictor.PredictInt(snapshot.maxPush, baseline1.maxPush, baseline2.maxPush);
             snapshot.stepOffset = predictor.PredictInt(snapshot.stepOffset, baseline1.stepOffset, baseline2.stepOffset);
+            snapshot.snapDownOffset = predictor.PredictInt(snapshot.snapDownOffset, baseline1.snapDownOffset, baseline2.snapDownOffset);
+            snapshot.snapDownSpeed = predictor.PredictInt(snapshot.snapDownSpeed, baseline1.snapDownSpeed, baseline2.snapDownSpeed);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -191,7 +201,9 @@ namespace PropHunt.Generated
             changeMask |= (snapshot.fallPushDecay != baseline.fallPushDecay) ? (1u<<9) : 0;
             changeMask |= (snapshot.maxPush != baseline.maxPush) ? (1u<<10) : 0;
             changeMask |= (snapshot.stepOffset != baseline.stepOffset) ? (1u<<11) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 12);
+            changeMask |= (snapshot.snapDownOffset != baseline.snapDownOffset) ? (1u<<12) : 0;
+            changeMask |= (snapshot.snapDownSpeed != baseline.snapDownSpeed) ? (1u<<13) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 14);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -224,6 +236,10 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.maxPush, baseline.maxPush, compressionModel);
             if ((changeMask & (1 << 11)) != 0)
                 writer.WritePackedIntDelta(snapshot.stepOffset, baseline.stepOffset, compressionModel);
+            if ((changeMask & (1 << 12)) != 0)
+                writer.WritePackedIntDelta(snapshot.snapDownOffset, baseline.snapDownOffset, compressionModel);
+            if ((changeMask & (1 << 13)) != 0)
+                writer.WritePackedIntDelta(snapshot.snapDownSpeed, baseline.snapDownSpeed, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -280,6 +296,14 @@ namespace PropHunt.Generated
                 snapshot.stepOffset = reader.ReadPackedIntDelta(baseline.stepOffset, compressionModel);
             else
                 snapshot.stepOffset = baseline.stepOffset;
+            if ((changeMask & (1 << 12)) != 0)
+                snapshot.snapDownOffset = reader.ReadPackedIntDelta(baseline.snapDownOffset, compressionModel);
+            else
+                snapshot.snapDownOffset = baseline.snapDownOffset;
+            if ((changeMask & (1 << 13)) != 0)
+                snapshot.snapDownSpeed = reader.ReadPackedIntDelta(baseline.snapDownSpeed, compressionModel);
+            else
+                snapshot.snapDownSpeed = baseline.snapDownSpeed;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -312,6 +336,10 @@ namespace PropHunt.Generated
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.maxPush - backup.maxPush));
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.stepOffset - backup.stepOffset));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.snapDownOffset - backup.snapDownOffset));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.snapDownSpeed - backup.snapDownSpeed));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -364,6 +392,14 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("stepOffset"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("snapDownOffset"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("snapDownSpeed"));
             ++nameCount;
             return nameCount;
         }
