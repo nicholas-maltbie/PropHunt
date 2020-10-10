@@ -106,7 +106,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMovementSystem))]
-    public class SnapKCCDown : SystemBase
+    public class KCCSnapDown : SystemBase
     {
         protected unsafe override void OnUpdate()
         {
@@ -124,7 +124,7 @@ namespace PropHunt.Mixed.Systems
                 in PhysicsCollider collider) =>
             {
                 // Don't snap down if they are moving up (either in world or player velocity)
-                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up))
+                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || !grounded.StandingOnGround)
                 {
                     return;
                 }

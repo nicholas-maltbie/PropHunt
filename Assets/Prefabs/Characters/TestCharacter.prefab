@@ -175,7 +175,7 @@ MonoBehaviour:
   pushDecay: 0.1
   jumpGraceTime: 0.1
   jumpCooldown: 0.3
-  groundFallingDistance: 0.1
+  groundFallingDistance: 0.01
   maxPush: 10
   stepOffset: 0.25
   snapDownOffset: 0.35
