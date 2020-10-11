@@ -1,3 +1,4 @@
+using PropHunt.Client.Components;
 using PropHunt.Client.Systems;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace PropHunt.PlayMode.Tests.Utility
                     timedOut = true;
                 }
 
-                return ConnectionSystem.IsConnected != targetState && !timedOut;
+                return connectionManager.GetSingleton<ConnectionComponent>().isConnected != targetState && !timedOut;
             }
         }
 
