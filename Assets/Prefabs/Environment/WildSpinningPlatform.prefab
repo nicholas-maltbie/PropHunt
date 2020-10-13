@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4251410279766541687}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 50, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5738015990416959297}
@@ -92,7 +92,7 @@ Transform:
   m_GameObject: {fileID: 5738015990416959298}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 32, y: 5.1, z: -6.38}
-  m_LocalScale: {x: 4, y: 0.5, z: 2}
+  m_LocalScale: {x: 4, y: 1, z: 2}
   m_Children:
   - {fileID: 7375089101774636218}
   - {fileID: 5778066065929057669}
@@ -313,9 +313,9 @@ MonoBehaviour:
     y: 0
     z: 0
   m_InitialAngularVelocity:
-    x: 0.1
-    y: 0
-    z: 0.1
+    x: 0
+    y: 0.2
+    z: 0
   m_GravityFactor: 1
   m_OverrideDefaultMassDistribution: 0
   m_CenterOfMass:
@@ -357,7 +357,7 @@ MonoBehaviour:
   - {fileID: 7375089101774636218}
   - {fileID: 5778066065929057669}
   loopMethod: 0
-  speed: 3
+  speed: 1
 --- !u!114 &5738015990416959323
 MonoBehaviour:
   m_ObjectHideFlags: 0

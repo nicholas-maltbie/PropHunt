@@ -162,7 +162,6 @@ namespace PropHunt.Mixed.Components
         /// Threshold for when the player will stop falling onto the ground. Should be a value smaller
         /// than or equal to groundCheckDistance.
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float groundFallingDistance;
 
         /// <summary>
@@ -265,13 +264,11 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Velocity due to player input
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 playerVelocity;
 
         /// <summary>
         /// Velocity due to world forces
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
     }
 
@@ -284,13 +281,11 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Velocity of floor player is standing on
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 floorVelocity;
 
         /// <summary>
         /// Displacement of a character in the current frame
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 frameDisplacement;
     }
 
