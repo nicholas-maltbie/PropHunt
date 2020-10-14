@@ -9,7 +9,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to track moving of objects
     /// </summary>
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(EndFramePhysicsSystem))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class MovementTrackingSystem : SystemBase
     {
