@@ -328,7 +328,7 @@ namespace PropHunt.Mixed.Systems
                 Unity.Physics.ColliderCastHit overlapHit = overlapCollector.ClosestHit;
 
                 // Skip if no overlap ocurred
-                if (!overlapOcurred)
+                if (!overlapOcurred || overlapHit.Fraction > 0)
                 {
                     return;
                 }

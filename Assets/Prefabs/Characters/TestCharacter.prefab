@@ -170,8 +170,8 @@ MonoBehaviour:
   fallAnglePower: 1.2
   moveAnglePower: 2
   pushPower: 50
-  moveMaxBounces: 5
-  fallMaxBounces: 5
+  moveMaxBounces: 3
+  fallMaxBounces: 2
   pushDecay: 0.1
   jumpGraceTime: 0.1
   jumpCooldown: 0.3
