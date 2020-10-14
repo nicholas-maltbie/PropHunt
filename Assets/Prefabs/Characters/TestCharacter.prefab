@@ -147,6 +147,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewRotationRate: 180
   offset: {x: 0, y: 1.6, z: 0}
+  maxPitch: 90
+  minPitch: -90
 --- !u!114 &-8700528946816345019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +166,7 @@ MonoBehaviour:
   gravityForce: {x: 0, y: -9.8, z: 0}
   jumpForce: 5
   maxWalkAngle: 45
-  groundCheckDistance: 0.1
+  groundCheckDistance: 0.25
   fallAnglePower: 1.2
   moveAnglePower: 2
   pushPower: 50
@@ -175,6 +177,9 @@ MonoBehaviour:
   jumpCooldown: 0.3
   groundFallingDistance: 0.01
   maxPush: 10
+  stepOffset: 0.25
+  snapDownOffset: 0.35
+  snapDownSpeed: 3.5
 --- !u!114 &2032777291050987007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,6 +418,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewRotationRate: 180
   offset: {x: 0, y: 1.7, z: 0}
+  maxPitch: 90
+  minPitch: -90
 --- !u!1 &5362533525206946736
 GameObject:
   m_ObjectHideFlags: 0

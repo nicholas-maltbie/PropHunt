@@ -94,6 +94,22 @@ namespace PropHunt.Authoring
         /// </summary>
         public float maxPush = 2;
 
+        /// <summary>
+        /// Maximum amount a character can snap up when hitting steps/stairs (also any other object they hit very close
+        /// th their feet).
+        /// </summary>
+        public float stepOffset = 0.1f;
+
+        /// <summary>
+        /// Maximum distance a player can be 'snapped' down per frame
+        /// </summary>
+        public float snapDownOffset = 0.25f;
+
+        /// <summary>
+        /// Maximum rate at which a player can be 'snapped' down in meters per second
+        /// </summary>
+        public float snapDownSpeed = 0.5f;
+
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new KCCMovementSettings()
@@ -109,6 +125,9 @@ namespace PropHunt.Authoring
                 fallPushPower = this.pushPower,
                 fallPushDecay = this.pushDecay,
                 maxPush = this.maxPush,
+                stepOffset = this.stepOffset,
+                snapDownOffset = this.snapDownOffset,
+                snapDownSpeed = this.snapDownSpeed,
             });
             dstManager.AddComponentData(entity, new KCCJumping()
             {
