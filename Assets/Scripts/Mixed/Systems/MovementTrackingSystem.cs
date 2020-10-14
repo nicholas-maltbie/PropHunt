@@ -1,6 +1,7 @@
 
 using PropHunt.Mixed.Components;
 using Unity.Entities;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems

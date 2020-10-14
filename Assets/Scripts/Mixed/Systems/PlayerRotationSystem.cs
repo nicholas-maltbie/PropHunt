@@ -16,7 +16,6 @@ namespace PropHunt.Server.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class PlayerRotationSystem : SystemBase
     {

@@ -2,6 +2,7 @@
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -9,8 +10,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
-    [UpdateBefore(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
+    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
     public class MovingPlatformSystem : SystemBase
     {
         protected override void OnUpdate()
