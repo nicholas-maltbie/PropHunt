@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Character
-  m_Shader: {fileID: -6465566751694194690, guid: f9c4155b45f8ccd4bab657a36ad4095d,
+  m_Name: LitOrange
+  m_Shader: {fileID: -6465566751694194690, guid: 492079463615b5245bf0379582dcf7c1,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -53,7 +53,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_4C4B7100: 0.5
+    - Vector1_4C4B7100: 1
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -76,7 +76,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_F9CC1639: {r: 1, g: 1, b: 1, a: 0}
+    - Color_F9CC1639: {r: 1, g: 0.46219248, b: 0, a: 0}
     - Vector2_49D10C6: {r: 1, g: 1, b: 0, a: 0}
     - Vector2_57A569B6: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

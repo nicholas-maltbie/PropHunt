@@ -3,6 +3,7 @@ using PropHunt.Mixed.Utilities;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
@@ -10,16 +11,23 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
+    /// Update groups for things to compute before physics step computation
+    /// </summary>
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    public class KCCPreUpdateGroup : ComponentSystemGroup { }
+
+    /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(PushForceGroup))]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(EndFramePhysicsSystem))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
     public class KCCGroundedSystem : SystemBase
     {
         /// <summary>
@@ -97,6 +105,8 @@ namespace PropHunt.Mixed.Systems
                     }
                 }
             ).ScheduleParallel();
+
+            this.Dependency.Complete();
         }
     }
 
@@ -286,40 +296,50 @@ namespace PropHunt.Mixed.Systems
         protected unsafe override void OnUpdate()
         {
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
-            var floorMovementGetter = GetComponentDataFromEntity<FloorMovement>(true);
             float deltaTime = Time.DeltaTime;
 
-            Entities.WithReadOnly(floorMovementGetter).ForEach((
+            Entities.ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
                 in PhysicsCollider collider,
-                in KCCGrounded grounded,
+                in Rotation rotation,
+                in KCCGravity gravity,
                 in KCCMovementSettings movementSettings
             ) =>
             {
-                // Skip case when the character is not on the ground, or when
-                //  the distance to the ground is greater than zero (aka not overlapping).
-                if (!grounded.onGround || grounded.distanceToGround > 0)
+                // Project the character collider down and see what they collide with
+                //  Only filter for intersections
+                SelfFilteringClosestHitCollector<ColliderCastHit> overlapCollector =
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+
+                float3 from = translation.Value;
+                float3 to = from + gravity.Down * KCCUtils.Epsilon;
+
+                var overlapInput = new ColliderCastInput()
+                {
+                    End = to,
+                    Start = from,
+                    Collider = collider.ColliderPtr,
+                    Orientation = rotation.Value
+                };
+
+                bool overlapOcurred = physicsWorld.CollisionWorld.CastCollider(overlapInput, ref overlapCollector);
+                Unity.Physics.ColliderCastHit overlapHit = overlapCollector.ClosestHit;
+
+                // Skip if no overlap ocurred
+                if (!overlapOcurred || overlapHit.Fraction > 0)
                 {
                     return;
-                }
-
-                float3 previousDisplacement = float3.zero;
-                // Account for movement due to moving floor
-                if (floorMovementGetter.HasComponent(entity))
-                {
-                    // Seems to broken for now, will ignore as it works without this feature
-                    previousDisplacement = floorMovementGetter[entity].frameDisplacement;
                 }
 
                 // Draw a ray from the center of the character collider to 
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
-                float3 hitPoint = grounded.groundedPoint + previousDisplacement - grounded.surfaceNormal * KCCUtils.Epsilon;
-                float3 sourcePoint = hitPoint + grounded.surfaceNormal * (movementSettings.maxPush * deltaTime);
-                int hitObject = grounded.hitEntity.Index;
+                float3 hitPoint = overlapHit.Position - overlapHit.SurfaceNormal * KCCUtils.Epsilon;
+                float3 sourcePoint = hitPoint + overlapHit.SurfaceNormal * (movementSettings.maxPush * deltaTime);
+                int hitObject = overlapHit.Entity.Index;
                 int selfIndex = entity.Index;
 
                 // Hit collector to only collide with our object and the object we overlap with
@@ -350,7 +370,7 @@ namespace PropHunt.Mixed.Systems
                     // UnityEngine.Debug.DrawLine(sourcePoint, raycastHit.Position, UnityEngine.Color.red);
                     // UnityEngine.Debug.DrawLine(raycastHit.Position, hitPoint, UnityEngine.Color.cyan);
                     // Get movement in direction touching object
-                    float3 push = grounded.surfaceNormal * (overlapDistance + KCCUtils.Epsilon * 2);
+                    float3 push = overlapHit.SurfaceNormal * (overlapDistance + KCCUtils.Epsilon * 2);
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }
@@ -362,7 +382,6 @@ namespace PropHunt.Mixed.Systems
     /// System to move character with ground
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCGroundedSystem))]
     [UpdateBefore(typeof(KCCGravitySystem))]
     public class KCCMoveWithGroundSystem : SystemBase
     {
@@ -422,12 +441,13 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
-    [UpdateAfter(typeof(KCCGroundedSystem))]
     public class KCCGravitySystem : SystemBase
     {
         protected override void OnUpdate()
         {
             float deltaTime = Time.DeltaTime;
+
+            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
 
             Entities.ForEach((
                 ref KCCVelocity velocity,
@@ -436,6 +456,7 @@ namespace PropHunt.Mixed.Systems
                 {
                     // If the player is not grounded, push down by
                     // gravity's acceleration
+                    // UnityEngine.Debug.Log($"isServer {isServer}, falling {grounded.Falling}, distance {grounded.distanceToGround}, angle {grounded.angle}");
                     if (grounded.Falling)
                     {
                         // have world velocity decrease due to air resistance (future feature)

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7259411516345178096
+--- !u!1 &1118384706070375491
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7259411516345178097}
-  - component: {fileID: 7259411516345178099}
-  - component: {fileID: 7259411516345178098}
-  - component: {fileID: 7259411516345178060}
-  - component: {fileID: 7259411516345178061}
-  - component: {fileID: 7259411516345178062}
-  - component: {fileID: 405366226491774155}
+  - component: {fileID: 1118384706070375498}
+  - component: {fileID: 1118384706070375497}
+  - component: {fileID: 1118384706070375496}
+  - component: {fileID: 1118384706070375495}
+  - component: {fileID: 1118384706070375494}
+  - component: {fileID: 1118384706070375493}
+  - component: {fileID: 1118384706070375492}
   m_Layer: 0
-  m_Name: HorizontalSpinningCylinder
+  m_Name: HorizontalSpinningCylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7259411516345178097
+--- !u!4 &1118384706070375498
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 8.14, y: 2.65, z: 15.73}
+  m_LocalPosition: {x: 10, y: 2.65, z: 31}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
---- !u!33 &7259411516345178099
+--- !u!33 &1118384706070375497
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &7259411516345178098
+--- !u!23 &1118384706070375496
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,13 +85,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7259411516345178060
+--- !u!114 &1118384706070375495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccea9ea98e38942e0b0938c27ed1903e, type: 3}
@@ -135,13 +135,13 @@ MonoBehaviour:
     Tag05: 0
     Tag06: 0
     Tag07: 0
---- !u!114 &7259411516345178061
+--- !u!114 &1118384706070375494
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b275e5f92732148048d7b77e264ac30e, type: 3}
@@ -278,13 +278,13 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &7259411516345178062
+--- !u!114 &1118384706070375493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
@@ -297,36 +297,16 @@ MonoBehaviour:
   Importance: 1
   prefabId: a2ac3ff0ec55b8841a46bf0be8b6993d
   Name: HorizontalSpinningCylinder
---- !u!114 &405366226491774155
+--- !u!114 &1118384706070375492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7259411516345178096}
+  m_GameObject: {fileID: 1118384706070375491}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  position:
-    x: 0
-    y: 0
-    z: 0
-  previousPosition:
-    x: 0
-    y: 0
-    z: 0
-  attitude:
-    value:
-      x: 0
-      y: 0
-      z: 0
-      w: 0
-  previousAttitude:
-    value:
-      x: 0
-      y: 0
-      z: 0
-      w: 0
-  updates: 0
+  avoidTransferMomentum: 0

@@ -15,7 +15,7 @@ namespace PropHunt.Mixed.Systems
     /// commands based on user input.
     /// </summary>
     [BurstCompile]
-    [UpdateAfter(typeof(PlayerRotationSystem))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class KinematicCharacterControllerInput : SystemBase
     {
         protected override void OnUpdate()
