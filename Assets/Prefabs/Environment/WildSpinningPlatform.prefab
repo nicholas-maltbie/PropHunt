@@ -313,7 +313,7 @@ MonoBehaviour:
     y: 0
     z: 0
   m_InitialAngularVelocity:
-    x: 0
+    x: 0.1
     y: 0.2
     z: 0
   m_GravityFactor: 1
