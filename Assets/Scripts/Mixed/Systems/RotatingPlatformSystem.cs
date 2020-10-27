@@ -17,7 +17,8 @@ namespace PropHunt.Mixed.Systems
         public static float3 ShortestAngleBetween(float3 start, float3 end)
         {
             float3 delta = end - start;
-            return new float3{
+            return new float3
+            {
                 x = delta.x > 180 ? delta.x - 360 : delta.x,
                 y = delta.y > 180 ? delta.y - 360 : delta.y,
                 z = delta.z > 180 ? delta.z - 360 : delta.z
@@ -63,8 +64,6 @@ namespace PropHunt.Mixed.Systems
 
                     // Move toward current platform by speed
                     float3 dir = math.normalizesafe(angleBetween);
-                    
-                    UnityEngine.Debug.Log(angleBetween);
 
                     // Set physics velocity based on speed and direction
                     rotatingPlatform.currentAngle += dir * rotatingPlatform.speed * deltaTime;
