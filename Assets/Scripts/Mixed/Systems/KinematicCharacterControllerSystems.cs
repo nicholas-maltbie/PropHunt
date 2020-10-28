@@ -203,7 +203,17 @@ namespace PropHunt.Mixed.Systems
                 in Rotation rotation,
                 in KCCMovementSettings movementSettings) =>
             {
-                float verticalSnapMove = !kccGroundedGetter[entity].Falling || !kccGroundedGetter[entity].PreviousFalling ? movementSettings.stepOffset : 0;
+                KCCGrounded grounded = kccGroundedGetter[entity];
+                float verticalSnapMove = !grounded.Falling || !grounded.PreviousFalling ? movementSettings.stepOffset : 0;
+
+                float3 projectedMovement = velocity.playerVelocity * deltaTime;
+                // If the player is standing on the ground, project their movement onto the ground plane
+                // This allows them to walk up gradual slopes without facing a hit in movement speed
+                if (!grounded.Falling)
+                {
+                    // Move = Normalize(Proj(Move, GroundSurface)) * Move
+                    projectedMovement = math.normalize(KCCUtils.ProjectVectorOntoPlane(projectedMovement, grounded.surfaceNormal)) * math.length(projectedMovement);
+                }
 
                 // Adjust character translation due to player movement
                 translation.Value = KCCUtils.ProjectValidMovement(
@@ -211,7 +221,7 @@ namespace PropHunt.Mixed.Systems
                     entityInQueryIndex,
                     physicsWorld.CollisionWorld,
                     translation.Value,
-                    velocity.playerVelocity * deltaTime,
+                    projectedMovement,
                     physicsCollider,
                     entity.Index,
                     rotation.Value,
