@@ -121,7 +121,8 @@ namespace PropHunt.EditMode.Tests.Client
             Entity streamConn = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             // Test connection while attempting to connect
-            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent{
+            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent
+            {
                 attemptingConnect = false,
                 attemptingDisconnect = false
             });
@@ -142,7 +143,8 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsTrue(this.disconnectionCounts == 0);
 
             // Simulate disconnecting to server
-            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent{
+            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent
+            {
                 attemptingConnect = false,
                 attemptingDisconnect = false,
                 isConnected = true,
@@ -158,7 +160,7 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsTrue(this.connectionCounts == 0);
             Assert.IsTrue(this.disconnectionCounts == 0);
         }
-        
+
         /// <summary>
         /// Verify a connection/disconnection completion dependent on network stream connection
         /// </summary>
@@ -175,7 +177,8 @@ namespace PropHunt.EditMode.Tests.Client
             Entity streamConn = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             // Test connection while attempting to connect
-            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent{
+            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent
+            {
                 attemptingConnect = true,
                 attemptingDisconnect = false
             });
@@ -196,7 +199,8 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsTrue(this.disconnectionCounts == 0);
 
             // Simulate disconnecting to server
-            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent{
+            this.connectionSystem.SetSingleton<ConnectionComponent>(new ConnectionComponent
+            {
                 attemptingConnect = false,
                 attemptingDisconnect = true
             });
@@ -313,7 +317,8 @@ namespace PropHunt.EditMode.Tests.Client
         {
             // Setup parameters to request connect = false
             this.connectToServerSystem.SetSingleton<ConnectionComponent>(
-                new ConnectionComponent{
+                new ConnectionComponent
+                {
                     requestConnect = false
                 });
 
@@ -333,7 +338,8 @@ namespace PropHunt.EditMode.Tests.Client
         {
             // Setup parameters to request connect = true
             this.connectToServerSystem.SetSingleton<ConnectionComponent>(
-                new ConnectionComponent{
+                new ConnectionComponent
+                {
                     requestConnect = true
                 });
 
@@ -374,7 +380,8 @@ namespace PropHunt.EditMode.Tests.Client
         {
             // Setup parameters to request connect = true
             this.disconnectFromServerSystem.SetSingleton<ConnectionComponent>(
-                new ConnectionComponent{
+                new ConnectionComponent
+                {
                     requestDisconnect = false
                 });
             // Create an entity with the NetworkStreamConnection component
@@ -398,7 +405,8 @@ namespace PropHunt.EditMode.Tests.Client
         {
             // Setup parameters to request connect = true
             this.disconnectFromServerSystem.SetSingleton<ConnectionComponent>(
-                new ConnectionComponent{
+                new ConnectionComponent
+                {
                     requestDisconnect = true
                 });
             // Create an entity with the NetworkStreamConnection component
