@@ -46,6 +46,10 @@ namespace PropHunt.Client.Systems
                 buffer.DestroyEntity(entityInQueryIndex, ent);
             }).ScheduleParallel();
             this.commandBufferSystem.CreateCommandBuffer().DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
+#if UNITY_EDITOR
+            // Debug flag for editor tests
+            this.CompleteDependency();
+#endif
         }
     }
 
@@ -161,13 +165,13 @@ namespace PropHunt.Client.Systems
 
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
-                if (EntityManager.HasComponent<NetworkStreamInGame>(ent))
+                if (connectionSingleton.attemptingConnect && EntityManager.HasComponent<NetworkStreamInGame>(ent))
                 {
                     connectionSingleton.isConnected = true;
                     connectionSingleton.attemptingConnect = false;
                     OnConnect?.Invoke(this, new ListenConnect());
                 }
-                if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
+                if (connectionSingleton.attemptingDisconnect && EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
                     connectionSingleton.isConnected = false;
                     connectionSingleton.attemptingDisconnect = false;
