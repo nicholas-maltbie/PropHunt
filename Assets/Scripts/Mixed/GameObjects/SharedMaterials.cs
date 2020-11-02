@@ -10,7 +10,7 @@ namespace PropHunt.Mixed
     ///</summary>
     public class SharedMaterials : MonoBehaviour
     {
-        public static SharedMaterials Instance { get; private set; }
+        public static SharedMaterials Instance;
         public SharedMaterialLibrary MaterialLibrary;
         private Dictionary<int, Material> materialDictionary;
         public void Awake()
@@ -36,7 +36,7 @@ namespace PropHunt.Mixed
             }
         }
 
-        public Material GetMaterialById(int id)
+        public virtual Material GetMaterialById(int id)
         {
 
             if (materialDictionary.TryGetValue(id, out var material))
