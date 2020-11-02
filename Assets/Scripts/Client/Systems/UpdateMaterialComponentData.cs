@@ -15,8 +15,6 @@ namespace PropHunt.Client.Systems
     {
         protected override void OnUpdate()
         {
-            var ecb = EntityManager.World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref UpdateMaterialComponentData updateMatTag, ref MaterialIdComponentData materialId) =>
             {
                 // We only want to update this entity once, so this tag will be removed afterwards.
@@ -25,7 +23,7 @@ namespace PropHunt.Client.Systems
                 var material = SharedMaterials.Instance.GetMaterialById(materialId.materialId);
 
                 // Set the material.
-                ecb.SetSharedComponent(ent, new RenderMesh
+                PostUpdateCommands.SetSharedComponent(ent, new RenderMesh
                 {
                     mesh = renderMesh.mesh,
                     material = material,

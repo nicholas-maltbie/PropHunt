@@ -41,6 +41,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.uiChangeEvents = new UIChangeEvents();
             UIManager.UIEvents = this.uiChangeEvents;
 
+            MenuManagerSystem.Controller = null;
             this.menuManagerSystem = base.World.CreateSystem<MenuManagerSystem>();
 
             // Listen to requested screen change events
@@ -169,9 +170,6 @@ namespace PropHunt.EditMode.Tests.Client
 
             // Verify cursor is locked
             Assert.IsTrue(MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.DENY);
-
-            // Initial update to set state
-            this.menuManagerSystem.Update();
 
             // raise a mocked event
             // Simulate switch from main menu screen to HUD screen

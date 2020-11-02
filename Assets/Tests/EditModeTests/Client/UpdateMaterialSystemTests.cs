@@ -48,10 +48,6 @@ namespace PropHunt.EditMode.Tests.Client
             base.m_Manager.AddSharedComponentData<RenderMesh>(entity, new RenderMesh());
 
             this.updateMaterialSystem.Update();
-            EndSimulationEntityCommandBufferSystem buffer = base.World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
-            buffer.Update();
-
-            Material.DestroyImmediate(mat);
 
             Assert.IsFalse(base.m_Manager.HasComponent<UpdateMaterialComponentData>(entity));
         }
