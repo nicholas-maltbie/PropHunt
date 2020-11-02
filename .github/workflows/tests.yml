@@ -59,7 +59,7 @@ jobs:
           customParameters: |
             -enableCodeCoverage
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -coverageOptions generateBadgeReport;assemblyFilters:-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
+            -coverageOptions generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
             -nographics
 
       # - name: Upload Results
