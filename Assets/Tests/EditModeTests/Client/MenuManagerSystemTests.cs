@@ -1,18 +1,11 @@
-using Moq;
 using NUnit.Framework;
 using PropHunt.Client.Components;
 using PropHunt.Client.Systems;
+using PropHunt.Constants;
 using PropHunt.InputManagement;
-using PropHunt.Mixed.Commands;
-using PropHunt.Mixed.Components;
 using PropHunt.UI;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Entities;
 using Unity.Entities.Tests;
-using Unity.NetCode;
 using UnityEngine;
-using UnityEngine.TestTools;
 
 namespace PropHunt.EditMode.Tests.Client
 {
@@ -191,14 +184,6 @@ namespace PropHunt.EditMode.Tests.Client
 
             // Verify cursor is locked
             Assert.IsTrue(MenuManagerSystem.MovementState == LockedInputState.ALLOW);
-        }
-
-        [Test]
-        public void VerifyStaticConstants()
-        {
-            Assert.IsFalse(string.IsNullOrEmpty(MenuScreenNames.MainMenuScreen));
-            Assert.IsFalse(string.IsNullOrEmpty(MenuScreenNames.InGameMenuScreen));
-            Assert.IsFalse(string.IsNullOrEmpty(MenuScreenNames.HUDScreen));
         }
     }
 }
