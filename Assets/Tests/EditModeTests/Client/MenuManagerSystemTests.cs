@@ -78,9 +78,10 @@ namespace PropHunt.EditMode.Tests.Client
         {
             this.menuManagerSystem.Update();
             this.menuManagerSystem.SetSingleton<ConnectionComponent>(
-                new ConnectionComponent {
+                new ConnectionComponent
+                {
                     isConnected = true,
-            });
+                });
 
             this.menuManagerSystem.Update();
 
