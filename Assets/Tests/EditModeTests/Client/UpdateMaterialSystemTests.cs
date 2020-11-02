@@ -35,7 +35,7 @@ namespace PropHunt.EditMode.Tests.Client
         [Test]
         public void TestUpdateMaterialOperation()
         {
-            Mock<SharedMaterials> sharedMaterialMock = new Mock<SharedMaterials>();
+            Mock<ISharedMaterialLookup> sharedMaterialMock = new Mock<ISharedMaterialLookup>();
             SharedMaterials.Instance = sharedMaterialMock.Object;
 
             Material mat = new Material(Shader.Find("Shader Graphs/LitDOTS"));
