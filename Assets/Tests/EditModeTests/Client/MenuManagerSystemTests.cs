@@ -121,8 +121,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.menuManagerSystem.Update();
 
             // When connected, verify toggling input state and menu screen when hitting 'cancel' button
-            var previousLockState = Cursor.lockState;
-            var previousVisibleState = Cursor.visible;
+            var previousState = MenuManagerSystem.MovementState;
             var previousScreen = this.currentScreen;
 
             // Mock player input
@@ -134,30 +133,15 @@ namespace PropHunt.EditMode.Tests.Client
 
             // Verify change in state
             this.menuManagerSystem.Update();
-            Assert.IsTrue(previousVisibleState != Cursor.visible);
-            Assert.IsTrue(previousLockState != Cursor.lockState);
-            Assert.IsTrue(previousScreen != this.currentScreen);
-            Assert.IsTrue((
-                    Cursor.lockState == CursorLockMode.Confined &&
-                    MenuManagerSystem.MovementState == LockedInputState.ALLOW
-                ) || (
-                    Cursor.lockState == CursorLockMode.None &&
-                    MenuManagerSystem.MovementState == LockedInputState.DENY
-                ));
 
-            previousLockState = Cursor.lockState;
-            previousVisibleState = Cursor.visible;
+            Assert.IsFalse(previousState == MenuManagerSystem.MovementState);
             previousScreen = this.currentScreen;
+            previousState = MenuManagerSystem.MovementState;
 
             // Verify change in state when hitting 'cancel' again with another update
             this.menuManagerSystem.Update();
-            Assert.IsTrue(previousVisibleState != Cursor.visible);
-            Assert.IsTrue(previousLockState != Cursor.lockState);
-            Assert.IsTrue(previousScreen != this.currentScreen);
 
-            previousLockState = Cursor.lockState;
-            previousVisibleState = Cursor.visible;
-            previousScreen = this.currentScreen;
+            Assert.IsFalse(previousState == MenuManagerSystem.MovementState);
         }
 
         /// <summary>
