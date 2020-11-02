@@ -183,5 +183,18 @@ namespace PropHunt.EditMode.Tests.Client
             // Verify cursor is locked
             Assert.IsTrue(MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW);
         }
+
+        [Test]
+        public void VerifyInputStateController()
+        {
+            InputStateController controller = new InputStateController();
+
+            controller.MovementState = LockedInputState.ALLOW;
+            Assert.IsTrue(controller.GetCurrentState() == LockedInputState.ALLOW);
+            Assert.IsTrue(controller.GetCurrentState() == controller.MovementState);
+            controller.MovementState = LockedInputState.DENY;
+            Assert.IsTrue(controller.GetCurrentState() == LockedInputState.DENY);
+            Assert.IsTrue(controller.GetCurrentState() == controller.MovementState);
+        }
     }
 }
