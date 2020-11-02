@@ -22,34 +22,19 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [UpdateBefore(typeof(ConnectionSystem))]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    public class ClearClientGhostEntities : SystemBase
+    public class ClearClientGhostEntities : ComponentSystem
     {
-        protected EndSimulationEntityCommandBufferSystem commandBufferSystem;
-
         public struct ClientClearGhosts : IComponentData { };
-
-        protected override void OnCreate()
-        {
-            RequireSingletonForUpdate<ClientClearGhosts>();
-            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-        }
 
         protected override void OnUpdate()
         {
-            var buffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             // Also delete the existing ghost objects
             Entities.ForEach((
                 Entity ent,
-                int entityInQueryIndex,
                 ref GhostComponent ghost) =>
             {
-                buffer.DestroyEntity(entityInQueryIndex, ent);
-            }).ScheduleParallel();
-            this.commandBufferSystem.CreateCommandBuffer().DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
-#if UNITY_EDITOR
-            // Debug flag for editor tests
-            this.CompleteDependency();
-#endif
+                PostUpdateCommands.DestroyEntity(ent);
+            });
         }
     }
 
@@ -73,8 +58,9 @@ namespace PropHunt.Client.Systems
                 Debug.Log("Attempting to disconnect");
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
                 {
-                    EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
-                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
+                    PostUpdateCommands.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
+                    Entity clearEntity = PostUpdateCommands.CreateEntity();
+                    PostUpdateCommands.AddComponent<ClearClientGhostEntities.ClientClearGhosts>(clearEntity);
                 });
                 connectionSingleton.requestDisconnect = false;
                 connectionSingleton.attemptingDisconnect = true;
@@ -130,12 +116,12 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// Is the player attempting to connect to the server
         /// </summary>
-        public static bool RequestConnect { get; set; }
+        public static bool RequestConnect;
 
         /// <summary>
         /// Is the player attempting to disconnect from the server
         /// </summary>
-        public static bool RequestDisconnect { get; set; }
+        public static bool RequestDisconnect;
 
         protected override void OnCreate()
         {

@@ -41,7 +41,7 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// Current movement state of the player
         /// </summary>
-        public LockedInputState MovementState { get; set; }
+        public LockedInputState MovementState;
 
         /// <inheritdoc/>
         public LockedInputState GetCurrentState() => MovementState;
