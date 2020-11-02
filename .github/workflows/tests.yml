@@ -2,7 +2,7 @@ name: Tests
 
 on:
   pull_request: {}
-  push: { branches: [master] }
+  push: {}
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -59,14 +59,14 @@ jobs:
           customParameters: |
             -enableCodeCoverage
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -coverageOptions generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
+            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
             -nographics
 
-      # - name: Upload Results
-      #   uses: actions/upload-artifact@v1
-      #   with:
-      #     name: Test results for ${{ matrix.testMode }}
-      #     path: ${{ steps.tests.outputs.artifactsPath }}
+      - name: Upload Results
+        uses: actions/upload-artifact@v1
+        with:
+          name: Test results for ${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
       
       - name: Find Coverage
         run: |
