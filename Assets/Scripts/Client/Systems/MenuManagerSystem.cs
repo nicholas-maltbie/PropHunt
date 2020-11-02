@@ -1,4 +1,5 @@
 using PropHunt.Client.Components;
+using PropHunt.Constants;
 using PropHunt.InputManagement;
 using PropHunt.UI;
 using Unity.Burst;
@@ -13,27 +14,6 @@ namespace PropHunt.Client.Systems
     /// as a pause menu or other options.
     /// </summary>
     public enum LockedInputState { ALLOW, DENY };
-
-    /// <summary>
-    /// Database for menu screen names
-    /// </summary>
-    public static class MenuScreenNames
-    {
-        /// <summary>
-        /// Main menu default screen for when leaving the game
-        /// </summary>
-        public static readonly string MainMenuScreen = "MainMenuScreen";
-
-        /// <summary>
-        /// Screen with in game menu options
-        /// </summary>
-        public static readonly string InGameMenuScreen = "InGameMenu";
-
-        /// <summary>
-        /// Screen with in game heads up display name
-        /// </summary>
-        public static readonly string HUDScreen = "InGameHUD";
-    }
 
     /// <summary>
     /// System to manage the available menu and
