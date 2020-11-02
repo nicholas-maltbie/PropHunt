@@ -56,7 +56,7 @@ namespace PropHunt.Client.Systems
             float pitchChange = 0;
             float yawChange = 0;
 
-            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW)
+            if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW)
             {
                 pitchChange = this.unityService.GetAxis("Mouse Y");
                 yawChange = this.unityService.GetAxis("Mouse X");

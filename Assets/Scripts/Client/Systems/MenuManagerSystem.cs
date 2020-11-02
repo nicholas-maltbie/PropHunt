@@ -16,6 +16,41 @@ namespace PropHunt.Client.Systems
     public enum LockedInputState { ALLOW, DENY };
 
     /// <summary>
+    /// Interface for getting the current status of the input state
+    /// </summary>
+    public interface IInputStateController
+    {
+        /// <summary>
+        /// Get the current input state
+        /// </summary>
+        /// <returns></returns>
+        LockedInputState GetCurrentState();
+
+        /// <summary>
+        /// Set the state of the input controller
+        /// </summary>
+        /// <param name="newState">New input state for controller</param>
+        void SetCurrentState(LockedInputState newState);
+    }
+
+    /// <summary>
+    /// Implementation of input state controller for filtering player input
+    /// </summary>
+    public class InputStateController : IInputStateController
+    {
+        /// <summary>
+        /// Current movement state of the player
+        /// </summary>
+        public LockedInputState MovementState { get; set; }
+
+        /// <inheritdoc/>
+        public LockedInputState GetCurrentState() => MovementState;
+
+        /// <inheritdoc/>
+        public void SetCurrentState(LockedInputState newState) => MovementState = newState;
+    }
+
+    /// <summary>
     /// System to manage the available menu and
     /// switch between different menus.
     /// </summary>
@@ -25,9 +60,9 @@ namespace PropHunt.Client.Systems
     public class MenuManagerSystem : ComponentSystem
     {
         /// <summary>
-        /// Public get method for the current movement state of the player
+        /// Current input state controller
         /// </summary>
-        public static LockedInputState MovementState { get; private set; }
+        public static IInputStateController Controller;
 
         /// <summary>
         /// Was this previously connected last frame
@@ -46,13 +81,19 @@ namespace PropHunt.Client.Systems
             UIManager.UIEvents.ScreenChangeOccur += this.HandleScreenChangeEvent;
             RequireSingletonForUpdate<ConnectionComponent>();
 
-            // Setup default unity service if non is provided
+            // Setup default unity service if none is provided
             if (this.unityService == null)
             {
                 this.unityService = new UnityService();
             }
-
-            MenuManagerSystem.MovementState = LockedInputState.ALLOW;
+            // Setup default controller if none is provided
+            if (MenuManagerSystem.Controller == null)
+            {
+                MenuManagerSystem.Controller = new InputStateController()
+                {
+                    MovementState = LockedInputState.ALLOW
+                };
+            }
         }
 
         protected override void OnDestroy()
@@ -68,7 +109,7 @@ namespace PropHunt.Client.Systems
         {
             if (eventArgs.newScreen == MenuScreenNames.HUDScreen)
             {
-                MenuManagerSystem.MovementState = LockedInputState.ALLOW;
+                MenuManagerSystem.Controller.SetCurrentState(LockedInputState.ALLOW);
             }
         }
 
@@ -88,25 +129,25 @@ namespace PropHunt.Client.Systems
                 // Parse user input to check if the toggle menu button has been pressed
                 if (unityService.GetButtonDown("Cancel"))
                 {
-                    if (MenuManagerSystem.MovementState == LockedInputState.ALLOW)
+                    if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW)
                     {
-                        MenuManagerSystem.MovementState = LockedInputState.DENY;
+                        MenuManagerSystem.Controller.SetCurrentState(LockedInputState.DENY);
                         UIManager.RequestNewScreen(this, MenuScreenNames.InGameMenuScreen);
                     }
-                    else if (MovementState == LockedInputState.DENY)
+                    else if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.DENY)
                     {
-                        MenuManagerSystem.MovementState = LockedInputState.ALLOW;
+                        MenuManagerSystem.Controller.SetCurrentState(LockedInputState.ALLOW);
                         UIManager.RequestNewScreen(this, MenuScreenNames.HUDScreen);
                     }
                 }
 
                 // Set cursor visibility based on current user input
-                if (MenuManagerSystem.MovementState == LockedInputState.ALLOW)
+                if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW)
                 {
                     Cursor.lockState = CursorLockMode.Confined;
                     Cursor.visible = false;
                 }
-                else if (MenuManagerSystem.MovementState == LockedInputState.DENY)
+                else if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.DENY)
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
