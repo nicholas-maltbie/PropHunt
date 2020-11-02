@@ -49,7 +49,7 @@ jobs:
       - name: Pull lfs data, if not cached
         run: git lfs pull
 
-      - uses: webbertakken/unity-test-runner@v1.4
+      - uses: webbertakken/unity-test-runner@v1.7
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
