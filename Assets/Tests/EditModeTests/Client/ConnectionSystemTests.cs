@@ -272,17 +272,19 @@ namespace PropHunt.EditMode.Tests.Client
         [Test]
         public void DestroyManyEntities()
         {
-            base.m_Manager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
-            Entity testGhost = base.m_Manager.CreateEntity();
-            base.m_Manager.AddComponent<GhostComponent>(testGhost);
-            Entity testGhost2 = base.m_Manager.CreateEntity();
-            base.m_Manager.AddComponent<GhostComponent>(testGhost2);
+            Entity testGhost = base.m_Manager.CreateEntity(typeof(GhostComponent));
+            Entity testGhost2 = base.m_Manager.CreateEntity(typeof(GhostComponent));
             Entity testNonGhost = base.m_Manager.CreateEntity();
+            base.m_Manager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
+            base.m_Manager.CompleteAllJobs();
+
+            Assert.IsTrue(base.m_Manager.CreateEntityQuery(typeof(GhostComponent)).CalculateEntityCount() == 2);
 
             this.ghostEntitySystem.Update();
-
             EndSimulationEntityCommandBufferSystem buffer = base.World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
             buffer.Update();
+
+            Assert.IsTrue(base.m_Manager.CreateEntityQuery(typeof(GhostComponent)).CalculateEntityCount() == 0);
 
             Assert.IsFalse(base.m_Manager.Exists(testGhost));
             Assert.IsFalse(base.m_Manager.Exists(testGhost2));
