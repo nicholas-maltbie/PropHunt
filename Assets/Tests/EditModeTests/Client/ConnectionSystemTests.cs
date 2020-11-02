@@ -69,14 +69,14 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsFalse(connectionData.requestConnect);
             Assert.IsFalse(connectionData.requestDisconnect);
 
-            ConnectionSystem.ConnectToServer();
+            ConnectionSystem.RequestConnect = true;
             this.connectionSystem.Update();
 
             connectionData = this.connectionSystem.GetSingleton<ConnectionComponent>();
             Assert.IsTrue(connectionData.requestConnect);
             Assert.IsFalse(connectionData.requestDisconnect);
 
-            ConnectionSystem.DisconnectFromServer();
+            ConnectionSystem.RequestDisconnect = true;
             this.connectionSystem.Update();
 
             connectionData = this.connectionSystem.GetSingleton<ConnectionComponent>();

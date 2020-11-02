@@ -130,28 +130,12 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// Is the player attempting to connect to the server
         /// </summary>
-        private static bool requestConnect;
+        public static bool RequestConnect { get; set; }
 
         /// <summary>
         /// Is the player attempting to disconnect from the server
         /// </summary>
-        private static bool requestDisconnect;
-
-        /// <summary>
-        /// Invoke whenever a disconnect is requested
-        /// </summary>
-        public static void DisconnectFromServer()
-        {
-            requestDisconnect = true;
-        }
-
-        /// <summary>
-        /// Invoke whenever a connect is requested
-        /// </summary>
-        public static void ConnectToServer()
-        {
-            requestConnect = true;
-        }
+        public static bool RequestDisconnect { get; set; }
 
         protected override void OnCreate()
         {
@@ -180,15 +164,15 @@ namespace PropHunt.Client.Systems
             });
 
             // Load static components into connection entity
-            if (requestConnect)
+            if (RequestConnect)
             {
-                connectionSingleton.requestConnect = requestConnect;
-                requestConnect = false;
+                connectionSingleton.requestConnect = true;
+                RequestConnect = false;
             }
-            if (requestDisconnect)
+            if (RequestDisconnect)
             {
-                connectionSingleton.requestDisconnect = requestDisconnect;
-                requestDisconnect = false;
+                connectionSingleton.requestDisconnect = true;
+                RequestDisconnect = false;
             }
 
             SetSingleton(connectionSingleton);

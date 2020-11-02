@@ -47,14 +47,14 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
 
             yield return null;
             // Make a connect request
-            ConnectionSystem.ConnectToServer();
+            ConnectionSystem.RequestConnect = true;
             yield return new WaitForConnected(connectionManager);
             Assert.IsTrue(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
 
             yield return null;
 
             // Make a disconnect request
-            ConnectionSystem.DisconnectFromServer();
+            ConnectionSystem.RequestDisconnect = true;
             yield return new WaitForConnected(connectionManager, state: false);
             Assert.IsFalse(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
         }

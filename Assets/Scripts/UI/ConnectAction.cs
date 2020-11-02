@@ -51,7 +51,7 @@ namespace PropHunt.UI
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkAddress = networkAddress;
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = networkPort;
 
-                ConnectionSystem.ConnectToServer();
+                ConnectionSystem.RequestConnect = true;
             }
             catch
             {
