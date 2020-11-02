@@ -33,15 +33,23 @@ namespace PropHunt.EditMode.Tests.Client
         /// </summary>
         private Entity playerEntity;
 
+        /// <summary>
+        /// Mocked input state manager
+        /// </summary>
+        private Mock<IInputStateController> inputStateControllerMock;
+
         [SetUp]
         public override void Setup()
         {
             base.Setup();
 
             this.samplePlayerInputSystem = base.World.CreateSystem<SamplePlayerInput>();
-            this.unityServiceMock = new Moq.Mock<IUnityService>();
+            this.unityServiceMock = new Mock<IUnityService>();
             this.samplePlayerInputSystem.unityService = this.unityServiceMock.Object;
             base.World.CreateSystem<ClientSimulationSystemGroup>();
+            this.inputStateControllerMock = new Mock<IInputStateController>();
+            this.inputStateControllerMock.Setup(m => m.GetCurrentState()).Returns(LockedInputState.ALLOW);
+            MenuManagerSystem.Controller = this.inputStateControllerMock.Object;
 
             Entity networkId = base.m_Manager.CreateEntity(typeof(NetworkIdComponent));
             base.m_Manager.SetComponentData<NetworkIdComponent>(
@@ -198,6 +206,31 @@ namespace PropHunt.EditMode.Tests.Client
             // Check to ensure the target pitch is not greater than the maximum pitch value
             playerInputSample = base.m_Manager.GetBuffer<PlayerInput>(localInput)[0];
             Assert.IsTrue(playerInputSample.targetPitch == pvData.minPitch);
+        }
+
+        /// <summary>
+        /// Verify performance when updating with locked movement state
+        /// </summary>
+        [Test]
+        public void UpdateWithLockedMovementState()
+        {
+            this.inputStateControllerMock.Setup(m => m.GetCurrentState()).Returns(LockedInputState.DENY);
+
+            // Update the system and verify that the input manager is not invoked
+            this.samplePlayerInputSystem.Update();
+            // Only delta time should have been invoked
+            Assert.IsTrue(this.unityServiceMock.Invocations.Count == 1);
+            // Verify that a buffer size is greater than zero and that the 
+            var localInput = this.samplePlayerInputSystem.GetSingleton<CommandTargetComponent>().targetEntity;
+            Assert.IsTrue(base.m_Manager.GetBuffer<PlayerInput>(localInput).Length > 0);
+
+            // Check to ensure the target pitch is not greater than the maximum pitch value
+            var playerInputSample = base.m_Manager.GetBuffer<PlayerInput>(localInput)[0];
+            Assert.IsTrue(playerInputSample.horizMove == 0);
+            Assert.IsTrue(playerInputSample.vertMove == 0);
+            Assert.IsTrue(playerInputSample.interact == 0);
+            Assert.IsTrue(playerInputSample.jump == 0);
+            Assert.IsTrue(playerInputSample.sprint == 0);
         }
     }
 }

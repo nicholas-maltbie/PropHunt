@@ -114,7 +114,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.menuManagerSystem.Update();
 
             // When connected, verify toggling input state and menu screen when hitting 'cancel' button
-            var previousState = MenuManagerSystem.MovementState;
+            var previousState = MenuManagerSystem.Controller.GetCurrentState();
             var previousScreen = this.currentScreen;
 
             // Mock player input
@@ -127,14 +127,14 @@ namespace PropHunt.EditMode.Tests.Client
             // Verify change in state
             this.menuManagerSystem.Update();
 
-            Assert.IsFalse(previousState == MenuManagerSystem.MovementState);
+            Assert.IsFalse(previousState == MenuManagerSystem.Controller.GetCurrentState());
             previousScreen = this.currentScreen;
-            previousState = MenuManagerSystem.MovementState;
+            previousState = MenuManagerSystem.Controller.GetCurrentState();
 
             // Verify change in state when hitting 'cancel' again with another update
             this.menuManagerSystem.Update();
 
-            Assert.IsFalse(previousState == MenuManagerSystem.MovementState);
+            Assert.IsFalse(previousState == MenuManagerSystem.Controller.GetCurrentState());
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.uiChangeEvents.ChangeScreen(null, args);
 
             // Verify cursor is locked
-            Assert.IsTrue(MenuManagerSystem.MovementState == LockedInputState.DENY);
+            Assert.IsTrue(MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.DENY);
 
             // Initial update to set state
             this.menuManagerSystem.Update();
@@ -183,7 +183,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.uiChangeEvents.ChangeScreen(null, args);
 
             // Verify cursor is locked
-            Assert.IsTrue(MenuManagerSystem.MovementState == LockedInputState.ALLOW);
+            Assert.IsTrue(MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW);
         }
     }
 }
