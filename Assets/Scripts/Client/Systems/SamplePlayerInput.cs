@@ -100,8 +100,11 @@ namespace PropHunt.Client.Systems
             playerInput.targetPitch = targetPitch;
             playerInput.targetYaw = targetYaw;
 
-            var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
-            inputBuffer.AddCommandData(playerInput);
+            if (EntityManager.Exists(localInput))
+            {
+                var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
+                inputBuffer.AddCommandData(playerInput);
+            }
         }
     }
 

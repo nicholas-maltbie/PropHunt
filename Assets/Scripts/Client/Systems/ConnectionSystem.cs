@@ -26,6 +26,11 @@ namespace PropHunt.Client.Systems
     {
         public struct ClientClearGhosts : IComponentData { };
 
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<ClientClearGhosts>();
+        }
+
         protected override void OnUpdate()
         {
             // Also delete the existing ghost objects
