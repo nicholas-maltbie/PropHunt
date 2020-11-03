@@ -69,14 +69,14 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsFalse(connectionData.requestConnect);
             Assert.IsFalse(connectionData.requestDisconnect);
 
-            ConnectionSystem.RequestConnect = true;
+            ConnectionSystem.Instance.RequestConnect();
             this.connectionSystem.Update();
 
             connectionData = this.connectionSystem.GetSingleton<ConnectionComponent>();
             Assert.IsTrue(connectionData.requestConnect);
             Assert.IsFalse(connectionData.requestDisconnect);
 
-            ConnectionSystem.RequestDisconnect = true;
+            ConnectionSystem.Instance.RequestDisconnect();
             this.connectionSystem.Update();
 
             connectionData = this.connectionSystem.GetSingleton<ConnectionComponent>();
@@ -114,9 +114,9 @@ namespace PropHunt.EditMode.Tests.Client
             var networkStreamEntity = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             // Also verify events
-            ConnectionSystem.OnConnect += ConnectCounter;
+            ConnectionSystem.Instance.OnConnect += ConnectCounter;
             // Also verify events
-            ConnectionSystem.OnDisconnect += DisconnectCounter;
+            ConnectionSystem.Instance.OnDisconnect += DisconnectCounter;
             // Stream connection component
             Entity streamConn = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
@@ -170,9 +170,9 @@ namespace PropHunt.EditMode.Tests.Client
             var networkStreamEntity = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             // Also verify events
-            ConnectionSystem.OnConnect += ConnectCounter;
+            ConnectionSystem.Instance.OnConnect += ConnectCounter;
             // Also verify events
-            ConnectionSystem.OnDisconnect += DisconnectCounter;
+            ConnectionSystem.Instance.OnDisconnect += DisconnectCounter;
             // Stream connection component
             Entity streamConn = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 

@@ -37,24 +37,27 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
         {
             SceneManager.LoadScene("SampleScene");
 
-            yield return new WaitForSceneLoaded("SampleScene");
+            yield return new WaitForSceneLoaded("SampleScene", newTimeout: 30);
+            yield return null;
         }
 
         [UnityTest]
         public IEnumerator ConnectionTest()
         {
             ConnectionSystem connectionManager = this.clientWorld.GetExistingSystem<ConnectionSystem>();
+            base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             yield return null;
             // Make a connect request
-            ConnectionSystem.RequestConnect = true;
+            ConnectionSystem.Instance.RequestConnect();
+            yield return null;
             yield return new WaitForConnected(connectionManager);
             Assert.IsTrue(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
 
             yield return null;
-
             // Make a disconnect request
-            ConnectionSystem.RequestDisconnect = true;
+            ConnectionSystem.Instance.RequestDisconnect();
+            yield return null;
             yield return new WaitForConnected(connectionManager, state: false);
             Assert.IsFalse(connectionManager.GetSingleton<ConnectionComponent>().isConnected);
         }

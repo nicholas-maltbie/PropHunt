@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using PropHunt.Client.Components;
 using Unity.Entities;
 using Unity.NetCode;
@@ -111,30 +112,54 @@ namespace PropHunt.Client.Systems
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class ConnectionSystem : ComponentSystem
     {
+        public static ConnectionSystem Instance;
+
         /// <summary>
         /// Events for when connecting to server
         /// </summary>
-        public static event EventHandler<ListenConnect> OnConnect;
+        public event EventHandler<ListenConnect> OnConnect;
 
         /// <summary>
         /// Events for when disconnecting from server
         /// </summary>
-        public static event EventHandler<ListenDisconnect> OnDisconnect;
+        public event EventHandler<ListenDisconnect> OnDisconnect;
 
         /// <summary>
         /// Is the player attempting to connect to the server
+        /// 
+        /// 1 indicates requesting connect, 0 indicates no request
         /// </summary>
-        public static bool RequestConnect;
+        private int requestConnect;
 
         /// <summary>
         /// Is the player attempting to disconnect from the server
+        /// 
+        /// 1 indicates requesting disconnect, 0 indicates no request
         /// </summary>
-        public static bool RequestDisconnect;
+        private int requestDisconnect;
+
+        /// <summary>
+        /// REquest to connect to the server
+        /// </summary>
+        public void RequestConnect()
+        {
+            Interlocked.Exchange(ref this.requestConnect, 1);
+        }
+
+        /// <summary>
+        /// Request to disconnect from the server
+        /// </summary>
+        public void RequestDisconnect()
+        {
+            Interlocked.Exchange(ref this.requestDisconnect, 1);
+        }
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<ConnectionComponent>();
             EntityManager.CreateEntity(typeof(ConnectionComponent));
+
+            ConnectionSystem.Instance = this;
         }
 
         protected override void OnUpdate()
@@ -157,16 +182,14 @@ namespace PropHunt.Client.Systems
                 }
             });
 
-            // Load static components into connection entity
-            if (RequestConnect)
+            // Load components into connection entity in thread safe way
+            if (Interlocked.CompareExchange(ref this.requestConnect, 0, 1) == 1)
             {
                 connectionSingleton.requestConnect = true;
-                RequestConnect = false;
             }
-            if (RequestDisconnect)
+            if (Interlocked.CompareExchange(ref this.requestDisconnect, 0, 1) == 1)
             {
                 connectionSingleton.requestDisconnect = true;
-                RequestDisconnect = false;
             }
 
             SetSingleton(connectionSingleton);
