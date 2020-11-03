@@ -49,7 +49,7 @@ jobs:
       - name: Pull lfs data, if not cached
         run: git lfs pull
 
-      - uses: webbertakken/unity-test-runner@v1.4
+      - uses: webbertakken/unity-test-runner@v1.7
         id: tests
         with:
           projectPath: ${{ matrix.projectPath }}
@@ -59,7 +59,8 @@ jobs:
           customParameters: |
             -enableCodeCoverage
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -coverageOptions generateBadgeReport;assemblyFilters:-PropHunt.Test*,-EditModeTests,-Assembly*,-PropHunt.Generated,-Unity.NetCode.Generated,-Unity.Transform.Generated;pathFilters:-*/Assets/NetCodeGenerated/*
+            -stackTraceLogType Full
+            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
             -nographics
 
       # - name: Upload Results

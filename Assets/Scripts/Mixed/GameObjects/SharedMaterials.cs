@@ -5,12 +5,32 @@ using UnityEngine;
 namespace PropHunt.Mixed
 {
     /// <summary>
+    /// Interface to lookup and read materials by ID
+    /// </summary>
+    public interface ISharedMaterialLookup
+    {
+        /// <summary>
+        /// Get a material by it's ID
+        /// </summary>
+        /// <param name="id">integer id of material</param>
+        /// <returns>Material stored under this integer ID</returns>
+        Material GetMaterialById(int id);
+
+        /// <summary>
+        /// Gets the reference ID of a material
+        /// </summary>
+        /// <param name="material">Material to lookup</param>
+        /// <returns>Id of the material</returns>
+        int GetIdForMaterial(Material material);
+    }
+
+    /// <summary>
     /// Shared Materias: will be an object that will be instantiated with a library of materials, 
     /// from which the user will derive the id.
     ///</summary>
-    public class SharedMaterials : MonoBehaviour
+    public class SharedMaterials : MonoBehaviour, ISharedMaterialLookup
     {
-        public static SharedMaterials Instance { get; private set; }
+        public static ISharedMaterialLookup Instance;
         public SharedMaterialLibrary MaterialLibrary;
         private Dictionary<int, Material> materialDictionary;
         public void Awake()

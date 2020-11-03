@@ -31,20 +31,46 @@ namespace PropHunt.UI
         public string newScreen { get; set; }
     }
 
+    public class UIChangeEvents
+    {
+        /// <summary>
+        /// Events for requesting a screen change
+        /// </summary>
+        public event EventHandler<RequestScreenChangeEventArgs> RequestScreenChange;
+
+        /// <summary>
+        /// Events for when a screen change has ocurred
+        /// </summary>
+        public event EventHandler<ScreenChangeEventArgs> ScreenChangeOccur;
+
+        public void ChangeScreen(object sender, ScreenChangeEventArgs changeEvent)
+        {
+            ScreenChangeOccur?.Invoke(sender, changeEvent);
+        }
+
+        public void RequestScreen(object sender, RequestScreenChangeEventArgs request)
+        {
+            RequestScreenChange?.Invoke(sender, request);
+        }
+    }
+
     /// <summary>
     /// Class to manager various UI Screens
     /// </summary>
     public class UIManager : MonoBehaviour
     {
-        /// <summary>
-        /// Events for requesting a screen change
-        /// </summary>
-        public static event EventHandler<RequestScreenChangeEventArgs> RequestScreenChange;
+        public static void SetupUIEvents()
+        {
+            if (UIManager.UIEvents == null)
+            {
+                UIManager.UIEvents = new UIChangeEvents();
+            }
+        }
 
         /// <summary>
-        /// Events for when a screen change has ocurred
+        /// Instance of the UIManager for events
         /// </summary>
-        public static event EventHandler<ScreenChangeEventArgs> ScreenChangeOccur;
+        public static UIChangeEvents UIEvents;
 
         /// <summary>
         /// Various screens to add into the scene
@@ -100,17 +126,20 @@ namespace PropHunt.UI
                     this.screenLookup[screenName].SetActive(false);
                 }
             }
+
+            // Setup static instance
+            UIManager.SetupUIEvents();
         }
 
         public void OnEnable()
         {
             // Setup listening to event queue
-            RequestScreenChange += this.HandleScreenRequest;
+            UIManager.UIEvents.RequestScreenChange += this.HandleScreenRequest;
         }
 
         public void OnDisable()
         {
-            RequestScreenChange -= this.HandleScreenRequest;
+            UIManager.UIEvents.RequestScreenChange -= this.HandleScreenRequest;
         }
 
         /// <summary>
@@ -153,7 +182,7 @@ namespace PropHunt.UI
             this.CurrentScreen = screenName;
 
             // invoke screen change event
-            ScreenChangeOccur?.Invoke(this, changeEvent);
+            UIManager.UIEvents.ChangeScreen(this, changeEvent);
         }
 
         /// <summary>
@@ -165,7 +194,7 @@ namespace PropHunt.UI
         {
             RequestScreenChangeEventArgs request = new RequestScreenChangeEventArgs();
             request.newScreen = name;
-            UIManager.RequestScreenChange?.Invoke(sender, request);
+            UIManager.UIEvents.RequestScreen(sender, request);
         }
     }
 }
