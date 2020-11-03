@@ -384,11 +384,10 @@ namespace PropHunt.EditMode.Tests.Client
                     requestDisconnect = false
                 });
             // Create an entity with the NetworkStreamConnection component
-            base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
+            Entity networkStreamEntity = base.m_Manager.CreateEntity(typeof(NetworkStreamConnection));
 
             this.disconnectFromServerSystem.Update();
             var connection = this.disconnectFromServerSystem.GetSingleton<ConnectionComponent>();
-            var networkStreamEntity = base.m_Manager.CreateEntityQuery(typeof(NetworkStreamConnection)).ToEntityArray(Unity.Collections.Allocator.Persistent)[0];
             bool hasDisconnect = base.m_Manager.HasComponent<NetworkStreamRequestDisconnect>(networkStreamEntity);
 
             Assert.IsFalse(connection.requestDisconnect);
