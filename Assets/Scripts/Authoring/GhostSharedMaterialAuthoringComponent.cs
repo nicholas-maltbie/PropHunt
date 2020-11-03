@@ -6,18 +6,20 @@ using UnityEngine;
 namespace PropHunt.Authoring
 {
     /// <summary>
-    /// Player view authoring component, will attach a palyer
-    /// view attribute to an component as it is converted to an entity.
+    /// Ghost shared material authoring component
+    /// Will attach a Material Id to a ghosted component that uses a shared material.
     /// </summary>
     [RequireComponent(typeof(MeshRenderer))]
     public class GhostSharedMaterialAuthoringComponent : MonoBehaviour, IConvertGameObjectToEntity
     {
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            // var meshRendererMaterial = (MeshRenderer) gameObject.GetComponent<MeshRenderer>();
+            // We obtain the Mesh Renderer from the component, and get the material from there.
+            // That way we don't have to manually link the materials and Ids.
             MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
             var materialId = SharedMaterials.Instance.GetIdForMaterial(meshRenderer.sharedMaterial);
-            dstManager.AddComponentData(entity, new MaterialIdComponentData{
+            dstManager.AddComponentData(entity, new MaterialIdComponentData
+            {
                 materialId = materialId
             });
         }
