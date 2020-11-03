@@ -14,11 +14,11 @@ namespace Unity.NetCode.Generated
     [BurstCompile]
     public struct UnityNetCodeHeartbeatComponentSerializer : IComponentData, IRpcCommandSerializer<Unity.NetCode.HeartbeatComponent>
     {
-        public void Serialize(ref DataStreamWriter writer, in Unity.NetCode.HeartbeatComponent data)
+        public void Serialize(ref DataStreamWriter writer, in RpcSerializerState state, in Unity.NetCode.HeartbeatComponent data)
         {
         }
 
-        public void Deserialize(ref DataStreamReader reader, ref Unity.NetCode.HeartbeatComponent data)
+        public void Deserialize(ref DataStreamReader reader, in RpcDeserializerState state,  ref Unity.NetCode.HeartbeatComponent data)
         {
         }
         [BurstCompile]

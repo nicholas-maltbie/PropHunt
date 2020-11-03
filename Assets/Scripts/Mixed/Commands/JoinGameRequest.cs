@@ -20,13 +20,13 @@ namespace PropHunt.Mixed.Commands
             RpcExecutor.ExecuteCreateRequestComponent<JoinGameRequest, JoinGameRequest>(ref parameters);
         }
 
-        public void Serialize(ref DataStreamWriter writer, in JoinGameRequest data)
+        public void Serialize(ref DataStreamWriter writer, in RpcSerializerState state, in JoinGameRequest data)
         {
             // Empty request (as of now) do not pass data
             writer.WriteInt(0);
         }
 
-        public void Deserialize(ref DataStreamReader reader, ref JoinGameRequest data)
+        public void Deserialize(ref DataStreamReader reader, in RpcDeserializerState state, ref JoinGameRequest data)
         {
             // Empty request (as of now) do not pass data
             reader.ReadInt();

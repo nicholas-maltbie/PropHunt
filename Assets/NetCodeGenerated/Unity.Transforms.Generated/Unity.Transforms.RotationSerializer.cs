@@ -16,39 +16,47 @@ namespace Unity.Transforms.Generated
     [BurstCompile]
     public struct UnityTransformsRotationGhostComponentSerializer
     {
-        static UnityTransformsRotationGhostComponentSerializer()
+        static GhostComponentSerializer.State GetState()
         {
-            State = new GhostComponentSerializer.State
+            // This needs to be lazy initialized because otherwise there is a depenency on the static initialization order which breaks il2cpp builds due to TYpeManager not being initialized yet
+            if (!s_StateInitialized)
             {
-                GhostFieldsHash = 13806170254378846403,
-                ExcludeFromComponentCollectionHash = 0,
-                ComponentType = ComponentType.ReadWrite<Unity.Transforms.Rotation>(),
-                ComponentSize = UnsafeUtility.SizeOf<Unity.Transforms.Rotation>(),
-                SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
-                ChangeMaskBits = ChangeMaskBits,
-                SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
-                SendForChildEntities = 0,
-                CopyToSnapshot =
-                    new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
-                CopyFromSnapshot =
-                    new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyFromSnapshot),
-                RestoreFromBackup =
-                    new PortableFunctionPointer<GhostComponentSerializer.RestoreFromBackupDelegate>(RestoreFromBackup),
-                PredictDelta = new PortableFunctionPointer<GhostComponentSerializer.PredictDeltaDelegate>(PredictDelta),
-                CalculateChangeMask =
-                    new PortableFunctionPointer<GhostComponentSerializer.CalculateChangeMaskDelegate>(
-                        CalculateChangeMask),
-                Serialize = new PortableFunctionPointer<GhostComponentSerializer.SerializeDelegate>(Serialize),
-                Deserialize = new PortableFunctionPointer<GhostComponentSerializer.DeserializeDelegate>(Deserialize),
+                s_State = new GhostComponentSerializer.State
+                {
+                    GhostFieldsHash = 13806170254378846403,
+                    ExcludeFromComponentCollectionHash = 0,
+                    ComponentType = ComponentType.ReadWrite<Unity.Transforms.Rotation>(),
+                    ComponentSize = UnsafeUtility.SizeOf<Unity.Transforms.Rotation>(),
+                    SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
+                    ChangeMaskBits = ChangeMaskBits,
+                    SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
+                    SendForChildEntities = 0,
+                    CopyToSnapshot =
+                        new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
+                    CopyFromSnapshot =
+                        new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyFromSnapshot),
+                    RestoreFromBackup =
+                        new PortableFunctionPointer<GhostComponentSerializer.RestoreFromBackupDelegate>(RestoreFromBackup),
+                    PredictDelta = new PortableFunctionPointer<GhostComponentSerializer.PredictDeltaDelegate>(PredictDelta),
+                    CalculateChangeMask =
+                        new PortableFunctionPointer<GhostComponentSerializer.CalculateChangeMaskDelegate>(
+                            CalculateChangeMask),
+                    Serialize = new PortableFunctionPointer<GhostComponentSerializer.SerializeDelegate>(Serialize),
+                    Deserialize = new PortableFunctionPointer<GhostComponentSerializer.DeserializeDelegate>(Deserialize),
+                    #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    ReportPredictionErrors = new PortableFunctionPointer<GhostComponentSerializer.ReportPredictionErrorsDelegate>(ReportPredictionErrors),
+                    #endif
+                };
                 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                ReportPredictionErrors = new PortableFunctionPointer<GhostComponentSerializer.ReportPredictionErrorsDelegate>(ReportPredictionErrors),
+                s_State.NumPredictionErrorNames = GetPredictionErrorNames(ref s_State.PredictionErrorNames);
                 #endif
-            };
-            #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            State.NumPredictionErrorNames = GetPredictionErrorNames(ref State.PredictionErrorNames);
-            #endif
+                s_StateInitialized = true;
+            }
+            return s_State;
         }
-        public static readonly GhostComponentSerializer.State State;
+        private static bool s_StateInitialized;
+        private static GhostComponentSerializer.State s_State;
+        public static GhostComponentSerializer.State State => GetState();
         public struct Snapshot
         {
             public int ValueX;

@@ -15,7 +15,7 @@ namespace PropHunt.Client.Systems
     /// Systemt to sample player input at each tick.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostInputSystemGroup))]
     [UpdateAfter(typeof(MenuManagerSystem))]
     public class SamplePlayerInput : ComponentSystem
     {

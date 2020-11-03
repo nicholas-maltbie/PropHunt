@@ -14,14 +14,14 @@ namespace PropHunt.Mixed.Systems
     /// Update groups for things to compute before physics step computation
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    [UpdateBefore(typeof(BeginFixedStepSimulationEntityCommandBufferSystem))]
     public class KCCPreUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    [UpdateAfter(typeof(EndFixedStepSimulationEntityCommandBufferSystem))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
@@ -104,7 +104,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.elapsedFallTime = 0;
                     }
                 }
-            ).ScheduleParallel();
+            ).Schedule();
 
             this.Dependency.Complete();
         }
@@ -163,7 +163,7 @@ namespace PropHunt.Mixed.Systems
                     // Shift character down to that location (plus some wiggle epsilon room)
                     translation.Value = translation.Value + gravity.Down * (distanceToGround - KCCUtils.Epsilon * 2);
                 }
-            }).ScheduleParallel();
+            }).Schedule();
 
             this.Dependency.Complete();
         }
@@ -252,7 +252,7 @@ namespace PropHunt.Mixed.Systems
                     anglePower: movementSettings.fallAnglePower
                 );
             }
-            ).ScheduleParallel();
+            ).Schedule();
 
             this.Dependency.Complete();
             this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
@@ -291,7 +291,7 @@ namespace PropHunt.Mixed.Systems
                     }
                     // Otherwise do nothing
                 }
-            ).ScheduleParallel();
+            ).Schedule();
         }
     }
 
@@ -384,7 +384,7 @@ namespace PropHunt.Mixed.Systems
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }
-            }).ScheduleParallel();
+            }).Schedule();
         }
     }
 
@@ -441,7 +441,7 @@ namespace PropHunt.Mixed.Systems
                         velocity.worldVelocity += tempVelocity;
                     }
                 }
-            ).ScheduleParallel();
+            ).Schedule();
         }
     }
 
@@ -476,7 +476,7 @@ namespace PropHunt.Mixed.Systems
                     }
                     // else: Have hit the ground, don't accelerate due to gravity
                 }
-            ).ScheduleParallel();
+            ).Schedule();
         }
     }
 }
