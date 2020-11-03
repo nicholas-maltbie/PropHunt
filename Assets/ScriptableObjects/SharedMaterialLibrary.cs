@@ -12,6 +12,5 @@ namespace PropHunt.Scriptable
     public class SharedMaterial
     {
         public Material Material;
-        public int MaterialId;
     }
 }

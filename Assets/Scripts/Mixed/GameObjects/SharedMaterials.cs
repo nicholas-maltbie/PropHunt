@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using PropHunt.Scriptable;
+using Unity.Entities;
 using UnityEngine;
 
 namespace PropHunt.Mixed
@@ -8,10 +10,11 @@ namespace PropHunt.Mixed
     /// Shared Materias: will be an object that will be instantiated with a library of materials, 
     /// from which the user will derive the id.
     ///</summary>
-    public class SharedMaterials : MonoBehaviour
+    public class SharedMaterials : MonoBehaviour, IConvertGameObjectToEntity
     {
         public static SharedMaterials Instance { get; private set; }
         public SharedMaterialLibrary MaterialLibrary;
+        private Dictionary<string, int> materialKeyByNameDictionary;
         private Dictionary<int, Material> materialDictionary;
         public void Awake()
         {
@@ -25,20 +28,31 @@ namespace PropHunt.Mixed
             InitializeDictionary();
         }
 
+        public void OnDestroy()
+        {
+            materialDictionary.Clear();
+            materialKeyByNameDictionary.Clear();
+            Instance = null;
+        }
+
         private void InitializeDictionary()
         {
             materialDictionary = new Dictionary<int, Material>();
+            materialKeyByNameDictionary = new Dictionary<string, int>();
+
+            var orderedMaterials = MaterialLibrary.SharedMaterials.OrderBy(m => m.Material.name).ToList();
 
             // Add materials to a dictionary to make querying faster.
-            foreach (var materialLib in MaterialLibrary.SharedMaterials)
-            {
-                materialDictionary.Add(materialLib.MaterialId, materialLib.Material);
+            for(var i = 0; i < orderedMaterials.Count; i++){
+                var material = orderedMaterials[i];
+                materialKeyByNameDictionary.Add(material.Material.name, i);
+                materialDictionary.Add(i, material.Material);
+                Debug.Log($"Added material: {material.Material.name} to library.");
             }
         }
 
         public Material GetMaterialById(int id)
         {
-
             if (materialDictionary.TryGetValue(id, out var material))
             {
                 return material;
@@ -48,14 +62,45 @@ namespace PropHunt.Mixed
 
         public int GetIdForMaterial(Material material)
         {
-            foreach (var key in materialDictionary.Keys)
-            {
-                if (materialDictionary[key] == material)
-                {
-                    return key;
-                }
+            var matName = material.name;
+            if(materialKeyByNameDictionary.TryGetValue(matName, out var materialId)){
+                return materialId;
             }
-            throw new System.Exception($"Given material was not found on the material library. Make sure to Add the material to the Scriptable Object Material library on scene.");
+
+            throw new System.Exception($"Given material {material.name} was not found on the material library. Make sure to Add the material to the Scriptable Object Material library on scene.");
         }
+
+        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+        {
+            BlobAssetReference<SharedMaterialBlobAsset> sharedMaterialBlobAssetReference;
+            using(var blobBuilder = new BlobBuilder(Unity.Collections.Allocator.Temp)){
+                ref var blobAsset = ref blobBuilder.ConstructRoot<SharedMaterialBlobAsset>();
+                var sharedMaterialArray = blobBuilder.Allocate(ref blobAsset.Materials, materialDictionary.Count);
+
+                foreach(var dicVal in materialDictionary){
+                    sharedMaterialArray[dicVal.Key] = new SharedMaterial{Value = dicVal.Value};
+                }
+
+                sharedMaterialBlobAssetReference = blobBuilder.CreateBlobAssetReference<SharedMaterialBlobAsset>(Unity.Collections.Allocator.Persistent);
+            }
+
+            dstManager.AddComponentData(entity, new SharedMaterialData{
+                sharedMaterialsBlobAssetRef = sharedMaterialBlobAssetReference
+            });
+        }
+    }
+
+    public struct SharedMaterial
+    {
+        public Material Value;
+    }
+
+    public struct SharedMaterialBlobAsset
+    {
+        public BlobArray<SharedMaterial> Materials;
+    }
+
+    public struct SharedMaterialData : IComponentData{
+        public BlobAssetReference<SharedMaterialBlobAsset> sharedMaterialsBlobAssetRef;
     }
 }
