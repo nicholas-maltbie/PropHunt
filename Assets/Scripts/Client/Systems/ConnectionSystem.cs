@@ -33,14 +33,16 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
+            var buffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+
             // Also delete the existing ghost objects
             Entities.ForEach((
                 Entity ent,
                 ref GhostComponent ghost) =>
             {
-                PostUpdateCommands.DestroyEntity(ent);
+                buffer.DestroyEntity(ent);
             });
-            PostUpdateCommands.DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
+            buffer.DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
         }
     }
 

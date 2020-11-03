@@ -261,6 +261,7 @@ namespace PropHunt.EditMode.Tests.Client
             base.m_Manager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
             // Update with no entities in world
             this.ghostEntitySystem.Update();
+            base.World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().Update();
         }
 
         /// <summary>
@@ -278,6 +279,7 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsTrue(base.m_Manager.CreateEntityQuery(typeof(GhostComponent)).CalculateEntityCount() == 2);
 
             this.ghostEntitySystem.Update();
+            base.World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().Update();
 
             Assert.IsTrue(base.m_Manager.CreateEntityQuery(typeof(GhostComponent)).CalculateEntityCount() == 0);
 
