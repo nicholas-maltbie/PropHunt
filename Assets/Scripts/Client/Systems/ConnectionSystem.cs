@@ -40,6 +40,7 @@ namespace PropHunt.Client.Systems
             {
                 PostUpdateCommands.DestroyEntity(ent);
             });
+            PostUpdateCommands.DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
         }
     }
 
