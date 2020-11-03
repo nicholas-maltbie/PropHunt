@@ -13,7 +13,7 @@
       "dependencies": {}
     },
     "com.unity.ads": {
-      "version": "3.4.9",
+      "version": "3.5.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -276,7 +276,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.purchasing": {
-      "version": "2.1.0",
+      "version": "2.1.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
