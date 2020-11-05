@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using PropHunt.Client.Components;
 using Unity.Entities;
 using Unity.NetCode;
@@ -22,30 +23,27 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [UpdateBefore(typeof(ConnectionSystem))]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    public class ClearClientGhostEntities : SystemBase
+    public class ClearClientGhostEntities : ComponentSystem
     {
-        protected EndSimulationEntityCommandBufferSystem commandBufferSystem;
-
         public struct ClientClearGhosts : IComponentData { };
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<ClientClearGhosts>();
-            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
-            var buffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
+            var buffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+
             // Also delete the existing ghost objects
             Entities.ForEach((
                 Entity ent,
-                int entityInQueryIndex,
                 ref GhostComponent ghost) =>
             {
-                buffer.DestroyEntity(entityInQueryIndex, ent);
-            }).ScheduleParallel();
-            this.commandBufferSystem.CreateCommandBuffer().DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
+                buffer.DestroyEntity(ent);
+            });
+            buffer.DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
         }
     }
 
@@ -69,8 +67,9 @@ namespace PropHunt.Client.Systems
                 Debug.Log("Attempting to disconnect");
                 Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
                 {
-                    EntityManager.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
-                    EntityManager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
+                    PostUpdateCommands.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
+                    Entity clearEntity = PostUpdateCommands.CreateEntity();
+                    PostUpdateCommands.AddComponent<ClearClientGhostEntities.ClientClearGhosts>(clearEntity);
                 });
                 connectionSingleton.requestDisconnect = false;
                 connectionSingleton.attemptingDisconnect = true;
@@ -113,46 +112,54 @@ namespace PropHunt.Client.Systems
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class ConnectionSystem : ComponentSystem
     {
+        public static ConnectionSystem Instance;
+
         /// <summary>
         /// Events for when connecting to server
         /// </summary>
-        public static event EventHandler<ListenConnect> OnConnect;
+        public event EventHandler<ListenConnect> OnConnect;
 
         /// <summary>
         /// Events for when disconnecting from server
         /// </summary>
-        public static event EventHandler<ListenDisconnect> OnDisconnect;
+        public event EventHandler<ListenDisconnect> OnDisconnect;
 
         /// <summary>
         /// Is the player attempting to connect to the server
+        /// 
+        /// 1 indicates requesting connect, 0 indicates no request
         /// </summary>
-        private static bool requestConnect;
+        private int requestConnect;
 
         /// <summary>
         /// Is the player attempting to disconnect from the server
+        /// 
+        /// 1 indicates requesting disconnect, 0 indicates no request
         /// </summary>
-        private static bool requestDisconnect;
+        private int requestDisconnect;
 
         /// <summary>
-        /// Invoke whenever a disconnect is requested
+        /// REquest to connect to the server
         /// </summary>
-        public static void DisconnectFromServer()
+        public void RequestConnect()
         {
-            requestDisconnect = true;
+            Interlocked.Exchange(ref this.requestConnect, 1);
         }
 
         /// <summary>
-        /// Invoke whenever a connect is requested
+        /// Request to disconnect from the server
         /// </summary>
-        public static void ConnectToServer()
+        public void RequestDisconnect()
         {
-            requestConnect = true;
+            Interlocked.Exchange(ref this.requestDisconnect, 1);
         }
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<ConnectionComponent>();
             EntityManager.CreateEntity(typeof(ConnectionComponent));
+
+            ConnectionSystem.Instance = this;
         }
 
         protected override void OnUpdate()
@@ -161,13 +168,13 @@ namespace PropHunt.Client.Systems
 
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
-                if (EntityManager.HasComponent<NetworkStreamInGame>(ent))
+                if (connectionSingleton.attemptingConnect && EntityManager.HasComponent<NetworkStreamInGame>(ent))
                 {
                     connectionSingleton.isConnected = true;
                     connectionSingleton.attemptingConnect = false;
                     OnConnect?.Invoke(this, new ListenConnect());
                 }
-                if (EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
+                if (connectionSingleton.attemptingDisconnect && EntityManager.HasComponent<NetworkStreamDisconnected>(ent))
                 {
                     connectionSingleton.isConnected = false;
                     connectionSingleton.attemptingDisconnect = false;
@@ -175,16 +182,14 @@ namespace PropHunt.Client.Systems
                 }
             });
 
-            // Load static components into connection entity
-            if (requestConnect)
+            // Load components into connection entity in thread safe way
+            if (Interlocked.CompareExchange(ref this.requestConnect, 0, 1) == 1)
             {
-                connectionSingleton.requestConnect = requestConnect;
-                requestConnect = false;
+                connectionSingleton.requestConnect = true;
             }
-            if (requestDisconnect)
+            if (Interlocked.CompareExchange(ref this.requestDisconnect, 0, 1) == 1)
             {
-                connectionSingleton.requestDisconnect = requestDisconnect;
-                requestDisconnect = false;
+                connectionSingleton.requestDisconnect = true;
             }
 
             SetSingleton(connectionSingleton);

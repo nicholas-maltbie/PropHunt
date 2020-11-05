@@ -183,11 +183,11 @@ namespace PropHunt.Mixed.Utilities
                     // Get angle between surface normal and remaining movement
                     float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
                     // Normalize angle between to be between 0 and 1
+                    // 0 means no angle, 1 means 90 degree angle
                     angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
                     float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
                     // Create angle factor using 1 / (1 + normalizedAngle)
                     float angleFactor = 1.0f / (1.0f + normalizedAngle);
-                    // If the character hit something
                     // Reduce the momentum by the remaining movement that ocurred
                     remaining *= math.pow(angleFactor, anglePower);
                 }
@@ -204,7 +204,8 @@ namespace PropHunt.Mixed.Utilities
         }
 
         /// <summary>
-        /// Projects a vector onto a plane
+        /// Projects a vector onto a plane. Does NOT preserve the original length of the vector,
+        /// is simplay a projection onto a plane.
         /// </summary>
         /// <param name="vector">Vector to project</param>
         /// <param name="planeNormal">plane to project vector onto</param>

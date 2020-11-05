@@ -7,6 +7,7 @@ using UnityEngine;
 using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
+using PropHunt.InputManagement;
 
 namespace PropHunt.Client.Systems
 {
@@ -18,10 +19,16 @@ namespace PropHunt.Client.Systems
     [UpdateAfter(typeof(MenuManagerSystem))]
     public class SamplePlayerInput : ComponentSystem
     {
+        public IUnityService unityService;
 
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<NetworkIdComponent>();
+
+            if (this.unityService == null)
+            {
+                this.unityService = new UnityService();
+            }
         }
 
         protected override void OnUpdate()
@@ -43,32 +50,32 @@ namespace PropHunt.Client.Systems
 
             float targetPitch = 0;
             float targetYaw = 0;
-            var input = default(PlayerInput);
-            input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
+            var playerInput = default(PlayerInput);
+            playerInput.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
             float pitchChange = 0;
             float yawChange = 0;
 
-            if (MenuManagerSystem.MovementState == LockedInputState.ALLOW)
+            if (MenuManagerSystem.Controller.GetCurrentState() == LockedInputState.ALLOW)
             {
-                pitchChange = Input.GetAxis("Mouse Y");
-                yawChange = Input.GetAxis("Mouse X");
-                input.horizMove = Input.GetAxis("Horizontal");
-                input.vertMove = Input.GetAxis("Vertical");
-                input.interact = (byte)(Input.GetButtonDown("Interact") ? 1 : 0);
-                input.jump = (byte)(Input.GetButton("Jump") ? 1 : 0);
-                input.sprint = (byte)(Input.GetButton("Sprint") ? 1 : 0);
+                pitchChange = this.unityService.GetAxis("Mouse Y");
+                yawChange = this.unityService.GetAxis("Mouse X");
+                playerInput.horizMove = this.unityService.GetAxis("Horizontal");
+                playerInput.vertMove = this.unityService.GetAxis("Vertical");
+                playerInput.interact = (byte)(this.unityService.GetButtonDown("Interact") ? 1 : 0);
+                playerInput.jump = (byte)(this.unityService.GetButton("Jump") ? 1 : 0);
+                playerInput.sprint = (byte)(this.unityService.GetButton("Sprint") ? 1 : 0);
             }
             else
             {
-                input.horizMove = 0;
-                input.vertMove = 0;
-                input.interact = 0;
-                input.jump = 0;
-                input.sprint = 0;
+                playerInput.horizMove = 0;
+                playerInput.vertMove = 0;
+                playerInput.interact = 0;
+                playerInput.jump = 0;
+                playerInput.sprint = 0;
             }
 
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime();
             Entities.ForEach((ref PlayerView pv, ref PlayerId playerId, ref Rotation rotation) =>
             {
                 if (playerId.playerId == localPlayerId)
@@ -90,11 +97,14 @@ namespace PropHunt.Client.Systems
                 }
             });
 
-            input.targetPitch = targetPitch;
-            input.targetYaw = targetYaw;
+            playerInput.targetPitch = targetPitch;
+            playerInput.targetYaw = targetYaw;
 
-            var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
-            inputBuffer.AddCommandData(input);
+            if (EntityManager.Exists(localInput))
+            {
+                var inputBuffer = EntityManager.GetBuffer<PlayerInput>(localInput);
+                inputBuffer.AddCommandData(playerInput);
+            }
         }
     }
 

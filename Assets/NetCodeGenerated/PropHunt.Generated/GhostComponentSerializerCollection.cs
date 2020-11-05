@@ -20,6 +20,7 @@ namespace PropHunt.Generated
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMovingPlatformGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsPlayerIdGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsPlayerViewGhostComponentSerializer.State);
+            ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsRotatingPlatformGhostComponentSerializer.State);
         }
 
         protected override void OnUpdate()

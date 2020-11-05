@@ -14,7 +14,7 @@ namespace PropHunt.UI
         /// </summary>
         public void DisconnectClient()
         {
-            ConnectionSystem.DisconnectFromServer();
+            ConnectionSystem.Instance.RequestDisconnect();
         }
     }
 }
