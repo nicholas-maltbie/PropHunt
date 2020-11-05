@@ -63,7 +63,8 @@ namespace PropHunt.Mixed
             var orderedMaterials = MaterialLibrary.SharedMaterials.OrderBy(m => m.Material.name).ToList();
 
             // Add materials to a dictionary to make querying faster.
-            for(var i = 0; i < orderedMaterials.Count; i++){
+            for (var i = 0; i < orderedMaterials.Count; i++)
+            {
                 var material = orderedMaterials[i];
                 materialKeyByNameDictionary.Add(material.Material.name, i);
                 materialDictionary.Add(i, material.Material);
@@ -83,7 +84,8 @@ namespace PropHunt.Mixed
         public int GetIdForMaterial(Material material)
         {
             var matName = material.name;
-            if(materialKeyByNameDictionary.TryGetValue(matName, out var materialId)){
+            if (materialKeyByNameDictionary.TryGetValue(matName, out var materialId))
+            {
                 return materialId;
             }
 
@@ -93,18 +95,21 @@ namespace PropHunt.Mixed
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             BlobAssetReference<SharedMaterialBlobAsset> sharedMaterialBlobAssetReference;
-            using(var blobBuilder = new BlobBuilder(Unity.Collections.Allocator.Temp)){
+            using (var blobBuilder = new BlobBuilder(Unity.Collections.Allocator.Temp))
+            {
                 ref var blobAsset = ref blobBuilder.ConstructRoot<SharedMaterialBlobAsset>();
                 var sharedMaterialArray = blobBuilder.Allocate(ref blobAsset.Materials, materialDictionary.Count);
 
-                foreach(var dicVal in materialDictionary){
-                    sharedMaterialArray[dicVal.Key] = new SharedMaterial{Value = dicVal.Value};
+                foreach (var dicVal in materialDictionary)
+                {
+                    sharedMaterialArray[dicVal.Key] = new SharedMaterial { Value = dicVal.Value };
                 }
 
                 sharedMaterialBlobAssetReference = blobBuilder.CreateBlobAssetReference<SharedMaterialBlobAsset>(Unity.Collections.Allocator.Persistent);
             }
 
-            dstManager.AddComponentData(entity, new SharedMaterialData{
+            dstManager.AddComponentData(entity, new SharedMaterialData
+            {
                 sharedMaterialsBlobAssetRef = sharedMaterialBlobAssetReference
             });
         }
@@ -120,7 +125,8 @@ namespace PropHunt.Mixed
         public BlobArray<SharedMaterial> Materials;
     }
 
-    public struct SharedMaterialData : IComponentData{
+    public struct SharedMaterialData : IComponentData
+    {
         public BlobAssetReference<SharedMaterialBlobAsset> sharedMaterialsBlobAssetRef;
     }
 }
