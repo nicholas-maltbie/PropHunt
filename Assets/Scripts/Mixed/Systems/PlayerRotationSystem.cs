@@ -8,7 +8,7 @@ using Unity.NetCode;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 
-namespace PropHunt.Server.Systems
+namespace PropHunt.Server.Mixed
 {
 
     /// <summary>

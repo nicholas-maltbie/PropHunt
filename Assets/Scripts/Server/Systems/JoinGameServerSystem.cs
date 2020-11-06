@@ -56,11 +56,16 @@ namespace PropHunt.Server.Systems
                 int ghostId = GetPlayerGhostIndex(ghostPrefabs);
                 var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection)[ghostId].Value;
                 var player = PostUpdateCommands.Instantiate(prefab);
+                PostUpdateCommands.AddComponent<PlayerId>(player);
+                PostUpdateCommands.AddComponent<Translation>(player);
+                PostUpdateCommands.AddComponent<GhostOwnerComponent>(player);
                 PostUpdateCommands.SetComponent(player, new PlayerId { playerId = connectionId });
                 PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) });
                 PostUpdateCommands.SetComponent(player, new GhostOwnerComponent { NetworkId = connectionId });
 
                 PostUpdateCommands.AddBuffer<PlayerInput>(player);
+
+                PostUpdateCommands.AddComponent<CommandTargetComponent>(reqSrc.SourceConnection);
                 PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
 
                 PostUpdateCommands.DestroyEntity(reqEnt);
