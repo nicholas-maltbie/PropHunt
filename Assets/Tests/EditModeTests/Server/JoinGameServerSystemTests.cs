@@ -62,7 +62,7 @@ namespace PropHunt.EditMode.Tests.Server
             base.m_Manager.AddComponent<JoinGameRequest>(requestEntity);
             base.m_Manager.AddComponentData<ReceiveRpcCommandRequestComponent>(requestEntity,
                 new ReceiveRpcCommandRequestComponent { SourceConnection = sourceConnection });
-            
+
             // Process the request
             this.joinGameServerSystem.Update();
 
@@ -101,7 +101,7 @@ namespace PropHunt.EditMode.Tests.Server
             base.m_Manager.AddComponent<JoinGameRequest>(requestEntity);
             base.m_Manager.AddComponentData<ReceiveRpcCommandRequestComponent>(requestEntity,
                 new ReceiveRpcCommandRequestComponent { SourceConnection = sourceConnection });
-            
+
             // Process the request and assert that an exception is thrown
             Assert.Throws<IndexOutOfRangeException>(new TestDelegate(UpdateJoinSystem));
         }
