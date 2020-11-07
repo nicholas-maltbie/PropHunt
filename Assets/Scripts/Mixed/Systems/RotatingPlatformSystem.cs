@@ -43,7 +43,7 @@ namespace PropHunt.Mixed.Systems
                         // go to next target
                         int nextPlatform = rotatingPlatform.current + rotatingPlatform.direction;
                         // Adjust by current rule if out of bounds
-                        if (nextPlatform < 0 || nextPlatform > rotatingPlatform.direction)
+                        if (nextPlatform < 0 || nextPlatform >= targets.Length)
                         {
                             if (rotatingPlatform.loopMethod == PlatformLooping.REVERSE)
                             {

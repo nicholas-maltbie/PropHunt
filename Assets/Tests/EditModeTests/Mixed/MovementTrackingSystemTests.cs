@@ -1,8 +1,7 @@
-﻿using Moq;
-using Moq.Protected;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PropHunt.Mixed.Systems;
 using PropHunt.Mixed.Components;
+using PropHunt.Tests.Utils;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.Transforms;
@@ -14,7 +13,7 @@ namespace PropHunt.EditMode.Tests.Mixed
     public class MovementTrackingSystemTests : ECSTestsFixture
     {
         /// <summary>
-        /// System for camera follow system
+        /// System for movement tracking
         /// </summary>
         private MovementTrackingSystem movementTracking;
 
@@ -25,11 +24,6 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup camera follow system
             this.movementTracking = World.CreateSystem<MovementTrackingSystem>();
-        }
-
-        private bool WithinErrorRange(float3 value, float3 target, float error = 0.001f)
-        {
-            return math.all(math.abs(value - target) <= error);
         }
 
         /// <summary>
@@ -49,7 +43,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Verify initial object state
             MovementTracking trackComponent;
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), float3.zero));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), float3.zero));
 
             // Verify change in state when object moves
             base.m_Manager.SetComponentData<Translation>(tracked, new Translation { Value = new float3(0, 1, 0) });
@@ -60,7 +54,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Verify new displacement values
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, 1, 0)));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, 1, 0)));
 
             // Verify change in state when object rotates
             base.m_Manager.SetComponentData<Translation>(tracked, new Translation { Value = new float3(0, 1, 0) });
@@ -71,8 +65,8 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Verify new displacement values
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, 0, 0)));
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), new float3(-1, 0, 1)));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, 0, 0)));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), new float3(-1, 0, 1)));
 
             // Verify change in state when object rotates and is displaced
             base.m_Manager.SetComponentData<Translation>(tracked, new Translation { Value = new float3(0, 0, 0) });
@@ -83,15 +77,15 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Verify new displacement values
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, -1, 0)));
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), new float3(-1, -1, -1)));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, -1, 0)));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), new float3(-1, -1, -1)));
 
             // Update state using the system
             // Verify no change with no movement
             this.movementTracking.Update();
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), float3.zero));
-            Assert.IsTrue(WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), float3.zero));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), float3.zero));
+            Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, new float3(1, 0, 0)), float3.zero));
         }
     }
 }
