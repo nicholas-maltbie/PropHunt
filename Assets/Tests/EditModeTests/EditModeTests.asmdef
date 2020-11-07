@@ -11,6 +11,7 @@
         "PropHunt",
         "Unity.Transforms",
         "Unity.Mathematics",
+        "Unity.Physics",
         "Unity.NetCode",
         "Unity.Rendering.Hybrid"
     ],
