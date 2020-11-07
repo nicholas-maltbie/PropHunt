@@ -1,4 +1,5 @@
 
+using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,9 +15,14 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     public class MovingPlatformSystem : SystemBase
     {
+        /// <summary>
+        /// Unity service for accessing unity data
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = this.unityService.GetDeltaTime();
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
@@ -31,7 +37,7 @@ namespace PropHunt.Mixed.Systems
                         // go to next target
                         int nextPlatform = movingPlatform.current + movingPlatform.direction;
                         // Adjust by current rule if out of bounds
-                        if (nextPlatform < 0 || nextPlatform > movingPlatform.direction)
+                        if (nextPlatform < 0 || nextPlatform >= targets.Length)
                         {
                             if (movingPlatform.loopMethod == PlatformLooping.REVERSE)
                             {
