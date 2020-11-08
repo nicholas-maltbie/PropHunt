@@ -33,7 +33,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
-            float deltaTime = this.unityService.GetDeltaTime();
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 ref RotatingPlatform rotatingPlatform,
                 ref Rotation rotation,

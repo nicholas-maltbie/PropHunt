@@ -25,12 +25,12 @@ namespace PropHunt.Mixed.Systems
         /// <summary>
         /// Unity service for managing static inputs in a testable manner
         /// </summary>
-        public IUnityService unityServie = new UnityService();
+        public IUnityService unityService = new UnityService();
 
         protected override void OnUpdate()
         {
             var tick = this.predictionManager.GetPredictingTick(base.World);
-            var deltaTime = this.unityServie.GetDeltaTime();
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
             IPredictionState manager = this.predictionManager;
 
             Entities.ForEach((

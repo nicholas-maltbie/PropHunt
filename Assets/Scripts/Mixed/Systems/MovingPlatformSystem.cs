@@ -22,7 +22,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
-            float deltaTime = this.unityService.GetDeltaTime();
+            float deltaTime = Time.DeltaTime;
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,

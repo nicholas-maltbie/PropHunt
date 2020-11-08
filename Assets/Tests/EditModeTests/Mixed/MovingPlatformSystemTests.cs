@@ -57,7 +57,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new MovingPlatformTarget { target = new float3(10, 0, 0) } );
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
@@ -95,7 +95,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) } ); // target [2]
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // The platform will pass beyond target [2] so when reverse is setup it shoudl loop back to having target
             // platform be target [1]
@@ -140,7 +140,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) } ); // target [2]
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // The platform will pass beyond target [2] so when cycle is setup it shoudl loop back to having target
             // platform be target [0]
@@ -151,7 +151,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Ensure target changes to 1
             // Will take two seconds to get back to original location
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(2.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(2.0f);
             this.movingPlatformSystem.Update();
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value);
@@ -160,7 +160,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             
             // Ensure target updates back to 2
             // Will involve slighlty more movement
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
             this.movingPlatformSystem.Update();
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value);

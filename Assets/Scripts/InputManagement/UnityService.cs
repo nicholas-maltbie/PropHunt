@@ -10,14 +10,9 @@ namespace PropHunt.InputManagement
         /// <summary>
         /// Get the current delta time in seconds between this and last frame
         /// </summary>
+        /// <param name="timeData">Time data for this system</param>
         /// <returns>The current delta time between this and the previous frame</returns>
-        float GetDeltaTime();
-
-        /// <summary>
-        /// Get the fixed delta time in seconds between this and last frame
-        /// </summary>
-        /// <returns>The fixed delta time between this and the previous frame</returns>
-        float GetFixedDeltaTime();
+        float GetDeltaTime(Unity.Core.TimeData timeData);
 
         /// <summary>
         /// Get the raw axis movement for a given axis (by name)
@@ -47,15 +42,9 @@ namespace PropHunt.InputManagement
     public class UnityService : IUnityService
     {
         /// <inheritdoc/>
-        public float GetDeltaTime()
+        public float GetDeltaTime(Unity.Core.TimeData timeData)
         {
-            return Time.deltaTime;
-        }
-
-        /// <inheritdoc/>
-        public float GetFixedDeltaTime()
-        {
-            return Time.fixedDeltaTime;
+            return timeData.DeltaTime;
         }
 
         /// <inheritdoc/>

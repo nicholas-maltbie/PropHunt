@@ -75,7 +75,7 @@ namespace PropHunt.Client.Systems
                 playerInput.sprint = 0;
             }
 
-            float deltaTime = unityService.GetDeltaTime();
+            float deltaTime = unityService.GetDeltaTime(base.Time);
             Entities.ForEach((ref PlayerView pv, ref PlayerId playerId, ref Rotation rotation) =>
             {
                 if (playerId.playerId == localPlayerId)
