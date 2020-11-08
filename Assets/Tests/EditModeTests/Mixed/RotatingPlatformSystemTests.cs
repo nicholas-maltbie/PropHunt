@@ -58,7 +58,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) } );
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.rotatingPlatformSystem.Update();
@@ -97,7 +97,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) } ); // target [2]
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // The platform will pass beyond target [2] so when reverse is setup it shoudl loop back to having target
             // platform be target [1]
@@ -143,7 +143,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) } ); // target [2]
 
             // Setup mocked delta time of one second
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // The platform will pass beyond target [2] so when reverse is setup it shoudl loop back to having target
             // platform be target [1]
@@ -160,7 +160,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(base.m_Manager.GetComponentData<RotatingPlatform>(rotatingPlatform).direction == 1);
 
             // Ensure target changes back to 1
-            this.unityServiceMock.Setup(m => m.GetDeltaTime()).Returns(2.0f);
+            this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(2.0f);
             this.rotatingPlatformSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<RotatingPlatform>(rotatingPlatform).current == 1);
             Assert.IsTrue(base.m_Manager.GetComponentData<RotatingPlatform>(rotatingPlatform).direction == 1);

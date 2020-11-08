@@ -50,7 +50,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Connect mocked variables ot system
             this.kccInputSystem.predictionManager = this.predictionStateMock.Object;
-            this.kccInputSystem.unityServie = this.unityServiceMock.Object;
+            this.kccInputSystem.unityService = this.unityServiceMock.Object;
 
             // Setup the necessary GhostPredictionSystemGroup
             this.ghostPredGroup = base.World.CreateSystem<GhostPredictionSystemGroup>();
@@ -107,7 +107,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.ShouldPredict(currentTick, It.IsAny<PredictedGhostComponent>())).Returns(true);
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
-            this.unityServiceMock.Setup(e => e.GetDeltaTime()).Returns(1.0f);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             float horizMove = 0.0f;
             float vertMove = 1.0f;
