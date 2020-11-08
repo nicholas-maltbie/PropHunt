@@ -14,6 +14,12 @@ namespace PropHunt.InputManagement
         float GetDeltaTime();
 
         /// <summary>
+        /// Get the fixed delta time in seconds between this and last frame
+        /// </summary>
+        /// <returns>The fixed delta time between this and the previous frame</returns>
+        float GetFixedDeltaTime();
+
+        /// <summary>
         /// Get the raw axis movement for a given axis (by name)
         /// </summary>
         /// <param name="axisName">Name of selected axis</param>
@@ -44,6 +50,12 @@ namespace PropHunt.InputManagement
         public float GetDeltaTime()
         {
             return Time.deltaTime;
+        }
+
+        /// <inheritdoc/>
+        public float GetFixedDeltaTime()
+        {
+            return Time.fixedDeltaTime;
         }
 
         /// <inheritdoc/>
