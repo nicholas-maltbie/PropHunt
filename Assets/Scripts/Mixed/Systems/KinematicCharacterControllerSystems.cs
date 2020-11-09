@@ -1,3 +1,4 @@
+using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using Unity.Entities;
@@ -35,10 +36,21 @@ namespace PropHunt.Mixed.Systems
         /// </summary>
         public static readonly float MaxAngleFallDegrees = 90;
 
+        /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
+        /// <summary>
+        /// Collision manager for testing and evaluating collisions
+        /// </summary>
+        private readonly ICollisionManager collisionManager = new CollisionManager();
+
         protected unsafe override void OnUpdate()
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
+            this.collisionManager.SetCollisionManager(physicsWorld.CollisionWorld);
 
             Entities.ForEach((
                 Entity entity,
