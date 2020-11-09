@@ -41,16 +41,10 @@ namespace PropHunt.Mixed.Systems
         /// </summary>
         public IUnityService unityService = new UnityService();
 
-        /// <summary>
-        /// Collision manager for testing and evaluating collisions
-        /// </summary>
-        private readonly ICollisionManager collisionManager = new CollisionManager();
-
         protected unsafe override void OnUpdate()
         {
-            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
-            this.collisionManager.SetCollisionManager(physicsWorld.CollisionWorld);
 
             Entities.ForEach((
                 Entity entity,
@@ -61,7 +55,7 @@ namespace PropHunt.Mixed.Systems
                 in Rotation rotation) =>
                 {
                     SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                        new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                        new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
                     float3 from = translation.Value;
                     float3 to = from + gravity.Down * grounded.groundCheckDistance;
@@ -74,7 +68,7 @@ namespace PropHunt.Mixed.Systems
                         Orientation = rotation.Value
                     };
 
-                    bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
+                    bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
                     Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
 
                     grounded.previousAngle = grounded.angle;
