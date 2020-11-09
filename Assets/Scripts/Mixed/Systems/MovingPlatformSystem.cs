@@ -22,7 +22,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
@@ -32,6 +32,7 @@ namespace PropHunt.Mixed.Systems
                     float3 currentTarget = targets[movingPlatform.current];
                     float dist = math.distance(translation.Value, currentTarget);
                     float movement = movingPlatform.speed * deltaTime;
+
                     if (dist <= movement)
                     {
                         // go to next target
