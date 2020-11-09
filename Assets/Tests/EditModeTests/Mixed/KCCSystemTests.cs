@@ -51,13 +51,24 @@ namespace PropHunt.EditMode.Tests.Mixed
         public Entity CreateTestPlayer()
         {
             Entity player = base.m_Manager.CreateEntity();
-            base.m_Manager.AddBuffer<PlayerInput>(player);
-            base.m_Manager.AddComponent<KCCGravity>(player);
             base.m_Manager.AddComponent<KCCGrounded>(player);
+            base.m_Manager.AddComponent<KCCGravity>(player);
+            base.m_Manager.AddComponent<PhysicsCollider>(player);
             base.m_Manager.AddComponent<Translation>(player);
             base.m_Manager.AddComponent<Rotation>(player);
 
             return player;
+        }
+
+        [Test]
+        public void TestGrounded()
+        {
+            Entity player = CreateTestPlayer();
+            PhysicsWorld mockedPhysicsWorld = new PhysicsWorld();
+            CollisionWorld mockedCollisionWorld = new CollisionWorld();
+            mockedPhysicsWorld.CollisionWorld = mockedCollisionWorld;
+
+            this.kccGroundedSystem.Update();
         }
     }
 }
