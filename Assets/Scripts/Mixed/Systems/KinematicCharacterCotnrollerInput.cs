@@ -41,6 +41,8 @@ namespace PropHunt.Mixed.Systems
                 in PlayerView view,
                 in KCCMovementSettings settings) =>
             {
+                // TODO: do not use reference types here, look into properly mocking
+                // the struct behaviour for the tests
                 if (!manager.ShouldPredict(tick, prediction))
                 {
                     return;
