@@ -35,6 +35,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             Mock<BuildPhysicsWorld> physicsWorldMock = new Mock<BuildPhysicsWorld>();
 
+            // TODO: Setup valid physics world
             base.World.AddSystem<BuildPhysicsWorld>(physicsWorldMock.Object);
 
             // Setup mocks for system
@@ -64,9 +65,6 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void TestGrounded()
         {
             Entity player = CreateTestPlayer();
-            PhysicsWorld mockedPhysicsWorld = new PhysicsWorld();
-            CollisionWorld mockedCollisionWorld = new CollisionWorld();
-            mockedPhysicsWorld.CollisionWorld = mockedCollisionWorld;
 
             this.kccGroundedSystem.Update();
         }
