@@ -124,11 +124,16 @@ namespace PropHunt.Mixed.Systems
     [UpdateAfter(typeof(KCCMovementSystem))]
     public class KCCSnapDown : SystemBase
     {
+        /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected unsafe override void OnUpdate()
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 Entity entity,
                 ref Translation translation,
