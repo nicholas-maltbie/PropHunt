@@ -55,7 +55,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<RotatingPlatformTarget>(rotatingPlatform);
             DynamicBuffer<RotatingPlatformTarget> targets = base.m_Manager.GetBuffer<RotatingPlatformTarget>(rotatingPlatform);
-            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) } );
+            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) });
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
@@ -92,9 +92,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<RotatingPlatformTarget>(rotatingPlatform);
             DynamicBuffer<RotatingPlatformTarget> targets = base.m_Manager.GetBuffer<RotatingPlatformTarget>(rotatingPlatform);
-            targets.Add(new RotatingPlatformTarget { target = new float3( 0, 0, 0) } ); // target [0]
-            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) } ); // target [1]
-            targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) } ); // target [2]
+            targets.Add(new RotatingPlatformTarget { target = new float3(0, 0, 0) }); // target [0]
+            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) }); // target [1]
+            targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) }); // target [2]
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
@@ -138,9 +138,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<RotatingPlatformTarget>(rotatingPlatform);
             DynamicBuffer<RotatingPlatformTarget> targets = base.m_Manager.GetBuffer<RotatingPlatformTarget>(rotatingPlatform);
-            targets.Add(new RotatingPlatformTarget { target = new float3( 0, 0, 0) } ); // target [0]
-            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) } ); // target [1]
-            targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) } ); // target [2]
+            targets.Add(new RotatingPlatformTarget { target = new float3(0, 0, 0) }); // target [0]
+            targets.Add(new RotatingPlatformTarget { target = new float3(30, 0, 0) }); // target [1]
+            targets.Add(new RotatingPlatformTarget { target = new float3(60, 0, 0) }); // target [2]
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);

@@ -43,10 +43,10 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             base.m_Manager.AddBuffer<PushForce>(pushed);
             DynamicBuffer<PushForce> pushBuffer = base.m_Manager.GetBuffer<PushForce>(pushed);
-            pushBuffer.Add(new PushForce { point = new float3(0, 0, 0), force = new float3(1, 0, 0) } );
+            pushBuffer.Add(new PushForce { point = new float3(0, 0, 0), force = new float3(1, 0, 0) });
 
             Assert.IsTrue(base.m_Manager.GetBuffer<PushForce>(pushed).Length > 0);
-            
+
             this.pushForceCleanupSystem.Update();
             this.bufferSystem.Update();
 
@@ -82,13 +82,13 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity pushed = base.m_Manager.CreateEntity();
             base.m_Manager.AddComponent<PhysicsVelocity>(pushed);
             base.m_Manager.AddComponent<PhysicsMass>(pushed);
-            base.m_Manager.AddComponentData<Translation>(pushed, new Translation { Value = float3.zero } );
+            base.m_Manager.AddComponentData<Translation>(pushed, new Translation { Value = float3.zero });
             base.m_Manager.AddComponent<Rotation>(pushed);
             base.m_Manager.AddBuffer<PushForce>(pushed);
 
             PhysicsVelocity startingPV = base.m_Manager.GetComponentData<PhysicsVelocity>(pushed);
             DynamicBuffer<PushForce> pushBuffer = base.m_Manager.GetBuffer<PushForce>(pushed);
-            pushBuffer.Add(new PushForce { point = new float3(0, 0, 0), force = new float3(1, 0, 0) } );
+            pushBuffer.Add(new PushForce { point = new float3(0, 0, 0), force = new float3(1, 0, 0) });
 
             this.pushForceApplySystem.Update();
 
@@ -102,17 +102,17 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             Entity pushed = base.m_Manager.CreateEntity();
             base.m_Manager.AddComponent<PhysicsVelocity>(pushed);
-            base.m_Manager.AddComponentData<PhysicsMass>(pushed, new PhysicsMass 
+            base.m_Manager.AddComponentData<PhysicsMass>(pushed, new PhysicsMass
             {
-               Transform = new RigidTransform { rot = quaternion.Euler(float3.zero), pos = float3.zero },
-               InverseMass = 1f,
-               InverseInertia = new float3(1, 1, 1),
-               AngularExpansionFactor = 1f,
-               CenterOfMass = float3.zero,
-               InertiaOrientation = quaternion.Euler(float3.zero) 
+                Transform = new RigidTransform { rot = quaternion.Euler(float3.zero), pos = float3.zero },
+                InverseMass = 1f,
+                InverseInertia = new float3(1, 1, 1),
+                AngularExpansionFactor = 1f,
+                CenterOfMass = float3.zero,
+                InertiaOrientation = quaternion.Euler(float3.zero)
             });
-            base.m_Manager.AddComponentData<Translation>(pushed, new Translation { Value = float3.zero } );
-            base.m_Manager.AddComponentData<Rotation>(pushed, new Rotation { Value = quaternion.Euler(float3.zero) } );
+            base.m_Manager.AddComponentData<Translation>(pushed, new Translation { Value = float3.zero });
+            base.m_Manager.AddComponentData<Rotation>(pushed, new Rotation { Value = quaternion.Euler(float3.zero) });
             base.m_Manager.AddBuffer<PushForce>(pushed);
             return pushed;
         }
@@ -121,11 +121,11 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void VerifyCorrectPushForce()
         {
             base.World.CreateSystem<ServerSimulationSystemGroup>();
-            
+
             Entity pushed = CreatePushedEntity();
 
             DynamicBuffer<PushForce> pushBuffer = base.m_Manager.GetBuffer<PushForce>(pushed);
-            pushBuffer.Add(new PushForce { point = new float3(1, 0, 0), force = new float3(1, 0, 0) } );
+            pushBuffer.Add(new PushForce { point = new float3(1, 0, 0), force = new float3(1, 0, 0) });
 
             this.pushForceApplySystem.Update();
 
@@ -140,12 +140,12 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void VerifyCorrectPushForceAngular()
         {
             base.World.CreateSystem<ServerSimulationSystemGroup>();
-            
+
             Entity pushed = CreatePushedEntity();
 
             DynamicBuffer<PushForce> pushBuffer = base.m_Manager.GetBuffer<PushForce>(pushed);
             // Simulate push on the top of the object
-            pushBuffer.Add(new PushForce { point = new float3(0, 1, 0), force = new float3(10, 0, 0) } );
+            pushBuffer.Add(new PushForce { point = new float3(0, 1, 0), force = new float3(10, 0, 0) });
 
             this.pushForceApplySystem.Update();
 
