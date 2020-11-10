@@ -172,7 +172,7 @@ namespace PropHunt.Mixed.Systems
                 {
                     float cappedSpeed = math.min(distanceToGround, settings.snapDownSpeed * deltaTime);
                     // Shift character down to that location (plus some wiggle epsilon room)
-                    translation.Value = translation.Value + gravity.Down * (distanceToGround - KCCUtils.Epsilon * 2);
+                    translation.Value = translation.Value + gravity.Down * (cappedSpeed - KCCUtils.Epsilon * 2);
                 }
             }).ScheduleParallel();
 

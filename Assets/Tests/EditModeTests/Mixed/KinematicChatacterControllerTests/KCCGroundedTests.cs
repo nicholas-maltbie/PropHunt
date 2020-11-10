@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using PropHunt.Mixed.Systems;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
@@ -9,6 +9,7 @@ using Unity.Physics.Systems;
 using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
+using PropHunt.Tests.Utils;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -124,73 +125,4 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(grounded.elapsedFallTime == 1.0f);
         }
     }
-
-
-    [TestFixture]
-    public class KCCSnapDownSystemTests : ECSTestsFixture
-    {
-        /// <summary>
-        /// System for parsing player input to KCC movement
-        /// </summary>
-        private KCCSnapDown kccSnapDown;
-
-        /// <summary>
-        /// Mock of unity service for managing delta time in a testable manner
-        /// </summary>
-        private Mock<IUnityService> unityServiceMock;
-
-        /// <summary>
-        /// Current build physics world for test
-        /// </summary>
-        private BuildPhysicsWorld buildPhysicsWorld;
-
-        [SetUp]
-        public override void Setup()
-        {
-            base.Setup();
-
-            // Setup kcc input system
-            this.kccSnapDown = World.CreateSystem<KCCSnapDown>();
-            this.buildPhysicsWorld = base.World.CreateSystem<BuildPhysicsWorld>();
-
-            // Setup mocks for system
-            this.unityServiceMock = new Mock<IUnityService>();
-            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
-
-            // Connect mocked variables ot system
-            this.kccSnapDown.unityService = this.unityServiceMock.Object;
-        }
-
-        /// <summary>
-        /// Script to create a test player for the KCCInput system
-        /// </summary>
-        /// <returns></returns>
-        public Entity CreateTestPlayer(float3 position, float radius)
-        {
-            Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
-            base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, maxWalkAngle = 30.0f });
-            base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
-            base.m_Manager.AddComponent<KCCGravity>(player);
-            base.m_Manager.AddComponentData<KCCMovementSettings>(player, new KCCMovementSettings
-            {
-                snapDownOffset = 1.0f,
-                snapDownSpeed  = 1.0f,
-            });
-
-            return player;
-        }
-
-        /// <summary>
-        /// Test the cases when the snap down should be skipped
-        /// </summary>
-        [Test]
-        public void TestSkipSnap()
-        {
-            Entity player = CreateTestPlayer(new float3(0, 1, 0), 1.0f);
-
-            this.buildPhysicsWorld.Update();
-            this.kccSnapDown.Update();
-        }
-    }
-
 }
