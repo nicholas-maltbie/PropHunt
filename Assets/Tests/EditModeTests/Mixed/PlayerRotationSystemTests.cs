@@ -1,26 +1,27 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using PropHunt.Mixed.Systems;
 using PropHunt.Mixed.Components;
-using PropHunt.Tests.Utils;
 using Unity.Entities;
 using Unity.Entities.Tests;
+using Unity.Transforms;
 using Unity.Mathematics;
 using Moq;
 using PropHunt.InputManagement;
-using PropHunt.Mixed.Utilities;
 using Unity.NetCode;
+using PropHunt.Server.Systems;
+using PropHunt.Mixed.Utilities;
 using PropHunt.Mixed.Commands;
 using Assets.Tests.EditModeTests.Utils;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
     [TestFixture]
-    public class KCCInputSystemTests : ECSTestsFixture
+    public class PlayerRotationSystemTests : ECSTestsFixture
     {
         /// <summary>
-        /// System for parsing player input to KCC movement
+        /// System for parsing player input to rotation.
         /// </summary>
-        private KinematicCharacterControllerInput kccInputSystem;
+        private PlayerRotationSystem playerRotationSystem;
 
         /// <summary>
         /// Mock of prediction state controller
@@ -43,41 +44,18 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.Setup();
 
             // Setup kcc input system
-            this.kccInputSystem = World.CreateSystem<KinematicCharacterControllerInput>();
+            this.playerRotationSystem = World.CreateSystem<PlayerRotationSystem>();
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
             this.predictionStateMock = new Mock<IPredictionState>();
 
             // Connect mocked variables ot system
-            this.kccInputSystem.predictionManager = this.predictionStateMock.Object;
-            this.kccInputSystem.unityService = this.unityServiceMock.Object;
+            this.playerRotationSystem.predictionManager = this.predictionStateMock.Object;
+            this.playerRotationSystem.unityService = this.unityServiceMock.Object;
 
             // Setup the necessary GhostPredictionSystemGroup
             this.ghostPredGroup = base.World.CreateSystem<GhostPredictionSystemGroup>();
-        }
-
-        /// <summary>
-        /// Script to create a test player for the KCCInput system
-        /// </summary>
-        /// <returns></returns>
-        public Entity CreateTestPlayer()
-        {
-            Entity player = base.m_Manager.CreateEntity();
-            base.m_Manager.AddBuffer<PlayerInput>(player);
-            base.m_Manager.AddComponent<KCCVelocity>(player);
-            base.m_Manager.AddComponent<KCCJumping>(player);
-            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
-            base.m_Manager.AddComponent<PlayerView>(player);
-            base.m_Manager.AddComponentData<KCCMovementSettings>(player,
-                new KCCMovementSettings
-                {
-                    sprintMultiplier = 2.0f,
-                    moveSpeed = 1.0f
-                }
-            );
-
-            return player;
         }
 
         /// <summary>
@@ -89,35 +67,56 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = this.CreateTestPlayer();
             // Setup mocked behaviour to not permit predicting for this player
             this.predictionStateMock.Setup(e => e.ShouldPredict(0, It.IsAny<PredictedGhostComponent>())).Returns(false);
+            var rotBefore = m_Manager.GetComponentData<Rotation>(player).Value;
+            this.playerRotationSystem.Update();
+            var rotAfter = m_Manager.GetComponentData<Rotation>(player).Value;
 
-            this.kccInputSystem.Update();
 
             // Assert that the player velocity is zero
-            Assert.IsTrue(TestUtils.WithinErrorRange(base.m_Manager.GetComponentData<KCCVelocity>(player).playerVelocity, float3.zero));
+            Assert.AreEqual(rotBefore, rotAfter);
         }
-        
-        /// <summary>
-        /// Assert proper update of player given various input states
-        /// </summary>
+
         [Test]
-        public void UpdatePlayerVelocityAndJumpState()
+        public void VerifyPlayerRotatesAccordingToInput()
         {
-            Entity player = this.CreateTestPlayer();
-            // First 'data' tick will be tick 1
+            var player = this.CreateTestPlayer();
+            // Verify that a buffer is removed from a pushed entity
             uint currentTick = 1;
+            var targetYaw = 30.0f;
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.ShouldPredict(currentTick, It.IsAny<PredictedGhostComponent>())).Returns(true);
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
             // Add input to player.
-            InputUtils.AddInput(base.m_Manager, player, currentTick, vertMove: 1.0f, targetPitch: 30.0f, jump: 1);
+            InputUtils.AddInput(base.m_Manager, player, currentTick, vertMove: 0.0f, targetPitch: 30.0f, targetYaw: targetYaw, jump: 1);
 
-            this.kccInputSystem.Update();
+            this.playerRotationSystem.Update();
 
-            // Assert state is updated correctly
-            Assert.IsTrue(TestUtils.WithinErrorRange(base.m_Manager.GetComponentData<KCCVelocity>(player).playerVelocity, new float3(0, 0, 1)));
-            Assert.IsTrue(base.m_Manager.GetComponentData<KCCJumping>(player).attemptingJump == true);
+            //rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
+            var expectedRotation = quaternion.Euler(new float3(0, math.radians(targetYaw), 0)).value;
+
+            // Assert Player View updates accordingly
+            Assert.AreEqual(base.m_Manager.GetComponentData<PlayerView>(player).yaw, targetYaw);
+
+            // Assert the player rotated as it should have.
+            Assert.AreEqual(base.m_Manager.GetComponentData<Rotation>(player).Value, expectedRotation);
+        }
+
+        /// <summary>
+        /// Script to create a test player for the Rotation System.
+        /// </summary>
+        /// <returns></returns>
+        public Entity CreateTestPlayer()
+        {
+            Entity player = base.m_Manager.CreateEntity();
+            base.m_Manager.AddBuffer<PlayerInput>(player);
+            base.m_Manager.AddComponent<Rotation>(player);
+            base.m_Manager.AddComponent<PlayerId>(player);
+            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
+            base.m_Manager.AddComponent<PlayerView>(player);
+
+            return player;
         }
     }
 }
