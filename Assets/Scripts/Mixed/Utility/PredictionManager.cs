@@ -4,7 +4,7 @@ using Unity.NetCode;
 namespace PropHunt.Mixed.Utilities
 {
     /// <summary>
-    /// Structure for containg the static decision of predicting at a given tick
+    /// Structure for contains the static decision of predicting at a given tick
     /// </summary>
     public interface IPredictionState
     {
@@ -14,7 +14,7 @@ namespace PropHunt.Mixed.Utilities
         /// <param name="tick">Time of event</param>
         /// <param name="prediction">Prediction component of the object</param>
         /// <returns>True if a prediction should be made, false otherwise</returns>
-        bool ShouldPredict(uint tick, in PredictedGhostComponent prediction);    
+        bool ShouldPredict(uint tick, in PredictedGhostComponent prediction);
 
         /// <summary>
         /// Get the current predicting tick of the world
