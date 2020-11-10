@@ -60,7 +60,7 @@ namespace PropHunt.Server.Systems
                 view.pitch = input.targetPitch;
                 view.yaw = input.targetYaw;
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
-            }).WithoutBurst().ScheduleParallel();
+            }).WithoutBurst().Run();
         }
     }
 }
