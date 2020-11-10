@@ -76,7 +76,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 // Distance to snap player down to ground
                 snapDownOffset = this.snapDownOffset,
                 // Speed at which player is snapped to ground
-                snapDownSpeed  = this.snapDownSpeed,
+                snapDownSpeed = this.snapDownSpeed,
             });
 
             return player;
@@ -91,7 +91,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);  
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.1 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -112,14 +112,14 @@ namespace PropHunt.EditMode.Tests.Mixed
                 distanceToGround = 0.0f,
                 groundFallingDistance = 1.0f,
             });
-            
+
             float3 startingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             this.buildPhysicsWorld.Update();
             this.kccSnapDown.Update();
 
             // Assert that the player snapped down by 0.1 units
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
-            Assert.IsTrue(TestUtils.WithinErrorRange(endingPosition, startingPosition + new float3(0, -0.1f, 0), error : 0.1f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(endingPosition, startingPosition + new float3(0, -0.1f, 0), error: 0.1f));
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);  
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.75 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -155,7 +155,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 distanceToGround = 0.0f,
                 groundFallingDistance = 1.0f,
             });
-            
+
             float3 startingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             this.buildPhysicsWorld.Update();
             this.kccSnapDown.Update();
@@ -163,7 +163,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Assert that the player snapped down by 0.1 units
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             float3 delta = endingPosition - startingPosition;
-            float maxDistanceSnap = this.snapDownOffset * sampleDeltaTime;
+            float maxDistanceSnap = this.snapDownSpeed * sampleDeltaTime;
             UnityEngine.Debug.Log($"Measured delta due to snap: {delta}");
             Assert.IsTrue(math.all(math.abs(delta) <= math.abs(new float3(0, maxDistanceSnap, 0))));
         }
@@ -177,7 +177,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);  
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.75 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -198,14 +198,14 @@ namespace PropHunt.EditMode.Tests.Mixed
                 distanceToGround = 0.0f,
                 groundFallingDistance = 1.0f,
             });
-            
+
             float3 startingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             this.buildPhysicsWorld.Update();
             this.kccSnapDown.Update();
 
             // Assert that the player did not snap down onto the floor
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
-            Assert.IsTrue(TestUtils.WithinErrorRange(startingPosition, endingPosition, error : 0.1f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(startingPosition, endingPosition, error: 0.1f));
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = CreateTestPlayer(new float3(0, 0, 0), 0.5f);
             float3 startingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);  
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.1 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = float3.zero });
@@ -231,7 +231,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 playerVelocity = gravityUp,
                 worldVelocity = gravityUp
             });
-            
+
             this.buildPhysicsWorld.Update();
             this.kccSnapDown.Update();
 
@@ -250,7 +250,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             {
                 onGround = false
             });
-            
+
             this.buildPhysicsWorld.Update();
             this.kccSnapDown.Update();
 
