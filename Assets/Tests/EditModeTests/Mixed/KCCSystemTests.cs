@@ -9,6 +9,8 @@ using PropHunt.Mixed.Commands;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 using Unity.Physics;
+using PropHunt.EditMode.Tests.Utils;
+using Unity.Mathematics;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -25,6 +27,11 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// </summary>
         private Mock<IUnityService> unityServiceMock;
 
+        /// <summary>
+        /// Current build phyiscs world for test
+        /// </summary>
+        private BuildPhysicsWorld buildPhysicsWorld;
+
         [SetUp]
         public override void Setup()
         {
@@ -32,11 +39,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup kcc input system
             this.kccGroundedSystem = World.CreateSystem<KCCGroundedSystem>();
-
-            Mock<BuildPhysicsWorld> physicsWorldMock = new Mock<BuildPhysicsWorld>();
-
-            // TODO: Setup valid physics world
-            base.World.AddSystem<BuildPhysicsWorld>(physicsWorldMock.Object);
+            this.buildPhysicsWorld = base.World.CreateSystem<BuildPhysicsWorld>();
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
@@ -49,23 +52,31 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// Script to create a test player for the KCCInput system
         /// </summary>
         /// <returns></returns>
-        public Entity CreateTestPlayer()
+        public Entity CreateTestPlayer(float3 position, float radius)
         {
-            Entity player = base.m_Manager.CreateEntity();
+            Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
             base.m_Manager.AddComponent<KCCGrounded>(player);
             base.m_Manager.AddComponent<KCCGravity>(player);
-            base.m_Manager.AddComponent<PhysicsCollider>(player);
-            base.m_Manager.AddComponent<Translation>(player);
-            base.m_Manager.AddComponent<Rotation>(player);
 
             return player;
         }
 
         [Test]
-        public void TestGrounded()
+        public void TestGroundedNoFloor()
         {
-            Entity player = CreateTestPlayer();
+            Entity player = CreateTestPlayer(new float3(0, 1, 0), 1.0f);
 
+            this.buildPhysicsWorld.Update();
+            this.kccGroundedSystem.Update();
+        }
+
+        [Test]
+        public void TestGroundedWithFloor()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 1, 0), 1.0f);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+
+            this.buildPhysicsWorld.Update();
             this.kccGroundedSystem.Update();
         }
     }
