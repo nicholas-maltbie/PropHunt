@@ -12,19 +12,11 @@ namespace PropHunt.Game
 
         private void Awake()
         {
-            if(Instance != null)
+            if (Instance != null)
             {
                 return;
             }
             Instance = this;
-        }
-
-        private EntityManager dstManager;
-
-        // Start is called before the first frame update
-        void Start()
-        {
-
         }
 
         // Update is called once per frame
@@ -34,19 +26,19 @@ namespace PropHunt.Game
             {
                 return;
             }
-            var system = World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<BuildPhysicsWorld>();
 
-            for(int i = 0; i < World.All.Count; i++)
+            for (int i = 0; i < World.All.Count; i++)
             {
                 var currWorld = World.All[i];
                 if (currWorld.Name.Contains("Server"))
                 {
+                    // Add a breakpoint here in order to take a look at the object.
+                    // Still need to find a way to convert it into json.
                     var physicsWorld = currWorld.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld;
-                    var jsonString = JsonUtility.ToJson(physicsWorld);
                     break;
                 }
             }
-            
+
             takeSnapShot = false;
         }
 
