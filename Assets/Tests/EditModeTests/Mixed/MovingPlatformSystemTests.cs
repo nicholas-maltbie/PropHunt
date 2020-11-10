@@ -54,7 +54,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<MovingPlatformTarget>(movingPlatform);
             DynamicBuffer<MovingPlatformTarget> targets = base.m_Manager.GetBuffer<MovingPlatformTarget>(movingPlatform);
-            targets.Add(new MovingPlatformTarget { target = new float3(10, 0, 0) } );
+            targets.Add(new MovingPlatformTarget { target = new float3(10, 0, 0) });
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
@@ -90,9 +90,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<MovingPlatformTarget>(movingPlatform);
             DynamicBuffer<MovingPlatformTarget> targets = base.m_Manager.GetBuffer<MovingPlatformTarget>(movingPlatform);
-            targets.Add(new MovingPlatformTarget { target = new float3(0, 0, 0) } ); // target [0]
-            targets.Add(new MovingPlatformTarget { target = new float3(1, 0, 0) } ); // target [1]
-            targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) } ); // target [2]
+            targets.Add(new MovingPlatformTarget { target = new float3(0, 0, 0) }); // target [0]
+            targets.Add(new MovingPlatformTarget { target = new float3(1, 0, 0) }); // target [1]
+            targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) }); // target [2]
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
@@ -135,9 +135,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             });
             base.m_Manager.AddBuffer<MovingPlatformTarget>(movingPlatform);
             DynamicBuffer<MovingPlatformTarget> targets = base.m_Manager.GetBuffer<MovingPlatformTarget>(movingPlatform);
-            targets.Add(new MovingPlatformTarget { target = new float3(0, 0, 0) } ); // target [0]
-            targets.Add(new MovingPlatformTarget { target = new float3(1, 0, 0) } ); // target [1]
-            targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) } ); // target [2]
+            targets.Add(new MovingPlatformTarget { target = new float3(0, 0, 0) }); // target [0]
+            targets.Add(new MovingPlatformTarget { target = new float3(1, 0, 0) }); // target [1]
+            targets.Add(new MovingPlatformTarget { target = new float3(2, 0, 0) }); // target [2]
 
             // Setup mocked delta time of one second
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
@@ -157,7 +157,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
 
-            
+
             // Ensure target updates back to 2
             // Will involve slighlty more movement
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
