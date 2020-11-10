@@ -95,7 +95,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Assert that the player velocity is zero
             Assert.IsTrue(TestUtils.WithinErrorRange(base.m_Manager.GetComponentData<KCCVelocity>(player).playerVelocity, float3.zero));
         }
-        
+
         /// <summary>
         /// Assert proper update of player given various input states
         /// </summary>

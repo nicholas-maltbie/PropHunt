@@ -21,10 +21,11 @@ namespace Assets.Tests.EditModeTests.Utils
         /// <param name="jump">The jump action state (0 or 1).</param>
         /// <param name="interact">The interact action state (0 or 1).</param>
         /// <param name="sprint">The sprint action state (0 or 1).</param>
-        public static void AddInput(EntityManager entityManager, Entity entity, uint currentTick = 0,  float horizMove = 0.0f, float vertMove = 0.0f, float targetYaw = 0.0f, float targetPitch = 0.0f, byte jump = 0, byte interact = 0, byte sprint = 0)
+        public static void AddInput(EntityManager entityManager, Entity entity, uint currentTick = 0, float horizMove = 0.0f, float vertMove = 0.0f, float targetYaw = 0.0f, float targetPitch = 0.0f, byte jump = 0, byte interact = 0, byte sprint = 0)
         {
             var inputBuffer = entityManager.GetBuffer<PlayerInput>(entity);
-            inputBuffer.Add(new PlayerInput { 
+            inputBuffer.Add(new PlayerInput
+            {
                 tick = currentTick,
                 horizMove = horizMove,
                 vertMove = vertMove,
