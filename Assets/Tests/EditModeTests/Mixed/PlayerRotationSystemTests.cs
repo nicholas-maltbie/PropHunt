@@ -94,7 +94,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.playerRotationSystem.Update();
 
             //rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
-            var expectedRotation = quaternion.Euler(new float3(0, math.radians(targetYaw), 0)).value;
+            var expectedRotation = quaternion.Euler(new float3(0, math.radians(targetYaw), 0));
 
             // Assert Player View updates accordingly
             Assert.AreEqual(base.m_Manager.GetComponentData<PlayerView>(player).yaw, targetYaw);
