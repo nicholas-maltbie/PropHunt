@@ -126,7 +126,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             UnityEngine.Debug.Log(delta);
             UnityEngine.Debug.Log(starting);
             UnityEngine.Debug.Log(ending);
-            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.25f, 0), error : 0.01f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.25f, 0), error: 0.01f));
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // ensure push delta = (0, 0.1, 0) due to capped speed
             float3 delta = ending - starting;
-            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.1f, 0), error : 0.01f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.1f, 0), error: 0.01f));
 
             // Repeat a second time
             starting = base.m_Manager.GetComponentData<Translation>(player).Value;
@@ -163,7 +163,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // ensure push delta = (0, 0.1, 0) due to capped speed
             delta = ending - starting;
-            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.1f, 0), error : 0.01f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.1f, 0), error: 0.01f));
 
             // final push of 0.05 units
             starting = base.m_Manager.GetComponentData<Translation>(player).Value;
@@ -173,7 +173,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // ensure push delta = (0, 0.05, 0) due to remaining distance
             delta = ending - starting;
-            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.05f, 0), error : 0.01f));
+            Assert.IsTrue(TestUtils.WithinErrorRange(delta, new float3(0, 0.05f, 0), error: 0.01f));
         }
     }
 }
