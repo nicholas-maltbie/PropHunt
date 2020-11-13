@@ -62,6 +62,16 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
 
         /// <summary>
+        /// Verify constants for KCC Grounded
+        /// </summary>
+        [Test]
+        public void TestConstantsKCCGrounded()
+        {
+            float value = KCCGroundedSystem.MaxAngleFallDegrees;
+            Assert.IsTrue(value > 0);
+        }
+
+        /// <summary>
         /// Test to ensure player is falling with no ground
         /// </summary>
         [Test]
