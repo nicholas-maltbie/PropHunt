@@ -55,12 +55,12 @@ namespace PropHunt.EditMode.Tests.Mixed
             {
                 maxWalkAngle = 45.0f,
                 groundCheckDistance = 1.0f,
-                groundFallingDistance  = 0.1f,
+                groundFallingDistance = 0.1f,
 
                 angle = 30.0f,
                 distanceToGround = 0.25f,
-                onGround = true, 
-                
+                onGround = true,
+
                 previousDistanceToGround = 0.35f,
                 previousOnGround = true,
                 previousAngle = 30.0f

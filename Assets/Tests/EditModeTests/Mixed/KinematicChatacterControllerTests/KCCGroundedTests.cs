@@ -118,7 +118,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             float flatAngle = grounded.angle;
 
             // Test with a sloped floor
-            base.m_Manager.SetComponentData<Rotation>(floor, new Rotation { Value = quaternion.Euler(60, 0, 0) } );
+            base.m_Manager.SetComponentData<Rotation>(floor, new Rotation { Value = quaternion.Euler(60, 0, 0) });
             base.m_Manager.SetComponentData<Translation>(floor, new Translation { Value = new float3(0, -1.25f, 0.8f) });
 
             this.buildPhysicsWorld.Update();
