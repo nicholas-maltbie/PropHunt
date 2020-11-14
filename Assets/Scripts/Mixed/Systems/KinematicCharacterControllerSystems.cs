@@ -459,9 +459,14 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCGravitySystem : SystemBase
     {
+        /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
 
             bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
 
