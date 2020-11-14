@@ -1,14 +1,9 @@
-﻿using Moq;
-using Moq.Protected;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PropHunt.Authoring;
-using PropHunt.Client.Systems;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.Mathematics;
-using Unity.NetCode;
-using Unity.Transforms;
 using UnityEngine;
 
 namespace PropHunt.EditMode.Tests.Authoring
