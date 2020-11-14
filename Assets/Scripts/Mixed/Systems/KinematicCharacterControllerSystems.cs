@@ -314,10 +314,15 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCPushOverlappingSystem : SystemBase
     {
+        /// <summary>
+        /// Unity service for referencing delta time for this system
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected unsafe override void OnUpdate()
         {
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
 
             Entities.ForEach((
                 Entity entity,
