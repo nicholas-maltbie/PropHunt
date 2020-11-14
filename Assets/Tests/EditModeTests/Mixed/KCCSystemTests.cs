@@ -105,7 +105,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
     }
 
-        [TestFixture]
+    [TestFixture]
     public class KCCGravitySystemTests : ECSTestsFixture
     {
         /// <summary>
@@ -124,7 +124,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.Setup();
 
             this.gravitySystem = base.World.CreateSystem<KCCGravitySystem>();
-            
+
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
             this.gravitySystem.unityService = unityServiceMock.Object;
@@ -137,14 +137,16 @@ namespace PropHunt.EditMode.Tests.Mixed
         public Entity CreateTestPlayer(float3 position, float radius, bool isGrounded)
         {
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
-            if(isGrounded)
+            if (isGrounded)
             {
                 // In order to simulate a Grounded player, we need to cover the following conditions:
                 // 1) The bool onGround is true.
                 // 2) The distance to the ground, needs to be less than the ground falling distance.
                 // 3) The player's angle is not greater than the max walk angle.
                 base.m_Manager.AddComponentData<KCCGrounded>(player,
-                new KCCGrounded { groundCheckDistance = 0.5f,
+                new KCCGrounded
+                {
+                    groundCheckDistance = 0.5f,
                     onGround = true,
                     distanceToGround = 0.1f,
                     groundFallingDistance = 0.2f,
@@ -155,11 +157,11 @@ namespace PropHunt.EditMode.Tests.Mixed
             else
             {
                 // In order to simulate a not grounded player, we simply set the bool onGround to be false.
-                base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, onGround = false,  });
+                base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, onGround = false, });
             }
 
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
-            base.m_Manager.AddComponentData<KCCVelocity>(player, new KCCVelocity{playerVelocity = float3.zero, worldVelocity = float3.zero});
+            base.m_Manager.AddComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = float3.zero, worldVelocity = float3.zero });
             return player;
         }
 
@@ -176,7 +178,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.gravitySystem.Update();
             var playerVelocity = m_Manager.GetComponentData<KCCVelocity>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
-            
+
             // We expect the gravity to have applied.
             var expectedWorldVelocity = float3.zero + kccGravity.gravityAcceleration;
             Assert.AreEqual(expectedWorldVelocity, playerVelocity.worldVelocity);
@@ -194,7 +196,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Update the System.
             this.gravitySystem.Update();
             var playerVelocity = m_Manager.GetComponentData<KCCVelocity>(player);
-            
+
             // We expect the gravity to not be applied.
             var expectedWorldVelocity = float3.zero;
             Assert.AreEqual(expectedWorldVelocity, playerVelocity.worldVelocity);
