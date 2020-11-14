@@ -124,11 +124,16 @@ namespace PropHunt.Mixed.Systems
     [UpdateAfter(typeof(KCCMovementSystem))]
     public class KCCSnapDown : SystemBase
     {
+        /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected unsafe override void OnUpdate()
         {
             PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
 
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 Entity entity,
                 ref Translation translation,
@@ -167,7 +172,7 @@ namespace PropHunt.Mixed.Systems
                 {
                     float cappedSpeed = math.min(distanceToGround, settings.snapDownSpeed * deltaTime);
                     // Shift character down to that location (plus some wiggle epsilon room)
-                    translation.Value = translation.Value + gravity.Down * (distanceToGround - KCCUtils.Epsilon * 2);
+                    translation.Value = translation.Value + gravity.Down * (cappedSpeed - KCCUtils.Epsilon * 2);
                 }
             }).ScheduleParallel();
 
