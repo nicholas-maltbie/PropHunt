@@ -17,7 +17,7 @@ namespace PropHunt.EditMode.Tests.Mixed
     public class KCCPushOverlappingSystemTests : ECSTestsFixture
     {
         /// <summary>
-        /// System for parsing player input to KCC movement
+        /// System for pushing players out of overlapping objects
         /// </summary>
         private KCCPushOverlappingSystem kccPushOverlapping;
 
