@@ -3,7 +3,6 @@ using PropHunt.Client.Systems;
 using PropHunt.UI;
 using Unity.Entities.Tests;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PropHunt.EditMode.Tests.UI
 {
@@ -44,13 +43,20 @@ namespace PropHunt.EditMode.Tests.UI
             this.uiChangeEvents = new UIChangeEvents();
             UIManager.UIEvents = this.uiChangeEvents;
 
-            MenuManagerSystem.Controller = null;
-
             // Listen to requested screen change events
             UIManager.UIEvents.RequestScreenChange += (object source, RequestScreenChangeEventArgs args) =>
             {
                 this.currentScreen = args.newScreen;
             };
+        }
+
+        [TearDown]
+        public override void TearDown()
+        {
+            base.TearDown();
+
+            // Cleanup game object
+            GameObject.DestroyImmediate(this.menuControllerObject);
         }
 
         [Test]
