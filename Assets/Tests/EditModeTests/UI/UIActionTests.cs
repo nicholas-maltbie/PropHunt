@@ -64,7 +64,7 @@ namespace PropHunt.EditMode.Tests.UI
             PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = 0;
             action.serverAddress.text = "";
             action.serverPort.text = "";
-            
+
             // Attempt to connect with invalid parameters
             action.ConnectToServer();
             // Assert that address and info has not been updated
@@ -77,7 +77,7 @@ namespace PropHunt.EditMode.Tests.UI
             PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = 0;
             action.serverAddress.text = "127.0.0.1";
             action.serverPort.text = "1234";
-            
+
             // Attempt to connect with invalid parameters
             action.ConnectToServer();
             // Assert that address and info has not been updated
