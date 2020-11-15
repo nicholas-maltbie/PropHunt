@@ -69,6 +69,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
             var rotBefore = m_Manager.GetComponentData<Rotation>(player).Value;
+            InputUtils.AddInput(base.m_Manager, player, currentTick: currentTick);
             this.playerRotationSystem.Update();
             var rotAfter = m_Manager.GetComponentData<Rotation>(player).Value;
 
@@ -113,7 +114,8 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.m_Manager.AddBuffer<PlayerInput>(player);
             base.m_Manager.AddComponent<Rotation>(player);
             base.m_Manager.AddComponent<PlayerId>(player);
-            base.m_Manager.AddComponentData(player, new PredictedGhostComponent{
+            base.m_Manager.AddComponentData(player, new PredictedGhostComponent
+            {
                 PredictionStartTick = 0, // This will make Should Predict return true.
             });
             base.m_Manager.AddComponent<PlayerView>(player);
