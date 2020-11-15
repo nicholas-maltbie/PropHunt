@@ -280,9 +280,14 @@ namespace PropHunt.Mixed.Systems
     [UpdateAfter(typeof(KCCGravitySystem))]
     public class KCCJumpSystem : SystemBase
     {
+        /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 ref KCCJumping jumping,
