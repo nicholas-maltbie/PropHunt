@@ -31,7 +31,6 @@ namespace PropHunt.Mixed.Systems
         {
             var tick = this.predictionManager.GetPredictingTick(base.World);
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
-            IPredictionState manager = this.predictionManager;
 
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
@@ -41,9 +40,7 @@ namespace PropHunt.Mixed.Systems
                 in PlayerView view,
                 in KCCMovementSettings settings) =>
             {
-                // TODO: do not use reference types here, look into properly mocking
-                // the struct behaviour for the tests
-                if (!manager.ShouldPredict(tick, prediction))
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
                     return;
                 }
@@ -62,7 +59,7 @@ namespace PropHunt.Mixed.Systems
                 velocity.playerVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
                 // including jump action
                 jump.attemptingJump = input.IsJumping;
-            }).WithoutBurst().Run();
+            }).ScheduleParallel();
         }
     }
 }

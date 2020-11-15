@@ -61,13 +61,20 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// Script to create a test player for the KCCInput system
         /// </summary>
         /// <returns></returns>
-        public Entity CreateTestPlayer()
+        public Entity CreateTestPlayer(bool shouldPredict = true)
         {
+            uint predictionStartTick = 0;
+            if(!shouldPredict){
+                predictionStartTick = 1;
+            }
+
             Entity player = base.m_Manager.CreateEntity();
             base.m_Manager.AddBuffer<PlayerInput>(player);
             base.m_Manager.AddComponent<KCCVelocity>(player);
             base.m_Manager.AddComponent<KCCJumping>(player);
-            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
+            base.m_Manager.AddComponentData(player, new PredictedGhostComponent{
+                PredictionStartTick = predictionStartTick
+            });
             base.m_Manager.AddComponent<PlayerView>(player);
             base.m_Manager.AddComponentData<KCCMovementSettings>(player,
                 new KCCMovementSettings
@@ -86,9 +93,10 @@ namespace PropHunt.EditMode.Tests.Mixed
         [Test]
         public void NoInputNonPredictCharacterCharacter()
         {
-            Entity player = this.CreateTestPlayer();
+            Entity player = this.CreateTestPlayer(false);
+            uint currentTick = 1;
             // Setup mocked behaviour to not permit predicting for this player
-            this.predictionStateMock.Setup(e => e.ShouldPredict(0, It.IsAny<PredictedGhostComponent>())).Returns(false);
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
 
             this.kccInputSystem.Update();
 
@@ -106,7 +114,6 @@ namespace PropHunt.EditMode.Tests.Mixed
             // First 'data' tick will be tick 1
             uint currentTick = 1;
             // Setup mocked behaviour to permit predicting for this player
-            this.predictionStateMock.Setup(e => e.ShouldPredict(currentTick, It.IsAny<PredictedGhostComponent>())).Returns(true);
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 

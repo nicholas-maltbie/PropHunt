@@ -65,8 +65,9 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void NoInputNonPredictCharacterCharacter()
         {
             Entity player = this.CreateTestPlayer();
-            // Setup mocked behaviour to not permit predicting for this player
-            this.predictionStateMock.Setup(e => e.ShouldPredict(0, It.IsAny<PredictedGhostComponent>())).Returns(false);
+            uint currentTick = 1;
+            // Setup mocked behaviour to permit predicting for this player
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
             var rotBefore = m_Manager.GetComponentData<Rotation>(player).Value;
             this.playerRotationSystem.Update();
             var rotAfter = m_Manager.GetComponentData<Rotation>(player).Value;
@@ -84,7 +85,6 @@ namespace PropHunt.EditMode.Tests.Mixed
             uint currentTick = 1;
             var targetYaw = 30.0f;
             // Setup mocked behaviour to permit predicting for this player
-            this.predictionStateMock.Setup(e => e.ShouldPredict(currentTick, It.IsAny<PredictedGhostComponent>())).Returns(true);
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
 
@@ -113,7 +113,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.m_Manager.AddBuffer<PlayerInput>(player);
             base.m_Manager.AddComponent<Rotation>(player);
             base.m_Manager.AddComponent<PlayerId>(player);
-            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
+            base.m_Manager.AddComponentData(player, new PredictedGhostComponent{
+                PredictionStartTick = 0, // This will make Should Predict return true.
+            });
             base.m_Manager.AddComponent<PlayerView>(player);
 
             return player;
