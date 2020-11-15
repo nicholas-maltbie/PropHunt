@@ -5,6 +5,7 @@ using System.Net;
 using static PropHunt.Game.ClientGameSystem;
 using PropHunt.Game;
 using PropHunt.Client.Systems;
+using System;
 
 namespace PropHunt.UI
 {
@@ -38,24 +39,23 @@ namespace PropHunt.UI
             string networkAddress = serverAddress.text;
             IPAddress parsedAddress;
             ushort networkPort;
-            try
+            // Parse parameters
+            bool validIP = IPAddress.TryParse(networkAddress, out parsedAddress);
+            bool validPort = ushort.TryParse(serverPort.text, out networkPort);
+
+            // Verify parameters
+            // TODO: write verify code
+            if (!validIP || !validPort)
             {
-                // Parse parameters
-                IPAddress.TryParse(networkAddress, out parsedAddress);
-                ushort.TryParse(serverPort.text, out networkPort);
-
-                // Verify parameters
-                // TODO: write verify code
-
+                UnityEngine.Debug.Log($"Failed to parse IP Address {serverAddress.text} and Port {serverPort.text}");
+            }
+            else
+            {
                 // Assign connection parameters
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkAddress = networkAddress;
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = networkPort;
 
                 ConnectionSystem.Instance.RequestConnect();
-            }
-            catch
-            {
-                UnityEngine.Debug.Log($"Failed to parse IP Address {serverAddress.text} and Port {serverPort.text}");
             }
         }
     }

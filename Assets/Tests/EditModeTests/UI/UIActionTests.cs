@@ -44,6 +44,9 @@ namespace PropHunt.EditMode.Tests.UI
             this.uiHolder.AddComponent<ConnectAction>();
             ConnectAction action = this.uiHolder.GetComponent<ConnectAction>();
 
+            // Create an instance of the connection system
+            ConnectionSystem.Instance = new ConnectionSystem();
+
             // Setup parameters of action
             GameObject serverAddressField = GameObject.Instantiate(new GameObject());
             GameObject serverPortField = GameObject.Instantiate(new GameObject());
@@ -62,8 +65,8 @@ namespace PropHunt.EditMode.Tests.UI
             // Set initial parameters
             PropHunt.Game.ProphuntClientServerControlSystem.NetworkAddress = "";
             PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = 0;
-            action.serverAddress.text = "";
-            action.serverPort.text = "";
+            action.serverAddress.text = "helloworld";
+            action.serverPort.text = "i am groot";
 
             // Attempt to connect with invalid parameters
             action.ConnectToServer();
