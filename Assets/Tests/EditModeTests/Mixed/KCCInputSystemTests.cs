@@ -64,7 +64,8 @@ namespace PropHunt.EditMode.Tests.Mixed
         public Entity CreateTestPlayer(bool shouldPredict = true)
         {
             uint predictionStartTick = 0;
-            if(!shouldPredict){
+            if (!shouldPredict)
+            {
                 predictionStartTick = 1;
             }
 
@@ -72,7 +73,8 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.m_Manager.AddBuffer<PlayerInput>(player);
             base.m_Manager.AddComponent<KCCVelocity>(player);
             base.m_Manager.AddComponent<KCCJumping>(player);
-            base.m_Manager.AddComponentData(player, new PredictedGhostComponent{
+            base.m_Manager.AddComponentData(player, new PredictedGhostComponent
+            {
                 PredictionStartTick = predictionStartTick
             });
             base.m_Manager.AddComponent<PlayerView>(player);
