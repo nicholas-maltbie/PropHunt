@@ -40,9 +40,6 @@ namespace PropHunt.Mixed.Systems
             var tick = predictionManager.GetPredictingTick(base.World);
             var isClient = World.GetExistingSystem<ClientSimulationSystemGroup>() != null;
 
-            // TODO: Find a way to handle this in a way that allow us to have burst enabled.
-            IPredictionState manager = this.predictionManager;
-
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref PlayerView view,
@@ -50,7 +47,7 @@ namespace PropHunt.Mixed.Systems
                 in PlayerId playerId,
                 in PredictedGhostComponent prediction) =>
             {
-                if (!manager.ShouldPredict(tick, prediction))
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
                     return;
                 }
@@ -60,7 +57,7 @@ namespace PropHunt.Mixed.Systems
                 view.pitch = input.targetPitch;
                 view.yaw = input.targetYaw;
                 rot.Value.value = quaternion.Euler(new float3(0, math.radians(view.yaw), 0)).value;
-            }).WithoutBurst().Run();
+            }).ScheduleParallel();
         }
     }
 }
