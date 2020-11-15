@@ -39,6 +39,15 @@ namespace PropHunt.EditMode.Tests.UI
         }
 
         [Test]
+        public void QuitGameActionTests()
+        {
+            this.uiHolder.AddComponent<QuitGameAction>();
+            QuitGameAction action = this.uiHolder.GetComponent<QuitGameAction>();
+            // Just call the method
+            action.QuitGame();
+        }
+
+        [Test]
         public void DisconnectActionTests()
         {
             this.uiHolder.AddComponent<DisconnectAction>();
