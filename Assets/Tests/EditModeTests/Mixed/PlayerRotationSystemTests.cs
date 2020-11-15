@@ -64,7 +64,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         [Test]
         public void NoInputNonPredictCharacterCharacter()
         {
-            Entity player = this.CreateTestPlayer();
+            Entity player = this.CreateTestPlayer(false);
             uint currentTick = 1;
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
@@ -108,15 +108,20 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// Script to create a test player for the Rotation System.
         /// </summary>
         /// <returns></returns>
-        public Entity CreateTestPlayer()
+        public Entity CreateTestPlayer(bool shouldPredict = true)
         {
+            uint predictionStartTick = 0;
+            if (!shouldPredict)
+            {
+                predictionStartTick = 1;
+            }
             Entity player = base.m_Manager.CreateEntity();
             base.m_Manager.AddBuffer<PlayerInput>(player);
             base.m_Manager.AddComponent<Rotation>(player);
             base.m_Manager.AddComponent<PlayerId>(player);
             base.m_Manager.AddComponentData(player, new PredictedGhostComponent
             {
-                PredictionStartTick = 0, // This will make Should Predict return true.
+                PredictionStartTick = predictionStartTick, // This will make Should Predict return true.
             });
             base.m_Manager.AddComponent<PlayerView>(player);
 
