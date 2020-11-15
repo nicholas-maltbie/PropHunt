@@ -52,8 +52,7 @@ namespace PropHunt.UI
                 PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = networkPort;
 
                 ConnectionSystem.Instance.RequestConnect();
-            }
-            catch
+            } catch
             {
                 UnityEngine.Debug.Log($"Failed to parse IP Address {serverAddress.text} and Port {serverPort.text}");
             }
