@@ -39,6 +39,22 @@ namespace PropHunt.EditMode.Tests.UI
         }
 
         [Test]
+        public void DisconnectActionTests()
+        {
+            this.uiHolder.AddComponent<DisconnectAction>();
+            DisconnectAction action = this.uiHolder.GetComponent<DisconnectAction>();
+            Mock<ConnectionSystem> systemMock = new Mock<ConnectionSystem>();
+            ConnectionSystem.Instance = systemMock.Object;
+
+            int calls = 0;
+            systemMock.Setup(e => e.RequestDisconnect()).Callback(() => calls++);
+
+            // Simply invoke the method
+            action.DisconnectClient();
+            Assert.IsTrue(calls == 1);
+        }
+
+        [Test]
         public void ConnectActionTests()
         {
             this.uiHolder.AddComponent<ConnectAction>();
