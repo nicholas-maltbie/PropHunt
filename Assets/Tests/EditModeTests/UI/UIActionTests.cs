@@ -1,14 +1,8 @@
 ﻿using Moq;
-using Moq.Protected;
 using NUnit.Framework;
 using PropHunt.Client.Systems;
-using PropHunt.Mixed.Components;
 using PropHunt.UI;
-using Unity.Entities;
 using Unity.Entities.Tests;
-using Unity.Mathematics;
-using Unity.NetCode;
-using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.UI;
 
