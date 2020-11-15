@@ -83,7 +83,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             else
             {
                 // In order to simulate a not grounded player, we simply set the bool onGround to be false.
-                base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, onGround = false, elapsedFallTime = groundedElapsedFallTime});
+                base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, onGround = false, elapsedFallTime = groundedElapsedFallTime });
             }
 
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
@@ -177,7 +177,15 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Initializes a player with the required components for the gravity system.
             // It initializes world velocity as a float3.zero
-            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, true, true, jumpForce: 10f, jumpCoolDown: 1f);
+            Entity player = CreateTestPlayer(
+                position: new float3(0, 0, 0),
+                radius: 1f,
+                isGrounded: true,
+                isAttemptingJump: true,
+                jumpForce: 10f,
+                jumpCoolDown: 1f,
+                timeElapsedSinceLastJump: 1f);
+
             // Setup default deltatime value.
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
@@ -198,7 +206,16 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Initializes a player with the required components for the gravity system.
             // It initializes world velocity as a float3.zero
-            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, true, true, jumpForce: 10f, jumpCoolDown: 1f, groundedElapsedFallTime: 0.1f, jumpGraceTime: 0.2f);
+            Entity player = CreateTestPlayer(
+                position: new float3(0, 0, 0),
+                radius: 1f,
+                isGrounded: true,
+                isAttemptingJump: true,
+                jumpForce: 10f,
+                jumpCoolDown: 1f,
+                groundedElapsedFallTime: 0.1f,
+                jumpGraceTime: 0.2f,
+                timeElapsedSinceLastJump: 1f);
             // Setup default deltatime value.
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
@@ -219,7 +236,17 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Initializes a player with the required components for the gravity system.
             // It initializes world velocity as a float3.zero
-            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, true, true, jumpForce: 10f, jumpCoolDown: 1f, groundedElapsedFallTime: 0.2f, jumpGraceTime: 0.1f);
+            Entity player = CreateTestPlayer(
+                position: new float3(0, 0, 0),
+                radius: 1f,
+                isGrounded: true,
+                isAttemptingJump: true,
+                jumpForce: 10f,
+                jumpCoolDown: 1f,
+                groundedElapsedFallTime: 0.2f,
+                jumpGraceTime: 0.1f,
+                timeElapsedSinceLastJump: 1f);
+
             // Setup default deltatime value.
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
