@@ -246,7 +246,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // put the player on some ground
             Entity ground = base.m_Manager.CreateEntity();
             // Initialize movement tracking component
-            MovementTracking movement = new MovementTracking{ avoidTransferMomentum = false };
+            MovementTracking movement = new MovementTracking { avoidTransferMomentum = false };
             float3 groundVelocity = new float3(1, 0, 0);
             MovementTracking.UpdateState(ref movement, float3.zero, quaternion.Euler(float3.zero));
             MovementTracking.UpdateState(ref movement, groundVelocity, quaternion.Euler(float3.zero));
@@ -302,7 +302,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // put the player on some ground
             Entity ground = base.m_Manager.CreateEntity();
             // Initialize movement tracking component
-            MovementTracking movement = new MovementTracking{ avoidTransferMomentum = true };
+            MovementTracking movement = new MovementTracking { avoidTransferMomentum = true };
             float3 groundVelocity = new float3(1, 0, 0);
             MovementTracking.UpdateState(ref movement, float3.zero, quaternion.Euler(float3.zero));
             MovementTracking.UpdateState(ref movement, groundVelocity, quaternion.Euler(float3.zero));
