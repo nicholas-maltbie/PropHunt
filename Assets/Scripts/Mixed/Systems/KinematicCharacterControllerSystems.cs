@@ -416,9 +416,11 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCGravitySystem))]
     public class KCCMoveWithGroundSystem : SystemBase
     {
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
 
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
