@@ -187,6 +187,11 @@ namespace PropHunt.Mixed.Systems
     public class KCCMovementSystem : SystemBase
     {
         /// <summary>
+        /// Unity service for making the class testable
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
+        /// <summary>
         /// Command buffer system for pushing objects
         /// </summary>
         private EndSimulationEntityCommandBufferSystem commandBufferSystem;
@@ -202,7 +207,7 @@ namespace PropHunt.Mixed.Systems
             var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
 
             Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).ForEach((
                 Entity entity,
