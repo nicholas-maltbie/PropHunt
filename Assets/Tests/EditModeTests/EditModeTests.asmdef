@@ -4,6 +4,7 @@
         "Unity.Entities",
         "Unity.Entities.Tests",
         "Unity.Entities.Editor.Tests",
+        "Unity.Entities.Hybrid",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "PropHunt.Tests.Utils",

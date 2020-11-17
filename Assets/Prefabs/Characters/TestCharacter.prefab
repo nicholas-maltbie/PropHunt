@@ -91,14 +91,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3261350838457486256}
-  - component: {fileID: 1698639992764308297}
-  - component: {fileID: 5590118871220118959}
   - component: {fileID: -8700528946816345019}
   - component: {fileID: 2032777291050987007}
   - component: {fileID: 1967619771951168409}
-  - component: {fileID: 7895700625144195435}
+  - component: {fileID: 4908649953389240530}
+  - component: {fileID: 8683303483128327209}
   - component: {fileID: 4421601493602290122}
-  - component: {fileID: -8328457236669233695}
+  - component: {fileID: 7895700625144195435}
   m_Layer: 0
   m_Name: TestCharacter
   m_TagString: Untagged
@@ -121,34 +120,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1698639992764308297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3378658210144245526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383a033361916984090f80cbbcad057c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5590118871220118959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3378658210144245526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334e12dd9a08699488b63b716ae76544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  viewRotationRate: 180
-  offset: {x: 0, y: 1.6, z: 0}
-  maxPitch: 90
-  minPitch: -90
 --- !u!114 &-8700528946816345019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +344,52 @@ MonoBehaviour:
     Tag05: 0
     Tag06: 0
     Tag07: 0
+--- !u!114 &4908649953389240530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd3cc6e4eee319e44b1481712826e679, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset:
+    x: 0
+    y: 1.6
+    z: 0
+  viewRotationRate: 180
+  maxPitch: 90
+  minPitch: -90
+  pitch: 0
+  yaw: 0
+--- !u!114 &8683303483128327209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f358ff204a5c0cb488bf44dfa8bb0813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerId: 0
+--- !u!114 &4421601493602290122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1fea7091bb9848b191c018d3718ec0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7895700625144195435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,34 +409,6 @@ MonoBehaviour:
   Importance: 1
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter
---- !u!114 &4421601493602290122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3378658210144245526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1fea7091bb9848b191c018d3718ec0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-8328457236669233695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3378658210144245526}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 334e12dd9a08699488b63b716ae76544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  viewRotationRate: 180
-  offset: {x: 0, y: 1.7, z: 0}
-  maxPitch: 90
-  minPitch: -90
 --- !u!1 &5362533525206946736
 GameObject:
   m_ObjectHideFlags: 0
