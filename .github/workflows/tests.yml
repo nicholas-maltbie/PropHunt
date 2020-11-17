@@ -91,15 +91,16 @@ jobs:
       #     expression: '//CoverageSession/Summary/@branchCoverage'
       
       - name: Parse Coverage
+        id: parsecoverage
         run: |
-          echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-output name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
             Test Coverage Results for ${{ matrix.testMode }}:
-            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}%
+            Sequence Coverage: ${{ steps.parsecoverage.outputs.SEQUENCE_COVERAGE }}%
             Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
