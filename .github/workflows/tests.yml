@@ -71,7 +71,8 @@ jobs:
       
       - name: Find Coverage
         run: |
-          echo {COVERAGE_FILE}={$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")} >> $GITHUB_ENV
+          echo CF_PATH=$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          echo "{COVERAGE_FILE}={$CF_PATH}" >> $GITHUB_ENV
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
