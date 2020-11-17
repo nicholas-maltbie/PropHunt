@@ -71,7 +71,7 @@ jobs:
       
       - name: Find Coverage
         run: |
-          echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          echo {COVERAGE_FILE}={$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")} >> $GITHUB_ENV
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
