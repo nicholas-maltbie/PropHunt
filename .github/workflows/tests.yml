@@ -80,7 +80,7 @@ jobs:
         id: sequenceCoverage
         uses: QwerMike/xpath-action@v1
         with:
-          filename: "${{ env.COVERAGE_FILE }}"
+          filename: "${{ $COVERAGE_FILE }}"
           expression: '//CoverageSession/Summary/@sequenceCoverage'
       
       # - name: Branch Coverage
