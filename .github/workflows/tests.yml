@@ -70,9 +70,9 @@ jobs:
       #     path: ${{ steps.tests.outputs.artifactsPath }}
       
       - name: Find Coverage
+        id: coverage
         run: |
-          echo CF_PATH=$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
-          echo "{COVERAGE_FILE}={$CF_PATH}" >> $GITHUB_ENV
+          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
@@ -80,7 +80,7 @@ jobs:
         id: sequenceCoverage
         uses: QwerMike/xpath-action@v1
         with:
-          filename: "$COVERAGE_FILE"
+          filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
           expression: '//CoverageSession/Summary/@sequenceCoverage'
       
       # - name: Branch Coverage
