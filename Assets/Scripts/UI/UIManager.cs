@@ -92,6 +92,11 @@ namespace PropHunt.UI
         /// </summary>
         private Dictionary<string, GameObject> screenLookup;
 
+        /// <summary>
+        /// Instances of the screne objects
+        /// </summary>
+        public List<GameObject> screenInstances;
+
         public void Start()
         {
             if (this.screenPrefabs.Count == 0)
@@ -133,6 +138,7 @@ namespace PropHunt.UI
 
         public void OnEnable()
         {
+            UIManager.SetupUIEvents();
             // Setup listening to event queue
             UIManager.UIEvents.RequestScreenChange += this.HandleScreenRequest;
         }

@@ -43,7 +43,7 @@ namespace PropHunt.EditMode.Tests.Client
             // Ensure that camera exists
             if (Camera.main == null)
             {
-                this.camera = GameObject.Instantiate(new GameObject(), Vector3.zero, Quaternion.identity);
+                this.camera = new GameObject();
                 var cameraComponent = this.camera.AddComponent<Camera>();
                 this.camera.tag = "MainCamera";
             }

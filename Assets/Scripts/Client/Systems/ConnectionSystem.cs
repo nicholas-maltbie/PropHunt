@@ -141,7 +141,7 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// REquest to connect to the server
         /// </summary>
-        public void RequestConnect()
+        public virtual void RequestConnect()
         {
             Interlocked.Exchange(ref this.requestConnect, 1);
         }
@@ -149,7 +149,7 @@ namespace PropHunt.Client.Systems
         /// <summary>
         /// Request to disconnect from the server
         /// </summary>
-        public void RequestDisconnect()
+        public virtual void RequestDisconnect()
         {
             Interlocked.Exchange(ref this.requestDisconnect, 1);
         }
