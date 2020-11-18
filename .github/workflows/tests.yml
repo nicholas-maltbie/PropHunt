@@ -70,8 +70,9 @@ jobs:
       #     path: ${{ steps.tests.outputs.artifactsPath }}
       
       - name: Find Coverage
+        id: coverage
         run: |
-          echo ::set-env name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
@@ -79,7 +80,7 @@ jobs:
         id: sequenceCoverage
         uses: QwerMike/xpath-action@v1
         with:
-          filename: "${{ env.COVERAGE_FILE }}"
+          filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
           expression: '//CoverageSession/Summary/@sequenceCoverage'
       
       # - name: Branch Coverage
@@ -90,15 +91,16 @@ jobs:
       #     expression: '//CoverageSession/Summary/@branchCoverage'
       
       - name: Parse Coverage
+        id: parsecoverage
         run: |
-          echo ::set-env name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-output name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
             Test Coverage Results for ${{ matrix.testMode }}:
-            Sequence Coverage: ${{ env.SEQUENCE_COVERAGE }}%
+            Sequence Coverage: ${{ steps.parsecoverage.outputs.SEQUENCE_COVERAGE }}%
             Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
