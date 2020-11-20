@@ -1,6 +1,4 @@
 using NUnit.Framework;
-using PropHunt.Game;
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Utilities;
 using Unity.Entities.Tests;
 using Unity.NetCode;
