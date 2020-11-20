@@ -60,14 +60,14 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = CreateTestPlayer(float3.zero, 1.0f);
             Entity wall = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(2, 2, 2), float3.zero, float3.zero, 0, quaternion.Euler(0, 45, 0), true);
 
-            base.m_Manager.SetComponentData<Translation>(wall, new Translation{Value = new float3(3, -1, 1)});
-            base.m_Manager.SetComponentData<PhysicsMass>(wall, new PhysicsMass {InverseInertia = float3.zero});
+            base.m_Manager.SetComponentData<Translation>(wall, new Translation { Value = new float3(3, -1, 1) });
+            base.m_Manager.SetComponentData<PhysicsMass>(wall, new PhysicsMass { InverseInertia = float3.zero });
 
             this.buildPhysicsWorld.Update();
 
             float3 start = float3.zero;
             float3 movement = new float3(5, 0, 0);
-            
+
             ComponentDataFromEntity<PhysicsMass> pmGetter = this.buildPhysicsWorld.GetComponentDataFromEntity<PhysicsMass>(true);
 
             // ECB can only be used in job, will make a KCC Movement system for this
@@ -75,8 +75,8 @@ namespace PropHunt.EditMode.Tests.Mixed
             Mock<IUnityService> unityServiceMock = new Mock<IUnityService>();
             unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
             movementSystem.unityService = unityServiceMock.Object;
-            base.m_Manager.SetComponentData<Translation>(player, new Translation{Value = start});
-            base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity{playerVelocity = movement});
+            base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = start });
+            base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = movement });
             movementSystem.Update();
 
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
@@ -91,20 +91,20 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Assert that the box has some push force applied to it
             Assert.IsFalse(base.m_Manager.HasComponent<PushForce>(wall));
         }
-        
+
         [Test]
         public void TestKCCPushDynamicObject()
         {
             Entity player = CreateTestPlayer(float3.zero, 1.0f);
             Entity wall = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(2, 2, 2), float3.zero, float3.zero, 0, quaternion.Euler(0, 45, 0), true);
 
-            base.m_Manager.SetComponentData<Translation>(wall, new Translation{Value = new float3(3, -1, 1)});
+            base.m_Manager.SetComponentData<Translation>(wall, new Translation { Value = new float3(3, -1, 1) });
 
             this.buildPhysicsWorld.Update();
 
             float3 start = float3.zero;
             float3 movement = new float3(5, 0, 0);
-            
+
             ComponentDataFromEntity<PhysicsMass> pmGetter = this.buildPhysicsWorld.GetComponentDataFromEntity<PhysicsMass>(true);
 
             // ECB can only be used in job, will make a KCC Movement system for this
@@ -112,8 +112,8 @@ namespace PropHunt.EditMode.Tests.Mixed
             Mock<IUnityService> unityServiceMock = new Mock<IUnityService>();
             unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
             movementSystem.unityService = unityServiceMock.Object;
-            base.m_Manager.SetComponentData<Translation>(player, new Translation{Value = start});
-            base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity{playerVelocity = movement});
+            base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = start });
+            base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = movement });
             movementSystem.Update();
 
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
@@ -136,14 +136,14 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = CreateTestPlayer(float3.zero, 1.0f);
             Entity wall = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, new float3(0, 0.5f, 0), 0, quaternion.Euler(0, 0, 0), false);
 
-            base.m_Manager.SetComponentData<Translation>(wall, new Translation{Value = new float3(3, -0.45f, 0)});
-            base.m_Manager.SetComponentData<Translation>(player, new Translation{Value = float3.zero});
+            base.m_Manager.SetComponentData<Translation>(wall, new Translation { Value = new float3(3, -0.45f, 0) });
+            base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = float3.zero });
 
             this.buildPhysicsWorld.Update();
 
             float3 start = float3.zero;
             float3 movement = new float3(5, 0, 0);
-            
+
             ComponentDataFromEntity<PhysicsMass> pmGetter = this.buildPhysicsWorld.GetComponentDataFromEntity<PhysicsMass>(true);
             var cb = this.ecbSystem.CreateCommandBuffer().AsParallelWriter();
 
@@ -175,13 +175,13 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = CreateTestPlayer(float3.zero, 1.0f);
             Entity wall = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(2, 2, 2), float3.zero, float3.zero, 0, quaternion.Euler(0, 45, 0), false);
 
-            base.m_Manager.SetComponentData<Translation>(wall, new Translation{Value = new float3(3, -1, 1)});
+            base.m_Manager.SetComponentData<Translation>(wall, new Translation { Value = new float3(3, -1, 1) });
 
             this.buildPhysicsWorld.Update();
 
             float3 start = float3.zero;
             float3 movement = new float3(5, 0, 0);
-            
+
             ComponentDataFromEntity<PhysicsMass> pmGetter = this.buildPhysicsWorld.GetComponentDataFromEntity<PhysicsMass>(true);
             var cb = this.ecbSystem.CreateCommandBuffer().AsParallelWriter();
 
@@ -213,7 +213,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             float3 start = float3.zero;
             float3 movement = new float3(1, 0, 0);
-            
+
             ComponentDataFromEntity<PhysicsMass> pmGetter = this.buildPhysicsWorld.GetComponentDataFromEntity<PhysicsMass>(true);
             var cb = this.ecbSystem.CreateCommandBuffer().AsParallelWriter();
 
