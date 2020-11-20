@@ -60,8 +60,7 @@ jobs:
             -enableCodeCoverage
             -burst-disable-compilation 
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -stackTraceLogType Full
-            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
+            -coverageOptions "generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*"
             -nographics
 
       - name: Upload Results
