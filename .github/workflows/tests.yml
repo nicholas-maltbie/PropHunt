@@ -72,7 +72,7 @@ jobs:
       - name: Find Coverage
         id: coverage
         run: |
-          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "Summary.xml")
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
@@ -81,7 +81,7 @@ jobs:
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
-          expression: '//CoverageSession/Summary/@sequenceCoverage'
+          expression: '//CoverageReport/Summary/@Linecoverage'
       
       # - name: Branch Coverage
       #   id: branchCoverage
