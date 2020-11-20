@@ -47,14 +47,12 @@ namespace PropHunt.EditMode.Tests.Mixed.GameObjects
             mat3.Material.color = Color.blue;
 
             SharedMaterial[] mats = new SharedMaterial[3] { mat1, mat2, mat3 };
-            SharedMaterialLibrary matLibrary = new SharedMaterialLibrary();
+            SharedMaterialLibrary matLibrary = ScriptableObject.CreateInstance<SharedMaterialLibrary>();
             matLibrary.SharedMaterials = mats;
 
             sharedMaterialComponent.MaterialLibrary = matLibrary;
 
             // Initialize shared material componenet
-            sharedMaterialComponent.Awake();
-            // Initialize with a non null instance
             sharedMaterialComponent.Awake();
 
             // Get the material from a key
@@ -68,6 +66,9 @@ namespace PropHunt.EditMode.Tests.Mixed.GameObjects
             Assert.IsTrue(SharedMaterials.Instance.GetIdForMaterial(mat2.Material) == mat2.MaterialId);
             Assert.IsTrue(SharedMaterials.Instance.GetIdForMaterial(mat3.Material) == mat3.MaterialId);
             Assert.Throws(typeof(System.Exception), () => SharedMaterials.Instance.GetIdForMaterial(new Material(Shader.Find("Shader Graphs/LitDOTS"))));
+
+            // Initialize with a non null instance
+            sharedMaterialComponent.Awake();
         }
     }
 }
