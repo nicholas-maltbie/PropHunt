@@ -9,6 +9,7 @@
         "UnityEditor.TestRunner",
         "PropHunt.Tests.Utils",
         "PropHunt",
+        "PropHunt.Scriptable",
         "Unity.Collections",
         "Unity.Transforms",
         "Unity.Mathematics",
