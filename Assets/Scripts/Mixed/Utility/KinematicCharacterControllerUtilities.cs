@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using PropHunt.Mixed.Components;
+using PropHunt.Constants;
 
 namespace PropHunt.Mixed.Utilities
 {
@@ -34,11 +35,6 @@ namespace PropHunt.Mixed.Utilities
         }
 
         /// <summary>
-        /// Maximum angle between an object and a character 
-        /// </summary>
-        public static readonly float MaxAngleShoveRadians = math.radians(90.0f);
-
-        /// <summary>
         /// Check if a physics mass is kinematic
         /// </summary>
         /// <param name="mass">Physics mass to verify</param>
@@ -48,11 +44,6 @@ namespace PropHunt.Mixed.Utilities
             float3 intertia = mass.InverseInertia;
             return intertia.x == 0 && intertia.y == 0 && intertia.z == 0;
         }
-
-        /// <summary>
-        /// Small distance for acccounting for non deterministic simulation and float errors
-        /// </summary>
-        public static readonly float Epsilon = 0.001f;
 
         /// <summary>
         /// Gets the final position of a character attempting to move from a starting
@@ -184,8 +175,8 @@ namespace PropHunt.Mixed.Utilities
                     float angleBetween = math.length(math.dot(hit.SurfaceNormal, remaining)) / math.length(remaining);
                     // Normalize angle between to be between 0 and 1
                     // 0 means no angle, 1 means 90 degree angle
-                    angleBetween = math.min(KCCUtils.MaxAngleShoveRadians, math.abs(angleBetween));
-                    float normalizedAngle = angleBetween / KCCUtils.MaxAngleShoveRadians;
+                    angleBetween = math.min(KCCConstants.MaxAngleShoveRadians, math.abs(angleBetween));
+                    float normalizedAngle = angleBetween / KCCConstants.MaxAngleShoveRadians;
                     // Create angle factor using 1 / (1 + normalizedAngle)
                     float angleFactor = 1.0f / (1.0f + normalizedAngle);
                     // Reduce the momentum by the remaining movement that ocurred

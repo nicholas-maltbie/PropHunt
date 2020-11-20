@@ -101,7 +101,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Test with a flat floor
             Entity player = CreateTestPlayer(new float3(0, 0, 0), 0.5f);
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             base.m_Manager.SetComponentData<Translation>(floor, new Translation { Value = new float3(0, -0.5f, 0) });
 
             this.buildPhysicsWorld.Update();

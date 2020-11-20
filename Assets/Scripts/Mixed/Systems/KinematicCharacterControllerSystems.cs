@@ -1,3 +1,4 @@
+using PropHunt.Constants;
 using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
@@ -168,11 +169,11 @@ namespace PropHunt.Mixed.Systems
                 Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
                 float distanceToGround = hit.Fraction * settings.snapDownOffset;
 
-                if (collisionOcurred && distanceToGround > KCCUtils.Epsilon)
+                if (collisionOcurred && distanceToGround > KCCConstants.Epsilon)
                 {
                     float cappedSpeed = math.min(distanceToGround, settings.snapDownSpeed * deltaTime);
                     // Shift character down to that location (plus some wiggle epsilon room)
-                    translation.Value = translation.Value + gravity.Down * (cappedSpeed - KCCUtils.Epsilon * 2);
+                    translation.Value = translation.Value + gravity.Down * (cappedSpeed - KCCConstants.Epsilon * 2);
                 }
             }).ScheduleParallel();
 
@@ -350,7 +351,7 @@ namespace PropHunt.Mixed.Systems
                     new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
 
                 float3 from = translation.Value;
-                float3 to = from + gravity.Down * KCCUtils.Epsilon;
+                float3 to = from + gravity.Down * KCCConstants.Epsilon;
 
                 var overlapInput = new ColliderCastInput()
                 {
@@ -373,7 +374,7 @@ namespace PropHunt.Mixed.Systems
                 //  the point of collision
                 // If the ray intersects the other object before it reaches the edge of our own collider,
                 //  then we know that we are overlapping with the object
-                float3 hitPoint = overlapHit.Position - overlapHit.SurfaceNormal * KCCUtils.Epsilon;
+                float3 hitPoint = overlapHit.Position - overlapHit.SurfaceNormal * KCCConstants.Epsilon;
                 float3 sourcePoint = hitPoint + overlapHit.SurfaceNormal * (movementSettings.maxPush * deltaTime);
                 int hitObject = overlapHit.Entity.Index;
                 int selfIndex = entity.Index;
@@ -406,7 +407,7 @@ namespace PropHunt.Mixed.Systems
                     // UnityEngine.Debug.DrawLine(sourcePoint, raycastHit.Position, UnityEngine.Color.red);
                     // UnityEngine.Debug.DrawLine(raycastHit.Position, hitPoint, UnityEngine.Color.cyan);
                     // Get movement in direction touching object
-                    float3 push = overlapHit.SurfaceNormal * (overlapDistance + KCCUtils.Epsilon * 2);
+                    float3 push = overlapHit.SurfaceNormal * (overlapDistance + KCCConstants.Epsilon * 2);
                     // Push character collider by this much
                     translation.Value = translation.Value + push;
                 }
