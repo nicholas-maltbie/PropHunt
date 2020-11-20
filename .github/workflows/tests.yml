@@ -82,7 +82,7 @@ jobs:
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
-          expression: '//CoverageReport/Summary/@Linecoverage'
+          expression: '//CoverageReport/Summary/Linecoverage'
       
       # - name: Branch Coverage
       #   id: branchCoverage
