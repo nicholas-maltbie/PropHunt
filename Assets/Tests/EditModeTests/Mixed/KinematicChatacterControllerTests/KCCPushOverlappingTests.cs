@@ -89,7 +89,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void TestNoOverlapObjects()
         {
             Entity player = CreateTestPlayer(new float3(0, 0.5f, 0), 0.5f);
-            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // No overlap between objects
             base.m_Manager.SetComponentData<Translation>(overlap, new Translation { Value = new float3(0, -1f, 0) });
 
@@ -110,7 +110,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void TestBigOverlap()
         {
             Entity player = CreateTestPlayer(new float3(0, 0, 0), 0.5f);
-            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Overlapping by 0.25f units along the y axis with a normal that should be facing upwards
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 0.5f, 0) });
             base.m_Manager.SetComponentData<Translation>(overlap, new Translation { Value = new float3(0, -0.75f, 0) });
@@ -141,7 +141,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 // Allow player to be pushed at a rate of 1 unit per second
                 maxPush = 0.1f,
             });
-            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity overlap = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Overlapping by 0.25f units along the y axis with a normal that should be facing upwards
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 0.5f, 0) });
             base.m_Manager.SetComponentData<Translation>(overlap, new Translation { Value = new float3(0, -0.75f, 0) });

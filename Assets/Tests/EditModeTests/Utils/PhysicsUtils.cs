@@ -21,9 +21,9 @@ namespace PropHunt.EditMode.Tests.Utils
             componentTypes[3] = typeof(PhysicsCollider);
             if (isDynamic)
             {
-                componentTypes[6] = typeof(PhysicsVelocity);
-                componentTypes[7] = typeof(PhysicsMass);
-                componentTypes[8] = typeof(PhysicsDamping);
+                componentTypes[4] = typeof(PhysicsVelocity);
+                componentTypes[5] = typeof(PhysicsMass);
+                componentTypes[6] = typeof(PhysicsDamping);
             }
             Entity entity = entityManager.CreateEntity(componentTypes);
 
@@ -64,11 +64,11 @@ namespace PropHunt.EditMode.Tests.Utils
             return CreateBody(manager, position, orientation, spCollider, float3.zero, float3.zero, 1.0f, isDynamic);
         }
 
-        public static Entity CreateBox(EntityManager manager, float3 size, float3 position, float bevelRadius, quaternion orientation, bool isDynamic)
+        public static Entity CreateBox(EntityManager manager, float3 size, float3 position, float3 center, float bevelRadius, quaternion orientation, bool isDynamic)
         {
             BlobAssetReference<Unity.Physics.Collider> boxCollider = Unity.Physics.BoxCollider.Create(new BoxGeometry
             {
-                Center = position,
+                Center = center,
                 Orientation = orientation,
                 Size = size,
                 BevelRadius = bevelRadius

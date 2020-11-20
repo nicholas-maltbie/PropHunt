@@ -64,7 +64,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// <returns></returns>
         public Entity CreateTestPlayer(float3 position, float3 size)
         {
-            Entity player = PhysicsTestUtils.CreateBox(base.m_Manager, size, position, 0, quaternion.Euler(float3.zero), false);
+            Entity player = PhysicsTestUtils.CreateBox(base.m_Manager, size, position, float3.zero, 0, quaternion.Euler(float3.zero), false);
             base.m_Manager.AddComponent<KCCGrounded>(player);
             base.m_Manager.AddComponent<KCCVelocity>(player);
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity
@@ -91,7 +91,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.1 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -134,7 +134,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.75 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -177,7 +177,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Make a player character for this test
             Entity player = CreateTestPlayer(float3.zero, new float3(1, 1, 1));
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.75 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 1f, 0) });
@@ -218,7 +218,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = CreateTestPlayer(new float3(0, 0, 0), 0.5f);
             float3 startingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
             // Put a floor below the player
-            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            Entity floor = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), float3.zero, float3.zero, 0, quaternion.Euler(float3.zero), false);
             // Move floor slightly below player so they can snap down to floor
             // gap of 0.1 units between floor and player
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = float3.zero });
