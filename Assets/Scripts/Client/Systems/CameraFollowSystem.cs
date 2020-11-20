@@ -25,9 +25,6 @@ namespace PropHunt.Client.Systems
         protected override void OnUpdate()
         {
             int localPlayerId = GetSingleton<NetworkIdComponent>().Value;
-            UnityEngine.Debug.Log("Current play id: " + localPlayerId);
-
-            UnityEngine.Debug.Log("PlayerViews: " + this.EntityManager.CreateEntityQuery(typeof(PlayerView)).CalculateEntityCount());
 
             // Skip function if no main camera exists
             if (Camera.main == null)

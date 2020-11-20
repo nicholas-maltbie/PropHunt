@@ -52,6 +52,17 @@ namespace PropHunt.EditMode.Tests.Mixed.Commands
             Assert.IsTrue(playerInput.jump == playerInput2.jump);
             Assert.IsTrue(playerInput.interact == playerInput2.interact);
             Assert.IsTrue(playerInput.sprint == playerInput2.sprint);
+
+            Assert.IsTrue(playerInput.Tick == playerInput.tick);
+            uint targetTick = 2;
+            playerInput.Tick = targetTick;
+            Assert.IsTrue(playerInput.Tick == targetTick);
+
+            // Test the other serializer methodologies
+            var compression = new NetworkCompressionModel(Allocator.Temp);
+            playerInput.Serialize(ref writer, playerInput, compression);
+            reader = new DataStreamReader(writer.AsNativeArray());
+            playerInput.Deserialize(targetTick, ref reader, playerInput, compression);
         }
     }
 }
