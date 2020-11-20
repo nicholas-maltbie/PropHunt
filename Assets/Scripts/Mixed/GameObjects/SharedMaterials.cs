@@ -45,7 +45,7 @@ namespace PropHunt.Mixed
             InitializeDictionary();
         }
 
-        private void InitializeDictionary()
+        public void InitializeDictionary()
         {
             materialDictionary = new Dictionary<int, Material>();
 

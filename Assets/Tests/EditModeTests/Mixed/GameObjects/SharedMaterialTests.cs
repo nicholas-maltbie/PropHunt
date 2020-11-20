@@ -54,6 +54,7 @@ namespace PropHunt.EditMode.Tests.Mixed.GameObjects
 
             // Initialize shared material componenet
             sharedMaterialComponent.Awake();
+            sharedMaterialComponent.InitializeDictionary();
 
             // Get the material from a key
             Assert.IsTrue(sharedMaterialComponent.GetMaterialById(mat1.MaterialId).color == mat1.Material.color);
