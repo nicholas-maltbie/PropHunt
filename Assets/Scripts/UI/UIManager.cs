@@ -12,7 +12,7 @@ namespace PropHunt.UI
         /// <summary>
         /// String identifier for the new screen to load
         /// </summary>
-        public string newScreen { get; set; }
+        public string newScreen;
     }
 
     /// <summary>
@@ -23,12 +23,12 @@ namespace PropHunt.UI
         /// <summary>
         /// Name of the previous screen shown
         /// </summary>
-        public string oldScreen { get; set; }
+        public string oldScreen;
 
         /// <summary>
         /// Name of the new screen being changed to
         /// </summary>
-        public string newScreen { get; set; }
+        public string newScreen;
     }
 
     public class UIChangeEvents
