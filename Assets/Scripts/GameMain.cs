@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using PropHunt.Constants;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
@@ -7,27 +7,41 @@ using UnityEngine;
 
 namespace PropHunt.Game
 {
-    public class ProphuntClientServerControlSystem
+    public struct NetworkControlSettings : IComponentData
     {
-        /// <summary>
-        /// Network address for local connection (loopback)
-        /// </summary>
-        public static string DefaultNetworkAddress = "127.0.0.1";
-
-        /// <summary>
-        /// Network port for default connection to the server
-        /// </summary>
-        public static ushort DefaultNetworkPort = 25623;
-
         /// <summary>
         /// Network address of server being connected to.
         /// </summary>
-        public static string NetworkAddress = DefaultNetworkAddress;
+        public FixedString64 NetworkAddress;
 
         /// <summary>
         /// Port for host connection
         /// </summary>
-        public static ushort NetworkPort = 25623;
+        public ushort NetworkPort;
+
+        public static NetworkControlSettings GetDefault()
+        {
+            return new NetworkControlSettings
+            {
+                NetworkAddress = ProphuntClientServerControlSystem.DefaultNetworkAddress,
+                NetworkPort = ProphuntClientServerControlSystem.DefaultNetworkPort
+            };
+        }
+    }
+
+    public class NetworkControlSettingsSystem : ComponentSystem
+    {
+        // global instance of network control settings
+        public static NetworkControlSettingsSystem Instance;
+
+        protected override void OnCreate()
+        {
+            NetworkControlSettingsSystem.Instance = this;
+            EntityManager.CreateEntity(typeof(NetworkControlSettings));
+            this.SetSingleton<NetworkControlSettings>(NetworkControlSettings.GetDefault());
+        }
+
+        protected override void OnUpdate() { }
     }
 
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
@@ -41,6 +55,7 @@ namespace PropHunt.Game
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<InitServerGameComponent>();
+            RequireSingletonForUpdate<NetworkControlSettings>();
             // Create singleton, require singleton for update so system runs once
             EntityManager.CreateEntity(typeof(InitServerGameComponent));
             Debug.Log("Creating server world");
@@ -55,7 +70,7 @@ namespace PropHunt.Game
             {
                 // Server world automatically listens for connections from any host
                 NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
-                ep.Port = ProphuntClientServerControlSystem.NetworkPort;
+                ep.Port = GetSingleton<NetworkControlSettings>().NetworkPort;
                 network.Listen(ep);
             }
         }
@@ -82,9 +97,10 @@ namespace PropHunt.Game
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
             if (World.GetExistingSystem<ClientSimulationSystemGroup>() != null)
             {
+                NetworkControlSettings settings = this.GetSingleton<NetworkControlSettings>();
                 // Client worlds automatically connect to localhost
-                UnityEngine.Debug.Log($"Connecting to {ProphuntClientServerControlSystem.NetworkAddress}:{ProphuntClientServerControlSystem.NetworkPort}");
-                NetworkEndPoint ep = NetworkEndPoint.Parse(ProphuntClientServerControlSystem.NetworkAddress, ProphuntClientServerControlSystem.NetworkPort);
+                UnityEngine.Debug.Log($"Connecting to {settings.NetworkAddress}:{settings.NetworkPort}");
+                NetworkEndPoint ep = NetworkEndPoint.Parse(settings.NetworkAddress.ConvertToString(), settings.NetworkPort);
                 network.Connect(ep);
             }
         }

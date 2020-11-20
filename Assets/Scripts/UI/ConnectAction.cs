@@ -1,11 +1,9 @@
 using UnityEngine;
-using Unity.Entities;
 using UnityEngine.UI;
 using System.Net;
-using static PropHunt.Game.ClientGameSystem;
-using PropHunt.Game;
 using PropHunt.Client.Systems;
-using System;
+using PropHunt.Constants;
+using PropHunt.Game;
 
 namespace PropHunt.UI
 {
@@ -26,8 +24,8 @@ namespace PropHunt.UI
 
         public void OnEnable()
         {
-            this.serverAddress.text = PropHunt.Game.ProphuntClientServerControlSystem.DefaultNetworkAddress;
-            this.serverPort.text = PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort.ToString();
+            this.serverAddress.text = ProphuntClientServerControlSystem.DefaultNetworkAddress;
+            this.serverPort.text = ProphuntClientServerControlSystem.DefaultNetworkPort.ToString();
         }
 
         /// <summary>
@@ -52,8 +50,12 @@ namespace PropHunt.UI
             else
             {
                 // Assign connection parameters
-                PropHunt.Game.ProphuntClientServerControlSystem.NetworkAddress = networkAddress;
-                PropHunt.Game.ProphuntClientServerControlSystem.NetworkPort = networkPort;
+                var networkControl = NetworkControlSettingsSystem.Instance;
+                networkControl.SetSingleton<NetworkControlSettings>(new NetworkControlSettings
+                {
+                    NetworkAddress = networkAddress,
+                    NetworkPort = networkPort
+                });
 
                 ConnectionSystem.Instance.RequestConnect();
             }

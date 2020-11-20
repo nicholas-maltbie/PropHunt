@@ -9,9 +9,11 @@
         "UnityEditor.TestRunner",
         "PropHunt.Tests.Utils",
         "PropHunt",
+        "Unity.Collections",
         "Unity.Transforms",
         "Unity.Mathematics",
         "Unity.Physics",
+        "Unity.Networking.Transport",
         "Unity.NetCode",
         "Unity.Rendering.Hybrid"
     ],
