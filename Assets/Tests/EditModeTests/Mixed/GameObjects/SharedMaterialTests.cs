@@ -56,16 +56,16 @@ namespace PropHunt.EditMode.Tests.Mixed.GameObjects
             sharedMaterialComponent.Awake();
 
             // Get the material from a key
-            Assert.IsTrue(SharedMaterials.Instance.GetMaterialById(mat1.MaterialId) == mat1.Material);
-            Assert.IsTrue(SharedMaterials.Instance.GetMaterialById(mat2.MaterialId) == mat2.Material);
-            Assert.IsTrue(SharedMaterials.Instance.GetMaterialById(mat3.MaterialId) == mat3.Material);
-            Assert.Throws(typeof(System.Exception), () => SharedMaterials.Instance.GetMaterialById(0));
+            Assert.IsTrue(sharedMaterialComponent.GetMaterialById(mat1.MaterialId).color == mat1.Material.color);
+            Assert.IsTrue(sharedMaterialComponent.GetMaterialById(mat2.MaterialId).color == mat2.Material.color);
+            Assert.IsTrue(sharedMaterialComponent.GetMaterialById(mat3.MaterialId).color == mat3.Material.color);
+            Assert.Throws(typeof(System.Exception), () => sharedMaterialComponent.GetMaterialById(0));
 
             // Get the key from a material
-            Assert.IsTrue(SharedMaterials.Instance.GetIdForMaterial(mat1.Material) == mat1.MaterialId);
-            Assert.IsTrue(SharedMaterials.Instance.GetIdForMaterial(mat2.Material) == mat2.MaterialId);
-            Assert.IsTrue(SharedMaterials.Instance.GetIdForMaterial(mat3.Material) == mat3.MaterialId);
-            Assert.Throws(typeof(System.Exception), () => SharedMaterials.Instance.GetIdForMaterial(new Material(Shader.Find("Shader Graphs/LitDOTS"))));
+            Assert.IsTrue(sharedMaterialComponent.GetIdForMaterial(mat1.Material) == mat1.MaterialId);
+            Assert.IsTrue(sharedMaterialComponent.GetIdForMaterial(mat2.Material) == mat2.MaterialId);
+            Assert.IsTrue(sharedMaterialComponent.GetIdForMaterial(mat3.Material) == mat3.MaterialId);
+            Assert.Throws(typeof(System.Exception), () => sharedMaterialComponent.GetIdForMaterial(new Material(Shader.Find("Shader Graphs/LitDOTS"))));
 
             // Initialize with a non null instance
             sharedMaterialComponent.Awake();
