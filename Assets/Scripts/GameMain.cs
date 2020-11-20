@@ -21,13 +21,14 @@ namespace PropHunt.Game
 
         public static NetworkControlSettings GetDefault()
         {
-            return new NetworkControlSettings{
+            return new NetworkControlSettings
+            {
                 NetworkAddress = ProphuntClientServerControlSystem.DefaultNetworkAddress,
                 NetworkPort = ProphuntClientServerControlSystem.DefaultNetworkPort
             };
         }
     }
-    
+
     public class NetworkControlSettingsSystem : ComponentSystem
     {
         // global instance of network control settings
@@ -40,7 +41,7 @@ namespace PropHunt.Game
             this.SetSingleton<NetworkControlSettings>(NetworkControlSettings.GetDefault());
         }
 
-        protected override void OnUpdate() {}
+        protected override void OnUpdate() { }
     }
 
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]

@@ -15,7 +15,8 @@ namespace PropHunt.EditMode.Tests.Mixed.Commands
         [Test]
         public void TestPlayerInputSerializeDeserialize()
         {
-            PlayerInput playerInput = new PlayerInput{
+            PlayerInput playerInput = new PlayerInput
+            {
                 tick = 0u,
                 horizMove = -1.0f,
                 vertMove = 1.0f,
@@ -31,7 +32,7 @@ namespace PropHunt.EditMode.Tests.Mixed.Commands
             Assert.IsTrue(playerInput.IsInteracting);
 
             DataStreamWriter writer = new DataStreamWriter(100, Allocator.Temp);
-            
+
             // serialize data
             playerInput.Serialize(ref writer);
             NativeArray<byte> bytes = writer.AsNativeArray();
