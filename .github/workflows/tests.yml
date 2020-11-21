@@ -106,8 +106,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
-      
-      Skip assert coverage step for now
+
       - name: Assert Coverage
         run: |
           python3 -c "assert ${{ env.LINE_COVERAGE }} >= 100, 'Line Coverage must be 100%, is only ${{ env.LINE_COVERAGE }}%'"
