@@ -2,7 +2,7 @@ name: Tests
 
 on:
   pull_request: {}
-  push: {}
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -82,7 +82,7 @@ jobs:
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
-          expression: '//CoverageReport/Summary/Linecoverage'
+          expression: '//CoverageReport/Summary/Linecoverage/text()'
       
       # - name: Branch Coverage
       #   id: branchCoverage
