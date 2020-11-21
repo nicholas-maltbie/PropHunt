@@ -77,8 +77,8 @@ jobs:
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
-      - name: Sequence Coverage
-        id: sequenceCoverage
+      - name: Line Coverage
+        id: LineCoverage
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
@@ -94,14 +94,14 @@ jobs:
       - name: Parse Coverage
         id: parsecoverage
         run: |
-          echo ::set-output name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-output name=LINE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.LineCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
             Test Coverage Results for ${{ matrix.testMode }}:
-            Sequence Coverage: ${{ steps.parsecoverage.outputs.SEQUENCE_COVERAGE }}%
+            Line Coverage: ${{ steps.parsecoverage.outputs.LINE_COVERAGE }}%
             Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
@@ -110,4 +110,4 @@ jobs:
       Skip assert coverage step for now
       - name: Assert Coverage
         run: |
-          python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 100, 'Sequence coverage must be 100%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
+          python3 -c "assert ${{ env.LINE_COVERAGE }} >= 100, 'Line Coverage must be 100%, is only ${{ env.LINE_COVERAGE }}%'"
