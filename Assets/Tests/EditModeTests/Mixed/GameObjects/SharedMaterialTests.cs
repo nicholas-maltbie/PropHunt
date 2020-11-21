@@ -53,6 +53,7 @@ namespace PropHunt.EditMode.Tests.Mixed.GameObjects
             sharedMaterialComponent.MaterialLibrary = matLibrary;
 
             // Initialize shared material componenet
+            SharedMaterial.Instance = null;
             sharedMaterialComponent.Awake();
             sharedMaterialComponent.InitializeDictionary();
 
