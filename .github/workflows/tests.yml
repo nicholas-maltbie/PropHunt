@@ -58,10 +58,10 @@ jobs:
           artifactsPath: ${{ matrix.testMode }}-artifacts
           customParameters: |
             -enableCodeCoverage
+            -debugCodeOptimization
             -burst-disable-compilation 
             -coverageResultsPath ${{ matrix.testMode }}-artifacts
-            -stackTraceLogType Full
-            -coverageOptions generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*
+            -coverageOptions "generateHtmlReport;generateBadgeReport;assemblyFilters:-Unity.Entities.Tests.*,-Assembly*,-PropHunt.Generated,-PropHunt.Constants*;pathFilters:-*/Assets/NetCodeGenerated/*,-*/Assets/Tests/*"
             -nographics
 
       # - name: Upload Results
@@ -73,16 +73,16 @@ jobs:
       - name: Find Coverage
         id: coverage
         run: |
-          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "TestCoverageResults_0000.xml")
+          echo ::set-output name=COVERAGE_FILE::$(find ${{ steps.tests.outputs.artifactsPath }} -name "Summary.xml")
           ls -lah .
           ls -lah ${{ steps.tests.outputs.artifactsPath }}
       
-      - name: Sequence Coverage
-        id: sequenceCoverage
+      - name: Line Coverage
+        id: LineCoverage
         uses: QwerMike/xpath-action@v1
         with:
           filename: "${{ steps.coverage.outputs.COVERAGE_FILE }}"
-          expression: '//CoverageSession/Summary/@sequenceCoverage'
+          expression: '//CoverageReport/Summary/Linecoverage/text()'
       
       # - name: Branch Coverage
       #   id: branchCoverage
@@ -92,22 +92,21 @@ jobs:
       #     expression: '//CoverageSession/Summary/@branchCoverage'
       
       - name: Parse Coverage
-        id: parsecoverage
+        id: ParseCoverage
         run: |
-          echo ::set-output name=SEQUENCE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.sequenceCoverage.outputs.result }})
+          echo ::set-output name=LINE_COVERAGE::$(cut -d "=" -f2- <<< ${{ steps.LineCoverage.outputs.result }})
       
       - name: Add PR Comment
         uses: mshick/add-pr-comment@v1
         with:
           message: |
             Test Coverage Results for ${{ matrix.testMode }}:
-            Sequence Coverage: ${{ steps.parsecoverage.outputs.SEQUENCE_COVERAGE }}%
+            Line Coverage: ${{ steps.ParseCoverage.outputs.LINE_COVERAGE }}%
             Link to run results: [https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]' # The user.login for temporary GitHub tokens
           allow-repeats: false # This is the default
-      
-      # Skip assert coverage step for now
-      # - name: Assert Coverage
-      #   run: |
-      #     python3 -c "assert ${{ env.SEQUENCE_COVERAGE }} >= 95, 'Sequence coverage must be at least 95%, is only ${{ env.SEQUENCE_COVERAGE }}%'"
+
+      - name: Assert Coverage
+        run: |
+          python3 -c "assert ${{ steps.ParseCoverage.outputs.LINE_COVERAGE }} >= 100, 'Line Coverage must be 100%, is only ${{ env.LINE_COVERAGE }}%'"
