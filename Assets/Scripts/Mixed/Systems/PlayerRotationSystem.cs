@@ -1,6 +1,8 @@
+using PropHunt.InputManagement;
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Systems;
+using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -22,11 +24,20 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class PlayerRotationSystem : SystemBase
     {
+        /// <summary>
+        /// Prediction manager for determining state update in a testable manner
+        /// </summary>
+        public IPredictionState predictionManager = new PredictionState();
+
+        /// <summary>
+        /// Unity service for managing static inputs in a testable manner
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
-            var tick = group.PredictingTick;
-            var deltaTime = Time.DeltaTime;
+            var tick = predictionManager.GetPredictingTick(base.World);
             var isClient = World.GetExistingSystem<ClientSimulationSystemGroup>() != null;
 
             Entities.ForEach((

@@ -1,4 +1,5 @@
 
+using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,6 +15,11 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(BuildPhysicsWorld))]
     public class RotatingPlatformSystem : SystemBase
     {
+        /// <summary>
+        /// Unity service for accessing unity data
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         public static float3 ShortestAngleBetween(float3 start, float3 end)
         {
             float3 delta = end - start;
@@ -27,7 +33,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
-            float deltaTime = Time.DeltaTime;
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 ref RotatingPlatform rotatingPlatform,
                 ref Rotation rotation,
@@ -43,7 +49,7 @@ namespace PropHunt.Mixed.Systems
                         // go to next target
                         int nextPlatform = rotatingPlatform.current + rotatingPlatform.direction;
                         // Adjust by current rule if out of bounds
-                        if (nextPlatform < 0 || nextPlatform > rotatingPlatform.direction)
+                        if (nextPlatform < 0 || nextPlatform >= targets.Length)
                         {
                             if (rotatingPlatform.loopMethod == PlatformLooping.REVERSE)
                             {

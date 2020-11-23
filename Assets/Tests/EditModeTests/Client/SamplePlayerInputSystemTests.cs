@@ -121,7 +121,7 @@ namespace PropHunt.EditMode.Tests.Client
         public void VerifyInputCreation()
         {
             // Setup default inputs
-            this.unityServiceMock.Setup(e => e.GetDeltaTime()).Returns(1);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse Y")).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse X")).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Horizontal")).Returns(1);
@@ -148,7 +148,7 @@ namespace PropHunt.EditMode.Tests.Client
             CreatePlayerEntity(2);
 
             // Setup default inputs
-            this.unityServiceMock.Setup(e => e.GetDeltaTime()).Returns(1);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse Y")).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse X")).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Horizontal")).Returns(1);
@@ -172,7 +172,7 @@ namespace PropHunt.EditMode.Tests.Client
         public void VerifyCorrectWithPitchOutOfBounds()
         {
             // Setup default inputs
-            this.unityServiceMock.Setup(e => e.GetDeltaTime()).Returns(1);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse Y")).Returns(-100);
             this.unityServiceMock.Setup(e => e.GetAxis("Mouse X")).Returns(1);
             this.unityServiceMock.Setup(e => e.GetAxis("Horizontal")).Returns(1);

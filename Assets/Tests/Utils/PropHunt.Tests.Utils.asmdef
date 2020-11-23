@@ -6,6 +6,7 @@
         "Unity.Entities.Tests",
         "Unity.Entities.Hybrid",
         "Unity.Networking.Transport",
+        "Unity.Mathematics",
         "Unity.NetCode",
         "Unity.NetCode.Editor",
         "UnityEditor.TestRunner",

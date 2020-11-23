@@ -22,11 +22,11 @@ Naming convention for branches are as follows. Use a prefix that fits the kind o
 
 Whenever you are adding new features or changing the code, make sure to add documentation. Use the [C# XML Documentation Comments](https://marketplace.visualstudio.com/items?itemName=k--kato.docomment) for documentation. This uses XML Documentation for C#. If you have any questions about this code, reference the [doxygen manual](http://www.doxygen.nl/manual/xmlcmds.html).
 
-## 3. ~~Write Unit Test~~
+## 3. Write Unit Test
 
-Normally we would recommend writing unit tests for all pieces of code but this as of now is not setup in an easy manner. Ensure that your code works and add it to the environment before committing it. 
+Write unit tests for your existing code with the Edit Mode Tests. There is an article in the wiki about [Making Unit Tests](https://github.com/nicholas-maltbie/PropHunt/wiki/Making-Unit-Tests). There is an example unit test. To view existing tests look at the `Assets/Tests/EditModeTests` path within the project for all the current tests in the project. 
 
-Here is a short intro on unity testing [article link](https://www.raywenderlich.com/9454-introduction-to-unity-unit-testing). If we figure out a standardized way to include this we will add it to the project. 
+If you want to know more about testing in unity read this introduction to unit testing in unity [article link](https://www.raywenderlich.com/9454-introduction-to-unity-unit-testing).
 
 ## 4. Make a Pull Request
 

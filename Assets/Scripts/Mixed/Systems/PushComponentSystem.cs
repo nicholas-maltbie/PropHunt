@@ -36,10 +36,9 @@ namespace PropHunt.Mixed.Systems
 
             Entities.ForEach((
                 Entity entity,
-                int entityInQueryIndex,
-                in DynamicBuffer<PushForce> pushForce) =>
+                ref DynamicBuffer<PushForce> pushForce) =>
                 {
-                    commandBuffer.RemoveComponent(entityInQueryIndex, entity, ComponentType.ReadOnly<PushForce>());
+                    pushForce.Clear();
                 }
             ).ScheduleParallel();
 
@@ -63,7 +62,7 @@ namespace PropHunt.Mixed.Systems
 
             if (isServer)
             {
-                Entities.ForEach((
+                Entities.WithChangeFilter<PushForce>().ForEach((
                     ref PhysicsVelocity physicsVelocity,
                     in PhysicsMass physicsMass,
                     in Translation translation,

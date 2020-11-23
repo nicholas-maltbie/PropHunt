@@ -1,28 +1,36 @@
 
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Server.Systems;
-using Unity.Burst;
+using PropHunt.Mixed.Utilities;
+using PropHunt.InputManagement;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics;
 
 namespace PropHunt.Mixed.Systems
 {
+
     /// <summary>
     /// Parse player input and set kinematic character controller to follow movement
     /// commands based on user input.
     /// </summary>
-    [BurstCompile]
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class KinematicCharacterControllerInput : SystemBase
     {
+        /// <summary>
+        /// Prediction manager for determining state update in a testable manner
+        /// </summary>
+        public IPredictionState predictionManager = new PredictionState();
+
+        /// <summary>
+        /// Unity service for managing static inputs in a testable manner
+        /// </summary>
+        public IUnityService unityService = new UnityService();
+
         protected override void OnUpdate()
         {
-            var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
-            var tick = group.PredictingTick;
-            var deltaTime = Time.DeltaTime;
+            var tick = this.predictionManager.GetPredictingTick(base.World);
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
 
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
@@ -47,12 +55,11 @@ namespace PropHunt.Mixed.Systems
                 float speedMultiplier = input.IsSprinting ? settings.SprintSpeed : settings.moveSpeed;
 
                 quaternion horizPlaneView = quaternion.RotateY(math.radians(view.yaw));
-
                 // Make movement vector based on player input
                 velocity.playerVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
                 // including jump action
                 jump.attemptingJump = input.IsJumping;
-            }).Schedule();
+            }).ScheduleParallel();
         }
     }
 }
