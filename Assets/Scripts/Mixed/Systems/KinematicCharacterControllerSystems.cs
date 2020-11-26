@@ -29,6 +29,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCPreUpdateGroup))]
     public class KCCGroundedSystem : SystemBase
     {
