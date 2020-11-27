@@ -53,7 +53,7 @@ namespace PropHunt.Server.Systems
                 {
                     // Set jump to true
                     jumping.attemptingJump = true;
-                    float jumpRange = agent.minTimeJump - agent.maxTimeJump;
+                    float jumpRange = agent.maxTimeJump - agent.minTimeJump;
                     agent.remainingTimeJump = randomState.random.NextFloat() * jumpRange + agent.minTimeJump;
                 }
                 else
