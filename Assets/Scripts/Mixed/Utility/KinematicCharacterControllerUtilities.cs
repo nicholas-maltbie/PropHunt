@@ -108,6 +108,9 @@ namespace PropHunt.Mixed.Utilities
             float3 remaining = movement; // Remaining momentum
             int bounces = 0; // current number of bounces
 
+            SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
+
             // Continue computing while there is momentum and bounces remaining
             while (math.length(remaining) > epsilon && bounces <= maxBounces)
             {
@@ -123,9 +126,6 @@ namespace PropHunt.Mixed.Utilities
                     Collider = collider.ColliderPtr,
                     Orientation = rotation
                 };
-
-                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entityIndex, 1.0f, collisionWorld);
 
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
