@@ -43,7 +43,7 @@ namespace PropHunt.Server.Systems
 
                     // Rotate the character to look this direction
                     rotation.Value = quaternion.RotateY(newDirection);
-                    
+
                     // Reset the time to change direction
                     float directionChangeRange = agent.maxTimeDirectionChange - agent.minTimeDirectionChange;
                     agent.remainingTimeDirectionChange = randomState.random.NextFloat() * directionChangeRange + agent.minTimeDirectionChange;

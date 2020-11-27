@@ -14,7 +14,7 @@ namespace PropHunt.Authoring
             // Create a rng with a random seed value
             dstManager.AddComponentData(entity, new RandomWrapper()
             {
-                random = new Unity.Mathematics.Random((uint) UnityEngine.Random.Range(1, int.MaxValue))
+                random = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, int.MaxValue))
             });
         }
     }

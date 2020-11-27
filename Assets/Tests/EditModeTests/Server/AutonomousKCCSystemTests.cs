@@ -45,8 +45,8 @@ namespace PropHunt.EditMode.Tests.Server
                 remainingTimeDirectionChange = 3.0f,
                 remainingTimeJump = 3.0f,
             });
-            base.m_Manager.AddComponentData<Rotation>(autonomousKCC, new Rotation { Value = quaternion.Euler(float3.zero)});
-            base.m_Manager.AddComponentData<RandomWrapper>(autonomousKCC, new RandomWrapper{ random = new Unity.Mathematics.Random(123) });
+            base.m_Manager.AddComponentData<Rotation>(autonomousKCC, new Rotation { Value = quaternion.Euler(float3.zero) });
+            base.m_Manager.AddComponentData<RandomWrapper>(autonomousKCC, new RandomWrapper { random = new Unity.Mathematics.Random(123) });
             return autonomousKCC;
         }
 
@@ -69,7 +69,7 @@ namespace PropHunt.EditMode.Tests.Server
             Assert.IsTrue(math.all(startVelocity == base.m_Manager.GetComponentData<KCCVelocity>(autonomousCharacter).playerVelocity));
             // Assert that the character is not jumping
             Assert.IsTrue(base.m_Manager.GetComponentData<KCCJumping>(autonomousCharacter).attemptingJump == false);
-        
+
             // Assert that remaining jump time and change direction time have decreased by delta time
             agent = base.m_Manager.GetComponentData<AutonomousKCCAgent>(autonomousCharacter);
             Assert.IsTrue(startRemainingChangeDirectionTime - deltaTime == agent.remainingTimeDirectionChange);
