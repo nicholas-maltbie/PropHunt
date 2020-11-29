@@ -56,8 +56,11 @@ namespace PropHunt.UI
                     NetworkAddress = networkAddress,
                     NetworkPort = networkPort
                 });
-
-                ConnectionSystem.Instance.RequestConnect();
+                ConnectionSystem.Instance.RequestConnect(new NetworkControlSettings
+                {
+                    NetworkAddress = networkAddress,
+                    NetworkPort = networkPort
+                });
             }
         }
     }

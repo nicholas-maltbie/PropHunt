@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using PropHunt.Client.Components;
 using PropHunt.Client.Systems;
+using PropHunt.Game;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.NetCode;
@@ -35,6 +36,7 @@ namespace PropHunt.EditMode.Tests.Client
         {
             base.Setup();
             this.connectionSystem = base.World.CreateSystem<ConnectionSystem>();
+            base.World.CreateSystem<NetworkControlSettingsSystem>();
             // Connection Componenet created as part of Connection System
             // base.m_Manager.CreateEntity(typeof(ConnectionComponent));
 
@@ -69,7 +71,7 @@ namespace PropHunt.EditMode.Tests.Client
             Assert.IsFalse(connectionData.requestConnect);
             Assert.IsFalse(connectionData.requestDisconnect);
 
-            ConnectionSystem.Instance.RequestConnect();
+            ConnectionSystem.Instance.RequestConnect(new Game.NetworkControlSettings());
             this.connectionSystem.Update();
 
             connectionData = this.connectionSystem.GetSingleton<ConnectionComponent>();
