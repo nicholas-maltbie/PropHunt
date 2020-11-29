@@ -13,6 +13,11 @@ namespace PropHunt.UI
     public class ConnectAction : MonoBehaviour
     {
         /// <summary>
+        /// Instance for this connect action
+        /// </summary>
+        public static ConnectAction Instance;
+
+        /// <summary>
         /// Text object with server address
         /// </summary>
         public InputField serverAddress;
@@ -22,10 +27,22 @@ namespace PropHunt.UI
         /// </summary>
         public InputField serverPort;
 
+        /// <summary>
+        /// Debug information
+        /// </summary>
+        public Text debugInformation;
+
         public void OnEnable()
         {
             this.serverAddress.text = ProphuntClientServerControlSystem.DefaultNetworkAddress;
             this.serverPort.text = ProphuntClientServerControlSystem.DefaultNetworkPort.ToString();
+
+            ConnectAction.Instance = this;
+        }
+
+        public void SetDebugText(string text)
+        {
+            this.debugInformation.text = text;
         }
 
         /// <summary>
@@ -61,6 +78,7 @@ namespace PropHunt.UI
                     NetworkAddress = networkAddress,
                     NetworkPort = networkPort
                 });
+                
             }
         }
     }

@@ -114,6 +114,10 @@ namespace PropHunt.Client.Systems
     [UpdateBefore(typeof(ClientGameSystem))]
     public class ConnectionSystem : ComponentSystem
     {
+        /// <summary>
+        /// Public instance of connection system for client to access 
+        /// from mono  behaviours
+        /// </summary>
         public static ConnectionSystem Instance;
 
         /// <summary>

@@ -100,6 +100,7 @@ namespace PropHunt.Game
                 NetworkControlSettings settings = this.GetSingleton<NetworkControlSettings>();
                 // Client worlds automatically connect to localhost
                 UnityEngine.Debug.Log($"Connecting to {settings.NetworkAddress}:{settings.NetworkPort}");
+                PropHunt.UI.ConnectAction.Instance.SetDebugText($"Attempting to connect to {settings.NetworkAddress}:{settings.NetworkPort}");
                 NetworkEndPoint ep = NetworkEndPoint.Parse(settings.NetworkAddress.ConvertToString(), settings.NetworkPort);
                 network.Connect(ep);
             }
