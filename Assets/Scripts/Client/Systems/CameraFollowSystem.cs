@@ -14,7 +14,7 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(PresentationSystemGroup))]
-    public class CameraFollowSystem : ComponentSystem
+    public class CameraFollowSystem : SystemBase
     {
         protected override void OnCreate()
         {
@@ -33,20 +33,19 @@ namespace PropHunt.Client.Systems
             }
             float3 position = Camera.main.transform.position;
             quaternion rotation = Camera.main.transform.rotation;
-            Entities.
-                ForEach(
-                    (Entity ent, ref Translation transform, ref Rotation rot, ref PlayerId player, ref PlayerView view) =>
-                    {
-                        if (player.playerId == localPlayerId)
-                        {
-                            position.x = transform.Value.x;
-                            position.y = transform.Value.y;
-                            position.z = transform.Value.z;
-                            position += view.offset;
-                            rotation.value = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0).value;
-                        }
-                    }
-                );
+            Entities.ForEach((
+                Entity ent,
+                ref Translation transform,
+                ref Rotation rot,
+                ref PlayerId player,
+                ref PlayerView view) =>
+            {
+                if (player.playerId == localPlayerId)
+                {
+                    position = transform.Value + view.offset;
+                    rotation = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0);
+                }
+            }).Run();
 
             Camera.main.transform.position = position;
             Camera.main.transform.rotation = rotation;

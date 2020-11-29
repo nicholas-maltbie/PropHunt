@@ -2,6 +2,7 @@ using PropHunt.Constants;
 using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -29,6 +30,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCPreUpdateGroup))]
     public class KCCGroundedSystem : SystemBase
     {
@@ -123,6 +125,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMovementSystem))]
+    [BurstCompile]
     public class KCCSnapDown : SystemBase
     {
         /// <summary>
@@ -185,6 +188,7 @@ namespace PropHunt.Mixed.Systems
     /// Applies character movement to a kinematic character controller
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [BurstCompile]
     public class KCCMovementSystem : SystemBase
     {
         /// <summary>
@@ -284,6 +288,7 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
+    [BurstCompile]
     public class KCCJumpSystem : SystemBase
     {
         /// <summary>
@@ -323,6 +328,7 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
     [UpdateBefore(typeof(KCCMovementSystem))]
+    [BurstCompile]
     public class KCCPushOverlappingSystem : SystemBase
     {
         /// <summary>
@@ -420,6 +426,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCGravitySystem))]
+    [BurstCompile]
     public class KCCMoveWithGroundSystem : SystemBase
     {
         public IUnityService unityService = new UnityService();
@@ -480,6 +487,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
+    [BurstCompile]
     public class KCCGravitySystem : SystemBase
     {
         /// <summary>
