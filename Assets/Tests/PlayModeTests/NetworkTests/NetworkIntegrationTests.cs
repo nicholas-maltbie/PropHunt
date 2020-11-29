@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using PropHunt.Client.Systems;
 using PropHunt.Client.Components;
+using PropHunt.Constants;
+using Unity.Collections;
 
 namespace PropHunt.PlayMode.Tests.NetworkTests
 {
@@ -49,7 +51,10 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
 
             yield return null;
             // Make a connect request
-            ConnectionSystem.Instance.RequestConnect();
+            ConnectionSystem.Instance.RequestConnect(new Game.NetworkControlSettings{
+                NetworkAddress = new FixedString64(ProphuntClientServerControlSystem.DefaultNetworkAddress),
+                NetworkPort = ProphuntClientServerControlSystem.DefaultNetworkPort
+            });
             yield return null;
             yield return new WaitForConnected(connectionManager);
             Assert.IsTrue(connectionManager.GetSingleton<ConnectionComponent>().isConnected);

@@ -14,6 +14,7 @@
         "PropHunt.Generated",
         "PropHunt.Tests.Utils",
         "PropHunt.Scriptable",
+        "Unity.Collections",
         "Unity.Transforms",
         "Unity.Mathematics",
         "Unity.NetCode",
