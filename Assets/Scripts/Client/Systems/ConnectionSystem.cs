@@ -195,5 +195,4 @@ namespace PropHunt.Client.Systems
             SetSingleton(connectionSingleton);
         }
     }
-
 }
