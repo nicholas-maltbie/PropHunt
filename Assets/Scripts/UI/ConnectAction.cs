@@ -45,6 +45,14 @@ namespace PropHunt.UI
             this.debugInformation.text = text;
         }
 
+        public void UpdateOnConnect(object source, ListenConnect connect)
+        {
+            // Don't listen to next event
+            ConnectionSystem.Instance.OnConnect -= this.UpdateOnConnect;
+            // Setup debug text to successfully connected
+            this.SetDebugText("Connected to server successfully");
+        }
+
         /// <summary>
         /// Command to start connecting to the server
         /// </summary>
@@ -78,7 +86,7 @@ namespace PropHunt.UI
                     NetworkAddress = networkAddress,
                     NetworkPort = networkPort
                 });
-                
+                ConnectionSystem.Instance.OnConnect += this.UpdateOnConnect;
             }
         }
     }
