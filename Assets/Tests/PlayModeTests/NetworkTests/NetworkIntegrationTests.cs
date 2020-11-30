@@ -51,7 +51,8 @@ namespace PropHunt.PlayMode.Tests.NetworkTests
 
             yield return null;
             // Make a connect request
-            ConnectionSystem.Instance.RequestConnect(new Game.NetworkControlSettings{
+            ConnectionSystem.Instance.RequestConnect(new Game.NetworkControlSettings
+            {
                 NetworkAddress = new FixedString64(ProphuntClientServerControlSystem.DefaultNetworkAddress),
                 NetworkPort = ProphuntClientServerControlSystem.DefaultNetworkPort
             });
