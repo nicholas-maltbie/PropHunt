@@ -77,11 +77,14 @@ namespace PropHunt.EditMode.Tests.UI
             // Setup parameters of action
             GameObject serverAddressField = GameObject.Instantiate(new GameObject());
             GameObject serverPortField = GameObject.Instantiate(new GameObject());
+            GameObject debugText = GameObject.Instantiate(new GameObject());
             serverAddressField.AddComponent<InputField>();
             serverPortField.AddComponent<InputField>();
+            debugText.AddComponent<Text>();
             // Connect to the action
             action.serverAddress = serverAddressField.GetComponent<InputField>();
             action.serverPort = serverPortField.GetComponent<InputField>();
+            action.debugInformation = debugText.GetComponent<Text>();
 
             // Verify behaviour of on enable method
             action.OnEnable();
@@ -126,7 +129,7 @@ namespace PropHunt.EditMode.Tests.UI
             GameObject.DestroyImmediate(serverAddressField);
             GameObject.DestroyImmediate(serverPortField);
 
-            
+
             // Test for failure to parse
             // Set initial parameters
             var connectionSettings = new NetworkControlSettings
@@ -144,6 +147,9 @@ namespace PropHunt.EditMode.Tests.UI
             // Assert that address and info has not been updated
             Assert.IsTrue(this.controlSettingsSystem.GetSingleton<NetworkControlSettings>().NetworkAddress.ToString() == "192.168.0.1");
             Assert.IsTrue(this.controlSettingsSystem.GetSingleton<NetworkControlSettings>().NetworkPort == 12345);
+
+            // Test the debug text functions
+            action.UpdateOnConnect(this, new ListenConnect());
         }
     }
 }
