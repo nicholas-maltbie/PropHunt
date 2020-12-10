@@ -9,6 +9,12 @@
         },
         {
             "$type": "Unity.Build.Classic.EnableHeadlessMode, Unity.Build.Classic"
+        },
+        {
+            "$type": "Unity.Build.Common.PlayerScriptingDefines, Unity.Build",
+            "Defines": [
+                "UNITY_SERVER"
+            ]
         }
     ]
 }

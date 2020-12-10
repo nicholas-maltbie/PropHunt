@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using PropHunt.Client.Components;
+using PropHunt.Game;
 using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine;
@@ -84,6 +85,7 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     [UpdateAfter(typeof(ConnectionSystem))]
+    [UpdateAfter(typeof(ClientGameSystem))]
     public class ConnectToServerSystem : ComponentSystem
     {
         protected override void OnCreate()
@@ -108,10 +110,14 @@ namespace PropHunt.Client.Systems
     /// <summary>
     /// System to handle disconnecting client from the server
     /// </summary>
-    [UpdateBefore(typeof(GhostReceiveSystem))]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateBefore(typeof(ClientGameSystem))]
     public class ConnectionSystem : ComponentSystem
     {
+        /// <summary>
+        /// Public instance of connection system for client to access 
+        /// from mono  behaviours
+        /// </summary>
         public static ConnectionSystem Instance;
 
         /// <summary>
@@ -132,6 +138,11 @@ namespace PropHunt.Client.Systems
         private int requestConnect;
 
         /// <summary>
+        /// Target settings when requesting a connection
+        /// </summary>
+        private NetworkControlSettings targetSettings;
+
+        /// <summary>
         /// Is the player attempting to disconnect from the server
         /// 
         /// 1 indicates requesting disconnect, 0 indicates no request
@@ -139,11 +150,12 @@ namespace PropHunt.Client.Systems
         private int requestDisconnect;
 
         /// <summary>
-        /// REquest to connect to the server
+        /// Request to connect to the server
         /// </summary>
-        public virtual void RequestConnect()
+        public virtual void RequestConnect(NetworkControlSettings connectionSettings)
         {
             Interlocked.Exchange(ref this.requestConnect, 1);
+            this.targetSettings = connectionSettings;
         }
 
         /// <summary>
@@ -158,13 +170,13 @@ namespace PropHunt.Client.Systems
         {
             RequireSingletonForUpdate<ConnectionComponent>();
             EntityManager.CreateEntity(typeof(ConnectionComponent));
-
             ConnectionSystem.Instance = this;
         }
 
         protected override void OnUpdate()
         {
             var connectionSingleton = GetSingleton<ConnectionComponent>();
+            // UnityEngine.Debug.Log(GetSingleton<NetworkControlSettings>().NetworkAddress);
 
             Entities.ForEach((Entity ent, ref NetworkStreamConnection conn) =>
             {
@@ -185,6 +197,7 @@ namespace PropHunt.Client.Systems
             // Load components into connection entity in thread safe way
             if (Interlocked.CompareExchange(ref this.requestConnect, 0, 1) == 1)
             {
+                this.SetSingleton<NetworkControlSettings>(this.targetSettings);
                 connectionSingleton.requestConnect = true;
             }
             if (Interlocked.CompareExchange(ref this.requestDisconnect, 0, 1) == 1)
@@ -195,5 +208,4 @@ namespace PropHunt.Client.Systems
             SetSingleton(connectionSingleton);
         }
     }
-
 }

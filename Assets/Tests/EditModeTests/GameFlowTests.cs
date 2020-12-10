@@ -1,7 +1,11 @@
+using Moq;
 using NUnit.Framework;
 using PropHunt.Game;
+using PropHunt.UI;
 using Unity.Entities.Tests;
 using Unity.NetCode;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace PropHunt.EditMode.Tests.Flow
 {
@@ -41,6 +45,8 @@ namespace PropHunt.EditMode.Tests.Flow
     {
         private ClientGameSystem clientGameSystem;
 
+        private GameObject connectMock;
+
         [SetUp]
         public override void Setup()
         {
@@ -50,12 +56,24 @@ namespace PropHunt.EditMode.Tests.Flow
             base.World.CreateSystem<NetworkControlSettingsSystem>();
             base.World.CreateSystem<NetworkStreamReceiveSystem>();
             base.m_Manager.CreateEntity(typeof(ClientGameSystem.InitClientGameComponent));
+            connectMock = new GameObject();
+            ConnectAction connectAction = connectMock.AddComponent<ConnectAction>();
+            Text connectText = connectMock.AddComponent<Text>();
+            connectAction.debugInformation = connectText;
+            PropHunt.UI.ConnectAction.Instance = connectAction;
+        }
+
+        [TearDown]
+        public override void TearDown()
+        {
+            GameObject.DestroyImmediate(connectMock);
         }
 
         [Test]
         public void VerifyClientSystemSetupWithClientSystem()
         {
             base.World.CreateSystem<ClientSimulationSystemGroup>();
+            PropHunt.UI.ConnectAction.Instance = this.connectMock.GetComponent<ConnectAction>();
             this.clientGameSystem.Update();
             Assert.IsFalse(this.clientGameSystem.HasSingleton<ClientGameSystem.InitClientGameComponent>());
         }

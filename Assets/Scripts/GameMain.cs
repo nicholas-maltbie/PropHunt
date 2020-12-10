@@ -65,6 +65,7 @@ namespace PropHunt.Game
         {
             // Destroy singleton to prevent system from running again
             EntityManager.DestroyEntity(GetSingletonEntity<InitServerGameComponent>());
+#if UNITY_SERVER || UNITY_EDITOR
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
             if (World.GetExistingSystem<ServerSimulationSystemGroup>() != null)
             {
@@ -73,6 +74,7 @@ namespace PropHunt.Game
                 ep.Port = GetSingleton<NetworkControlSettings>().NetworkPort;
                 network.Listen(ep);
             }
+#endif
         }
     }
 
@@ -83,7 +85,6 @@ namespace PropHunt.Game
         public struct InitClientGameComponent : IComponentData
         {
         }
-
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<InitClientGameComponent>();
@@ -94,15 +95,18 @@ namespace PropHunt.Game
         {
             EntityManager.DestroyEntity(GetSingletonEntity<InitClientGameComponent>());
 
+#if UNITY_CLIENT || UNITY_EDITOR
             var network = World.GetExistingSystem<NetworkStreamReceiveSystem>();
             if (World.GetExistingSystem<ClientSimulationSystemGroup>() != null)
             {
                 NetworkControlSettings settings = this.GetSingleton<NetworkControlSettings>();
                 // Client worlds automatically connect to localhost
                 UnityEngine.Debug.Log($"Connecting to {settings.NetworkAddress}:{settings.NetworkPort}");
+                PropHunt.UI.ConnectAction.Instance.SetDebugText($"Attempting to connect to {settings.NetworkAddress}:{settings.NetworkPort}");
                 NetworkEndPoint ep = NetworkEndPoint.Parse(settings.NetworkAddress.ConvertToString(), settings.NetworkPort);
                 network.Connect(ep);
             }
+#endif
         }
     }
 } // End namespace Prophunt.Game
