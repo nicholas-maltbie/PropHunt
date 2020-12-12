@@ -3,7 +3,6 @@ using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
