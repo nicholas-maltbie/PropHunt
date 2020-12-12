@@ -16,15 +16,14 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Update groups for things to compute before physics step computation
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateAfter(typeof(KCCUpdateGroup))]
     public class KCCPreUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>

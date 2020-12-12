@@ -14,7 +14,7 @@ namespace PropHunt.Mixed.Systems
     /// Parse player input and set kinematic character controller to follow movement
     /// commands based on user input.
     /// </summary>
-    [UpdateBefore(typeof(KCCUpdateGroup))]
+    [UpdateBefore(typeof(GhostSimulationSystemGroup))]
     public class KinematicCharacterControllerInput : SystemBase
     {
         /// <summary>

@@ -11,7 +11,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System group for resolving push forces applied to dynamic objects in the scene
     /// </summary>
-    [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     public class PushForceGroup : ComponentSystemGroup { }
 
     /// <summary>
@@ -57,25 +57,19 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
-            // Only apply force if this is the server
-            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
-
-            if (isServer)
-            {
-                Entities.WithChangeFilter<PushForce>().ForEach((
-                    ref PhysicsVelocity physicsVelocity,
-                    in PhysicsMass physicsMass,
-                    in Translation translation,
-                    in Rotation rotation,
-                    in DynamicBuffer<PushForce> pushForce) =>
+            Entities.WithChangeFilter<PushForce>().ForEach((
+                ref PhysicsVelocity physicsVelocity,
+                in PhysicsMass physicsMass,
+                in Translation translation,
+                in Rotation rotation,
+                in DynamicBuffer<PushForce> pushForce) =>
+                {
+                    for (int push = 0; push < pushForce.Length; push++)
                     {
-                        for (int push = 0; push < pushForce.Length; push++)
-                        {
-                            physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce[push].force, pushForce[push].point);
-                        }
+                        physicsVelocity.ApplyImpulse(physicsMass, translation, rotation, pushForce[push].force, pushForce[push].point);
                     }
-                ).ScheduleParallel();
-            }
+                }
+            ).ScheduleParallel();
         }
     }
 }
