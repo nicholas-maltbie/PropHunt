@@ -48,7 +48,7 @@ namespace PropHunt.Mixed.Systems
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
 
-            Entities.ForEach((
+            Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
@@ -134,10 +134,10 @@ namespace PropHunt.Mixed.Systems
 
         protected unsafe override void OnUpdate()
         {
-            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
 
             float deltaTime = unityService.GetDeltaTime(base.Time);
-            Entities.ForEach((
+            Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
                 ref Translation translation,
                 in Rotation rotation,
@@ -154,7 +154,7 @@ namespace PropHunt.Mixed.Systems
                 }
 
                 SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
                 float3 from = translation.Value;
                 float3 to = from + gravity.Down * settings.snapDownOffset;
@@ -167,7 +167,7 @@ namespace PropHunt.Mixed.Systems
                     Orientation = rotation.Value
                 };
 
-                bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
+                bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
                 Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
                 float distanceToGround = hit.Fraction * settings.snapDownOffset;
 
@@ -208,12 +208,12 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
-            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
 
-            Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).ForEach((
+            Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -239,7 +239,7 @@ namespace PropHunt.Mixed.Systems
                 translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
-                    physicsWorld.CollisionWorld,
+                    collisionWorld,
                     translation.Value,
                     projectedMovement,
                     physicsCollider,
@@ -257,7 +257,7 @@ namespace PropHunt.Mixed.Systems
                 translation.Value = KCCUtils.ProjectValidMovement(
                     commandBuffer,
                     entityInQueryIndex,
-                    physicsWorld.CollisionWorld,
+                    collisionWorld,
                     translation.Value,
                     velocity.worldVelocity * deltaTime,
                     physicsCollider,
@@ -337,10 +337,10 @@ namespace PropHunt.Mixed.Systems
 
         protected unsafe override void OnUpdate()
         {
-            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
 
-            Entities.ForEach((
+            Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
@@ -353,7 +353,7 @@ namespace PropHunt.Mixed.Systems
                 // Project the character collider down and see what they collide with
                 //  Only filter for intersections
                 SelfFilteringClosestHitCollector<ColliderCastHit> overlapCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
                 float3 from = translation.Value;
                 float3 to = from + gravity.Down * KCCConstants.Epsilon;
@@ -366,7 +366,7 @@ namespace PropHunt.Mixed.Systems
                     Orientation = rotation.Value
                 };
 
-                bool overlapOcurred = physicsWorld.CollisionWorld.CastCollider(overlapInput, ref overlapCollector);
+                bool overlapOcurred = collisionWorld.CastCollider(overlapInput, ref overlapCollector);
                 Unity.Physics.ColliderCastHit overlapHit = overlapCollector.ClosestHit;
 
                 // Skip if no overlap ocurred
@@ -386,7 +386,7 @@ namespace PropHunt.Mixed.Systems
 
                 // Hit collector to only collide with our object and the object we overlap with
                 var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
-                    selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
+                    selfIndex, hitObject, 1.0f, collisionWorld);
 
                 // Draw a ray from the center of the character to the hit object
                 var input = new RaycastInput()
@@ -397,7 +397,7 @@ namespace PropHunt.Mixed.Systems
                 };
 
                 // Do the raycast computation
-                bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+                bool collisionOcurred = collisionWorld.CastRay(input, ref hitCollector);
                 // UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
 
                 // Push our character collider out of the object we are overlapping with
@@ -498,8 +498,6 @@ namespace PropHunt.Mixed.Systems
         {
             float deltaTime = unityService.GetDeltaTime(base.Time);
 
-            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
-
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded,
@@ -507,7 +505,6 @@ namespace PropHunt.Mixed.Systems
                 {
                     // If the player is not grounded, push down by
                     // gravity's acceleration
-                    // UnityEngine.Debug.Log($"isServer {isServer}, falling {grounded.Falling}, distance {grounded.distanceToGround}, angle {grounded.angle}");
                     if (grounded.Falling)
                     {
                         // have world velocity decrease due to air resistance (future feature)

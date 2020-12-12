@@ -3,10 +3,8 @@ using Unity.Entities;
 using Unity.NetCode;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Commands;
-using UnityEngine;
 using Unity.Burst;
 using Unity.Transforms;
-using Unity.Mathematics;
 using PropHunt.InputManagement;
 
 namespace PropHunt.Client.Systems
@@ -15,8 +13,7 @@ namespace PropHunt.Client.Systems
     /// Systemt to sample player input at each tick.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    [UpdateAfter(typeof(MenuManagerSystem))]
+    [UpdateInGroup(typeof(GhostInputSystemGroup))]
     public class SamplePlayerInput : ComponentSystem
     {
         public IUnityService unityService;
