@@ -1,5 +1,4 @@
 using PropHunt.Constants;
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using Unity.Burst;
@@ -16,37 +15,33 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Update groups for things to compute before physics step computation
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(KCCUpdateGroup))]
     public class KCCPreUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(KinematicCharacterControllerInput))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
-    public class KCCGroundedSystem : SystemBase
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    public class KCCGroundedSystem : PredictionStateSystem
     {
         /// <summary>
         /// Maximum degrees between ground and player 
         /// </summary>
         public static readonly float MaxAngleFallDegrees = 90;
-
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            uint tick = this.predictionManager.GetPredictingTick(base.World);
 
             Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
@@ -54,8 +49,14 @@ namespace PropHunt.Mixed.Systems
                 in KCCGravity gravity,
                 in PhysicsCollider collider,
                 in Translation translation,
-                in Rotation rotation) =>
+                in Rotation rotation,
+                in PredictedGhostComponent prediction) =>
                 {
+                    if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                    {
+                        return;
+                    }
+
                     SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
                         new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
@@ -122,22 +123,21 @@ namespace PropHunt.Mixed.Systems
     /// This snaps characters down onto the ground if they are floating within a small distance
     /// of the ground.
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMovementSystem))]
-    [BurstCompile]
-    public class KCCSnapDown : SystemBase
+    public class KCCSnapDown : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
+            var predictionGetter = this.GetComponentDataFromEntity<PredictedGhostComponent>(true);
+            var tick = predictionManager.GetPredictingTick(base.World);
 
             float deltaTime = unityService.GetDeltaTime(base.Time);
-            Entities.WithReadOnly(collisionWorld).ForEach((
+            Entities.WithReadOnly(collisionWorld)
+                .WithReadOnly(predictionGetter)
+                .ForEach((
                 Entity entity,
                 ref Translation translation,
                 in Rotation rotation,
@@ -147,6 +147,11 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings settings,
                 in PhysicsCollider collider) =>
             {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predictionGetter[entity]))
+                {
+                    return;
+                }
+
                 // Don't snap down if they are moving up (either in world or player velocity)
                 if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || !grounded.StandingOnGround)
                 {
@@ -186,15 +191,10 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
     [BurstCompile]
-    public class KCCMovementSystem : SystemBase
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    public class KCCMovementSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         /// <summary>
         /// Command buffer system for pushing objects
         /// </summary>
@@ -211,18 +211,32 @@ namespace PropHunt.Mixed.Systems
             var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
+            var movementSettingsGetter = this.GetComponentDataFromEntity<KCCMovementSettings>(true);
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
+            var predictionGetter = this.GetComponentDataFromEntity<PredictedGhostComponent>(true);
+            var tick = predictionManager.GetPredictingTick(base.World);
 
-            Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).WithReadOnly(collisionWorld).ForEach((
+            Entities.WithReadOnly(physicsMassGetter)
+                .WithReadOnly(kccGroundedGetter)
+                .WithReadOnly(collisionWorld)
+                .WithReadOnly(predictionGetter)
+                .WithReadOnly(movementSettingsGetter)
+                .ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
                 in KCCVelocity velocity,
                 in KCCGravity gravity,
                 in PhysicsCollider physicsCollider,
-                in Rotation rotation,
-                in KCCMovementSettings movementSettings) =>
+                in Rotation rotation) =>
             {
+                var prediction = predictionGetter[entity];
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                {
+                    return;
+                }
+
+                var movementSettings = movementSettingsGetter[entity];
                 KCCGrounded grounded = kccGroundedGetter[entity];
                 float verticalSnapMove = !grounded.Falling || !grounded.PreviousFalling ? movementSettings.stepOffset : 0;
 
@@ -232,7 +246,8 @@ namespace PropHunt.Mixed.Systems
                 if (!grounded.Falling)
                 {
                     // Move = Normalize(Proj(Move, GroundSurface)) * Move
-                    projectedMovement = math.normalize(KCCUtils.ProjectVectorOntoPlane(projectedMovement, grounded.surfaceNormal)) * math.length(projectedMovement);
+                    projectedMovement = math.normalize(
+                        KCCUtils.ProjectVectorOntoPlane(projectedMovement, grounded.surfaceNormal)) * math.length(projectedMovement);
                 }
 
                 // Adjust character translation due to player movement
@@ -284,26 +299,29 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
-    [BurstCompile]
-    public class KCCJumpSystem : SystemBase
+    public class KCCJumpSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = predictionManager.GetPredictingTick(base.World);
+
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 ref KCCJumping jumping,
                 in KCCGrounded grounded,
-                in KCCGravity gravity) =>
+                in KCCGravity gravity,
+                in PredictedGhostComponent prediction) =>
                 {
+                    if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                    {
+                        return;
+                    }
+
                     // If the KCC is attempting to jump and is grounded, jump
                     if (jumping.attemptingJump && KCCUtils.CanJump(jumping, grounded))
                     {
@@ -324,21 +342,17 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Pushes kinematic character controllers out of objects they are stuck in
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
     [UpdateBefore(typeof(KCCMovementSystem))]
-    [BurstCompile]
-    public class KCCPushOverlappingSystem : SystemBase
+    public class KCCPushOverlappingSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for referencing delta time for this system
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
             var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = predictionManager.GetPredictingTick(base.World);
 
             Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
@@ -347,9 +361,14 @@ namespace PropHunt.Mixed.Systems
                 in PhysicsCollider collider,
                 in Rotation rotation,
                 in KCCGravity gravity,
-                in KCCMovementSettings movementSettings
-            ) =>
+                in KCCMovementSettings movementSettings,
+                in PredictedGhostComponent prediction) =>
             {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                {
+                    return;
+                }
+
                 // Project the character collider down and see what they collide with
                 //  Only filter for intersections
                 SelfFilteringClosestHitCollector<ColliderCastHit> overlapCollector =
@@ -423,16 +442,15 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to move character with ground
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCGravitySystem))]
-    [BurstCompile]
-    public class KCCMoveWithGroundSystem : SystemBase
+    public class KCCMoveWithGroundSystem : PredictionStateSystem
     {
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
+            var tick = predictionManager.GetPredictingTick(base.World);
 
             // Only applies to grounded KCC characters with a KCC velocity.
             Entities.ForEach((
@@ -440,8 +458,14 @@ namespace PropHunt.Mixed.Systems
                 ref Translation translation,
                 ref FloorMovement floor,
                 in KCCGravity gravity,
-                in KCCGrounded grounded) =>
+                in KCCGrounded grounded,
+                in PredictedGhostComponent prediction) =>
                 {
+                    if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                    {
+                        return;
+                    }
+
                     float3 tempVelocity = floor.floorVelocity;
                     floor.frameDisplacement = float3.zero;
                     // Bit jittery but this could probably be fixed by smoothing the movement a bit
@@ -484,25 +508,27 @@ namespace PropHunt.Mixed.Systems
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
-    [BurstCompile]
-    public class KCCGravitySystem : SystemBase
+    public class KCCGravitySystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            uint tick = base.predictionManager.GetPredictingTick(base.World);
 
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded,
-                in KCCGravity gravity) =>
+                in KCCGravity gravity,
+                in PredictedGhostComponent prediction) =>
                 {
+                    if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                    {
+                        return;
+                    }
+
                     // If the player is not grounded, push down by
                     // gravity's acceleration
                     if (grounded.Falling)

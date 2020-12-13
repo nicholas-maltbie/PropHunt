@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct KCCMovementSettings : IComponentData
     {
         /// <summary>
@@ -31,13 +31,11 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Max number of bounces per frame when moving
         /// </summary>
-        [GhostField]
         public int moveMaxBounces;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when walking
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float moveAnglePower;
 
         /// <summary>
@@ -49,44 +47,37 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when moving
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float movePushDecay;
 
         /// <summary>
         /// Max number of bounces per frame when falling
         /// </summary>
-        [GhostField]
         public int fallMaxBounces;
 
         /// <summary>
         /// Weight of object when falling (pushing) onto objects
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushPower;
 
         /// <summary>
         /// Decrease in momentum factor due to angle change when falling
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallAnglePower;
 
         /// <summary>
         /// Proportional decrease in momentum due to pushing an object when falling
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float fallPushDecay;
 
         /// <summary>
         /// Maximum that a character can be pushed per second (should be the diameter of the character or so)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
         public float maxPush;
 
         /// <summary>
         /// Maximum amount a character can snap up when hitting steps/stairs (also any other object they hit very close
         /// th their feet).
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
         public float stepOffset;
 
         /// <summary>
@@ -98,14 +89,13 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Maximum rate at which a player can be 'snapped' down in meters per second
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
         public float snapDownSpeed;
     }
 
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -124,7 +114,6 @@ namespace PropHunt.Mixed.Components
         /// Duration of jumping grace period
         ///     - Player can jump while not grounded, as long as they haven't been grounded longer than this amount of time
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float jumpGraceTime;
 
         /// <summary>
@@ -144,7 +133,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
@@ -204,7 +193,6 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Time spent falling
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float elapsedFallTime;
 
         /// <summary>
@@ -258,24 +246,26 @@ namespace PropHunt.Mixed.Components
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
         /// Velocity due to player input
         /// </summary>
+        [GhostField(Quantization=100, Interpolate=true)]
         public float3 playerVelocity;
 
         /// <summary>
         /// Velocity due to world forces
         /// </summary>
+        [GhostField(Quantization=100, Interpolate=true)]
         public float3 worldVelocity;
     }
 
     /// <summary>
     /// Movement of floor for the course of a frame and moving a character
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct FloorMovement : IComponentData
     {
         /// <summary>
@@ -293,7 +283,7 @@ namespace PropHunt.Mixed.Components
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent]
     public struct KCCGravity : IComponentData
     {
 

@@ -1,13 +1,10 @@
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Systems;
 using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -19,25 +16,14 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class PlayerRotationSystem : SystemBase
+    public class PlayerRotationSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Prediction manager for determining state update in a testable manner
-        /// </summary>
-        public IPredictionState predictionManager = new PredictionState();
-
-        /// <summary>
-        /// Unity service for managing static inputs in a testable manner
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
             var tick = predictionManager.GetPredictingTick(base.World);
-            var isClient = World.GetExistingSystem<ClientSimulationSystemGroup>() != null;
 
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
@@ -46,6 +32,7 @@ namespace PropHunt.Mixed.Systems
                 in PlayerId playerId,
                 in PredictedGhostComponent prediction) =>
             {
+                // Don't rotate on client, client is handled locally
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
                     return;

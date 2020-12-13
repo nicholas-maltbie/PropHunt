@@ -14,19 +14,9 @@ namespace PropHunt.Mixed.Systems
     /// Parse player input and set kinematic character controller to follow movement
     /// commands based on user input.
     /// </summary>
-    [UpdateBefore(typeof(GhostSimulationSystemGroup))]
-    public class KinematicCharacterControllerInput : SystemBase
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    public class KinematicCharacterControllerInput : PredictionStateSystem
     {
-        /// <summary>
-        /// Prediction manager for determining state update in a testable manner
-        /// </summary>
-        public IPredictionState predictionManager = new PredictionState();
-
-        /// <summary>
-        /// Unity service for managing static inputs in a testable manner
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             var tick = this.predictionManager.GetPredictingTick(base.World);

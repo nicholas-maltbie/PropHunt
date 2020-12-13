@@ -24,13 +24,13 @@ namespace PropHunt.Generated
             {
                 s_State = new GhostComponentSerializer.State
                 {
-                    GhostFieldsHash = 17884505960735121,
+                    GhostFieldsHash = 5695069450399240654,
                     ExcludeFromComponentCollectionHash = 0,
                     ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCGrounded>(),
                     ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCGrounded>(),
                     SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                     ChangeMaskBits = ChangeMaskBits,
-                    SendMask = GhostComponentSerializer.SendMask.Predicted,
+                    SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
                     SendForChildEntities = 1,
                     CopyToSnapshot =
                         new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
@@ -62,9 +62,8 @@ namespace PropHunt.Generated
         {
             public int maxWalkAngle;
             public int groundCheckDistance;
-            public int elapsedFallTime;
         }
-        public const int ChangeMaskBits = 3;
+        public const int ChangeMaskBits = 2;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -76,7 +75,6 @@ namespace PropHunt.Generated
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.maxWalkAngle = (int) math.round(component.maxWalkAngle * 100);
                 snapshot.groundCheckDistance = (int) math.round(component.groundCheckDistance * 100);
-                snapshot.elapsedFallTime = (int) math.round(component.elapsedFallTime * 100);
             }
         }
         [BurstCompile]
@@ -98,9 +96,6 @@ namespace PropHunt.Generated
                 component.groundCheckDistance =
                     math.lerp(snapshotBefore.groundCheckDistance * 0.01f,
                         snapshotAfter.groundCheckDistance * 0.01f, snapshotInterpolationFactor);
-                component.elapsedFallTime =
-                    math.lerp(snapshotBefore.elapsedFallTime * 0.01f,
-                        snapshotAfter.elapsedFallTime * 0.01f, snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
@@ -111,7 +106,6 @@ namespace PropHunt.Generated
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCGrounded>(backupData, 0);
             component.maxWalkAngle = backup.maxWalkAngle;
             component.groundCheckDistance = backup.groundCheckDistance;
-            component.elapsedFallTime = backup.elapsedFallTime;
         }
 
         [BurstCompile]
@@ -123,7 +117,6 @@ namespace PropHunt.Generated
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.maxWalkAngle = predictor.PredictInt(snapshot.maxWalkAngle, baseline1.maxWalkAngle, baseline2.maxWalkAngle);
             snapshot.groundCheckDistance = predictor.PredictInt(snapshot.groundCheckDistance, baseline1.groundCheckDistance, baseline2.groundCheckDistance);
-            snapshot.elapsedFallTime = predictor.PredictInt(snapshot.elapsedFallTime, baseline1.elapsedFallTime, baseline2.elapsedFallTime);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -134,8 +127,7 @@ namespace PropHunt.Generated
             uint changeMask;
             changeMask = (snapshot.maxWalkAngle != baseline.maxWalkAngle) ? 1u : 0;
             changeMask |= (snapshot.groundCheckDistance != baseline.groundCheckDistance) ? (1u<<1) : 0;
-            changeMask |= (snapshot.elapsedFallTime != baseline.elapsedFallTime) ? (1u<<2) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 3);
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -148,8 +140,6 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.maxWalkAngle, baseline.maxWalkAngle, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedIntDelta(snapshot.groundCheckDistance, baseline.groundCheckDistance, compressionModel);
-            if ((changeMask & (1 << 2)) != 0)
-                writer.WritePackedIntDelta(snapshot.elapsedFallTime, baseline.elapsedFallTime, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -166,10 +156,6 @@ namespace PropHunt.Generated
                 snapshot.groundCheckDistance = reader.ReadPackedIntDelta(baseline.groundCheckDistance, compressionModel);
             else
                 snapshot.groundCheckDistance = baseline.groundCheckDistance;
-            if ((changeMask & (1 << 2)) != 0)
-                snapshot.elapsedFallTime = reader.ReadPackedIntDelta(baseline.elapsedFallTime, compressionModel);
-            else
-                snapshot.elapsedFallTime = baseline.elapsedFallTime;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -183,8 +169,6 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundCheckDistance - backup.groundCheckDistance));
             ++errorIndex;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.elapsedFallTime - backup.elapsedFallTime));
-            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -196,10 +180,6 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("groundCheckDistance"));
-            ++nameCount;
-            if (nameCount != 0)
-                names.Append(new FixedString32(","));
-            names.Append(new FixedString64("elapsedFallTime"));
             ++nameCount;
             return nameCount;
         }

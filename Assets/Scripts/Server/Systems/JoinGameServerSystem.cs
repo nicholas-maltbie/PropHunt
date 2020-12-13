@@ -13,7 +13,6 @@ namespace PropHunt.Server.Systems
     /// <summary>
     /// When server receives go in game request, go in game and delete request
     /// </summary>
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class JoinGameServerSystem : ComponentSystem
     {
