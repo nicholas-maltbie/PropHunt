@@ -16,7 +16,7 @@ namespace PropHunt.Mixed.Systems
     /// Update groups for things to compute before physics step computation
     /// </summary>
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    [UpdateAfter(typeof(KCCUpdateGroup))]
+    [UpdateBefore(typeof(MovementTrackingSystem))]
     public class KCCPreUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>

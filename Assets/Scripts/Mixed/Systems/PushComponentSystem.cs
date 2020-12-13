@@ -58,6 +58,14 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnUpdate()
         {
+            bool isServer = base.World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
+
+            // Only apply force on the server
+            if (!isServer)
+            {
+                return;
+            }
+
             Entities.WithChangeFilter<PushForce>().ForEach((
                 ref PhysicsVelocity physicsVelocity,
                 in PhysicsMass physicsMass,

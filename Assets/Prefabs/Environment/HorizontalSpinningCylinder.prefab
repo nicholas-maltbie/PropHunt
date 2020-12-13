@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1118384706070375493}
   - component: {fileID: 1118384706070375492}
   m_Layer: 0
-  m_Name: HorizontalSpinningCylinder (1)
+  m_Name: HorizontalSpinningCylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,7 +292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 1
+  SupportedGhostModes: 2
   OptimizationMode: 0
   Importance: 1
   prefabId: a2ac3ff0ec55b8841a46bf0be8b6993d
