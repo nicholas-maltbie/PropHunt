@@ -17,14 +17,12 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
-            var ecb = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>
             {
-                ecb.AddComponent<NetworkStreamInGame>(ent);
-                var req = ecb.CreateEntity();
-                ecb.AddComponent<JoinGameRequest>(req);
-                ecb.AddComponent(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
+                PostUpdateCommands.AddComponent<NetworkStreamInGame>(ent);
+                var req = PostUpdateCommands.CreateEntity();
+                PostUpdateCommands.AddComponent<JoinGameRequest>(req);
+                PostUpdateCommands.AddComponent(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
             });
 
             // When the player Joins the session
@@ -32,7 +30,7 @@ namespace PropHunt.Client.Systems
             // entities that have a MaterialIdComponentData in order to do an update.
             Entities.ForEach((Entity ent, ref MaterialIdComponentData mat) =>
             {
-                ecb.AddComponent<UpdateMaterialComponentData>(ent);
+                PostUpdateCommands.AddComponent<UpdateMaterialComponentData>(ent);
             });
         }
     }

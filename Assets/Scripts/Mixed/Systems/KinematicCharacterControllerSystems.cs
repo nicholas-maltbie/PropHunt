@@ -146,7 +146,7 @@ namespace PropHunt.Mixed.Systems
                 in KCCMovementSettings settings,
                 in PhysicsCollider collider) =>
             {
-                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predictionGetter[entity]))
+                if (!predictionGetter.HasComponent(entity) || !GhostPredictionSystemGroup.ShouldPredict(tick, predictionGetter[entity]))
                 {
                     return;
                 }
@@ -218,7 +218,6 @@ namespace PropHunt.Mixed.Systems
             Entities.WithReadOnly(physicsMassGetter)
                 .WithReadOnly(kccGroundedGetter)
                 .WithReadOnly(collisionWorld)
-                .WithReadOnly(predictionGetter)
                 .WithReadOnly(movementSettingsGetter)
                 .ForEach((
                 Entity entity,
@@ -227,9 +226,9 @@ namespace PropHunt.Mixed.Systems
                 in KCCVelocity velocity,
                 in KCCGravity gravity,
                 in PhysicsCollider physicsCollider,
-                in Rotation rotation) =>
+                in Rotation rotation,
+                in PredictedGhostComponent prediction) =>
             {
-                var prediction = predictionGetter[entity];
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 {
                     return;
