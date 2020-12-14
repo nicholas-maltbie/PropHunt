@@ -15,6 +15,7 @@ namespace PropHunt.Mixed.Systems
     /// commands based on user input.
     /// </summary>
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class KinematicCharacterControllerInput : PredictionStateSystem
     {
         protected override void OnUpdate()

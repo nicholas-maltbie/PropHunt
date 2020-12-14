@@ -19,18 +19,20 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Target for a moving platform
     /// </summary>
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct MovingPlatformTarget : IBufferElementData
     {
         /// <summary>
         /// Position of target
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 target;
     }
 
     /// <summary>
     /// Moving platform component data for current state
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.All)]
     public struct MovingPlatform : IComponentData
     {
         /// <summary>

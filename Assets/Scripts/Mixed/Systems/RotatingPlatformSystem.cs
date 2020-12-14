@@ -13,7 +13,7 @@ namespace PropHunt.Mixed.Systems
     /// System to update a rotating platform's angular velocity to follow the current system
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    [UpdateBefore(typeof(BuildPhysicsWorld))]
     public class RotatingPlatformSystem : SystemBase
     {
         /// <summary>
