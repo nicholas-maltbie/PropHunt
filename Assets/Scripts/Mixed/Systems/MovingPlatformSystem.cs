@@ -13,8 +13,7 @@ namespace PropHunt.Mixed.Systems
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
-    [UpdateBefore(typeof(MovementTrackingSystem))]
+    [UpdateAfter(typeof(EndFramePhysicsSystem))]
     public class MovingPlatformSystem : SystemBase
     {
         /// <summary>

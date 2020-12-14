@@ -314,7 +314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 2
+  SupportedGhostModes: 1
   OptimizationMode: 0
   Importance: 1
   prefabId: 5d8dcd2ef7cdef34faa4dbe09325c9da
