@@ -1,4 +1,3 @@
-
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
@@ -10,13 +9,13 @@ namespace PropHunt.Client.Systems
     /// <summary>
     /// When client has a connection with network id, go in game and tell server to also go in game
     /// </summary>
-    [UpdateBefore(typeof(GhostSpawnSystemGroup))]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     public class JoinGameClientSystem : ComponentSystem
     {
 
         protected override void OnUpdate()
         {
+            var prespawnCount = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<PreSpawnedGhostId>()).CalculateEntityCount();
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>
             {
                 PostUpdateCommands.AddComponent<NetworkStreamInGame>(ent);

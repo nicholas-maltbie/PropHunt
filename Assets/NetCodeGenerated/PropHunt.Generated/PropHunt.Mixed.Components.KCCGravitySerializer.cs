@@ -30,7 +30,7 @@ namespace PropHunt.Generated
                     ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCGravity>(),
                     SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                     ChangeMaskBits = ChangeMaskBits,
-                    SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
+                    SendMask = GhostComponentSerializer.SendMask.Predicted,
                     SendForChildEntities = 1,
                     CopyToSnapshot =
                         new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),

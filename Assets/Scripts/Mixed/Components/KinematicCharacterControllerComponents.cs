@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCMovementSettings : IComponentData
     {
         /// <summary>
@@ -95,7 +95,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -133,7 +133,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
@@ -246,7 +246,7 @@ namespace PropHunt.Mixed.Components
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
@@ -265,7 +265,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Movement of floor for the course of a frame and moving a character
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct FloorMovement : IComponentData
     {
         /// <summary>
@@ -283,7 +283,7 @@ namespace PropHunt.Mixed.Components
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostComponent]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCGravity : IComponentData
     {
 

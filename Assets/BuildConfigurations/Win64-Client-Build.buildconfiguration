@@ -6,7 +6,11 @@
     "Components": [
         {
             "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
-            "OutputDirectory": "Builds/WIn64-Client"
+            "OutputDirectory": "Builds/Win64-Client"
+        },
+        {
+            "$type": "NetCodeConversionSettings, Unity.NetCode.Authoring.Hybrid",
+            "Target": 2
         }
     ]
 }
