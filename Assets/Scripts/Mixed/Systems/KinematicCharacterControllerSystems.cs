@@ -465,14 +465,9 @@ namespace PropHunt.Mixed.Systems
                     }
 
                     float3 tempVelocity = floor.floorVelocity;
-                    floor.frameDisplacement = float3.zero;
-                    // Bit jittery but this could probably be fixed by smoothing the movement a bit
-                    // to handle server lag and difference between positions
                     if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
                     {
                         MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
-
                         translation.Value += floor.frameDisplacement;
                         if (track.avoidTransferMomentum)
                         {
@@ -482,10 +477,6 @@ namespace PropHunt.Mixed.Systems
                         {
                             floor.floorVelocity = floor.frameDisplacement / deltaTime;
                         }
-                    }
-                    else
-                    {
-                        floor.floorVelocity = float3.zero;
                     }
 
                     bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);

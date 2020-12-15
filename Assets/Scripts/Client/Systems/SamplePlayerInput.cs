@@ -6,6 +6,7 @@ using PropHunt.Mixed.Commands;
 using Unity.Burst;
 using Unity.Transforms;
 using PropHunt.InputManagement;
+using Unity.Mathematics;
 
 namespace PropHunt.Client.Systems
 {
@@ -89,6 +90,17 @@ namespace PropHunt.Client.Systems
                     {
                         targetPitch = pv.minPitch;
                     }
+                }
+            });
+
+            var movementTrackingGetter = this.GetComponentDataFromEntity<MovementTracking>();
+            float3 floorMovement = float3.zero;
+            Entities.ForEach((ref KCCGrounded grounded, ref PlayerId playerId) =>
+            {
+                if (playerId.playerId == localPlayerId && grounded.hitEntity != Entity.Null && movementTrackingGetter.HasComponent(grounded.hitEntity))
+                {
+                    MovementTracking track = movementTrackingGetter[grounded.hitEntity];
+                    floorMovement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
                 }
             });
 

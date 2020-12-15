@@ -26,6 +26,7 @@ namespace PropHunt.Mixed.Systems
             Entities.ForEach((
                 DynamicBuffer<PlayerInput> inputBuffer,
                 ref KCCVelocity velocity,
+                ref FloorMovement floorMovement,
                 ref KCCJumping jump,
                 in PredictedGhostComponent prediction,
                 in PlayerView view,
@@ -50,6 +51,8 @@ namespace PropHunt.Mixed.Systems
                 velocity.playerVelocity = math.mul(horizPlaneView, direction) * speedMultiplier;
                 // including jump action
                 jump.attemptingJump = input.IsJumping;
+                // include floor movement
+                floorMovement.frameDisplacement = input.floorMovement;
             }).ScheduleParallel();
         }
     }

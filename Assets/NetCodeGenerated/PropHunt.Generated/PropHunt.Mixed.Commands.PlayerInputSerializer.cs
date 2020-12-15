@@ -24,6 +24,9 @@ namespace PropHunt.Generated
             writer.WriteUInt(data.jump);
             writer.WriteUInt(data.interact);
             writer.WriteUInt(data.sprint);
+            writer.WriteFloat(data.floorMovement.x);
+            writer.WriteFloat(data.floorMovement.y);
+            writer.WriteFloat(data.floorMovement.z);
         }
 
         public void Deserialize(ref DataStreamReader reader, ref PropHunt.Mixed.Commands.PlayerInput data)
@@ -36,6 +39,9 @@ namespace PropHunt.Generated
             data.jump = (byte) reader.ReadUInt();
             data.interact = (byte) reader.ReadUInt();
             data.sprint = (byte) reader.ReadUInt();
+            data.floorMovement.x = reader.ReadFloat();
+            data.floorMovement.y = reader.ReadFloat();
+            data.floorMovement.z = reader.ReadFloat();
         }
 
         public void Serialize(ref DataStreamWriter writer, in PropHunt.Mixed.Commands.PlayerInput data, in PropHunt.Mixed.Commands.PlayerInput baseline, NetworkCompressionModel compressionModel)
@@ -48,6 +54,9 @@ namespace PropHunt.Generated
             writer.WritePackedUIntDelta(data.jump, baseline.jump, compressionModel);
             writer.WritePackedUIntDelta(data.interact, baseline.interact, compressionModel);
             writer.WritePackedUIntDelta(data.sprint, baseline.sprint, compressionModel);
+            writer.WritePackedFloatDelta(data.floorMovement.x, baseline.floorMovement.x, compressionModel);
+            writer.WritePackedFloatDelta(data.floorMovement.y, baseline.floorMovement.y, compressionModel);
+            writer.WritePackedFloatDelta(data.floorMovement.z, baseline.floorMovement.z, compressionModel);
         }
 
         public void Deserialize(ref DataStreamReader reader, ref PropHunt.Mixed.Commands.PlayerInput data, in PropHunt.Mixed.Commands.PlayerInput baseline, NetworkCompressionModel compressionModel)
@@ -60,6 +69,9 @@ namespace PropHunt.Generated
             data.jump = (byte) reader.ReadPackedUIntDelta(baseline.jump, compressionModel);
             data.interact = (byte) reader.ReadPackedUIntDelta(baseline.interact, compressionModel);
             data.sprint = (byte) reader.ReadPackedUIntDelta(baseline.sprint, compressionModel);
+            data.floorMovement.x = reader.ReadPackedFloatDelta(baseline.floorMovement.x, compressionModel);
+            data.floorMovement.y = reader.ReadPackedFloatDelta(baseline.floorMovement.y, compressionModel);
+            data.floorMovement.z = reader.ReadPackedFloatDelta(baseline.floorMovement.z, compressionModel);
         }
     }
     public class PropHuntMixedCommandsPlayerInputSendCommandSystem : CommandSendSystem<PropHuntMixedCommandsPlayerInputSerializer, PropHunt.Mixed.Commands.PlayerInput>

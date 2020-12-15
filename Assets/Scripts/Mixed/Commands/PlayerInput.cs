@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 
@@ -67,6 +68,11 @@ namespace PropHunt.Mixed.Commands
         /// </summary>
         public bool IsSprinting => this.sprint == 1;
 
+        /// <summary>
+        /// Movement of the floor
+        /// </summary>
+        public float3 floorMovement;
+
         public uint Tick
         {
             get { return this.tick; }
@@ -83,6 +89,9 @@ namespace PropHunt.Mixed.Commands
             this.jump = reader.ReadByte();
             this.interact = reader.ReadByte();
             this.sprint = reader.ReadByte();
+            this.floorMovement.x = reader.ReadFloat();
+            this.floorMovement.y = reader.ReadFloat();
+            this.floorMovement.z = reader.ReadFloat();
         }
 
         public void Serialize(ref DataStreamWriter writer)
@@ -94,6 +103,9 @@ namespace PropHunt.Mixed.Commands
             writer.WriteByte(this.jump);
             writer.WriteByte(this.interact);
             writer.WriteByte(this.sprint);
+            writer.WriteFloat(this.floorMovement.x);
+            writer.WriteFloat(this.floorMovement.y);
+            writer.WriteFloat(this.floorMovement.z);
         }
 
         public void Deserialize(uint tick, ref DataStreamReader reader, PlayerInput baseline,
