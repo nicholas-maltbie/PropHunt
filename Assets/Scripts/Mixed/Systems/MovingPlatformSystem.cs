@@ -1,6 +1,7 @@
 
 using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -13,8 +14,7 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    [BurstCompile]
     public class MovingPlatformSystem : SystemBase
     {
         /// <summary>
