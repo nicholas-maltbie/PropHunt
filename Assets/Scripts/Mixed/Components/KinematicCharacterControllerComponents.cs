@@ -221,6 +221,11 @@ namespace PropHunt.Mixed.Components
         public float previousAngle;
 
         /// <summary>
+        /// Relative position between the character and the object they are standing on
+        /// </summary>
+        public float3 relativePosition;
+
+        /// <summary>
         /// Is the character standing within a certian distance of the ground.
         /// </summary>
         public bool StandingOnGround => this.onGround && this.distanceToGround <= this.groundFallingDistance;
@@ -260,25 +265,6 @@ namespace PropHunt.Mixed.Components
         /// </summary>
         [GhostField(Quantization=100, Interpolate=true)]
         public float3 worldVelocity;
-    }
-
-    /// <summary>
-    /// Movement of floor for the course of a frame and moving a character
-    /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
-    public struct FloorMovement : IComponentData
-    {
-        /// <summary>
-        /// Velocity of floor player is standing on
-        /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
-        public float3 floorVelocity;
-
-        /// <summary>
-        /// Displacement of a character in the current frame
-        /// </summary>
-        [GhostField(Quantization=100, Interpolate=true)]
-        public float3 frameDisplacement;
     }
 
     /// <summary>

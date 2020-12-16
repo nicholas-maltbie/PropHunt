@@ -372,7 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 1
+  SupportedGhostModes: 2
   OptimizationMode: 0
   Importance: 1
   prefabId: 563546384c88d2240844b477c3d3fac8
@@ -390,3 +390,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoidTransferMomentum: 0
+  ChangeAttitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  Displacement:
+    x: 0
+    y: 0
+    z: 0

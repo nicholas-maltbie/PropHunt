@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6853952401403759966}
   - component: {fileID: 6726795253296977184}
   - component: {fileID: 2573764294414762088}
+  - component: {fileID: 3777818217648254613}
   m_Layer: 0
   m_Name: WideSpinningCylinder
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702435718741386825}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8, y: -0, z: 47}
   m_LocalScale: {x: 12.2, y: 0.1, z: 12.2}
   m_Children: []
@@ -109,7 +110,7 @@ MonoBehaviour:
   m_InitialAngularVelocity:
     x: 0
     y: 0
-    z: 1.57
+    z: 0
   m_GravityFactor: 1
   m_OverrideDefaultMassDistribution: 0
   m_CenterOfMass:
@@ -291,6 +292,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoidTransferMomentum: 0
+  ChangeAttitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  Displacement:
+    x: 0
+    y: 0
+    z: 0
 --- !u!114 &2573764294414762088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,8 +316,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 1
+  SupportedGhostModes: 2
   OptimizationMode: 0
   Importance: 1
   prefabId: d6e0448f05ba0a648b0e470dc9d08050
   Name: SpinningCylinder
+--- !u!114 &3777818217648254613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702435718741386825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93a0c1f556a35bf4f9ea803db438d3b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angularVelocity:
+    x: 0
+    y: 60
+    z: 0

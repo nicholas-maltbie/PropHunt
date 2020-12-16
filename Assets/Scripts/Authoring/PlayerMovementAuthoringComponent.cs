@@ -150,8 +150,6 @@ namespace PropHunt.Authoring
             {
                 gravityAcceleration = this.gravityForce,
             });
-            dstManager.AddComponentData(entity, new FloorMovement() { });
-
         }
     }
 }

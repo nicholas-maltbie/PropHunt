@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1118384706070375494}
   - component: {fileID: 1118384706070375493}
   - component: {fileID: 1118384706070375492}
+  - component: {fileID: 199953266}
   m_Layer: 0
   m_Name: HorizontalSpinningCylinder
   m_TagString: Untagged
@@ -109,7 +110,7 @@ MonoBehaviour:
   m_InitialAngularVelocity:
     x: 0
     y: 0
-    z: 0.7
+    z: 0
   m_GravityFactor: 1
   m_OverrideDefaultMassDistribution: 0
   m_CenterOfMass:
@@ -295,7 +296,7 @@ MonoBehaviour:
   SupportedGhostModes: 1
   OptimizationMode: 0
   Importance: 1
-  prefabId: a2ac3ff0ec55b8841a46bf0be8b6993d
+  prefabId: 637b196d7bbabb8489c1709b865fa442
   Name: HorizontalSpinningCylinder
 --- !u!114 &1118384706070375492
 MonoBehaviour:
@@ -310,3 +311,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoidTransferMomentum: 0
+  ChangeAttitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  Displacement:
+    x: 0
+    y: 0
+    z: 0
+--- !u!114 &199953266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118384706070375491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93a0c1f556a35bf4f9ea803db438d3b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angularVelocity:
+    x: 0
+    y: 15
+    z: 0

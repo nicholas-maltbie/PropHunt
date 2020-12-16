@@ -5,8 +5,6 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -15,6 +13,8 @@ namespace PropHunt.Mixed.Systems
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
     [BurstCompile]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class MovingPlatformSystem : SystemBase
     {
         /// <summary>
@@ -28,6 +28,7 @@ namespace PropHunt.Mixed.Systems
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
+                ref MovementTracking tracking,
                 in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
                 {
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
@@ -62,7 +63,9 @@ namespace PropHunt.Mixed.Systems
                     // Move toward current platform by speed
                     float3 dir = math.normalizesafe(currentTarget - translation.Value);
                     // Move based on direction and speed
-                    translation.Value += dir * movingPlatform.speed * deltaTime;
+                    float3 displacement = dir * movingPlatform.speed * deltaTime;
+                    translation.Value += displacement;
+                    tracking.Displacement = displacement;
                 }
             ).ScheduleParallel();
         }

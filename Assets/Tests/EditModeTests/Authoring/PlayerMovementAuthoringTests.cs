@@ -74,7 +74,6 @@ namespace PropHunt.EditMode.Tests.Authoring
             Assert.IsTrue(base.m_Manager.HasComponent<KCCGrounded>(converted));
             Assert.IsTrue(base.m_Manager.HasComponent<KCCVelocity>(converted));
             Assert.IsTrue(base.m_Manager.HasComponent<KCCGravity>(converted));
-            Assert.IsTrue(base.m_Manager.HasComponent<FloorMovement>(converted));
             // Get setting components
             KCCMovementSettings settings = base.m_Manager.GetComponentData<KCCMovementSettings>(converted);
             KCCJumping jumping = base.m_Manager.GetComponentData<KCCJumping>(converted);

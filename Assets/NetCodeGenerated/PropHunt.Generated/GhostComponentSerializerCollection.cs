@@ -11,11 +11,11 @@ namespace PropHunt.Generated
         protected override void OnCreate()
         {
             var ghostCollectionSystem = World.GetOrCreateSystem<GhostCollectionSystem>();
+            ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsRotatingObjectGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCMovementSettingsGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCJumpingGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCGroundedGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCVelocityGhostComponentSerializer.State);
-            ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsFloorMovementGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsKCCGravityGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMaterialIdComponentDataGhostComponentSerializer.State);
             ghostCollectionSystem.AddSerializer(PropHuntMixedComponentsMovementTrackingGhostComponentSerializer.State);

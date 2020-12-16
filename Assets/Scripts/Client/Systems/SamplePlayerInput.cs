@@ -7,6 +7,8 @@ using Unity.Burst;
 using Unity.Transforms;
 using PropHunt.InputManagement;
 using Unity.Mathematics;
+using Unity.Physics;
+using PropHunt.Mixed.Utilities;
 
 namespace PropHunt.Client.Systems
 {
@@ -14,8 +16,8 @@ namespace PropHunt.Client.Systems
     /// Systemt to sample player input at each tick.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    [UpdateBefore(typeof(GhostSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateBefore(typeof(GhostPredictionSystemGroup))]
     public class SamplePlayerInput : ComponentSystem
     {
         public IUnityService unityService;
@@ -23,6 +25,7 @@ namespace PropHunt.Client.Systems
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<NetworkIdComponent>();
+            RequireSingletonForUpdate<NetworkStreamInGame>();
 
             if (this.unityService == null)
             {
@@ -32,6 +35,11 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
+            if (base.World.GetExistingSystem<ClientSimulationSystemGroup>() == null)
+            {
+                return;
+            }
+
             var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
             var localPlayerId = GetSingleton<NetworkIdComponent>().Value;
             if (localInput == Entity.Null)
@@ -90,17 +98,6 @@ namespace PropHunt.Client.Systems
                     {
                         targetPitch = pv.minPitch;
                     }
-                }
-            });
-
-            var movementTrackingGetter = this.GetComponentDataFromEntity<MovementTracking>();
-            float3 floorMovement = float3.zero;
-            Entities.ForEach((ref KCCGrounded grounded, ref PlayerId playerId) =>
-            {
-                if (playerId.playerId == localPlayerId && grounded.hitEntity != Entity.Null && movementTrackingGetter.HasComponent(grounded.hitEntity))
-                {
-                    MovementTracking track = movementTrackingGetter[grounded.hitEntity];
-                    floorMovement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
                 }
             });
 

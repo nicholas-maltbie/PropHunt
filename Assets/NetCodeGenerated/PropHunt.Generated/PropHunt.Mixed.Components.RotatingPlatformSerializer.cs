@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 13999026439373390310,
+                GhostFieldsHash = 5432018132876885095,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.RotatingPlatform>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.RotatingPlatform>(),
@@ -53,11 +53,14 @@ namespace PropHunt.Generated
         public struct Snapshot
         {
             public int speed;
+            public int currentAngle_x;
+            public int currentAngle_y;
+            public int currentAngle_z;
             public int loopMethod;
             public int current;
             public int direction;
         }
-        public const int ChangeMaskBits = 4;
+        public const int ChangeMaskBits = 5;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -68,6 +71,9 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.RotatingPlatform>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.speed = (int) math.round(component.speed * 100);
+                snapshot.currentAngle_x = (int) math.round(component.currentAngle.x * 100);
+                snapshot.currentAngle_y = (int) math.round(component.currentAngle.y * 100);
+                snapshot.currentAngle_z = (int) math.round(component.currentAngle.z * 100);
                 snapshot.loopMethod = (int) component.loopMethod;
                 snapshot.current = (int) component.current;
                 snapshot.direction = (int) component.direction;
@@ -89,6 +95,10 @@ namespace PropHunt.Generated
                 component.speed =
                     math.lerp(snapshotBefore.speed * 0.01f,
                         snapshotAfter.speed * 0.01f, snapshotInterpolationFactor);
+                component.currentAngle = math.lerp(
+                    new float3(snapshotBefore.currentAngle_x * 0.01f, snapshotBefore.currentAngle_y * 0.01f, snapshotBefore.currentAngle_z * 0.01f),
+                    new float3(snapshotAfter.currentAngle_x * 0.01f, snapshotAfter.currentAngle_y * 0.01f, snapshotAfter.currentAngle_z * 0.01f),
+                    snapshotInterpolationFactor);
                 component.loopMethod = (PropHunt.Mixed.Components.PlatformLooping) snapshotBefore.loopMethod;
                 component.current = (int) snapshotBefore.current;
                 component.direction = (int) snapshotBefore.direction;
@@ -101,6 +111,9 @@ namespace PropHunt.Generated
             ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.RotatingPlatform>(componentData, 0);
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.RotatingPlatform>(backupData, 0);
             component.speed = backup.speed;
+            component.currentAngle.x = backup.currentAngle.x;
+            component.currentAngle.y = backup.currentAngle.y;
+            component.currentAngle.z = backup.currentAngle.z;
             component.loopMethod = backup.loopMethod;
             component.current = backup.current;
             component.direction = backup.direction;
@@ -114,6 +127,9 @@ namespace PropHunt.Generated
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.speed = predictor.PredictInt(snapshot.speed, baseline1.speed, baseline2.speed);
+            snapshot.currentAngle_x = predictor.PredictInt(snapshot.currentAngle_x, baseline1.currentAngle_x, baseline2.currentAngle_x);
+            snapshot.currentAngle_y = predictor.PredictInt(snapshot.currentAngle_y, baseline1.currentAngle_y, baseline2.currentAngle_y);
+            snapshot.currentAngle_z = predictor.PredictInt(snapshot.currentAngle_z, baseline1.currentAngle_z, baseline2.currentAngle_z);
             snapshot.loopMethod = predictor.PredictInt(snapshot.loopMethod, baseline1.loopMethod, baseline2.loopMethod);
             snapshot.current = predictor.PredictInt(snapshot.current, baseline1.current, baseline2.current);
             snapshot.direction = predictor.PredictInt(snapshot.direction, baseline1.direction, baseline2.direction);
@@ -126,10 +142,13 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask;
             changeMask = (snapshot.speed != baseline.speed) ? 1u : 0;
-            changeMask |= (snapshot.loopMethod != baseline.loopMethod) ? (1u<<1) : 0;
-            changeMask |= (snapshot.current != baseline.current) ? (1u<<2) : 0;
-            changeMask |= (snapshot.direction != baseline.direction) ? (1u<<3) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 4);
+            changeMask |= (snapshot.currentAngle_x != baseline.currentAngle_x) ? (1u<<1) : 0;
+            changeMask |= (snapshot.currentAngle_y != baseline.currentAngle_y) ? (1u<<1) : 0;
+            changeMask |= (snapshot.currentAngle_z != baseline.currentAngle_z) ? (1u<<1) : 0;
+            changeMask |= (snapshot.loopMethod != baseline.loopMethod) ? (1u<<2) : 0;
+            changeMask |= (snapshot.current != baseline.current) ? (1u<<3) : 0;
+            changeMask |= (snapshot.direction != baseline.direction) ? (1u<<4) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 5);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -141,10 +160,16 @@ namespace PropHunt.Generated
             if ((changeMask & (1 << 0)) != 0)
                 writer.WritePackedIntDelta(snapshot.speed, baseline.speed, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
-                writer.WritePackedIntDelta(snapshot.loopMethod, baseline.loopMethod, compressionModel);
+                writer.WritePackedIntDelta(snapshot.currentAngle_x, baseline.currentAngle_x, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+                writer.WritePackedIntDelta(snapshot.currentAngle_y, baseline.currentAngle_y, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+                writer.WritePackedIntDelta(snapshot.currentAngle_z, baseline.currentAngle_z, compressionModel);
             if ((changeMask & (1 << 2)) != 0)
-                writer.WritePackedIntDelta(snapshot.current, baseline.current, compressionModel);
+                writer.WritePackedIntDelta(snapshot.loopMethod, baseline.loopMethod, compressionModel);
             if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedIntDelta(snapshot.current, baseline.current, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
                 writer.WritePackedIntDelta(snapshot.direction, baseline.direction, compressionModel);
         }
         [BurstCompile]
@@ -159,14 +184,26 @@ namespace PropHunt.Generated
             else
                 snapshot.speed = baseline.speed;
             if ((changeMask & (1 << 1)) != 0)
+                snapshot.currentAngle_x = reader.ReadPackedIntDelta(baseline.currentAngle_x, compressionModel);
+            else
+                snapshot.currentAngle_x = baseline.currentAngle_x;
+            if ((changeMask & (1 << 1)) != 0)
+                snapshot.currentAngle_y = reader.ReadPackedIntDelta(baseline.currentAngle_y, compressionModel);
+            else
+                snapshot.currentAngle_y = baseline.currentAngle_y;
+            if ((changeMask & (1 << 1)) != 0)
+                snapshot.currentAngle_z = reader.ReadPackedIntDelta(baseline.currentAngle_z, compressionModel);
+            else
+                snapshot.currentAngle_z = baseline.currentAngle_z;
+            if ((changeMask & (1 << 2)) != 0)
                 snapshot.loopMethod = reader.ReadPackedIntDelta(baseline.loopMethod, compressionModel);
             else
                 snapshot.loopMethod = baseline.loopMethod;
-            if ((changeMask & (1 << 2)) != 0)
+            if ((changeMask & (1 << 3)) != 0)
                 snapshot.current = reader.ReadPackedIntDelta(baseline.current, compressionModel);
             else
                 snapshot.current = baseline.current;
-            if ((changeMask & (1 << 3)) != 0)
+            if ((changeMask & (1 << 4)) != 0)
                 snapshot.direction = reader.ReadPackedIntDelta(baseline.direction, compressionModel);
             else
                 snapshot.direction = baseline.direction;
@@ -181,6 +218,8 @@ namespace PropHunt.Generated
             int errorIndex = 0;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.speed - backup.speed));
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.currentAngle, backup.currentAngle));
+            ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.loopMethod - backup.loopMethod));
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.current - backup.current));
@@ -194,6 +233,10 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("speed"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("currentAngle"));
             ++nameCount;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));

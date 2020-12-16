@@ -5,6 +5,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Physics;
 using Unity.Physics.Systems;
 using Unity.Transforms;
 
@@ -14,6 +15,8 @@ namespace PropHunt.Mixed.Systems
     /// System to update a rotating platform's angular velocity to follow the current system
     /// </summary>
     [BurstCompile]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class RotatingPlatformSystem : SystemBase
     {
         /// <summary>
@@ -38,6 +41,7 @@ namespace PropHunt.Mixed.Systems
             Entities.ForEach((
                 ref RotatingPlatform rotatingPlatform,
                 ref Rotation rotation,
+                ref MovementTracking movementTracking,
                 in DynamicBuffer<RotatingPlatformTarget> rotationTargets) =>
                 {
                     DynamicBuffer<float3> targets = rotationTargets.Reinterpret<float3>();
@@ -73,8 +77,10 @@ namespace PropHunt.Mixed.Systems
                     float3 dir = math.normalizesafe(angleBetween);
 
                     // Set physics velocity based on speed and direction
-                    rotatingPlatform.currentAngle += dir * rotatingPlatform.speed * deltaTime;
+                    float3 deltaAngle = dir * rotatingPlatform.speed * deltaTime;
+                    rotatingPlatform.currentAngle += deltaAngle;
                     rotation.Value = quaternion.Euler(math.radians(rotatingPlatform.currentAngle));
+                    movementTracking.ChangeAttitude = quaternion.Euler(deltaAngle);
                 }
             ).ScheduleParallel();
         }

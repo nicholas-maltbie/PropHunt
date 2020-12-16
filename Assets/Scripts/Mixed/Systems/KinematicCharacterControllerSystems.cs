@@ -13,13 +13,6 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
-    /// Update groups for things to compute before physics step computation
-    /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class KCCPreUpdateGroup : ComponentSystemGroup { }
-
-    /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
@@ -29,7 +22,7 @@ namespace PropHunt.Mixed.Systems
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCGroundedSystem : PredictionStateSystem
     {
         /// <summary>
@@ -42,7 +35,9 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = unityService.GetDeltaTime(base.Time);
             uint tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.WithReadOnly(collisionWorld).ForEach((
+            var translationGetter = this.GetComponentDataFromEntity<Translation>(true);
+
+            Entities.WithReadOnly(collisionWorld).WithReadOnly(translationGetter).ForEach((
                 Entity entity,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
@@ -89,6 +84,7 @@ namespace PropHunt.Mixed.Systems
                         grounded.groundedPoint = hit.Position;
                         grounded.hitEntity = hit.Entity;
                         grounded.surfaceNormal = hit.SurfaceNormal;
+                        grounded.relativePosition = hit.Position - translationGetter[hit.Entity].Value;
                     }
                     else
                     {
@@ -115,6 +111,36 @@ namespace PropHunt.Mixed.Systems
             ).ScheduleParallel();
 
             this.Dependency.Complete();
+        }
+    }
+
+    [BurstCompile]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateBefore(typeof(KCCPushOverlappingSystem))]
+    public class KCCMoveWithGround : PredictionStateSystem
+    {
+        protected override void OnUpdate()
+        {
+            float deltaTime = this.unityService.GetDeltaTime(base.Time);
+
+            // Only applies to grounded KCC characters with a KCC velocity.
+            Entities.ForEach((
+                ref KCCVelocity velocity,
+                ref Translation translation,
+                in KCCGravity gravity,
+                in KCCGrounded grounded) =>
+                {
+                    // Bit jittery but this could probably be fixed by smoothing the movement a bit
+                    // to handle server lag and difference between positions
+                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
+                    {
+                        MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
+                        float3 displacement = MovementTracking.GetDisplacementAtPoint(track, grounded.relativePosition);
+
+                        translation.Value += displacement;
+                    }
+                }
+            ).ScheduleParallel();
         }
     }
 
@@ -323,7 +349,7 @@ namespace PropHunt.Mixed.Systems
                     // If the KCC is attempting to jump and is grounded, jump
                     if (jumping.attemptingJump && KCCUtils.CanJump(jumping, grounded))
                     {
-                        velocity.worldVelocity += gravity.Up * jumping.jumpForce;
+                        velocity.worldVelocity = gravity.Up * jumping.jumpForce;
                         jumping.timeElapsedSinceJump = 0.0f;
                     }
                     // Track jumping cooldown if not jumping
@@ -342,8 +368,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
-    [UpdateBefore(typeof(KCCMovementSystem))]
+    [UpdateBefore(typeof(KCCGroundedSystem))]
     public class KCCPushOverlappingSystem : PredictionStateSystem
     {
         protected unsafe override void OnUpdate()
@@ -438,62 +463,6 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
-    /// System to move character with ground
-    /// </summary>
-    [BurstCompile]
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateBefore(typeof(KCCGravitySystem))]
-    public class KCCMoveWithGroundSystem : PredictionStateSystem
-    {
-        protected override void OnUpdate()
-        {
-            float deltaTime = this.unityService.GetDeltaTime(base.Time);
-            var tick = predictionManager.GetPredictingTick(base.World);
-
-            // Only applies to grounded KCC characters with a KCC velocity.
-            Entities.ForEach((
-                ref KCCVelocity velocity,
-                ref Translation translation,
-                ref FloorMovement floor,
-                in KCCGravity gravity,
-                in KCCGrounded grounded,
-                in PredictedGhostComponent prediction) =>
-                {
-                    if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
-                    {
-                        return;
-                    }
-
-                    float3 tempVelocity = floor.floorVelocity;
-                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
-                    {
-                        MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        translation.Value += floor.frameDisplacement;
-                        if (track.avoidTransferMomentum)
-                        {
-                            floor.floorVelocity = float3.zero;
-                        }
-                        else
-                        {
-                            floor.floorVelocity = floor.frameDisplacement / deltaTime;
-                        }
-                    }
-
-                    bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
-                    if (!grounded.Falling && !movingUp)
-                    {
-                        velocity.worldVelocity = float3.zero;
-                    }
-                    else if (grounded.Falling && !grounded.PreviousFalling)
-                    {
-                        velocity.worldVelocity += tempVelocity;
-                    }
-                }
-            ).ScheduleParallel();
-        }
-    }
-
-    /// <summary>
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
@@ -527,7 +496,12 @@ namespace PropHunt.Mixed.Systems
                         // fall due to gravity
                         velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                     }
+                    bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
                     // else: Have hit the ground, don't accelerate due to gravity
+                    if (!grounded.Falling && !movingUp)
+                    {
+                        velocity.worldVelocity = float3.zero;
+                    }
                 }
             ).ScheduleParallel();
         }

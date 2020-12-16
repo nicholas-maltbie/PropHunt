@@ -33,6 +33,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Current angle of the platform
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 currentAngle;
 
         /// <summary>
