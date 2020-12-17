@@ -19,9 +19,7 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class PlayerRotationSystem : SystemBase
     {
         /// <summary>
