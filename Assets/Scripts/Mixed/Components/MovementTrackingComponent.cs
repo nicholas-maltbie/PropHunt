@@ -20,13 +20,11 @@ namespace PropHunt.Mixed.Components
         /// Finds the change in attitude (expressed as a quaternion) between
         /// the current and previous attitude. QFinal * Inv(QInitial)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
         public quaternion ChangeAttitude;
 
         /// <summary>
         /// Displacement between current and previous frames
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
         public float3 Displacement;
 
         /// <summary>

@@ -12,8 +12,8 @@ using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
 {
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
+    [UpdateAfter(typeof(GhostPredictionSystemGroup))]
     public class KCCPreUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>

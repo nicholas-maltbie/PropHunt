@@ -14,9 +14,8 @@ namespace PropHunt.Mixed.Systems
     /// System to update a moving platform's velocity to follow the current system
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateInGroup(typeof(GhostSimulationSystemGroup))]
     [UpdateAfter(typeof(KCCPreUpdateGroup))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
     public class MovingPlatformSystem : PredictionStateSystem
     {
         protected override void OnUpdate()
