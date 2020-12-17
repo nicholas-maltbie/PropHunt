@@ -1,5 +1,6 @@
 using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
+using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -15,25 +16,26 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(KCCPreUpdateGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class RotatingObjectSystem : SystemBase
+    public class RotatingObjectSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for accessing unity data
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
+            uint tick = this.predictionManager.GetPredictingTick(base.World);
             Entities.ForEach((
                 ref RotatingObject rotatingObject,
                 ref Rotation rotation,
-                ref MovementTracking movementTracking) =>
+                ref MovementTracking movementTracking,
+                in PredictedGhostComponent predicted) =>
                 {
                     quaternion deltaAngle = quaternion.Euler(math.radians(rotatingObject.angularVelocity * deltaTime));
-                    // Add quaternions by multiplying them
-                    rotation.Value = math.mul(rotation.Value, deltaAngle);
+                    if (GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
+                    {
+                        // Add quaternions by multiplying them
+                        rotation.Value = math.mul(rotation.Value, deltaAngle);
+                    }
                     // Save this as the change in able
                     movementTracking.ChangeAttitude = deltaAngle;
                 }

@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 5911232014463065076}
   - component: {fileID: 5911232014463065077}
   - component: {fileID: 5911232014463065074}
-  - component: {fileID: 7089896821153077156}
+  - component: {fileID: 4983147591222533857}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -377,7 +377,7 @@ MonoBehaviour:
   Importance: 1
   prefabId: 563546384c88d2240844b477c3d3fac8
   Name: ExampleMovingPlatform
---- !u!114 &7089896821153077156
+--- !u!114 &4983147591222533857
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -386,17 +386,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5911232014463065067}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
+  m_Script: {fileID: 11500000, guid: 65588392d306b9b48811a920650dac77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   avoidTransferMomentum: 0
-  ChangeAttitude:
-    value:
-      x: 0
-      y: 0
-      z: 0
-      w: 0
-  Displacement:
-    x: 0
-    y: 0
-    z: 0

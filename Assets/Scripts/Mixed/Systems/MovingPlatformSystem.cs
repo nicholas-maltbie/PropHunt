@@ -1,6 +1,7 @@
 
 using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
+using PropHunt.Mixed.Utilities;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,22 +15,20 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(KCCPreUpdateGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class MovingPlatformSystem : SystemBase
+    public class MovingPlatformSystem : PredictionStateSystem
     {
-        /// <summary>
-        /// Unity service for accessing unity data
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
+            uint tick = this.predictionManager.GetPredictingTick(base.World);
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
                 ref MovementTracking tracking,
-                in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
+                in DynamicBuffer<MovingPlatformTarget> platformTargets,
+                in PredictedGhostComponent predicted) =>
                 {
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
                     float3 currentTarget = targets[movingPlatform.current];
@@ -64,7 +63,10 @@ namespace PropHunt.Mixed.Systems
                     float3 dir = math.normalizesafe(currentTarget - translation.Value);
                     // Move based on direction and speed
                     float3 displacement = dir * movingPlatform.speed * deltaTime;
-                    translation.Value += displacement;
+                    if (GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
+                    {
+                        translation.Value += displacement;
+                    }
                     tracking.Displacement = displacement;
                 }
             ).ScheduleParallel();

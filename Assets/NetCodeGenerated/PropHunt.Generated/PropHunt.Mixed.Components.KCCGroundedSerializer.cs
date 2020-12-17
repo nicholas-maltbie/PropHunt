@@ -21,7 +21,7 @@ namespace PropHunt.Generated
         {
             State = new GhostComponentSerializer.State
             {
-                GhostFieldsHash = 5695069450399240654,
+                GhostFieldsHash = 4743465025748989427,
                 ExcludeFromComponentCollectionHash = 0,
                 ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCGrounded>(),
                 ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCGrounded>(),
@@ -54,8 +54,14 @@ namespace PropHunt.Generated
         {
             public int maxWalkAngle;
             public int groundCheckDistance;
+            public int groundFallingDistance;
+            public int angle;
+            public int distanceToGround;
+            public int relativePosition_x;
+            public int relativePosition_y;
+            public int relativePosition_z;
         }
-        public const int ChangeMaskBits = 2;
+        public const int ChangeMaskBits = 6;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -67,6 +73,12 @@ namespace PropHunt.Generated
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.maxWalkAngle = (int) math.round(component.maxWalkAngle * 100);
                 snapshot.groundCheckDistance = (int) math.round(component.groundCheckDistance * 100);
+                snapshot.groundFallingDistance = (int) math.round(component.groundFallingDistance * 100);
+                snapshot.angle = (int) math.round(component.angle * 100);
+                snapshot.distanceToGround = (int) math.round(component.distanceToGround * 100);
+                snapshot.relativePosition_x = (int) math.round(component.relativePosition.x * 100);
+                snapshot.relativePosition_y = (int) math.round(component.relativePosition.y * 100);
+                snapshot.relativePosition_z = (int) math.round(component.relativePosition.z * 100);
             }
         }
         [BurstCompile]
@@ -88,6 +100,16 @@ namespace PropHunt.Generated
                 component.groundCheckDistance =
                     math.lerp(snapshotBefore.groundCheckDistance * 0.01f,
                         snapshotAfter.groundCheckDistance * 0.01f, snapshotInterpolationFactor);
+                component.groundFallingDistance =
+                    math.lerp(snapshotBefore.groundFallingDistance * 0.01f,
+                        snapshotAfter.groundFallingDistance * 0.01f, snapshotInterpolationFactor);
+                component.angle =
+                    math.lerp(snapshotBefore.angle * 0.01f,
+                        snapshotAfter.angle * 0.01f, snapshotInterpolationFactor);
+                component.distanceToGround =
+                    math.lerp(snapshotBefore.distanceToGround * 0.01f,
+                        snapshotAfter.distanceToGround * 0.01f, snapshotInterpolationFactor);
+                component.relativePosition = new float3(snapshotBefore.relativePosition_x * 0.01f, snapshotBefore.relativePosition_y * 0.01f, snapshotBefore.relativePosition_z * 0.01f);
             }
         }
         [BurstCompile]
@@ -98,6 +120,12 @@ namespace PropHunt.Generated
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCGrounded>(backupData, 0);
             component.maxWalkAngle = backup.maxWalkAngle;
             component.groundCheckDistance = backup.groundCheckDistance;
+            component.groundFallingDistance = backup.groundFallingDistance;
+            component.angle = backup.angle;
+            component.distanceToGround = backup.distanceToGround;
+            component.relativePosition.x = backup.relativePosition.x;
+            component.relativePosition.y = backup.relativePosition.y;
+            component.relativePosition.z = backup.relativePosition.z;
         }
 
         [BurstCompile]
@@ -109,6 +137,12 @@ namespace PropHunt.Generated
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.maxWalkAngle = predictor.PredictInt(snapshot.maxWalkAngle, baseline1.maxWalkAngle, baseline2.maxWalkAngle);
             snapshot.groundCheckDistance = predictor.PredictInt(snapshot.groundCheckDistance, baseline1.groundCheckDistance, baseline2.groundCheckDistance);
+            snapshot.groundFallingDistance = predictor.PredictInt(snapshot.groundFallingDistance, baseline1.groundFallingDistance, baseline2.groundFallingDistance);
+            snapshot.angle = predictor.PredictInt(snapshot.angle, baseline1.angle, baseline2.angle);
+            snapshot.distanceToGround = predictor.PredictInt(snapshot.distanceToGround, baseline1.distanceToGround, baseline2.distanceToGround);
+            snapshot.relativePosition_x = predictor.PredictInt(snapshot.relativePosition_x, baseline1.relativePosition_x, baseline2.relativePosition_x);
+            snapshot.relativePosition_y = predictor.PredictInt(snapshot.relativePosition_y, baseline1.relativePosition_y, baseline2.relativePosition_y);
+            snapshot.relativePosition_z = predictor.PredictInt(snapshot.relativePosition_z, baseline1.relativePosition_z, baseline2.relativePosition_z);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -119,7 +153,13 @@ namespace PropHunt.Generated
             uint changeMask;
             changeMask = (snapshot.maxWalkAngle != baseline.maxWalkAngle) ? 1u : 0;
             changeMask |= (snapshot.groundCheckDistance != baseline.groundCheckDistance) ? (1u<<1) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
+            changeMask |= (snapshot.groundFallingDistance != baseline.groundFallingDistance) ? (1u<<2) : 0;
+            changeMask |= (snapshot.angle != baseline.angle) ? (1u<<3) : 0;
+            changeMask |= (snapshot.distanceToGround != baseline.distanceToGround) ? (1u<<4) : 0;
+            changeMask |= (snapshot.relativePosition_x != baseline.relativePosition_x) ? (1u<<5) : 0;
+            changeMask |= (snapshot.relativePosition_y != baseline.relativePosition_y) ? (1u<<5) : 0;
+            changeMask |= (snapshot.relativePosition_z != baseline.relativePosition_z) ? (1u<<5) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 6);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -132,6 +172,18 @@ namespace PropHunt.Generated
                 writer.WritePackedIntDelta(snapshot.maxWalkAngle, baseline.maxWalkAngle, compressionModel);
             if ((changeMask & (1 << 1)) != 0)
                 writer.WritePackedIntDelta(snapshot.groundCheckDistance, baseline.groundCheckDistance, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.groundFallingDistance, baseline.groundFallingDistance, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedIntDelta(snapshot.angle, baseline.angle, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
+                writer.WritePackedIntDelta(snapshot.distanceToGround, baseline.distanceToGround, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedIntDelta(snapshot.relativePosition_x, baseline.relativePosition_x, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedIntDelta(snapshot.relativePosition_y, baseline.relativePosition_y, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedIntDelta(snapshot.relativePosition_z, baseline.relativePosition_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -148,6 +200,30 @@ namespace PropHunt.Generated
                 snapshot.groundCheckDistance = reader.ReadPackedIntDelta(baseline.groundCheckDistance, compressionModel);
             else
                 snapshot.groundCheckDistance = baseline.groundCheckDistance;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.groundFallingDistance = reader.ReadPackedIntDelta(baseline.groundFallingDistance, compressionModel);
+            else
+                snapshot.groundFallingDistance = baseline.groundFallingDistance;
+            if ((changeMask & (1 << 3)) != 0)
+                snapshot.angle = reader.ReadPackedIntDelta(baseline.angle, compressionModel);
+            else
+                snapshot.angle = baseline.angle;
+            if ((changeMask & (1 << 4)) != 0)
+                snapshot.distanceToGround = reader.ReadPackedIntDelta(baseline.distanceToGround, compressionModel);
+            else
+                snapshot.distanceToGround = baseline.distanceToGround;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.relativePosition_x = reader.ReadPackedIntDelta(baseline.relativePosition_x, compressionModel);
+            else
+                snapshot.relativePosition_x = baseline.relativePosition_x;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.relativePosition_y = reader.ReadPackedIntDelta(baseline.relativePosition_y, compressionModel);
+            else
+                snapshot.relativePosition_y = baseline.relativePosition_y;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.relativePosition_z = reader.ReadPackedIntDelta(baseline.relativePosition_z, compressionModel);
+            else
+                snapshot.relativePosition_z = baseline.relativePosition_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -161,6 +237,14 @@ namespace PropHunt.Generated
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundCheckDistance - backup.groundCheckDistance));
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.groundFallingDistance - backup.groundFallingDistance));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.angle - backup.angle));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.distanceToGround - backup.distanceToGround));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.relativePosition, backup.relativePosition));
+            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -172,6 +256,22 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("groundCheckDistance"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("groundFallingDistance"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("angle"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("distanceToGround"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("relativePosition"));
             ++nameCount;
             return nameCount;
         }

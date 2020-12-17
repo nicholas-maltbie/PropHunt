@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 5902303242071951101}
   - component: {fileID: 5902303242071951098}
   - component: {fileID: 5902303242071951103}
-  - component: {fileID: 6919952636966526069}
   - component: {fileID: 5902303242071951102}
+  - component: {fileID: 7162717689121910060}
+  - component: {fileID: 3180400147430746981}
   m_Layer: 0
   m_Name: SpinningCylinder
   m_TagString: Untagged
@@ -109,7 +110,7 @@ MonoBehaviour:
   m_InitialAngularVelocity:
     x: 0
     y: 0
-    z: 1.57
+    z: 0
   m_GravityFactor: 1
   m_OverrideDefaultMassDistribution: 0
   m_CenterOfMass:
@@ -278,19 +279,6 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &6919952636966526069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5902303242071951096}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  avoidTransferMomentum: 0
 --- !u!114 &5902303242071951102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,8 +293,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForcePrefabConversion: 0
   DefaultGhostMode: 0
-  SupportedGhostModes: 1
+  SupportedGhostModes: 2
   OptimizationMode: 0
   Importance: 1
   prefabId: 500369948f8b01346b0c4e2c343e2fe7
   Name: SpinningCylinder
+--- !u!114 &7162717689121910060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5902303242071951096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65588392d306b9b48811a920650dac77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  avoidTransferMomentum: 0
+--- !u!114 &3180400147430746981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5902303242071951096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93a0c1f556a35bf4f9ea803db438d3b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angularVelocity:
+    x: 0
+    y: 30
+    z: 0

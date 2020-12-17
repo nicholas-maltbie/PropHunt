@@ -16,6 +16,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(KCCPreUpdateGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class RotatingPlatformSystem : SystemBase
     {

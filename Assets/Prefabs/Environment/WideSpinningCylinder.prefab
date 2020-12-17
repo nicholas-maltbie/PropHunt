@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4427138457638911044}
   - component: {fileID: 1684203733757857799}
   - component: {fileID: 6853952401403759966}
-  - component: {fileID: 6726795253296977184}
   - component: {fileID: 2573764294414762088}
   - component: {fileID: 3777818217648254613}
+  - component: {fileID: 2061012303968502404}
   m_Layer: 0
   m_Name: WideSpinningCylinder
   m_TagString: Untagged
@@ -279,29 +279,6 @@ MonoBehaviour:
         Tag07: 0
     m_SerializedVersion: 1
   m_SerializedVersion: 1
---- !u!114 &6726795253296977184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702435718741386825}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d82f69b4de849334ea568448a52fca7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  avoidTransferMomentum: 0
-  ChangeAttitude:
-    value:
-      x: 0
-      y: 0
-      z: 0
-      w: 0
-  Displacement:
-    x: 0
-    y: 0
-    z: 0
 --- !u!114 &2573764294414762088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,3 +314,16 @@ MonoBehaviour:
     x: 0
     y: 60
     z: 0
+--- !u!114 &2061012303968502404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702435718741386825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65588392d306b9b48811a920650dac77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  avoidTransferMomentum: 0

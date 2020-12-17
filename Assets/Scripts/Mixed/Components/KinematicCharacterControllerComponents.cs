@@ -151,6 +151,7 @@ namespace PropHunt.Mixed.Components
         /// Threshold for when the player will stop falling onto the ground. Should be a value smaller
         /// than or equal to groundCheckDistance.
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float groundFallingDistance;
 
         /// <summary>
@@ -159,6 +160,7 @@ namespace PropHunt.Mixed.Components
         /// measured in degrees. Will be a value of -1 if no hit ocurred.
         /// Does not need to synced between clients.
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float angle;
 
         /// <summary>
@@ -167,6 +169,7 @@ namespace PropHunt.Mixed.Components
         /// ground was not hit.
         /// Does not need to synced between clients.
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float distanceToGround;
 
         /// <summary>
@@ -223,6 +226,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Relative position between the character and the object they are standing on
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = false)]
         public float3 relativePosition;
 
         /// <summary>

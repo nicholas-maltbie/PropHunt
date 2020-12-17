@@ -12,6 +12,10 @@ using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
 {
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateBefore(typeof(KCCUpdateGroup))]
+    public class KCCPreUpdateGroup : ComponentSystemGroup { }
+
     /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
@@ -22,13 +26,14 @@ namespace PropHunt.Mixed.Systems
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
+    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
     public class KCCGroundedSystem : PredictionStateSystem
     {
         /// <summary>
         /// Maximum degrees between ground and player 
         /// </summary>
         public static readonly float MaxAngleFallDegrees = 90;
+
         protected unsafe override void OnUpdate()
         {
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
@@ -368,7 +373,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateBefore(typeof(KCCGroundedSystem))]
+    [UpdateBefore(typeof(KCCMovementSystem))]
     public class KCCPushOverlappingSystem : PredictionStateSystem
     {
         protected unsafe override void OnUpdate()

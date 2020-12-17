@@ -13504,7 +13504,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7089896821153077156, guid: 563546384c88d2240844b477c3d3fac8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 563546384c88d2240844b477c3d3fac8, type: 3}
 --- !u!4 &265949918 stripped
 Transform:
@@ -45938,11 +45939,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SpinningCylinder
-      objectReference: {fileID: 0}
-    - target: {fileID: 5902303242071951096, guid: 500369948f8b01346b0c4e2c343e2fe7,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5902303242071951099, guid: 500369948f8b01346b0c4e2c343e2fe7,
         type: 3}
