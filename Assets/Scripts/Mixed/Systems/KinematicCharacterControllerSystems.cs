@@ -38,7 +38,7 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = unityService.GetDeltaTime(base.Time);
             var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.ForEach((
+            Entities.WithStructuralChanges().ForEach((
                 Entity entity,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
@@ -107,7 +107,38 @@ namespace PropHunt.Mixed.Systems
                 {
                     grounded.elapsedFallTime = 0;
                 }
-            }).ScheduleParallel();
+
+                // if (this.HasComponent<MovementTracking>(hit.Entity))
+                // {
+                //     //set the child
+                //     if (!EntityManager.HasComponent<LocalToWorld>(entity))
+                //         EntityManager.AddComponentData(entity, new LocalToWorld { });
+            
+                //     float3 relativePosition = grounded.groundedPoint - EntityManager.GetComponentData<Translation>(hit.Entity).Value;
+            
+                //     if (!EntityManager.HasComponent<Rotation>(entity))
+                //         EntityManager.AddComponentData(entity, new Rotation { Value = quaternion.Euler(float3.zero) });
+                //     else
+                //         EntityManager.SetComponentData(entity, new Rotation { Value = quaternion.Euler(float3.zero) });
+
+                //     if (!EntityManager.HasComponent<NonUniformScale>(entity))
+                //         EntityManager.AddComponentData(entity, new NonUniformScale { Value = new float3(1, 1, 1) });
+                //     else
+                //         EntityManager.SetComponentData(entity, new NonUniformScale { Value = new float3(1, 1, 1) });
+            
+                //     if (!EntityManager.HasComponent<Parent>(entity))
+                //         EntityManager.AddComponentData(entity, new Parent { Value = hit.Entity });
+                //     else
+                //         EntityManager.SetComponentData(entity, new Parent { Value = hit.Entity });
+            
+                //     if (!EntityManager.HasComponent<LocalToParent>(entity))
+                //         EntityManager.AddComponentData(entity, new LocalToParent());
+                // }
+                // else
+                // {
+                    
+                // }
+            }).Run();
 
             this.Dependency.Complete();
         }
@@ -329,7 +360,6 @@ namespace PropHunt.Mixed.Systems
     /// Pushes kinematic character controllers out of objects they are stuck in
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [BurstCompile]
     public class KCCPushOverlappingSystem : PredictedStateSystem
@@ -426,68 +456,6 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
-    /// System to move character with ground
-    /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateBefore(typeof(KCCGravitySystem))]
-    [BurstCompile]
-    public class KCCMoveWithGroundSystem : PredictedStateSystem
-    {
-        protected override void OnUpdate()
-        {
-            float deltaTime = this.unityService.GetDeltaTime(base.Time);
-            var tick = this.predictionManager.GetPredictingTick(base.World);
-
-            // Only applies to grounded KCC characters with a KCC velocity.
-            Entities.ForEach((
-                ref KCCVelocity velocity,
-                ref Translation translation,
-                ref FloorMovement floor,
-                in KCCGravity gravity,
-                in KCCGrounded grounded,
-                in PredictedGhostComponent predicted) =>
-            {
-                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
-                {
-                    return;
-                }
-                // float3 tempVelocity = floor.floorVelocity;
-                // floor.frameDisplacement = float3.zero;
-                // // Bit jittery but this could probably be fixed by smoothing the movement a bit
-                // // to handle server lag and difference between positions
-                // if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
-                // {
-                //     MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                //     floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
-
-                //     if (track.avoidTransferMomentum)
-                //     {
-                //         floor.floorVelocity = float3.zero;
-                //     }
-                //     else
-                //     {
-                //         floor.floorVelocity = floor.frameDisplacement / deltaTime;
-                //     }
-                // }
-                // else
-                // {
-                //     floor.floorVelocity = float3.zero;
-                // }
-
-                // bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
-                // if (!grounded.Falling && !movingUp)
-                // {
-                //     velocity.worldVelocity = float3.zero;
-                // }
-                // else if (grounded.Falling && !grounded.PreviousFalling)
-                // {
-                //     velocity.worldVelocity += tempVelocity;
-                // }
-            }).ScheduleParallel();
-        }
-    }
-
-    /// <summary>
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
@@ -511,6 +479,9 @@ namespace PropHunt.Mixed.Systems
                 {
                     return;
                 }
+
+                bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
+
                 // If the player is not grounded, push down by
                 // gravity's acceleration
                 if (grounded.Falling)
@@ -521,7 +492,7 @@ namespace PropHunt.Mixed.Systems
                     velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                 }
                 // else: Have hit the ground, don't accelerate due to gravity
-                else
+                else if (!movingUp)
                 {
                     velocity.worldVelocity = float3.zero;
                 }

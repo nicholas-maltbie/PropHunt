@@ -10,6 +10,7 @@ namespace PropHunt.Mixed.Systems
     /// System to track moving of objects
     /// </summary>
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    [UpdateBefore(typeof(GhostSimulationSystemGroup))]
     public class MovementTrackingSystem : SystemBase
     {
         protected override void OnUpdate()
