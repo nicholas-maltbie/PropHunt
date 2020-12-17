@@ -21,13 +21,11 @@ namespace PropHunt.Mixed.Systems
         protected override void OnUpdate()
         {
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
-            uint tick = this.predictionManager.GetPredictingTick(base.World);
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
                 ref Translation translation,
                 ref MovementTracking tracking,
-                in DynamicBuffer<MovingPlatformTarget> platformTargets,
-                in PredictedGhostComponent predicted) =>
+                in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
                 {
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
                     float3 currentTarget = targets[movingPlatform.current];
@@ -62,10 +60,7 @@ namespace PropHunt.Mixed.Systems
                     float3 dir = math.normalizesafe(currentTarget - translation.Value);
                     // Move based on direction and speed
                     float3 displacement = dir * movingPlatform.speed * deltaTime;
-                    if (GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
-                    {
-                        translation.Value += displacement;
-                    }
+                    translation.Value += displacement;
                     tracking.Displacement = displacement;
                 }
             ).ScheduleParallel();
