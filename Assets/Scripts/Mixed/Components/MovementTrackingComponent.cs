@@ -20,22 +20,22 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Current measured position of an object
         /// </summary>
-        private float3 position;
+        public float3 position;
 
         /// <summary>
         /// Previously measured position of an object (previous frame)
         /// </summary>
-        private float3 previousPosition;
+        public float3 previousPosition;
 
         /// <summary>
         /// An object's current attitude (rotation)
         /// </summary>
-        private quaternion attitude;
+        public quaternion attitude;
 
         /// <summary>
         /// Previously measured attitude of an object (previous frame)
         /// </summary>
-        private quaternion previousAttitude;
+        public quaternion previousAttitude;
 
         /// <summary>
         /// Number of times this tracking component has been updated
@@ -51,12 +51,14 @@ namespace PropHunt.Mixed.Components
         /// Finds the change in attitude (expressed as a quaternion) between
         /// the current and previous attitude. QFinal * Inv(QInitial)
         /// </summary>
-        private quaternion ChangeAttitude => Initialized ? math.mul(attitude, math.inverse(previousAttitude)) : quaternion.identity;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public quaternion ChangeAttitude;
 
         /// <summary>
         /// Displacement between current and previous frames
         /// </summary>
-        private float3 Displacement => Initialized ? position - previousPosition : float3.zero;
+        [GhostField(Quantization = 100, Interpolate = true)]
+        public float3 Displacement;
 
         /// <summary>
         /// Gets the absolute displacement of a point relative to the
@@ -90,6 +92,9 @@ namespace PropHunt.Mixed.Components
             track.previousAttitude = track.attitude;
             track.attitude = newAttitude;
             track.position = newPosition;
+
+            track.ChangeAttitude = track.Initialized ? math.mul(track.attitude, math.inverse(track.previousAttitude)) : quaternion.Euler(float3.zero);
+            track.Displacement = track.Initialized ? track.position - track.previousPosition : float3.zero;
             // Ensure initialized if not already
             track.updates += 1;
         }

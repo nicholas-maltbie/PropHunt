@@ -3,10 +3,8 @@ using Unity.Entities;
 using Unity.NetCode;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Commands;
-using UnityEngine;
 using Unity.Burst;
 using Unity.Transforms;
-using Unity.Mathematics;
 using PropHunt.InputManagement;
 
 namespace PropHunt.Client.Systems
@@ -17,6 +15,7 @@ namespace PropHunt.Client.Systems
     [BurstCompile]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
     [UpdateAfter(typeof(MenuManagerSystem))]
+    [UpdateBefore(typeof(GhostSimulationSystemGroup))]
     public class SamplePlayerInput : ComponentSystem
     {
         public IUnityService unityService;
@@ -80,20 +79,17 @@ namespace PropHunt.Client.Systems
             {
                 if (playerId.playerId == localPlayerId)
                 {
-                    pv.pitch += deltaTime * -1 * pitchChange * pv.viewRotationRate;
-                    pv.yaw += deltaTime * yawChange * pv.viewRotationRate;
+                    targetPitch = pv.pitch + deltaTime * -1 * pitchChange * pv.viewRotationRate;
+                    targetYaw = pv.yaw + deltaTime * yawChange * pv.viewRotationRate;
 
-                    if (pv.pitch > pv.maxPitch)
+                    if (targetPitch > pv.maxPitch)
                     {
-                        pv.pitch = pv.maxPitch;
+                        targetPitch = pv.maxPitch;
                     }
-                    else if (pv.pitch < pv.minPitch)
+                    else if (targetPitch < pv.minPitch)
                     {
-                        pv.pitch = pv.minPitch;
+                        targetPitch = pv.minPitch;
                     }
-
-                    targetPitch = pv.pitch;
-                    targetYaw = pv.yaw;
                 }
             });
 

@@ -1,5 +1,4 @@
 using PropHunt.Constants;
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using PropHunt.Mixed.Utility;
@@ -15,13 +14,6 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
-    /// Update groups for things to compute before physics step computation
-    /// </summary>
-    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class KCCPreUpdateGroup : ComponentSystemGroup { }
-
-    /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
@@ -32,7 +24,7 @@ namespace PropHunt.Mixed.Systems
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup), OrderFirst = true)]
     public class KCCGroundedSystem : PredictedStateSystem
     {
         /// <summary>
@@ -459,39 +451,38 @@ namespace PropHunt.Mixed.Systems
                 {
                     return;
                 }
-                    float3 tempVelocity = floor.floorVelocity;
-                floor.frameDisplacement = float3.zero;
-                // Bit jittery but this could probably be fixed by smoothing the movement a bit
-                // to handle server lag and difference between positions
-                if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
-                {
-                    MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                    floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
+                // float3 tempVelocity = floor.floorVelocity;
+                // floor.frameDisplacement = float3.zero;
+                // // Bit jittery but this could probably be fixed by smoothing the movement a bit
+                // // to handle server lag and difference between positions
+                // if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
+                // {
+                //     MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
+                //     floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
 
-                    translation.Value += floor.frameDisplacement;
-                    if (track.avoidTransferMomentum)
-                    {
-                        floor.floorVelocity = float3.zero;
-                    }
-                    else
-                    {
-                        floor.floorVelocity = floor.frameDisplacement / deltaTime;
-                    }
-                }
-                else
-                {
-                    floor.floorVelocity = float3.zero;
-                }
+                //     if (track.avoidTransferMomentum)
+                //     {
+                //         floor.floorVelocity = float3.zero;
+                //     }
+                //     else
+                //     {
+                //         floor.floorVelocity = floor.frameDisplacement / deltaTime;
+                //     }
+                // }
+                // else
+                // {
+                //     floor.floorVelocity = float3.zero;
+                // }
 
-                bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
-                if (!grounded.Falling && !movingUp)
-                {
-                    velocity.worldVelocity = float3.zero;
-                }
-                else if (grounded.Falling && !grounded.PreviousFalling)
-                {
-                    velocity.worldVelocity += tempVelocity;
-                }
+                // bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
+                // if (!grounded.Falling && !movingUp)
+                // {
+                //     velocity.worldVelocity = float3.zero;
+                // }
+                // else if (grounded.Falling && !grounded.PreviousFalling)
+                // {
+                //     velocity.worldVelocity += tempVelocity;
+                // }
             }).ScheduleParallel();
         }
     }
@@ -530,6 +521,10 @@ namespace PropHunt.Mixed.Systems
                     velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
                 }
                 // else: Have hit the ground, don't accelerate due to gravity
+                else
+                {
+                    velocity.worldVelocity = float3.zero;
+                }
             }).ScheduleParallel();
         }
     }
