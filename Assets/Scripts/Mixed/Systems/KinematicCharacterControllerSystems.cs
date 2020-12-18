@@ -3,6 +3,7 @@ using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
 using PropHunt.Mixed.Utility;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -38,13 +39,17 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = unityService.GetDeltaTime(base.Time);
             var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.WithStructuralChanges().ForEach((
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var ecbParallelWriter = ecb.AsParallelWriter();
+
+            Entities.ForEach((
                 Entity entity,
+                int entityInQueryIndex,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
                 in PhysicsCollider collider,
-                in Translation translation,
                 in Rotation rotation,
+                in Translation translation,
                 in PredictedGhostComponent predicted) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
@@ -108,39 +113,16 @@ namespace PropHunt.Mixed.Systems
                     grounded.elapsedFallTime = 0;
                 }
 
-                // if (this.HasComponent<MovementTracking>(hit.Entity))
-                // {
-                //     //set the child
-                //     if (!EntityManager.HasComponent<LocalToWorld>(entity))
-                //         EntityManager.AddComponentData(entity, new LocalToWorld { });
-            
-                //     float3 relativePosition = grounded.groundedPoint - EntityManager.GetComponentData<Translation>(hit.Entity).Value;
-            
-                //     if (!EntityManager.HasComponent<Rotation>(entity))
-                //         EntityManager.AddComponentData(entity, new Rotation { Value = quaternion.Euler(float3.zero) });
-                //     else
-                //         EntityManager.SetComponentData(entity, new Rotation { Value = quaternion.Euler(float3.zero) });
+                // If the floor has a MovementTracking component, set the parent of
+                //  the player entity to be the floor so the player can move along
+                //  with the floor
 
-                //     if (!EntityManager.HasComponent<NonUniformScale>(entity))
-                //         EntityManager.AddComponentData(entity, new NonUniformScale { Value = new float3(1, 1, 1) });
-                //     else
-                //         EntityManager.SetComponentData(entity, new NonUniformScale { Value = new float3(1, 1, 1) });
-            
-                //     if (!EntityManager.HasComponent<Parent>(entity))
-                //         EntityManager.AddComponentData(entity, new Parent { Value = hit.Entity });
-                //     else
-                //         EntityManager.SetComponentData(entity, new Parent { Value = hit.Entity });
-            
-                //     if (!EntityManager.HasComponent<LocalToParent>(entity))
-                //         EntityManager.AddComponentData(entity, new LocalToParent());
-                // }
-                // else
-                // {
-                    
-                // }
-            }).Run();
+            }).ScheduleParallel();
 
             this.Dependency.Complete();
+
+            // Playback events
+            ecb.Playback(base.EntityManager);
         }
     }
 

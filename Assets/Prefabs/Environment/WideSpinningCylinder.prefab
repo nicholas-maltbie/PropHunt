@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1702435718741386825
+--- !u!1 &644568073
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7483973418595362324}
-  - component: {fileID: 3945228378486459121}
-  - component: {fileID: 4427138457638911044}
-  - component: {fileID: 1684203733757857799}
-  - component: {fileID: 6853952401403759966}
-  - component: {fileID: 6726795253296977184}
-  - component: {fileID: 2573764294414762088}
+  - component: {fileID: 644568074}
+  - component: {fileID: 644568076}
+  - component: {fileID: 644568075}
   m_Layer: 0
-  m_Name: WideSpinningCylinder
+  m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7483973418595362324
+--- !u!4 &644568074
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702435718741386825}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8, y: -0, z: 47}
+  m_GameObject: {fileID: 644568073}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 12.2, y: 0.1, z: 12.2}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 7483973418595362324}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3945228378486459121
+--- !u!33 &644568076
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702435718741386825}
+  m_GameObject: {fileID: 644568073}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &4427138457638911044
+--- !u!23 &644568075
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1702435718741386825}
+  m_GameObject: {fileID: 644568073}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,6 +81,41 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1702435718741386825
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7483973418595362324}
+  - component: {fileID: 1684203733757857799}
+  - component: {fileID: 6853952401403759966}
+  - component: {fileID: 6726795253296977184}
+  - component: {fileID: 2573764294414762088}
+  m_Layer: 0
+  m_Name: WideSpinningCylinder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7483973418595362324
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702435718741386825}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: -0, z: 47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 644568074}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1684203733757857799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,13 +180,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ShapeType: 3
   m_PrimitiveCenter:
-    x: 0.000000059604645
+    x: 0
     y: 0
-    z: -0.00000011920929
+    z: 0
   m_PrimitiveSize:
-    x: 1.0000002
-    y: 1.0000002
-    z: 2
+    x: 12.2
+    y: 12.2
+    z: 0.1
   m_PrimitiveOrientation:
     Value:
       x: -90
@@ -163,15 +194,15 @@ MonoBehaviour:
       z: 90
     RotationOrder: 4
   m_Capsule:
-    Height: 2
-    Radius: 0.5000001
+    Height: 0.1
+    Radius: 6.1
     Axis: 2
   m_Cylinder:
-    Height: 2
-    Radius: 0.5000001
+    Height: 0.1
+    Radius: 6.1
     Axis: 2
   m_CylinderSideCount: 20
-  m_SphereRadius: 1
+  m_SphereRadius: 6.1
   m_MinimumSkinnedVertexWeight: 0.1
   m_ConvexHullGenerationParameters:
     m_SimplificationTolerance: 0.03000001
@@ -291,6 +322,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoidTransferMomentum: 0
+  position:
+    x: 0
+    y: 0
+    z: 0
+  previousPosition:
+    x: 0
+    y: 0
+    z: 0
+  attitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  previousAttitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  ChangeAttitude:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  Displacement:
+    x: 0
+    y: 0
+    z: 0
 --- !u!114 &2573764294414762088
 MonoBehaviour:
   m_ObjectHideFlags: 0
