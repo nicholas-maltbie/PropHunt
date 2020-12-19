@@ -4,6 +4,7 @@ using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using Unity.Physics;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -25,7 +26,8 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
             Entities.ForEach((
                 ref MovingPlatform movingPlatform,
-                ref Translation translation,
+                ref PhysicsVelocity velocity,
+                in Translation translation,
                 in DynamicBuffer<MovingPlatformTarget> platformTargets) =>
                 {
                     DynamicBuffer<float3> targets = platformTargets.Reinterpret<float3>();
@@ -60,7 +62,7 @@ namespace PropHunt.Mixed.Systems
                     // Move toward current platform by speed
                     float3 dir = math.normalizesafe(currentTarget - translation.Value);
                     // Set physics velocity based on speed and direction
-                    translation.Value += dir * movingPlatform.speed * deltaTime;
+                    velocity.Linear = dir * movingPlatform.speed;
                 }
             ).ScheduleParallel();
         }
