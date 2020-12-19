@@ -101,7 +101,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             );
             base.m_Manager.AddComponentData<PredictedGhostComponent>(
                 player,
-                new PredictedGhostComponent {AppliedTick = 0u}
+                new PredictedGhostComponent { AppliedTick = 0u }
             );
 
             return player;

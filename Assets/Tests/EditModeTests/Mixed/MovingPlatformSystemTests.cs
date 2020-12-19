@@ -63,8 +63,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
 
@@ -73,8 +74,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
 
@@ -114,8 +116,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Update the moving platform to move the moving platform by speed * delta time
             // Ensure target changes to 1
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
@@ -123,8 +126,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Ensure target changes back to 0
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 0);
@@ -132,8 +136,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Ensure target changes back to 1
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
@@ -171,8 +176,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 0);
@@ -181,8 +187,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Will take two seconds to get back to original location
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(2.0f);
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);
@@ -194,8 +201,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Will involve slighlty more movement
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
             this.movingPlatformSystem.Update();
-            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
-                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation
+            {
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value +
                     base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
             });
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);

@@ -75,7 +75,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             float timeElapsedSinceLastJump = 0f)
         {
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
-            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent {AppliedTick = 0u});
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { AppliedTick = 0u });
             if (isGrounded)
             {
                 // In order to simulate a Grounded player, we need to cover the following conditions:

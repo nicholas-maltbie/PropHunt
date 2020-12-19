@@ -69,7 +69,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
             base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, maxWalkAngle = 30.0f });
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
-            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent {AppliedTick = 0u});
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { AppliedTick = 0u });
 
             return player;
         }
