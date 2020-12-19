@@ -115,6 +115,17 @@ namespace PropHunt.EditMode.Tests.Mixed
             return player;
         }
 
+        /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, false, true, jumpForce: 10f, jumpCoolDown: 1f);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.kccJumpSystem.Update();
+        }
+
         [Test]
         public void VerifyPlayerCantJumpIfNotGrounded()
         {

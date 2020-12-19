@@ -100,6 +100,18 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
 
         /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 1, 0), 1.0f);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.buildPhysicsWorld.Update();
+            this.kccMovementSystem.Update();
+        }
+
+        /// <summary>
         /// Assert that the movement is correct on a flat plane
         /// </summary>
         [Test]

@@ -80,6 +80,18 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
 
         /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 1, 0), 1.0f);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.buildPhysicsWorld.Update();
+            this.kccPushOverlapping.Update();
+        }
+
+        /// <summary>
         /// Test to ensure no push when there is no overlap
         /// </summary>
         [Test]

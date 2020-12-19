@@ -90,6 +90,17 @@ namespace PropHunt.EditMode.Tests.Mixed
             return player;
         }
 
+        /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, false);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.kccGravitySystem.Update();
+        }
+
         [Test]
         public void VerifyGravityAppliesIfPlayerIsNotGrounded()
         {
