@@ -242,7 +242,6 @@ namespace PropHunt.Mixed.Systems
                     return;
                 }
 
-                var pm = physicsMassGetter[entity];
                 KCCGrounded grounded = kccGroundedGetter[entity];
                 KCCGravity gravity = kccGravityGetter[entity];
                 float verticalSnapMove = !grounded.Falling || !grounded.PreviousFalling ? movementSettings.stepOffset : 0;
@@ -292,8 +291,7 @@ namespace PropHunt.Mixed.Systems
                     pushDecay: movementSettings.fallPushDecay,
                     anglePower: movementSettings.fallAnglePower
                 );
-            }
-            ).ScheduleParallel();
+            }).ScheduleParallel();
 
             this.Dependency.Complete();
             this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);

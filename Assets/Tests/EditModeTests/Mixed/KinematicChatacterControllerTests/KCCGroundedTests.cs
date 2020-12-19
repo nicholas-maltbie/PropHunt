@@ -9,7 +9,8 @@ using Unity.Physics.Systems;
 using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
-using PropHunt.Tests.Utils;
+using Unity.NetCode;
+using PropHunt.Mixed.Utilities;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -27,6 +28,11 @@ namespace PropHunt.EditMode.Tests.Mixed
         private Mock<IUnityService> unityServiceMock;
 
         /// <summary>
+        /// Mock of prediction state controller
+        /// </summary>
+        private Mock<IPredictionState> predictionStateMock;
+
+        /// <summary>
         /// Current build physics world for test
         /// </summary>
         private BuildPhysicsWorld buildPhysicsWorld;
@@ -42,10 +48,16 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
+            this.predictionStateMock = new Mock<IPredictionState>();
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
 
-            // Connect mocked variables ot system
+            // Setup the network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+
+            // Connect mocked variables to system
             this.kccGroundedSystem.unityService = this.unityServiceMock.Object;
+            this.kccGroundedSystem.predictionManager = this.predictionStateMock.Object;
         }
 
         /// <summary>
@@ -57,6 +69,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
             base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, maxWalkAngle = 30.0f });
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent {AppliedTick = 0u});
 
             return player;
         }

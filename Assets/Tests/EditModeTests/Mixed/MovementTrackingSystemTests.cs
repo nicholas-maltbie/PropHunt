@@ -54,6 +54,7 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Verify new displacement values
             trackComponent = base.m_Manager.GetComponentData<MovementTracking>(tracked);
+            UnityEngine.Debug.Log(trackComponent.Displacement + " " + trackComponent.position + " " + trackComponent.previousPosition);
             Assert.IsTrue(TestUtils.WithinErrorRange(MovementTracking.GetDisplacementAtPoint(trackComponent, float3.zero), new float3(0, 1, 0)));
 
             // Verify change in state when object rotates

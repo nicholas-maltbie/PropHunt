@@ -10,6 +10,8 @@ using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
 using PropHunt.Tests.Utils;
+using PropHunt.Mixed.Utilities;
+using Unity.NetCode;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -19,7 +21,12 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// <summary>
         /// System for gravity
         /// </summary>
-        private KCCGravitySystem gravitySystem;
+        private KCCGravitySystem kccGravitySystem;
+
+        /// <summary>
+        /// Mock of prediction state controller
+        /// </summary>
+        private Mock<IPredictionState> predictionStateMock;
 
         /// <summary>
         /// Mock of unity service for managing delta time in a testable manner
@@ -31,11 +38,20 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             base.Setup();
 
-            this.gravitySystem = base.World.CreateSystem<KCCGravitySystem>();
+            this.kccGravitySystem = base.World.CreateSystem<KCCGravitySystem>();
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
-            this.gravitySystem.unityService = unityServiceMock.Object;
+            this.predictionStateMock = new Mock<IPredictionState>();
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
+
+            // Setup the network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+
+            // Connect mocked variables to system
+            this.kccGravitySystem.unityService = this.unityServiceMock.Object;
+            this.kccGravitySystem.predictionManager = this.predictionStateMock.Object;
         }
 
         /// <summary>
@@ -68,6 +84,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 base.m_Manager.AddComponentData<KCCGrounded>(player, new KCCGrounded { groundCheckDistance = 0.5f, onGround = false, });
             }
 
+            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity { gravityAcceleration = new float3(0, -9.8f, 0) });
             base.m_Manager.AddComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = float3.zero, worldVelocity = float3.zero });
             return player;
@@ -83,7 +100,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.gravitySystem.Update();
+            this.kccGravitySystem.Update();
             var playerVelocity = m_Manager.GetComponentData<KCCVelocity>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
 
@@ -102,7 +119,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.gravitySystem.Update();
+            this.kccGravitySystem.Update();
             var playerVelocity = m_Manager.GetComponentData<KCCVelocity>(player);
 
             // We expect the gravity to not be applied.

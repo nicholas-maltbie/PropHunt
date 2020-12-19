@@ -81,23 +81,27 @@ namespace PropHunt.EditMode.Tests.Client
         }
 
         /// <summary>
-        /// Creates the network id component singleton and EnableProphuntGhostReceiveSystemComponent singleton
+        /// Creates the network stream in game component singleton and EnableProphuntGhostReceiveSystemComponent singleton
         /// for updating the player camera
         /// </summary>
-        /// <param name="networkId">Player id to give the created NetworkIDComponent</param>
+        /// <param name="networkId">Player id to give the created NetworkStreamInGameComponent</param>
         private void CreateNetworkSingletons(int networkId)
         {
             var system = World.GetExistingSystem<CameraFollowSystem>();
 
             // Setup singleton data
+            if (!system.HasSingleton<NetworkStreamInGame>())
+            {
+                World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkStreamInGame>());
+            }
             if (!system.HasSingleton<NetworkIdComponent>())
             {
                 World.EntityManager.CreateEntity(ComponentType.ReadOnly<NetworkIdComponent>());
             }
-            var networkIDEntity = system.GetSingleton<NetworkIdComponent>();
+            var networkIDEntity = system.GetSingletonEntity<NetworkIdComponent>();
 
             // Set singleton data
-            system.SetSingleton<NetworkIdComponent>(new NetworkIdComponent { Value = networkId });
+            base.m_Manager.SetComponentData<NetworkIdComponent>(networkIDEntity, new NetworkIdComponent { Value = networkId });
         }
 
         /// <summary>

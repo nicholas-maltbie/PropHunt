@@ -55,6 +55,9 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup the necessary GhostPredictionSystemGroup
             this.ghostPredGroup = base.World.CreateSystem<GhostPredictionSystemGroup>();
+
+            // Setup the network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
         }
 
         /// <summary>
@@ -84,6 +87,10 @@ namespace PropHunt.EditMode.Tests.Mixed
                     sprintMultiplier = 2.0f,
                     moveSpeed = 1.0f
                 }
+            );
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(
+                player,
+                new PredictedGhostComponent {AppliedTick = 0u}
             );
 
             return player;

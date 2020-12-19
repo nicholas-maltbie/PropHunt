@@ -10,6 +10,8 @@ using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
 using PropHunt.Tests.Utils;
+using PropHunt.Mixed.Utilities;
+using Unity.NetCode;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -20,6 +22,11 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// System for pushing players out of overlapping objects
         /// </summary>
         private KCCPushOverlappingSystem kccPushOverlapping;
+
+        /// <summary>
+        /// Mock of prediction state controller
+        /// </summary>
+        private Mock<IPredictionState> predictionStateMock;
 
         /// <summary>
         /// Mock of unity service for managing delta time in a testable manner
@@ -42,10 +49,16 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
-            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1f);
+            this.predictionStateMock = new Mock<IPredictionState>();
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
 
-            // Connect mocked variables ot system
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+
+            // Connect mocked variables to system
             this.kccPushOverlapping.unityService = this.unityServiceMock.Object;
+            this.kccPushOverlapping.predictionManager = this.predictionStateMock.Object;
         }
 
         /// <summary>
@@ -55,6 +68,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         public Entity CreateTestPlayer(float3 position, float radius)
         {
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
+            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
             base.m_Manager.AddComponentData<KCCMovementSettings>(player, new KCCMovementSettings
             {
                 // Allow player to be pushed at a rate of 2 unit per second
@@ -115,7 +129,10 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = new float3(0, 0.5f, 0) });
             base.m_Manager.SetComponentData<Translation>(overlap, new Translation { Value = new float3(0, -0.75f, 0) });
 
-
+            foreach (var compType in base.m_Manager.GetComponentTypes(player))
+            {
+                UnityEngine.Debug.Log(compType);
+            }
             float3 starting = base.m_Manager.GetComponentData<Translation>(player).Value;
             this.buildPhysicsWorld.Update();
             this.kccPushOverlapping.Update();

@@ -10,6 +10,8 @@ using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
 using PropHunt.Tests.Utils;
+using PropHunt.Mixed.Utilities;
+using Unity.NetCode;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -25,6 +27,11 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// Mock of unity service for managing delta time in a testable manner
         /// </summary>
         private Mock<IUnityService> unityServiceMock;
+
+        /// <summary>
+        /// Mock of prediction state controller
+        /// </summary>
+        private Mock<IPredictionState> predictionStateMock;
 
         /// <summary>
         /// Current build physics world for test
@@ -52,10 +59,16 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
-            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1f);
+            this.predictionStateMock = new Mock<IPredictionState>();
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
 
-            // Connect mocked variables ot system
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+
+            // Connect mocked variables to system
             this.kccSnapDown.unityService = this.unityServiceMock.Object;
+            this.kccSnapDown.predictionManager = this.predictionStateMock.Object;
         }
 
         /// <summary>
@@ -65,6 +78,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         public Entity CreateTestPlayer(float3 position, float3 size)
         {
             Entity player = PhysicsTestUtils.CreateBox(base.m_Manager, size, position, float3.zero, 0, quaternion.Euler(float3.zero), false);
+            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
             base.m_Manager.AddComponent<KCCGrounded>(player);
             base.m_Manager.AddComponent<KCCVelocity>(player);
             base.m_Manager.AddComponentData<KCCGravity>(player, new KCCGravity

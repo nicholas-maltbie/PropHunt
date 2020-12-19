@@ -260,6 +260,7 @@ namespace PropHunt.EditMode.Tests.Client
         [Test]
         public void DestroyNoEntities()
         {
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
             base.m_Manager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
             // Update with no entities in world
             this.ghostEntitySystem.Update();
@@ -275,6 +276,9 @@ namespace PropHunt.EditMode.Tests.Client
             Entity testGhost = base.m_Manager.CreateEntity(typeof(GhostComponent));
             Entity testGhost2 = base.m_Manager.CreateEntity(typeof(GhostComponent));
             Entity testNonGhost = base.m_Manager.CreateEntity();
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+            base.m_Manager.AddComponent<PreSpawnedGhostId>(testGhost);
+            base.m_Manager.AddComponent<PreSpawnedGhostId>(testGhost2);
             base.m_Manager.CreateEntity(ComponentType.ReadOnly(typeof(ClearClientGhostEntities.ClientClearGhosts)));
             base.m_Manager.CompleteAllJobs();
 

@@ -93,10 +93,11 @@ namespace PropHunt.Mixed.Components
             track.attitude = newAttitude;
             track.position = newPosition;
 
-            track.ChangeAttitude = track.Initialized ? math.mul(track.attitude, math.inverse(track.previousAttitude)) : quaternion.Euler(float3.zero);
-            track.Displacement = track.Initialized ? track.position - track.previousPosition : float3.zero;
             // Ensure initialized if not already
             track.updates += 1;
+
+            track.ChangeAttitude = track.Initialized ? math.mul(track.attitude, math.inverse(track.previousAttitude)) : quaternion.Euler(float3.zero);
+            track.Displacement = track.Initialized ? track.position - track.previousPosition : float3.zero;
         }
     }
 }

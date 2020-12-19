@@ -8,6 +8,7 @@ using Unity.Mathematics;
 using Moq;
 using PropHunt.InputManagement;
 using PropHunt.Tests.Utils;
+using Unity.Physics;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -45,6 +46,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Create a moving platform with one target
             Entity movingPlatform = base.m_Manager.CreateEntity();
             base.m_Manager.AddComponentData<Translation>(movingPlatform, new Translation { Value = float3.zero });
+            base.m_Manager.AddComponentData<PhysicsVelocity>(movingPlatform, new PhysicsVelocity { Linear = float3.zero });
             base.m_Manager.AddComponentData<MovingPlatform>(movingPlatform, new MovingPlatform
             {
                 speed = 1.0f,
@@ -61,12 +63,20 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
 
             // Assert that the new position data is now (1, 0, 0)
             Assert.IsTrue(TestUtils.WithinErrorRange(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value, new float3(1, 0, 0)));
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
 
             // Assert that the new position data is now (2, 0, 0)
             Assert.IsTrue(TestUtils.WithinErrorRange(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value, new float3(2, 0, 0)));
@@ -80,6 +90,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Create a moving platform with one target
             Entity movingPlatform = base.m_Manager.CreateEntity();
+            base.m_Manager.AddComponentData<PhysicsVelocity>(movingPlatform, new PhysicsVelocity { Linear = float3.zero });
             base.m_Manager.AddComponentData<Translation>(movingPlatform, new Translation { Value = new float3(1, 0, 0) });
             base.m_Manager.AddComponentData<MovingPlatform>(movingPlatform, new MovingPlatform
             {
@@ -103,16 +114,28 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Update the moving platform to move the moving platform by speed * delta time
             // Ensure target changes to 1
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).direction == -1);
 
             // Ensure target changes back to 0
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 0);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).direction == -1);
 
             // Ensure target changes back to 1
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).direction == 1);
         }
@@ -125,6 +148,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         {
             // Create a moving platform with one target
             Entity movingPlatform = base.m_Manager.CreateEntity();
+            base.m_Manager.AddComponentData<PhysicsVelocity>(movingPlatform, new PhysicsVelocity { Linear = float3.zero });
             base.m_Manager.AddComponentData<Translation>(movingPlatform, new Translation { Value = new float3(1, 0, 0) });
             base.m_Manager.AddComponentData<MovingPlatform>(movingPlatform, new MovingPlatform
             {
@@ -147,12 +171,20 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Update the moving platform to move the moving platform by speed * delta time
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 0);
 
             // Ensure target changes to 1
             // Will take two seconds to get back to original location
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(2.0f);
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 1);
@@ -162,6 +194,10 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Will involve slighlty more movement
             this.unityServiceMock.Setup(m => m.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
             this.movingPlatformSystem.Update();
+            base.m_Manager.SetComponentData<Translation>(movingPlatform, new Translation{
+                Value = base.m_Manager.GetComponentData<Translation>(movingPlatform).Value + 
+                    base.m_Manager.GetComponentData<PhysicsVelocity>(movingPlatform).Linear
+            });
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current);
             UnityEngine.Debug.Log(base.m_Manager.GetComponentData<Translation>(movingPlatform).Value);
             Assert.IsTrue(base.m_Manager.GetComponentData<MovingPlatform>(movingPlatform).current == 2);

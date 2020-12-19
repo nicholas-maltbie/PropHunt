@@ -8,7 +8,6 @@ using Unity.Mathematics;
 using Moq;
 using PropHunt.InputManagement;
 using Unity.NetCode;
-using PropHunt.Server.Systems;
 using PropHunt.Mixed.Utilities;
 using PropHunt.Mixed.Commands;
 using Assets.Tests.EditModeTests.Utils;
@@ -53,6 +52,9 @@ namespace PropHunt.EditMode.Tests.Mixed
             // Connect mocked variables ot system
             this.playerRotationSystem.predictionManager = this.predictionStateMock.Object;
             this.playerRotationSystem.unityService = this.unityServiceMock.Object;
+
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
 
             // Setup the necessary GhostPredictionSystemGroup
             this.ghostPredGroup = base.World.CreateSystem<GhostPredictionSystemGroup>();

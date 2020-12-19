@@ -13,6 +13,7 @@ using PropHunt.Mixed.Systems;
 using Moq;
 using PropHunt.InputManagement;
 using PropHunt.Constants;
+using Unity.NetCode;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -50,6 +51,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.m_Manager.AddComponent<KCCGravity>(player);
             base.m_Manager.AddComponent<KCCMovementSettings>(player);
             base.m_Manager.AddComponent<KCCGrounded>(player);
+            base.m_Manager.AddComponent<PredictedGhostComponent>(player);
 
             return player;
         }
@@ -73,10 +75,15 @@ namespace PropHunt.EditMode.Tests.Mixed
             // ECB can only be used in job, will make a KCC Movement system for this
             KCCMovementSystem movementSystem = base.World.CreateSystem<KCCMovementSystem>();
             Mock<IUnityService> unityServiceMock = new Mock<IUnityService>();
+            Mock<IPredictionState> predictionStateMock = new Mock<IPredictionState>();
             unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
             movementSystem.unityService = unityServiceMock.Object;
+            movementSystem.predictionManager = predictionStateMock.Object;
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = start });
             base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = movement });
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
             movementSystem.Update();
 
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
@@ -110,10 +117,15 @@ namespace PropHunt.EditMode.Tests.Mixed
             // ECB can only be used in job, will make a KCC Movement system for this
             KCCMovementSystem movementSystem = base.World.CreateSystem<KCCMovementSystem>();
             Mock<IUnityService> unityServiceMock = new Mock<IUnityService>();
+            Mock<IPredictionState> predictionStateMock = new Mock<IPredictionState>();
             unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1.0f);
+            predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
             movementSystem.unityService = unityServiceMock.Object;
+            movementSystem.predictionManager = predictionStateMock.Object;
             base.m_Manager.SetComponentData<Translation>(player, new Translation { Value = start });
             base.m_Manager.SetComponentData<KCCVelocity>(player, new KCCVelocity { playerVelocity = movement });
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
             movementSystem.Update();
 
             float3 endingPosition = base.m_Manager.GetComponentData<Translation>(player).Value;
