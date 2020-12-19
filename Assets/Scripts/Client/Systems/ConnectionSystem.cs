@@ -38,12 +38,12 @@ namespace PropHunt.Client.Systems
             var buffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
 
             // Also delete the existing ghost objects
-            // Entities.ForEach((
-            //     Entity ent,
-            //     ref GhostComponent ghost) =>
-            // {
-            //     buffer.DestroyEntity(ent);
-            // });
+            Entities.ForEach((
+                Entity ent,
+                ref GhostComponent ghost) =>
+            {
+                buffer.DestroyEntity(ent);
+            });
             buffer.DestroyEntity(GetSingletonEntity<ClientClearGhosts>());
         }
     }
@@ -70,7 +70,6 @@ namespace PropHunt.Client.Systems
                 {
                     PostUpdateCommands.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
                     Entity clearEntity = PostUpdateCommands.CreateEntity();
-                    PostUpdateCommands.AddComponent<ClearClientGhostEntities.ClientClearGhosts>(clearEntity);
                 });
                 connectionSingleton.requestDisconnect = false;
                 connectionSingleton.attemptingDisconnect = true;

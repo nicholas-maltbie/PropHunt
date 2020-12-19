@@ -34,5 +34,4 @@ namespace PropHunt.Client.Systems
             });
         }
     }
-
 }
