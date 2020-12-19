@@ -19,6 +19,12 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCUpdateGroup))]
     public class KinematicCharacterControllerInput : PredictedStateSystem
     {
+
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<NetworkStreamInGame>();
+        }
+
         protected override void OnUpdate()
         {
             var tick = this.predictionManager.GetPredictingTick(base.World);

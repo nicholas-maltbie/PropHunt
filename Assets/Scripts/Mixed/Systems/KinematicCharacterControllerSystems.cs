@@ -209,6 +209,7 @@ namespace PropHunt.Mixed.Systems
 
         protected override void OnCreate()
         {
+            base.OnCreate();
             this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 

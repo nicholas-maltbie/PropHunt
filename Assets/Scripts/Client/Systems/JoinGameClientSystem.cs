@@ -11,6 +11,7 @@ namespace PropHunt.Client.Systems
     /// When client has a connection with network id, go in game and tell server to also go in game
     /// </summary>
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
+    [UpdateAfter(typeof(GhostSendSystem))]
     public class JoinGameClientSystem : ComponentSystem
     {
 
@@ -18,10 +19,10 @@ namespace PropHunt.Client.Systems
         {
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>
             {
-                PostUpdateCommands.AddComponent<NetworkStreamInGame>(ent);
-                var req = PostUpdateCommands.CreateEntity();
-                PostUpdateCommands.AddComponent<JoinGameRequest>(req);
-                PostUpdateCommands.AddComponent(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
+                EntityManager.AddComponent<NetworkStreamInGame>(ent);
+                var req = EntityManager.CreateEntity();
+                EntityManager.AddComponent<JoinGameRequest>(req);
+                EntityManager.AddComponentData(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
             });
 
             // When the player Joins the session

@@ -23,6 +23,7 @@ namespace PropHunt.Client.Systems
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<NetworkIdComponent>();
+            RequireSingletonForUpdate<NetworkStreamInGame>();
 
             if (this.unityService == null)
             {

@@ -1,14 +1,10 @@
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Systems;
-using PropHunt.Mixed.Utilities;
 using PropHunt.Mixed.Utility;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -23,6 +19,12 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     public class PlayerRotationSystem : PredictedStateSystem
     {
+
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<NetworkStreamInGame>();
+        }
+
         protected override void OnUpdate()
         {
             var group = World.GetExistingSystem<GhostPredictionSystemGroup>();

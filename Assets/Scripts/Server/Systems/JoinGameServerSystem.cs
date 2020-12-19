@@ -13,8 +13,8 @@ namespace PropHunt.Server.Systems
     /// <summary>
     /// When server receives go in game request, go in game and delete request
     /// </summary>
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    [UpdateAfter(typeof(GhostSendSystem))]
     public class JoinGameServerSystem : ComponentSystem
     {
         /// <summary>
@@ -47,7 +47,7 @@ namespace PropHunt.Server.Systems
             {
                 int connectionId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value;
 
-                PostUpdateCommands.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
+                EntityManager.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
                 UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", connectionId));
 
                 // Setup the character avatar

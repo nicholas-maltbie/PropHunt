@@ -46510,6 +46510,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: WideSpinningCylinder
       objectReference: {fileID: 0}
+    - target: {fileID: 1702435718741386825, guid: d6e0448f05ba0a648b0e470dc9d08050,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7483973418595362324, guid: d6e0448f05ba0a648b0e470dc9d08050,
         type: 3}
       propertyPath: m_LocalPosition.x
