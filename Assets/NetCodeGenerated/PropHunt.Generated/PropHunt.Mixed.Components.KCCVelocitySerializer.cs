@@ -15,7 +15,7 @@ using PropHunt.Mixed.Components;
 namespace PropHunt.Generated
 {
     [BurstCompile]
-    public struct PropHuntMixedComponentsMaterialIdComponentDataGhostComponentSerializer
+    public struct PropHuntMixedComponentsKCCVelocityGhostComponentSerializer
     {
         static GhostComponentSerializer.State GetState()
         {
@@ -24,13 +24,13 @@ namespace PropHunt.Generated
             {
                 s_State = new GhostComponentSerializer.State
                 {
-                    GhostFieldsHash = 14767913548786401661,
+                    GhostFieldsHash = 6104341673800988698,
                     ExcludeFromComponentCollectionHash = 0,
-                    ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MaterialIdComponentData>(),
-                    ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MaterialIdComponentData>(),
+                    ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.KCCVelocity>(),
+                    ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.KCCVelocity>(),
                     SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
                     ChangeMaskBits = ChangeMaskBits,
-                    SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
+                    SendMask = GhostComponentSerializer.SendMask.Predicted,
                     SendForChildEntities = 1,
                     CopyToSnapshot =
                         new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
@@ -60,9 +60,14 @@ namespace PropHunt.Generated
         public static GhostComponentSerializer.State State => GetState();
         public struct Snapshot
         {
-            public int materialId;
+            public int playerVelocity_x;
+            public int playerVelocity_y;
+            public int playerVelocity_z;
+            public int worldVelocity_x;
+            public int worldVelocity_y;
+            public int worldVelocity_z;
         }
-        public const int ChangeMaskBits = 1;
+        public const int ChangeMaskBits = 2;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -70,9 +75,14 @@ namespace PropHunt.Generated
             for (int i = 0; i < count; ++i)
             {
                 ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData, snapshotOffset + snapshotStride*i);
-                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(componentData, componentStride*i);
+                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
-                snapshot.materialId = (int) component.materialId;
+                snapshot.playerVelocity_x = (int) math.round(component.playerVelocity.x * 100);
+                snapshot.playerVelocity_y = (int) math.round(component.playerVelocity.y * 100);
+                snapshot.playerVelocity_z = (int) math.round(component.playerVelocity.z * 100);
+                snapshot.worldVelocity_x = (int) math.round(component.worldVelocity.x * 100);
+                snapshot.worldVelocity_y = (int) math.round(component.worldVelocity.y * 100);
+                snapshot.worldVelocity_z = (int) math.round(component.worldVelocity.z * 100);
             }
         }
         [BurstCompile]
@@ -85,19 +95,31 @@ namespace PropHunt.Generated
                 ref var snapshotBefore = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotInterpolationData.SnapshotBefore, snapshotOffset);
                 ref var snapshotAfter = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotInterpolationData.SnapshotAfter, snapshotOffset);
                 float snapshotInterpolationFactor = snapshotInterpolationData.InterpolationFactor;
-                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(componentData, componentStride*i);
+                ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, componentStride*i);
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
-                component.materialId = (int) snapshotBefore.materialId;
+                component.playerVelocity = math.lerp(
+                    new float3(snapshotBefore.playerVelocity_x * 0.01f, snapshotBefore.playerVelocity_y * 0.01f, snapshotBefore.playerVelocity_z * 0.01f),
+                    new float3(snapshotAfter.playerVelocity_x * 0.01f, snapshotAfter.playerVelocity_y * 0.01f, snapshotAfter.playerVelocity_z * 0.01f),
+                    snapshotInterpolationFactor);
+                component.worldVelocity = math.lerp(
+                    new float3(snapshotBefore.worldVelocity_x * 0.01f, snapshotBefore.worldVelocity_y * 0.01f, snapshotBefore.worldVelocity_z * 0.01f),
+                    new float3(snapshotAfter.worldVelocity_x * 0.01f, snapshotAfter.worldVelocity_y * 0.01f, snapshotAfter.worldVelocity_z * 0.01f),
+                    snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.RestoreFromBackupDelegate))]
         private static void RestoreFromBackup(IntPtr componentData, IntPtr backupData)
         {
-            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(componentData, 0);
-            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(backupData, 0);
-            component.materialId = backup.materialId;
+            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, 0);
+            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(backupData, 0);
+            component.playerVelocity.x = backup.playerVelocity.x;
+            component.playerVelocity.y = backup.playerVelocity.y;
+            component.playerVelocity.z = backup.playerVelocity.z;
+            component.worldVelocity.x = backup.worldVelocity.x;
+            component.worldVelocity.y = backup.worldVelocity.y;
+            component.worldVelocity.z = backup.worldVelocity.z;
         }
 
         [BurstCompile]
@@ -107,7 +129,12 @@ namespace PropHunt.Generated
             ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData);
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
-            snapshot.materialId = predictor.PredictInt(snapshot.materialId, baseline1.materialId, baseline2.materialId);
+            snapshot.playerVelocity_x = predictor.PredictInt(snapshot.playerVelocity_x, baseline1.playerVelocity_x, baseline2.playerVelocity_x);
+            snapshot.playerVelocity_y = predictor.PredictInt(snapshot.playerVelocity_y, baseline1.playerVelocity_y, baseline2.playerVelocity_y);
+            snapshot.playerVelocity_z = predictor.PredictInt(snapshot.playerVelocity_z, baseline1.playerVelocity_z, baseline2.playerVelocity_z);
+            snapshot.worldVelocity_x = predictor.PredictInt(snapshot.worldVelocity_x, baseline1.worldVelocity_x, baseline2.worldVelocity_x);
+            snapshot.worldVelocity_y = predictor.PredictInt(snapshot.worldVelocity_y, baseline1.worldVelocity_y, baseline2.worldVelocity_y);
+            snapshot.worldVelocity_z = predictor.PredictInt(snapshot.worldVelocity_z, baseline1.worldVelocity_z, baseline2.worldVelocity_z);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -116,8 +143,13 @@ namespace PropHunt.Generated
             ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData);
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask;
-            changeMask = (snapshot.materialId != baseline.materialId) ? 1u : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 1);
+            changeMask = (snapshot.playerVelocity_x != baseline.playerVelocity_x) ? 1u : 0;
+            changeMask |= (snapshot.playerVelocity_y != baseline.playerVelocity_y) ? (1u<<0) : 0;
+            changeMask |= (snapshot.playerVelocity_z != baseline.playerVelocity_z) ? (1u<<0) : 0;
+            changeMask |= (snapshot.worldVelocity_x != baseline.worldVelocity_x) ? (1u<<1) : 0;
+            changeMask |= (snapshot.worldVelocity_y != baseline.worldVelocity_y) ? (1u<<1) : 0;
+            changeMask |= (snapshot.worldVelocity_z != baseline.worldVelocity_z) ? (1u<<1) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 2);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -127,7 +159,17 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                writer.WritePackedIntDelta(snapshot.materialId, baseline.materialId, compressionModel);
+                writer.WritePackedIntDelta(snapshot.playerVelocity_x, baseline.playerVelocity_x, compressionModel);
+            if ((changeMask & (1 << 0)) != 0)
+                writer.WritePackedIntDelta(snapshot.playerVelocity_y, baseline.playerVelocity_y, compressionModel);
+            if ((changeMask & (1 << 0)) != 0)
+                writer.WritePackedIntDelta(snapshot.playerVelocity_z, baseline.playerVelocity_z, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+                writer.WritePackedIntDelta(snapshot.worldVelocity_x, baseline.worldVelocity_x, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+                writer.WritePackedIntDelta(snapshot.worldVelocity_y, baseline.worldVelocity_y, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+                writer.WritePackedIntDelta(snapshot.worldVelocity_z, baseline.worldVelocity_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -137,19 +179,41 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
-                snapshot.materialId = reader.ReadPackedIntDelta(baseline.materialId, compressionModel);
+                snapshot.playerVelocity_x = reader.ReadPackedIntDelta(baseline.playerVelocity_x, compressionModel);
             else
-                snapshot.materialId = baseline.materialId;
+                snapshot.playerVelocity_x = baseline.playerVelocity_x;
+            if ((changeMask & (1 << 0)) != 0)
+                snapshot.playerVelocity_y = reader.ReadPackedIntDelta(baseline.playerVelocity_y, compressionModel);
+            else
+                snapshot.playerVelocity_y = baseline.playerVelocity_y;
+            if ((changeMask & (1 << 0)) != 0)
+                snapshot.playerVelocity_z = reader.ReadPackedIntDelta(baseline.playerVelocity_z, compressionModel);
+            else
+                snapshot.playerVelocity_z = baseline.playerVelocity_z;
+            if ((changeMask & (1 << 1)) != 0)
+                snapshot.worldVelocity_x = reader.ReadPackedIntDelta(baseline.worldVelocity_x, compressionModel);
+            else
+                snapshot.worldVelocity_x = baseline.worldVelocity_x;
+            if ((changeMask & (1 << 1)) != 0)
+                snapshot.worldVelocity_y = reader.ReadPackedIntDelta(baseline.worldVelocity_y, compressionModel);
+            else
+                snapshot.worldVelocity_y = baseline.worldVelocity_y;
+            if ((changeMask & (1 << 1)) != 0)
+                snapshot.worldVelocity_z = reader.ReadPackedIntDelta(baseline.worldVelocity_z, compressionModel);
+            else
+                snapshot.worldVelocity_z = baseline.worldVelocity_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.ReportPredictionErrorsDelegate))]
         private static void ReportPredictionErrors(IntPtr componentData, IntPtr backupData, ref UnsafeList<float> errors)
         {
-            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(componentData, 0);
-            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MaterialIdComponentData>(backupData, 0);
+            ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(componentData, 0);
+            ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.KCCVelocity>(backupData, 0);
             int errorIndex = 0;
-            errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.materialId - backup.materialId));
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.playerVelocity, backup.playerVelocity));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.worldVelocity, backup.worldVelocity));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -157,7 +221,11 @@ namespace PropHunt.Generated
             int nameCount = 0;
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
-            names.Append(new FixedString64("materialId"));
+            names.Append(new FixedString64("playerVelocity"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("worldVelocity"));
             ++nameCount;
             return nameCount;
         }

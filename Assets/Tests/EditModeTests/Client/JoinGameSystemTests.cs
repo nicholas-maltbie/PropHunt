@@ -39,6 +39,7 @@ namespace PropHunt.EditMode.Tests.Client
             this.joinGameClientSystem.Update();
 
             // Verify that there is a JoinGameRequest object
+            base.World.GetExistingSystem<BeginSimulationEntityCommandBufferSystem>().Update();
             int numRequests = base.m_Manager.CreateEntityQuery(typeof(JoinGameRequest)).CalculateEntityCount();
             Assert.IsTrue(base.m_Manager.HasComponent<NetworkStreamInGame>(newtorkId));
             Assert.IsTrue(numRequests == 1);

@@ -8,7 +8,7 @@ namespace PropHunt.Mixed.Components
     /// Player movement settings for when a Kinematic Character Controller is
     /// being controlled.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCMovementSettings : IComponentData
     {
         /// <summary>
@@ -105,7 +105,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings for if a player is currently jumping
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCJumping : IComponentData
     {
         /// <summary>
@@ -144,7 +144,7 @@ namespace PropHunt.Mixed.Components
     /// <summary>
     /// Settings and data for if a character is currently grounded
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCGrounded : IComponentData
     {
         /// <summary>
@@ -258,24 +258,26 @@ namespace PropHunt.Mixed.Components
     /// Structure holding a Kinematic Character Controller's current velocity broken in to parts,
     /// velocity due to player input and velocity due to the world around them.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCVelocity : IComponentData
     {
         /// <summary>
         /// Velocity due to player input
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 playerVelocity;
 
         /// <summary>
         /// Velocity due to world forces
         /// </summary>
+        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 worldVelocity;
     }
 
     /// <summary>
     /// Movement of floor for the course of a frame and moving a character
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct FloorMovement : IComponentData
     {
         /// <summary>
@@ -293,7 +295,7 @@ namespace PropHunt.Mixed.Components
     /// Structure for controlling the direction and force of gravity to a kinematic
     /// character controller.
     /// </summary>
-    [GhostComponent(PrefabType = GhostPrefabType.PredictedClient | GhostPrefabType.Server)]
+    [GhostComponent(PrefabType = GhostPrefabType.AllPredicted, OwnerPredictedSendType = GhostSendType.Predicted)]
     public struct KCCGravity : IComponentData
     {
 

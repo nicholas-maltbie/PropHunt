@@ -1,8 +1,9 @@
 using PropHunt.Constants;
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utility;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -14,108 +15,115 @@ using Unity.Transforms;
 namespace PropHunt.Mixed.Systems
 {
     /// <summary>
-    /// Update groups for things to compute before physics step computation
-    /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
-    public class KCCPreUpdateGroup : ComponentSystemGroup { }
-
-    /// <summary>
     /// System group for all Kinematic Character Controller Actions
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    [UpdateAfter(typeof(KinematicCharacterControllerInput))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
 
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCPreUpdateGroup))]
-    public class KCCGroundedSystem : SystemBase
+    [UpdateInGroup(typeof(KCCUpdateGroup), OrderFirst = true)]
+    public class KCCGroundedSystem : PredictedStateSystem
     {
         /// <summary>
         /// Maximum degrees between ground and player 
         /// </summary>
         public static readonly float MaxAngleFallDegrees = 90;
 
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.ForEach((
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var ecbParallelWriter = ecb.AsParallelWriter();
+
+            Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
+                int entityInQueryIndex,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
                 in PhysicsCollider collider,
+                in Rotation rotation,
                 in Translation translation,
-                in Rotation rotation) =>
+                in PredictedGhostComponent predicted) =>
+            {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
                 {
-                    SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                        new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
-
-                    float3 from = translation.Value;
-                    float3 to = from + gravity.Down * grounded.groundCheckDistance;
-
-                    var input = new ColliderCastInput()
-                    {
-                        End = to,
-                        Start = from,
-                        Collider = collider.ColliderPtr,
-                        Orientation = rotation.Value
-                    };
-
-                    bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
-                    Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
-
-                    grounded.previousAngle = grounded.angle;
-                    grounded.previousOnGround = grounded.onGround;
-                    grounded.previousDistanceToGround = grounded.distanceToGround;
-                    grounded.previousHit = grounded.hitEntity;
-
-                    if (collisionOcurred)
-                    {
-                        float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
-                        float angleDegrees = math.degrees(angleBetween);
-                        grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
-                        grounded.onGround = true;
-                        grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
-                        grounded.groundedRBIndex = hit.RigidBodyIndex;
-                        grounded.groundedPoint = hit.Position;
-                        grounded.hitEntity = hit.Entity;
-                        grounded.surfaceNormal = hit.SurfaceNormal;
-                    }
-                    else
-                    {
-                        grounded.onGround = false;
-                        grounded.distanceToGround = -1;
-                        grounded.angle = -1;
-                        grounded.groundedRBIndex = -1;
-                        grounded.groundedPoint = float3.zero;
-                        grounded.hitEntity = Entity.Null;
-                        grounded.surfaceNormal = float3.zero;
-                    }
-
-                    // Falling is generated from other values, can be falling
-                    //  if hitting a steep slope on the ground.
-                    if (grounded.Falling)
-                    {
-                        grounded.elapsedFallTime += deltaTime;
-                    }
-                    else
-                    {
-                        grounded.elapsedFallTime = 0;
-                    }
+                    return;
                 }
-            ).ScheduleParallel();
+
+                SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
+
+                float3 from = translation.Value;
+                float3 to = from + gravity.Down * grounded.groundCheckDistance;
+
+                var input = new ColliderCastInput()
+                {
+                    End = to,
+                    Start = from,
+                    Collider = collider.ColliderPtr,
+                    Orientation = rotation.Value
+                };
+
+                bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
+                Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
+
+                grounded.previousAngle = grounded.angle;
+                grounded.previousOnGround = grounded.onGround;
+                grounded.previousDistanceToGround = grounded.distanceToGround;
+                grounded.previousHit = grounded.hitEntity;
+
+                if (collisionOcurred)
+                {
+                    float angleBetween = math.abs(math.acos(math.dot(math.normalizesafe(hit.SurfaceNormal), gravity.Up)));
+                    float angleDegrees = math.degrees(angleBetween);
+                    grounded.angle = math.max(0, math.min(angleDegrees, KCCGroundedSystem.MaxAngleFallDegrees));
+                    grounded.onGround = true;
+                    grounded.distanceToGround = hit.Fraction * grounded.groundCheckDistance;
+                    grounded.groundedRBIndex = hit.RigidBodyIndex;
+                    grounded.groundedPoint = hit.Position;
+                    grounded.hitEntity = hit.Entity;
+                    grounded.surfaceNormal = hit.SurfaceNormal;
+                }
+                else
+                {
+                    grounded.onGround = false;
+                    grounded.distanceToGround = -1;
+                    grounded.angle = -1;
+                    grounded.groundedRBIndex = -1;
+                    grounded.groundedPoint = float3.zero;
+                    grounded.hitEntity = Entity.Null;
+                    grounded.surfaceNormal = float3.zero;
+                }
+
+                // Falling is generated from other values, can be falling
+                //  if hitting a steep slope on the ground.
+                if (grounded.Falling)
+                {
+                    grounded.elapsedFallTime += deltaTime;
+                }
+                else
+                {
+                    grounded.elapsedFallTime = 0;
+                }
+
+                // If the floor has a MovementTracking component, set the parent of
+                //  the player entity to be the floor so the player can move along
+                //  with the floor
+
+            }).ScheduleParallel();
 
             this.Dependency.Complete();
+
+            // Playback events
+            ecb.Playback(base.EntityManager);
+            ecb.Dispose();
         }
     }
 
@@ -126,39 +134,43 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateAfter(typeof(KCCMovementSystem))]
     [BurstCompile]
-    public class KCCSnapDown : SystemBase
+    public class KCCSnapDown : PredictedStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
-            PhysicsWorld physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
 
             float deltaTime = unityService.GetDeltaTime(base.Time);
-            Entities.ForEach((
+            var kccGravityGetter = this.GetComponentDataFromEntity<KCCGravity>(true);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
+
+            Entities.WithReadOnly(collisionWorld)
+                .WithReadOnly(kccGravityGetter)
+                .ForEach((
                 Entity entity,
                 ref Translation translation,
                 in Rotation rotation,
-                in KCCGravity gravity,
                 in KCCGrounded grounded,
                 in KCCVelocity velocity,
                 in KCCMovementSettings settings,
-                in PhysicsCollider collider) =>
+                in PhysicsCollider collider,
+                in PredictedGhostComponent predicted) =>
             {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
+                {
+                    return;
+                }
                 // Don't snap down if they are moving up (either in world or player velocity)
-                if (KCCUtils.HasMovementAlongAxis(velocity, gravity.Up) || !grounded.StandingOnGround)
+                if (KCCUtils.HasMovementAlongAxis(velocity, kccGravityGetter[entity].Up) || !grounded.StandingOnGround)
                 {
                     return;
                 }
 
                 SelfFilteringClosestHitCollector<ColliderCastHit> hitCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
                 float3 from = translation.Value;
-                float3 to = from + gravity.Down * settings.snapDownOffset;
+                float3 to = from + kccGravityGetter[entity].Down * settings.snapDownOffset;
 
                 var input = new ColliderCastInput()
                 {
@@ -168,7 +180,7 @@ namespace PropHunt.Mixed.Systems
                     Orientation = rotation.Value
                 };
 
-                bool collisionOcurred = physicsWorld.CollisionWorld.CastCollider(input, ref hitCollector);
+                bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
                 Unity.Physics.ColliderCastHit hit = hitCollector.ClosestHit;
                 float distanceToGround = hit.Fraction * settings.snapDownOffset;
 
@@ -176,7 +188,7 @@ namespace PropHunt.Mixed.Systems
                 {
                     float cappedSpeed = math.min(distanceToGround, settings.snapDownSpeed * deltaTime);
                     // Shift character down to that location (plus some wiggle epsilon room)
-                    translation.Value = translation.Value + gravity.Down * (cappedSpeed - KCCConstants.Epsilon * 2);
+                    translation.Value = translation.Value + kccGravityGetter[entity].Down * (cappedSpeed - KCCConstants.Epsilon * 2);
                 }
             }).ScheduleParallel();
 
@@ -189,42 +201,41 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [BurstCompile]
-    public class KCCMovementSystem : SystemBase
+    public class KCCMovementSystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
-        /// <summary>
-        /// Command buffer system for pushing objects
-        /// </summary>
-        private EndSimulationEntityCommandBufferSystem commandBufferSystem;
-
-        protected override void OnCreate()
-        {
-            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-        }
-
         protected override void OnUpdate()
         {
-            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
-            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
+            var kccGravityGetter = this.GetComponentDataFromEntity<KCCGravity>(true);
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.WithReadOnly(physicsMassGetter).WithReadOnly(kccGroundedGetter).ForEach((
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var ecbParallelWriter = ecb.AsParallelWriter();
+
+            Entities.WithReadOnly(collisionWorld)
+                .WithReadOnly(kccGravityGetter)
+                .WithReadOnly(kccGroundedGetter)
+                .WithReadOnly(physicsMassGetter)
+                .ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
                 in KCCVelocity velocity,
-                in KCCGravity gravity,
                 in PhysicsCollider physicsCollider,
                 in Rotation rotation,
-                in KCCMovementSettings movementSettings) =>
+                in KCCMovementSettings movementSettings,
+                in PredictedGhostComponent prediction) =>
             {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                {
+                    return;
+                }
+
                 KCCGrounded grounded = kccGroundedGetter[entity];
+                KCCGravity gravity = kccGravityGetter[entity];
                 float verticalSnapMove = !grounded.Falling || !grounded.PreviousFalling ? movementSettings.stepOffset : 0;
 
                 float3 projectedMovement = velocity.playerVelocity * deltaTime;
@@ -238,9 +249,9 @@ namespace PropHunt.Mixed.Systems
 
                 // Adjust character translation due to player movement
                 translation.Value = KCCUtils.ProjectValidMovement(
-                    commandBuffer,
+                    ecbParallelWriter,
                     entityInQueryIndex,
-                    physicsWorld.CollisionWorld,
+                    collisionWorld,
                     translation.Value,
                     projectedMovement,
                     physicsCollider,
@@ -256,9 +267,9 @@ namespace PropHunt.Mixed.Systems
                 );
                 // Adjust character translation due to gravity/world forces
                 translation.Value = KCCUtils.ProjectValidMovement(
-                    commandBuffer,
+                    ecbParallelWriter,
                     entityInQueryIndex,
-                    physicsWorld.CollisionWorld,
+                    collisionWorld,
                     translation.Value,
                     velocity.worldVelocity * deltaTime,
                     physicsCollider,
@@ -272,11 +283,13 @@ namespace PropHunt.Mixed.Systems
                     pushDecay: movementSettings.fallPushDecay,
                     anglePower: movementSettings.fallAnglePower
                 );
-            }
-            ).ScheduleParallel();
+            }).ScheduleParallel();
 
             this.Dependency.Complete();
-            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
+
+            // Playback events
+            ecb.Playback(base.EntityManager);
+            ecb.Dispose();
         }
     }
 
@@ -289,36 +302,36 @@ namespace PropHunt.Mixed.Systems
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
     [BurstCompile]
-    public class KCCJumpSystem : SystemBase
+    public class KCCJumpSystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 ref KCCJumping jumping,
                 in KCCGrounded grounded,
-                in KCCGravity gravity) =>
+                in KCCGravity gravity,
+                in PredictedGhostComponent predicted) =>
+            {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
                 {
-                    // If the KCC is attempting to jump and is grounded, jump
-                    if (jumping.attemptingJump && KCCUtils.CanJump(jumping, grounded))
-                    {
-                        velocity.worldVelocity += gravity.Up * jumping.jumpForce;
-                        jumping.timeElapsedSinceJump = 0.0f;
-                    }
-                    // Track jumping cooldown if not jumping
-                    else if (jumping.timeElapsedSinceJump < jumping.jumpCooldown)
-                    {
-                        jumping.timeElapsedSinceJump += deltaTime;
-                    }
-                    // Otherwise do nothing
+                    return;
                 }
-            ).ScheduleParallel();
+                // If the KCC is attempting to jump and is grounded, jump
+                if (jumping.attemptingJump && KCCUtils.CanJump(jumping, grounded))
+                {
+                    velocity.worldVelocity += gravity.Up * jumping.jumpForce;
+                    jumping.timeElapsedSinceJump = 0.0f;
+                }
+                // Track jumping cooldown if not jumping
+                else if (jumping.timeElapsedSinceJump < jumping.jumpCooldown)
+                {
+                    jumping.timeElapsedSinceJump += deltaTime;
+                }
+                // Otherwise do nothing
+            }).ScheduleParallel();
         }
     }
 
@@ -326,35 +339,35 @@ namespace PropHunt.Mixed.Systems
     /// Pushes kinematic character controllers out of objects they are stuck in
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCMoveWithGroundSystem))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [BurstCompile]
-    public class KCCPushOverlappingSystem : SystemBase
+    public class KCCPushOverlappingSystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Unity service for referencing delta time for this system
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected unsafe override void OnUpdate()
         {
-            var physicsWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld;
+            var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.ForEach((
+            Entities.WithReadOnly(collisionWorld).ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref Translation translation,
                 in PhysicsCollider collider,
                 in Rotation rotation,
                 in KCCGravity gravity,
-                in KCCMovementSettings movementSettings
-            ) =>
+                in KCCMovementSettings movementSettings,
+                in PredictedGhostComponent predicted) =>
             {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
+                {
+                    return;
+                }
+
                 // Project the character collider down and see what they collide with
                 //  Only filter for intersections
                 SelfFilteringClosestHitCollector<ColliderCastHit> overlapCollector =
-                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, physicsWorld.CollisionWorld);
+                    new SelfFilteringClosestHitCollector<ColliderCastHit>(entity.Index, 1.0f, collisionWorld);
 
                 float3 from = translation.Value;
                 float3 to = from + gravity.Down * KCCConstants.Epsilon;
@@ -367,7 +380,7 @@ namespace PropHunt.Mixed.Systems
                     Orientation = rotation.Value
                 };
 
-                bool overlapOcurred = physicsWorld.CollisionWorld.CastCollider(overlapInput, ref overlapCollector);
+                bool overlapOcurred = collisionWorld.CastCollider(overlapInput, ref overlapCollector);
                 Unity.Physics.ColliderCastHit overlapHit = overlapCollector.ClosestHit;
 
                 // Skip if no overlap ocurred
@@ -387,7 +400,7 @@ namespace PropHunt.Mixed.Systems
 
                 // Hit collector to only collide with our object and the object we overlap with
                 var hitCollector = new FilteringClosestHitCollector<Unity.Physics.RaycastHit>(
-                    selfIndex, hitObject, 1.0f, physicsWorld.CollisionWorld);
+                    selfIndex, hitObject, 1.0f, collisionWorld);
 
                 // Draw a ray from the center of the character to the hit object
                 var input = new RaycastInput()
@@ -398,7 +411,7 @@ namespace PropHunt.Mixed.Systems
                 };
 
                 // Do the raycast computation
-                bool collisionOcurred = physicsWorld.CollisionWorld.CastRay(input, ref hitCollector);
+                bool collisionOcurred = collisionWorld.CastRay(input, ref hitCollector);
                 // UnityEngine.Debug.DrawLine(sourcePoint, hitPoint, UnityEngine.Color.green);
 
                 // Push our character collider out of the object we are overlapping with
@@ -422,103 +435,47 @@ namespace PropHunt.Mixed.Systems
     }
 
     /// <summary>
-    /// System to move character with ground
-    /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateBefore(typeof(KCCGravitySystem))]
-    [BurstCompile]
-    public class KCCMoveWithGroundSystem : SystemBase
-    {
-        public IUnityService unityService = new UnityService();
-
-        protected override void OnUpdate()
-        {
-            float deltaTime = this.unityService.GetDeltaTime(base.Time);
-
-            // Only applies to grounded KCC characters with a KCC velocity.
-            Entities.ForEach((
-                ref KCCVelocity velocity,
-                ref Translation translation,
-                ref FloorMovement floor,
-                in KCCGravity gravity,
-                in KCCGrounded grounded) =>
-                {
-                    float3 tempVelocity = floor.floorVelocity;
-                    floor.frameDisplacement = float3.zero;
-                    // Bit jittery but this could probably be fixed by smoothing the movement a bit
-                    // to handle server lag and difference between positions
-                    if (!grounded.Falling && this.HasComponent<MovementTracking>(grounded.hitEntity))
-                    {
-                        MovementTracking track = this.GetComponent<MovementTracking>(grounded.hitEntity);
-                        floor.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, grounded.groundedPoint);
-
-                        translation.Value += floor.frameDisplacement;
-                        if (track.avoidTransferMomentum)
-                        {
-                            floor.floorVelocity = float3.zero;
-                        }
-                        else
-                        {
-                            floor.floorVelocity = floor.frameDisplacement / deltaTime;
-                        }
-                    }
-                    else
-                    {
-                        floor.floorVelocity = float3.zero;
-                    }
-
-                    bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
-                    if (!grounded.Falling && !movingUp)
-                    {
-                        velocity.worldVelocity = float3.zero;
-                    }
-                    else if (grounded.Falling && !grounded.PreviousFalling)
-                    {
-                        velocity.worldVelocity += tempVelocity;
-                    }
-                }
-            ).ScheduleParallel();
-        }
-    }
-
-    /// <summary>
     /// Applies gravity to kinematic character controller. Does
     /// this after checking if character is grounded
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [BurstCompile]
-    public class KCCGravitySystem : SystemBase
+    public class KCCGravitySystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Unity service for making the class testable
-        /// </summary>
-        public IUnityService unityService = new UnityService();
-
         protected override void OnUpdate()
         {
             float deltaTime = unityService.GetDeltaTime(base.Time);
-
-            bool isServer = World.GetExistingSystem<ServerSimulationSystemGroup>() != null;
+            var tick = this.predictionManager.GetPredictingTick(base.World);
 
             Entities.ForEach((
                 ref KCCVelocity velocity,
                 in KCCGrounded grounded,
-                in KCCGravity gravity) =>
+                in KCCGravity gravity,
+                in PredictedGhostComponent predicted) =>
+            {
+                if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
                 {
-                    // If the player is not grounded, push down by
-                    // gravity's acceleration
-                    // UnityEngine.Debug.Log($"isServer {isServer}, falling {grounded.Falling}, distance {grounded.distanceToGround}, angle {grounded.angle}");
-                    if (grounded.Falling)
-                    {
-                        // have world velocity decrease due to air resistance (future feature)
-
-                        // fall due to gravity
-                        velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
-                    }
-                    // else: Have hit the ground, don't accelerate due to gravity
+                    return;
                 }
-            ).ScheduleParallel();
+
+                bool movingUp = KCCUtils.HasMovementAlongAxis(velocity, gravity.Up);
+
+                // If the player is not grounded, push down by
+                // gravity's acceleration
+                if (grounded.Falling)
+                {
+                    // have world velocity decrease due to air resistance (future feature)
+
+                    // fall due to gravity
+                    velocity.worldVelocity += gravity.gravityAcceleration * deltaTime;
+                }
+                // else: Have hit the ground, don't accelerate due to gravity
+                else if (!movingUp)
+                {
+                    velocity.worldVelocity = float3.zero;
+                }
+            }).ScheduleParallel();
         }
     }
 }

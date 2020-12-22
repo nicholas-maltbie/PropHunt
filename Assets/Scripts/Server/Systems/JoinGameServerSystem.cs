@@ -13,7 +13,6 @@ namespace PropHunt.Server.Systems
     /// <summary>
     /// When server receives go in game request, go in game and delete request
     /// </summary>
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
     [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
     public class JoinGameServerSystem : ComponentSystem
     {
@@ -43,11 +42,12 @@ namespace PropHunt.Server.Systems
 
         protected override void OnUpdate()
         {
+            var ecb = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
             Entities.WithNone<SendRpcCommandRequestComponent>().ForEach((Entity reqEnt, ref JoinGameRequest req, ref ReceiveRpcCommandRequestComponent reqSrc) =>
             {
                 int connectionId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value;
 
-                PostUpdateCommands.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
+                ecb.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
                 UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", connectionId));
 
                 // Setup the character avatar
@@ -55,18 +55,18 @@ namespace PropHunt.Server.Systems
                 DynamicBuffer<GhostPrefabBuffer> ghostPrefabs = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection);
                 int ghostId = GetPlayerGhostIndex(ghostPrefabs);
                 var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection)[ghostId].Value;
-                var player = PostUpdateCommands.Instantiate(prefab);
-                PostUpdateCommands.AddComponent<PlayerId>(player);
-                PostUpdateCommands.AddComponent<Translation>(player);
-                PostUpdateCommands.AddComponent<GhostOwnerComponent>(player);
-                PostUpdateCommands.SetComponent(player, new PlayerId { playerId = connectionId });
-                PostUpdateCommands.SetComponent(player, new Translation { Value = new float3(0, 5, 0) });
-                PostUpdateCommands.SetComponent(player, new GhostOwnerComponent { NetworkId = connectionId });
+                var player = ecb.Instantiate(prefab);
+                ecb.AddComponent<PlayerId>(player);
+                ecb.AddComponent<Translation>(player);
+                ecb.AddComponent<GhostOwnerComponent>(player);
+                ecb.SetComponent(player, new PlayerId { playerId = connectionId });
+                ecb.SetComponent(player, new Translation { Value = new float3(0, 5, 0) });
+                ecb.SetComponent(player, new GhostOwnerComponent { NetworkId = connectionId });
 
-                PostUpdateCommands.AddBuffer<PlayerInput>(player);
+                ecb.AddBuffer<PlayerInput>(player);
 
-                PostUpdateCommands.AddComponent<CommandTargetComponent>(reqSrc.SourceConnection);
-                PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
+                ecb.AddComponent<CommandTargetComponent>(reqSrc.SourceConnection);
+                ecb.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
 
                 PostUpdateCommands.DestroyEntity(reqEnt);
             });

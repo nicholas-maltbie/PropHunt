@@ -1,13 +1,10 @@
-using PropHunt.InputManagement;
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Systems;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utility;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics.Systems;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -19,20 +16,14 @@ namespace PropHunt.Mixed.Systems
     /// based on the character's current viewport.
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(EndFramePhysicsSystem))]
-    [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class PlayerRotationSystem : SystemBase
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+    public class PlayerRotationSystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Prediction manager for determining state update in a testable manner
-        /// </summary>
-        public IPredictionState predictionManager = new PredictionState();
 
-        /// <summary>
-        /// Unity service for managing static inputs in a testable manner
-        /// </summary>
-        public IUnityService unityService = new UnityService();
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<NetworkStreamInGame>();
+        }
 
         protected override void OnUpdate()
         {

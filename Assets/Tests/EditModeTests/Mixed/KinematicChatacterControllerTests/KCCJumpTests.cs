@@ -11,6 +11,7 @@ using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
 using PropHunt.Tests.Utils;
 using PropHunt.Mixed.Utilities;
+using Unity.NetCode;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {
@@ -25,7 +26,12 @@ namespace PropHunt.EditMode.Tests.Mixed
         /// <summary>
         /// System for jumping
         /// </summary>
-        private KCCJumpSystem jumpSystem;
+        private KCCJumpSystem kccJumpSystem;
+
+        /// <summary>
+        /// Mock of prediction state controller
+        /// </summary>
+        private Mock<IPredictionState> predictionStateMock;
 
         /// <summary>
         /// Mock of unity service for managing delta time in a testable manner
@@ -38,12 +44,19 @@ namespace PropHunt.EditMode.Tests.Mixed
             base.Setup();
 
             this.gravitySystem = base.World.CreateSystem<KCCGravitySystem>();
-            this.jumpSystem = base.World.CreateSystem<KCCJumpSystem>();
+            this.kccJumpSystem = base.World.CreateSystem<KCCJumpSystem>();
 
             // Setup mocks for system
             this.unityServiceMock = new Mock<IUnityService>();
-            this.gravitySystem.unityService = unityServiceMock.Object;
-            this.jumpSystem.unityService = unityServiceMock.Object;
+            this.predictionStateMock = new Mock<IPredictionState>();
+            this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<Unity.Entities.World>())).Returns(1u);
+
+            // Setup network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+
+            // Connect mocked variables to system
+            this.kccJumpSystem.unityService = this.unityServiceMock.Object;
+            this.kccJumpSystem.predictionManager = this.predictionStateMock.Object;
         }
 
         /// <summary>
@@ -62,6 +75,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             float timeElapsedSinceLastJump = 0f)
         {
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, radius, position, quaternion.Euler(float3.zero), false);
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { AppliedTick = 0u });
             if (isGrounded)
             {
                 // In order to simulate a Grounded player, we need to cover the following conditions:
@@ -101,6 +115,17 @@ namespace PropHunt.EditMode.Tests.Mixed
             return player;
         }
 
+        /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = CreateTestPlayer(new float3(0, 0, 0), 1f, false, true, jumpForce: 10f, jumpCoolDown: 1f);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.kccJumpSystem.Update();
+        }
+
         [Test]
         public void VerifyPlayerCantJumpIfNotGrounded()
         {
@@ -111,7 +136,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
@@ -136,7 +161,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(0.5f);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
@@ -161,7 +186,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
@@ -190,7 +215,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
@@ -220,7 +245,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);
@@ -251,7 +276,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             this.unityServiceMock.Setup(e => e.GetDeltaTime(It.IsAny<Unity.Core.TimeData>())).Returns(1);
 
             // Update the System.
-            this.jumpSystem.Update();
+            this.kccJumpSystem.Update();
 
             var playerJumpData = m_Manager.GetComponentData<KCCJumping>(player);
             var kccGravity = m_Manager.GetComponentData<KCCGravity>(player);

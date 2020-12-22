@@ -15,11 +15,11 @@ namespace PropHunt.Generated
     [BurstCompile]
     public struct PropHuntMixedCommandsJoinGameRequestSerializer : IComponentData, IRpcCommandSerializer<PropHunt.Mixed.Commands.JoinGameRequest>
     {
-        public void Serialize(ref DataStreamWriter writer, in PropHunt.Mixed.Commands.JoinGameRequest data)
+        public void Serialize(ref DataStreamWriter writer, in RpcSerializerState state, in PropHunt.Mixed.Commands.JoinGameRequest data)
         {
         }
 
-        public void Deserialize(ref DataStreamReader reader, ref PropHunt.Mixed.Commands.JoinGameRequest data)
+        public void Deserialize(ref DataStreamReader reader, in RpcDeserializerState state,  ref PropHunt.Mixed.Commands.JoinGameRequest data)
         {
         }
         [BurstCompile]

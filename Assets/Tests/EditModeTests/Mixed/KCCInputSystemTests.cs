@@ -55,6 +55,20 @@ namespace PropHunt.EditMode.Tests.Mixed
 
             // Setup the necessary GhostPredictionSystemGroup
             this.ghostPredGroup = base.World.CreateSystem<GhostPredictionSystemGroup>();
+
+            // Setup the network stream in game component
+            base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
+        }
+
+        /// <summary>
+        /// Test to ensure no action when should not predict
+        /// </summary>
+        [Test]
+        public void TestNoPredict()
+        {
+            Entity player = this.CreateTestPlayer(false);
+            base.m_Manager.SetComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = 1u });
+            this.kccInputSystem.Update();
         }
 
         /// <summary>
@@ -84,6 +98,10 @@ namespace PropHunt.EditMode.Tests.Mixed
                     sprintMultiplier = 2.0f,
                     moveSpeed = 1.0f
                 }
+            );
+            base.m_Manager.AddComponentData<PredictedGhostComponent>(
+                player,
+                new PredictedGhostComponent { AppliedTick = 0u }
             );
 
             return player;

@@ -52,6 +52,7 @@ namespace PropHunt.EditMode.Tests.Client
             MenuManagerSystem.Controller = this.inputStateControllerMock.Object;
 
             Entity networkId = base.m_Manager.CreateEntity(typeof(NetworkIdComponent));
+            Entity networkStreamInGame = base.m_Manager.CreateEntity(typeof(NetworkStreamInGame));
             base.m_Manager.SetComponentData<NetworkIdComponent>(
                 networkId,
                 new NetworkIdComponent

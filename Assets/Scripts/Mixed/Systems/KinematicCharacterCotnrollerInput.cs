@@ -6,6 +6,7 @@ using PropHunt.InputManagement;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using PropHunt.Mixed.Utility;
 
 namespace PropHunt.Mixed.Systems
 {
@@ -14,18 +15,15 @@ namespace PropHunt.Mixed.Systems
     /// Parse player input and set kinematic character controller to follow movement
     /// commands based on user input.
     /// </summary>
+    [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateBefore(typeof(KCCUpdateGroup))]
-    public class KinematicCharacterControllerInput : SystemBase
+    public class KinematicCharacterControllerInput : PredictedStateSystem
     {
-        /// <summary>
-        /// Prediction manager for determining state update in a testable manner
-        /// </summary>
-        public IPredictionState predictionManager = new PredictionState();
 
-        /// <summary>
-        /// Unity service for managing static inputs in a testable manner
-        /// </summary>
-        public IUnityService unityService = new UnityService();
+        protected override void OnCreate()
+        {
+            RequireSingletonForUpdate<NetworkStreamInGame>();
+        }
 
         protected override void OnUpdate()
         {

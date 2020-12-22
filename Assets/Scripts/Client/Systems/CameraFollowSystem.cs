@@ -19,7 +19,7 @@ namespace PropHunt.Client.Systems
         protected override void OnCreate()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            RequireSingletonForUpdate<NetworkIdComponent>();
+            RequireSingletonForUpdate<NetworkStreamInGame>();
         }
 
         protected override void OnUpdate()

@@ -17,44 +17,59 @@ namespace PropHunt.Generated
     [BurstCompile]
     public struct PropHuntMixedComponentsMovementTrackingGhostComponentSerializer
     {
-        static PropHuntMixedComponentsMovementTrackingGhostComponentSerializer()
+        static GhostComponentSerializer.State GetState()
         {
-            State = new GhostComponentSerializer.State
+            // This needs to be lazy initialized because otherwise there is a depenency on the static initialization order which breaks il2cpp builds due to TYpeManager not being initialized yet
+            if (!s_StateInitialized)
             {
-                GhostFieldsHash = 14767913548786401661,
-                ExcludeFromComponentCollectionHash = 0,
-                ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MovementTracking>(),
-                ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MovementTracking>(),
-                SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
-                ChangeMaskBits = ChangeMaskBits,
-                SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
-                SendForChildEntities = 1,
-                CopyToSnapshot =
-                    new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
-                CopyFromSnapshot =
-                    new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyFromSnapshot),
-                RestoreFromBackup =
-                    new PortableFunctionPointer<GhostComponentSerializer.RestoreFromBackupDelegate>(RestoreFromBackup),
-                PredictDelta = new PortableFunctionPointer<GhostComponentSerializer.PredictDeltaDelegate>(PredictDelta),
-                CalculateChangeMask =
-                    new PortableFunctionPointer<GhostComponentSerializer.CalculateChangeMaskDelegate>(
-                        CalculateChangeMask),
-                Serialize = new PortableFunctionPointer<GhostComponentSerializer.SerializeDelegate>(Serialize),
-                Deserialize = new PortableFunctionPointer<GhostComponentSerializer.DeserializeDelegate>(Deserialize),
+                s_State = new GhostComponentSerializer.State
+                {
+                    GhostFieldsHash = 2076368895607417193,
+                    ExcludeFromComponentCollectionHash = 0,
+                    ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.MovementTracking>(),
+                    ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.MovementTracking>(),
+                    SnapshotSize = UnsafeUtility.SizeOf<Snapshot>(),
+                    ChangeMaskBits = ChangeMaskBits,
+                    SendMask = GhostComponentSerializer.SendMask.Interpolated | GhostComponentSerializer.SendMask.Predicted,
+                    SendForChildEntities = 1,
+                    CopyToSnapshot =
+                        new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyToSnapshot),
+                    CopyFromSnapshot =
+                        new PortableFunctionPointer<GhostComponentSerializer.CopyToFromSnapshotDelegate>(CopyFromSnapshot),
+                    RestoreFromBackup =
+                        new PortableFunctionPointer<GhostComponentSerializer.RestoreFromBackupDelegate>(RestoreFromBackup),
+                    PredictDelta = new PortableFunctionPointer<GhostComponentSerializer.PredictDeltaDelegate>(PredictDelta),
+                    CalculateChangeMask =
+                        new PortableFunctionPointer<GhostComponentSerializer.CalculateChangeMaskDelegate>(
+                            CalculateChangeMask),
+                    Serialize = new PortableFunctionPointer<GhostComponentSerializer.SerializeDelegate>(Serialize),
+                    Deserialize = new PortableFunctionPointer<GhostComponentSerializer.DeserializeDelegate>(Deserialize),
+                    #if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    ReportPredictionErrors = new PortableFunctionPointer<GhostComponentSerializer.ReportPredictionErrorsDelegate>(ReportPredictionErrors),
+                    #endif
+                };
                 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                ReportPredictionErrors = new PortableFunctionPointer<GhostComponentSerializer.ReportPredictionErrorsDelegate>(ReportPredictionErrors),
+                s_State.NumPredictionErrorNames = GetPredictionErrorNames(ref s_State.PredictionErrorNames);
                 #endif
-            };
-            #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            State.NumPredictionErrorNames = GetPredictionErrorNames(ref State.PredictionErrorNames);
-            #endif
+                s_StateInitialized = true;
+            }
+            return s_State;
         }
-        public static readonly GhostComponentSerializer.State State;
+        private static bool s_StateInitialized;
+        private static GhostComponentSerializer.State s_State;
+        public static GhostComponentSerializer.State State => GetState();
         public struct Snapshot
         {
             public uint avoidTransferMomentum;
+            public int ChangeAttitudeX;
+            public int ChangeAttitudeY;
+            public int ChangeAttitudeZ;
+            public int ChangeAttitudeW;
+            public int Displacement_x;
+            public int Displacement_y;
+            public int Displacement_z;
         }
-        public const int ChangeMaskBits = 1;
+        public const int ChangeMaskBits = 3;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -65,6 +80,13 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovementTracking>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
                 snapshot.avoidTransferMomentum = component.avoidTransferMomentum?1u:0;
+                snapshot.ChangeAttitudeX = (int)math.round(component.ChangeAttitude.value.x * 100);
+                snapshot.ChangeAttitudeY = (int)math.round(component.ChangeAttitude.value.y * 100);
+                snapshot.ChangeAttitudeZ = (int)math.round(component.ChangeAttitude.value.z * 100);
+                snapshot.ChangeAttitudeW = (int)math.round(component.ChangeAttitude.value.w * 100);
+                snapshot.Displacement_x = (int) math.round(component.Displacement.x * 100);
+                snapshot.Displacement_y = (int) math.round(component.Displacement.y * 100);
+                snapshot.Displacement_z = (int) math.round(component.Displacement.z * 100);
             }
         }
         [BurstCompile]
@@ -81,6 +103,14 @@ namespace PropHunt.Generated
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
                 component.avoidTransferMomentum = snapshotBefore.avoidTransferMomentum != 0;
+                component.ChangeAttitude = math.slerp(
+                    math.normalize(new quaternion(snapshotBefore.ChangeAttitudeX * 0.01f, snapshotBefore.ChangeAttitudeY * 0.01f, snapshotBefore.ChangeAttitudeZ * 0.01f, snapshotBefore.ChangeAttitudeW * 0.01f)),
+                    math.normalize(new quaternion(snapshotAfter.ChangeAttitudeX * 0.01f, snapshotAfter.ChangeAttitudeY * 0.01f, snapshotAfter.ChangeAttitudeZ * 0.01f, snapshotAfter.ChangeAttitudeW * 0.01f)),
+                    snapshotInterpolationFactor);
+                component.Displacement = math.lerp(
+                    new float3(snapshotBefore.Displacement_x * 0.01f, snapshotBefore.Displacement_y * 0.01f, snapshotBefore.Displacement_z * 0.01f),
+                    new float3(snapshotAfter.Displacement_x * 0.01f, snapshotAfter.Displacement_y * 0.01f, snapshotAfter.Displacement_z * 0.01f),
+                    snapshotInterpolationFactor);
             }
         }
         [BurstCompile]
@@ -90,6 +120,10 @@ namespace PropHunt.Generated
             ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovementTracking>(componentData, 0);
             ref var backup = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.MovementTracking>(backupData, 0);
             component.avoidTransferMomentum = backup.avoidTransferMomentum;
+            component.ChangeAttitude = backup.ChangeAttitude;
+            component.Displacement.x = backup.Displacement.x;
+            component.Displacement.y = backup.Displacement.y;
+            component.Displacement.z = backup.Displacement.z;
         }
 
         [BurstCompile]
@@ -100,6 +134,13 @@ namespace PropHunt.Generated
             ref var baseline1 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline1Data);
             ref var baseline2 = ref GhostComponentSerializer.TypeCast<Snapshot>(baseline2Data);
             snapshot.avoidTransferMomentum = (uint)predictor.PredictInt((int)snapshot.avoidTransferMomentum, (int)baseline1.avoidTransferMomentum, (int)baseline2.avoidTransferMomentum);
+            snapshot.ChangeAttitudeX = predictor.PredictInt(snapshot.ChangeAttitudeX, baseline1.ChangeAttitudeX, baseline2.ChangeAttitudeX);
+            snapshot.ChangeAttitudeY = predictor.PredictInt(snapshot.ChangeAttitudeY, baseline1.ChangeAttitudeY, baseline2.ChangeAttitudeY);
+            snapshot.ChangeAttitudeZ = predictor.PredictInt(snapshot.ChangeAttitudeZ, baseline1.ChangeAttitudeZ, baseline2.ChangeAttitudeZ);
+            snapshot.ChangeAttitudeW = predictor.PredictInt(snapshot.ChangeAttitudeW, baseline1.ChangeAttitudeW, baseline2.ChangeAttitudeW);
+            snapshot.Displacement_x = predictor.PredictInt(snapshot.Displacement_x, baseline1.Displacement_x, baseline2.Displacement_x);
+            snapshot.Displacement_y = predictor.PredictInt(snapshot.Displacement_y, baseline1.Displacement_y, baseline2.Displacement_y);
+            snapshot.Displacement_z = predictor.PredictInt(snapshot.Displacement_z, baseline1.Displacement_z, baseline2.Displacement_z);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CalculateChangeMaskDelegate))]
@@ -109,7 +150,14 @@ namespace PropHunt.Generated
             ref var baseline = ref GhostComponentSerializer.TypeCast<Snapshot>(baselineData);
             uint changeMask;
             changeMask = (snapshot.avoidTransferMomentum != baseline.avoidTransferMomentum) ? 1u : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 1);
+            changeMask |= (snapshot.ChangeAttitudeX != baseline.ChangeAttitudeX ||
+                        snapshot.ChangeAttitudeY != baseline.ChangeAttitudeY ||
+                        snapshot.ChangeAttitudeZ != baseline.ChangeAttitudeZ ||
+                        snapshot.ChangeAttitudeW != baseline.ChangeAttitudeW) ? (1u<<1) : 0;
+            changeMask |= (snapshot.Displacement_x != baseline.Displacement_x) ? (1u<<2) : 0;
+            changeMask |= (snapshot.Displacement_y != baseline.Displacement_y) ? (1u<<2) : 0;
+            changeMask |= (snapshot.Displacement_z != baseline.Displacement_z) ? (1u<<2) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 3);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -120,6 +168,19 @@ namespace PropHunt.Generated
             uint changeMask = GhostComponentSerializer.CopyFromChangeMask(changeMaskData, startOffset, ChangeMaskBits);
             if ((changeMask & (1 << 0)) != 0)
                 writer.WritePackedUIntDelta(snapshot.avoidTransferMomentum, baseline.avoidTransferMomentum, compressionModel);
+            if ((changeMask & (1 << 1)) != 0)
+            {
+                writer.WritePackedIntDelta(snapshot.ChangeAttitudeX, baseline.ChangeAttitudeX, compressionModel);
+                writer.WritePackedIntDelta(snapshot.ChangeAttitudeY, baseline.ChangeAttitudeY, compressionModel);
+                writer.WritePackedIntDelta(snapshot.ChangeAttitudeZ, baseline.ChangeAttitudeZ, compressionModel);
+                writer.WritePackedIntDelta(snapshot.ChangeAttitudeW, baseline.ChangeAttitudeW, compressionModel);
+            }
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.Displacement_x, baseline.Displacement_x, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.Displacement_y, baseline.Displacement_y, compressionModel);
+            if ((changeMask & (1 << 2)) != 0)
+                writer.WritePackedIntDelta(snapshot.Displacement_z, baseline.Displacement_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -132,6 +193,32 @@ namespace PropHunt.Generated
                 snapshot.avoidTransferMomentum = reader.ReadPackedUIntDelta(baseline.avoidTransferMomentum, compressionModel);
             else
                 snapshot.avoidTransferMomentum = baseline.avoidTransferMomentum;
+            if ((changeMask & (1 << 1)) != 0)
+            {
+                snapshot.ChangeAttitudeX = reader.ReadPackedIntDelta(baseline.ChangeAttitudeX, compressionModel);
+                snapshot.ChangeAttitudeY = reader.ReadPackedIntDelta(baseline.ChangeAttitudeY, compressionModel);
+                snapshot.ChangeAttitudeZ = reader.ReadPackedIntDelta(baseline.ChangeAttitudeZ, compressionModel);
+                snapshot.ChangeAttitudeW = reader.ReadPackedIntDelta(baseline.ChangeAttitudeW, compressionModel);
+            }
+            else
+            {
+                snapshot.ChangeAttitudeX = baseline.ChangeAttitudeX;
+                snapshot.ChangeAttitudeY = baseline.ChangeAttitudeY;
+                snapshot.ChangeAttitudeZ = baseline.ChangeAttitudeZ;
+                snapshot.ChangeAttitudeW = baseline.ChangeAttitudeW;
+            }
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.Displacement_x = reader.ReadPackedIntDelta(baseline.Displacement_x, compressionModel);
+            else
+                snapshot.Displacement_x = baseline.Displacement_x;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.Displacement_y = reader.ReadPackedIntDelta(baseline.Displacement_y, compressionModel);
+            else
+                snapshot.Displacement_y = baseline.Displacement_y;
+            if ((changeMask & (1 << 2)) != 0)
+                snapshot.Displacement_z = reader.ReadPackedIntDelta(baseline.Displacement_z, compressionModel);
+            else
+                snapshot.Displacement_z = baseline.Displacement_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -143,6 +230,10 @@ namespace PropHunt.Generated
             int errorIndex = 0;
             errors[errorIndex] = math.max(errors[errorIndex], (component.avoidTransferMomentum != backup.avoidTransferMomentum) ? 1 : 0);
             ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.ChangeAttitude.value, backup.ChangeAttitude.value));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.Displacement, backup.Displacement));
+            ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
         {
@@ -150,6 +241,14 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("avoidTransferMomentum"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("ChangeAttitude"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("Displacement"));
             ++nameCount;
             return nameCount;
         }

@@ -5,6 +5,7 @@ using PropHunt.Game;
 using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine;
+using static PropHunt.Client.Systems.ClearClientGhostEntities;
 using static PropHunt.Game.ClientGameSystem;
 
 namespace PropHunt.Client.Systems
@@ -31,6 +32,7 @@ namespace PropHunt.Client.Systems
         protected override void OnCreate()
         {
             RequireSingletonForUpdate<ClientClearGhosts>();
+            RequireSingletonForUpdate<NetworkStreamInGame>();
         }
 
         protected override void OnUpdate()
@@ -38,7 +40,7 @@ namespace PropHunt.Client.Systems
             var buffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
 
             // Also delete the existing ghost objects
-            Entities.ForEach((
+            Entities.WithAll<PreSpawnedGhostId>().ForEach((
                 Entity ent,
                 ref GhostComponent ghost) =>
             {
@@ -70,7 +72,7 @@ namespace PropHunt.Client.Systems
                 {
                     PostUpdateCommands.AddComponent(ent, typeof(NetworkStreamRequestDisconnect));
                     Entity clearEntity = PostUpdateCommands.CreateEntity();
-                    PostUpdateCommands.AddComponent<ClearClientGhostEntities.ClientClearGhosts>(clearEntity);
+                    PostUpdateCommands.AddComponent<ClientClearGhosts>(clearEntity);
                 });
                 connectionSingleton.requestDisconnect = false;
                 connectionSingleton.attemptingDisconnect = true;

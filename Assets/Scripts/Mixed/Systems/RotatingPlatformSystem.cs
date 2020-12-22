@@ -3,7 +3,7 @@ using PropHunt.InputManagement;
 using PropHunt.Mixed.Components;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics.Systems;
+using Unity.NetCode;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -11,8 +11,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// System to update a rotating platform's angular velocity to follow the current system
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(BuildPhysicsWorld))]
+    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    [UpdateBefore(typeof(MovementTrackingSystem))]
     public class RotatingPlatformSystem : SystemBase
     {
         /// <summary>

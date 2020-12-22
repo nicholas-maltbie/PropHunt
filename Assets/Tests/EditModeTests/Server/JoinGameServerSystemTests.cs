@@ -65,6 +65,7 @@ namespace PropHunt.EditMode.Tests.Server
 
             // Process the request
             this.joinGameServerSystem.Update();
+            base.World.GetExistingSystem<BeginSimulationEntityCommandBufferSystem>().Update();
 
             // Verify actions
             // Verify that the source connection now has a NetworkStreamInGame component

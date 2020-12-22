@@ -16,12 +16,13 @@ namespace PropHunt.Client.Systems
 
         protected override void OnUpdate()
         {
+            var ecb = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
             Entities.WithNone<NetworkStreamInGame>().ForEach((Entity ent, ref NetworkIdComponent id) =>
             {
-                PostUpdateCommands.AddComponent<NetworkStreamInGame>(ent);
-                var req = PostUpdateCommands.CreateEntity();
-                PostUpdateCommands.AddComponent<JoinGameRequest>(req);
-                PostUpdateCommands.AddComponent(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
+                ecb.AddComponent<NetworkStreamInGame>(ent);
+                var req = ecb.CreateEntity();
+                ecb.AddComponent<JoinGameRequest>(req);
+                ecb.AddComponent(req, new SendRpcCommandRequestComponent { TargetConnection = ent });
             });
 
             // When the player Joins the session
@@ -33,5 +34,4 @@ namespace PropHunt.Client.Systems
             });
         }
     }
-
 }
