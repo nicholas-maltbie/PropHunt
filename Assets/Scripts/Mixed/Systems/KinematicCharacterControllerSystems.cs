@@ -123,6 +123,7 @@ namespace PropHunt.Mixed.Systems
 
             // Playback events
             ecb.Playback(base.EntityManager);
+            ecb.Dispose();
         }
     }
 
@@ -202,26 +203,17 @@ namespace PropHunt.Mixed.Systems
     [BurstCompile]
     public class KCCMovementSystem : PredictedStateSystem
     {
-        /// <summary>
-        /// Command buffer system for pushing objects
-        /// </summary>
-        private EndSimulationEntityCommandBufferSystem commandBufferSystem;
-
-        protected override void OnCreate()
-        {
-            base.OnCreate();
-            this.commandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-        }
-
         protected override void OnUpdate()
         {
-            var commandBuffer = this.commandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
             var physicsMassGetter = this.GetComponentDataFromEntity<PhysicsMass>(true);
             var kccGroundedGetter = this.GetComponentDataFromEntity<KCCGrounded>(true);
             var kccGravityGetter = this.GetComponentDataFromEntity<KCCGravity>(true);
             float deltaTime = this.unityService.GetDeltaTime(base.Time);
             var tick = this.predictionManager.GetPredictingTick(base.World);
+
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var ecbParallelWriter = ecb.AsParallelWriter();
 
             Entities.WithReadOnly(collisionWorld)
                 .WithReadOnly(kccGravityGetter)
@@ -257,7 +249,7 @@ namespace PropHunt.Mixed.Systems
 
                 // Adjust character translation due to player movement
                 translation.Value = KCCUtils.ProjectValidMovement(
-                    commandBuffer,
+                    ecbParallelWriter,
                     entityInQueryIndex,
                     collisionWorld,
                     translation.Value,
@@ -275,7 +267,7 @@ namespace PropHunt.Mixed.Systems
                 );
                 // Adjust character translation due to gravity/world forces
                 translation.Value = KCCUtils.ProjectValidMovement(
-                    commandBuffer,
+                    ecbParallelWriter,
                     entityInQueryIndex,
                     collisionWorld,
                     translation.Value,
@@ -294,7 +286,10 @@ namespace PropHunt.Mixed.Systems
             }).ScheduleParallel();
 
             this.Dependency.Complete();
-            this.commandBufferSystem.AddJobHandleForProducer(this.Dependency);
+
+            // Playback events
+            ecb.Playback(base.EntityManager);
+            ecb.Dispose();
         }
     }
 
