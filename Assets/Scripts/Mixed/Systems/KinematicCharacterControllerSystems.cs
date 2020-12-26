@@ -10,6 +10,7 @@ using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
 using Unity.Physics.Systems;
+using Unity.Rendering;
 using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
@@ -20,6 +21,62 @@ namespace PropHunt.Mixed.Systems
     [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
     [UpdateAfter(typeof(KinematicCharacterControllerInput))]
     public class KCCUpdateGroup : ComponentSystemGroup { }
+
+    /// <summary>
+    /// Move the player with the floor
+    /// </summary>
+    [BurstCompile]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(EndFramePhysicsSystem))]
+    public class KCCMoveWithFloor : PredictedStateSystem
+    {
+        protected unsafe override void OnUpdate()
+        {
+            float deltaTime = unityService.GetDeltaTime(base.Time);
+            var tick = this.predictionManager.GetPredictingTick(base.World);
+            var localToWoldGetter = this.GetComponentDataFromEntity<LocalToWorld>(true);
+            var movementTrackingGetter = this.GetComponentDataFromEntity<MovementTracking>(true);
+
+            Entities.WithReadOnly(movementTrackingGetter)
+                .ForEach((
+                Entity entity,
+                int entityInQueryIndex,
+                ref Translation translation,
+                ref FloorMovement floorMovement,
+                ref KCCVelocity velocity,
+                in KCCGrounded grounded,
+                in PredictedGhostComponent predicted) =>
+            {
+                var tempVelocity = floorMovement.floorVelocity;
+                if (grounded.StandingOnGround && movementTrackingGetter.HasComponent(grounded.hitEntity))
+                {
+                    var track = movementTrackingGetter[grounded.hitEntity];
+                    // Get the displacement at this frame
+                    floorMovement.frameDisplacement = MovementTracking.GetDisplacementAtPoint(track, translation.Value);
+                    translation.Value += floorMovement.frameDisplacement;
+
+                    if (track.avoidTransferMomentum)
+                    {
+                        floorMovement.floorVelocity = float3.zero;
+                    }
+                    else
+                    {
+                        floorMovement.floorVelocity = floorMovement.frameDisplacement / deltaTime;
+                    }
+                }
+                else
+                {
+                    floorMovement.floorVelocity = float3.zero;
+                }
+
+                // If not grounded this frame but was grounded previous frame, accelerate by floor velocity
+                if (!grounded.StandingOnGround && grounded.PreviousStandingOnGround)
+                {
+                    velocity.worldVelocity += tempVelocity;
+                }
+            }).Run();
+        }
+    }
 
     /// <summary>
     /// Updates the grounded data on a kinematic character controller
@@ -39,17 +96,15 @@ namespace PropHunt.Mixed.Systems
             float deltaTime = unityService.GetDeltaTime(base.Time);
             var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            var ecbParallelWriter = ecb.AsParallelWriter();
-
-            Entities.WithReadOnly(collisionWorld).ForEach((
+            Entities.WithReadOnly(collisionWorld)
+                .ForEach((
                 Entity entity,
                 int entityInQueryIndex,
                 ref KCCGrounded grounded,
                 in KCCGravity gravity,
                 in PhysicsCollider collider,
-                in Rotation rotation,
                 in Translation translation,
+                in Rotation rotation,
                 in PredictedGhostComponent predicted) =>
             {
                 if (!GhostPredictionSystemGroup.ShouldPredict(tick, predicted))
@@ -112,18 +167,9 @@ namespace PropHunt.Mixed.Systems
                 {
                     grounded.elapsedFallTime = 0;
                 }
-
-                // If the floor has a MovementTracking component, set the parent of
-                //  the player entity to be the floor so the player can move along
-                //  with the floor
-
             }).ScheduleParallel();
 
             this.Dependency.Complete();
-
-            // Playback events
-            ecb.Playback(base.EntityManager);
-            ecb.Dispose();
         }
     }
 
@@ -199,8 +245,8 @@ namespace PropHunt.Mixed.Systems
     /// <summary>
     /// Applies character movement to a kinematic character controller
     /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
     [BurstCompile]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCMovementSystem : PredictedStateSystem
     {
         protected override void OnUpdate()
@@ -298,10 +344,10 @@ namespace PropHunt.Mixed.Systems
     /// Will effect the world velocity of the character (since jumping
     /// will decay due to gravity)
     /// </summary>
+    [BurstCompile]
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
     [UpdateAfter(typeof(KCCGravitySystem))]
-    [BurstCompile]
     public class KCCJumpSystem : PredictedStateSystem
     {
         protected override void OnUpdate()
@@ -440,6 +486,7 @@ namespace PropHunt.Mixed.Systems
     /// </summary>
     [UpdateInGroup(typeof(KCCUpdateGroup))]
     [UpdateBefore(typeof(KCCMovementSystem))]
+    [UpdateAfter(typeof(KCCGroundedSystem))]
     [BurstCompile]
     public class KCCGravitySystem : PredictedStateSystem
     {

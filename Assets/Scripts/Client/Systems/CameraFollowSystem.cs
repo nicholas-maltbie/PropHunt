@@ -35,14 +35,14 @@ namespace PropHunt.Client.Systems
             quaternion rotation = Camera.main.transform.rotation;
             Entities.ForEach((
                 Entity ent,
-                ref Translation transform,
-                ref Rotation rot,
+                ref LocalToWorld localToWorld,
                 ref PlayerId player,
                 ref PlayerView view) =>
             {
                 if (player.playerId == localPlayerId)
                 {
-                    position = transform.Value + view.offset;
+                    RigidTransform transform = new RigidTransform(localToWorld.Value);
+                    position = transform.pos + view.offset;
                     rotation = quaternion.Euler(math.radians(view.pitch), math.radians(view.yaw), 0);
                 }
             }).Run();

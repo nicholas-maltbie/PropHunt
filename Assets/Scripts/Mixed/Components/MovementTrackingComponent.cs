@@ -51,14 +51,22 @@ namespace PropHunt.Mixed.Components
         /// Finds the change in attitude (expressed as a quaternion) between
         /// the current and previous attitude. QFinal * Inv(QInitial)
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public quaternion ChangeAttitude;
 
         /// <summary>
         /// Displacement between current and previous frames
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
         public float3 Displacement;
+
+        public static float3 GetDisplacementGivenChange(float3 displacement, quaternion changeAttitude, float3 relativePosition)
+        {
+            // Rotate point around center by change in attitude
+            float3 rotatedFinalPosition = math.mul(changeAttitude, relativePosition);
+            // Get the delta due to rotation
+            float3 deltaRotation = rotatedFinalPosition - relativePosition;
+            // Shift point by total displacement
+            return deltaRotation + displacement;
+        }
 
         /// <summary>
         /// Gets the absolute displacement of a point relative to the
@@ -71,12 +79,7 @@ namespace PropHunt.Mixed.Components
         {
             // Get relative position to previous start
             float3 relativePosition = point - track.previousPosition;
-            // Rotate point around center by change in attitude
-            float3 rotatedFinalPosition = math.mul(track.ChangeAttitude, relativePosition);
-            // Get the delta due to rotation
-            float3 deltaRotation = rotatedFinalPosition - relativePosition;
-            // Shift point by total displacement
-            return deltaRotation + track.Displacement;
+            return GetDisplacementGivenChange(track.Displacement, track.ChangeAttitude, relativePosition);
         }
 
         /// <summary>
