@@ -7,11 +7,13 @@ using Unity.Transforms;
 
 namespace PropHunt.Mixed.Systems
 {
+    [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+    public class MovingPlatformGroup : FixedStepSimulationSystemGroup {}
+
     /// <summary>
     /// System to track moving of objects
     /// </summary>
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(EndFramePhysicsSystem))]
+    [UpdateInGroup(typeof(MovingPlatformGroup), OrderLast = true)]
     public class MovementTrackingSystem : SystemBase
     {
         protected override void OnUpdate()

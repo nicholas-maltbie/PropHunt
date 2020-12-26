@@ -26,7 +26,7 @@ namespace PropHunt.Mixed.Systems
     /// Move the player with the floor
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(KCCUpdateGroup), OrderFirst = true)]
     [UpdateAfter(typeof(EndFramePhysicsSystem))]
     public class KCCMoveWithFloor : PredictedStateSystem
     {
@@ -82,7 +82,7 @@ namespace PropHunt.Mixed.Systems
     /// Updates the grounded data on a kinematic character controller
     /// </summary>
     [BurstCompile]
-    [UpdateInGroup(typeof(KCCUpdateGroup), OrderFirst = true)]
+    [UpdateInGroup(typeof(KCCUpdateGroup))]
     public class KCCGroundedSystem : PredictedStateSystem
     {
         /// <summary>
@@ -177,8 +177,7 @@ namespace PropHunt.Mixed.Systems
     /// This snaps characters down onto the ground if they are floating within a small distance
     /// of the ground.
     /// </summary>
-    [UpdateInGroup(typeof(KCCUpdateGroup))]
-    [UpdateAfter(typeof(KCCMovementSystem))]
+    [UpdateInGroup(typeof(KCCUpdateGroup), OrderFirst = true)]
     [BurstCompile]
     public class KCCSnapDown : PredictedStateSystem
     {
