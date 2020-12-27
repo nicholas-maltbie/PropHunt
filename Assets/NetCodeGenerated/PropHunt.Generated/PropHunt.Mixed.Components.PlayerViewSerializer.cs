@@ -24,7 +24,7 @@ namespace PropHunt.Generated
             {
                 s_State = new GhostComponentSerializer.State
                 {
-                    GhostFieldsHash = 4041310980984577592,
+                    GhostFieldsHash = 2002798567621899064,
                     ExcludeFromComponentCollectionHash = 0,
                     ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.PlayerView>(),
                     ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.PlayerView>(),
@@ -75,10 +75,10 @@ namespace PropHunt.Generated
                 ref var snapshot = ref GhostComponentSerializer.TypeCast<Snapshot>(snapshotData, snapshotOffset + snapshotStride*i);
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.PlayerView>(componentData, componentStride*i);
                 ref var serializerState = ref GhostComponentSerializer.TypeCast<GhostSerializerState>(stateData, 0);
-                snapshot.offset_x = (int) math.round(component.offset.x * 100);
-                snapshot.offset_y = (int) math.round(component.offset.y * 100);
-                snapshot.offset_z = (int) math.round(component.offset.z * 100);
-                snapshot.viewRotationRate = (int) math.round(component.viewRotationRate * 100);
+                snapshot.offset_x = (int) math.round(component.offset.x * 1000);
+                snapshot.offset_y = (int) math.round(component.offset.y * 1000);
+                snapshot.offset_z = (int) math.round(component.offset.z * 1000);
+                snapshot.viewRotationRate = (int) math.round(component.viewRotationRate * 1000);
             }
         }
         [BurstCompile]
@@ -94,8 +94,8 @@ namespace PropHunt.Generated
                 ref var component = ref GhostComponentSerializer.TypeCast<PropHunt.Mixed.Components.PlayerView>(componentData, componentStride*i);
                 var deserializerState = GhostComponentSerializer.TypeCast<GhostDeserializerState>(stateData, 0);
                 deserializerState.SnapshotTick = snapshotInterpolationData.Tick;
-                component.offset = new float3(snapshotBefore.offset_x * 0.01f, snapshotBefore.offset_y * 0.01f, snapshotBefore.offset_z * 0.01f);
-                component.viewRotationRate = snapshotBefore.viewRotationRate * 0.01f;
+                component.offset = new float3(snapshotBefore.offset_x * 0.001f, snapshotBefore.offset_y * 0.001f, snapshotBefore.offset_z * 0.001f);
+                component.viewRotationRate = snapshotBefore.viewRotationRate * 0.001f;
             }
         }
         [BurstCompile]
