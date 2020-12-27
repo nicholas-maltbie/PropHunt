@@ -71,14 +71,14 @@ namespace PropHunt.Mixed.Systems
                 {
                     // Get the thing that is hit
                     ColliderCastHit hit = hitCollector.ClosestHit;
-                    focus.focusedObject = hit.Entity;
-                    focus.focusedDistance = focus.focusOffset + hit.Fraction * math.length(castEnd - castStart);
+                    focus.lookObject = hit.Entity;
+                    focus.lookDistance = focus.focusOffset + hit.Fraction * math.length(castEnd - castStart);
                 }
                 else
                 {
                     // Setup the hit to be nothing
-                    focus.focusedObject = Entity.Null;
-                    focus.focusedDistance = -1;
+                    focus.lookObject = Entity.Null;
+                    focus.lookDistance = -1;
                 }
             }).ScheduleParallel();
             this.Dependency.Complete();

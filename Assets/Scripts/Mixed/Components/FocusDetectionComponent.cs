@@ -33,16 +33,11 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Distance to the object the player is looking at
         /// </summary>
-        public float focusedDistance;
+        public float lookDistance;
 
         /// <summary>
         /// Object that is focused on this frame
         /// </summary>
-        public Entity focusedObject;
-
-        /// <summary>
-        /// Sphere collider for detecting collisions
-        /// </summary>
-        public BlobAssetReference<Collider> sphereCollider;
+        public Entity lookObject;
     }
 }
