@@ -51,9 +51,10 @@ namespace PropHunt.EditMode.Tests.Mixed
         private Entity CreateTestPlayer(float3 position, float pitch, float yaw, bool shouldPredict = true)
         {
             Entity player = PhysicsTestUtils.CreateSphere(base.m_Manager, 1.0f, position, quaternion.Euler(float3.zero), false);
-            base.m_Manager.AddComponentData<PlayerView>(player, new PlayerView {pitch = pitch, yaw = yaw });
+            base.m_Manager.AddComponentData<PlayerView>(player, new PlayerView { pitch = pitch, yaw = yaw });
             base.m_Manager.AddComponentData<PredictedGhostComponent>(player, new PredictedGhostComponent { PredictionStartTick = shouldPredict ? 0u : 1u });
-            base.m_Manager.AddComponentData<FocusDetection>(player, new FocusDetection {
+            base.m_Manager.AddComponentData<FocusDetection>(player, new FocusDetection
+            {
                 focusDistance = 1.0f,
                 focusOffset = 0.0f,
                 focusRadius = 0.05f,
