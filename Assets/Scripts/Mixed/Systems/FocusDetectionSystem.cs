@@ -21,11 +21,16 @@ namespace PropHunt.Mixed.Systems
         protected override unsafe void OnUpdate()
         {
             CollisionWorld collisionWorld = World.GetExistingSystem<BuildPhysicsWorld>().PhysicsWorld.CollisionWorld;
+            var focusTargetGetter = base.GetComponentDataFromEntity<FocusTarget>(true);
+            EntityCommandBuffer ecb = new EntityCommandBuffer(Unity.Collections.Allocator.TempJob);
+            var parallelWriter = ecb.AsParallelWriter();
             var tick = this.predictionManager.GetPredictingTick(base.World);
 
-            Entities.WithReadOnly(collisionWorld)
+            Entities.WithReadOnly(focusTargetGetter)
+                .WithReadOnly(collisionWorld)
                 .ForEach((
                 Entity entity,
+                int entityInQueryIndex,
                 ref FocusDetection focus,
                 in PlayerView playerView,
                 in PredictedGhostComponent predicted,
@@ -67,6 +72,9 @@ namespace PropHunt.Mixed.Systems
                 // Check if the player is looking at something
                 bool collisionOcurred = collisionWorld.CastCollider(input, ref hitCollector);
 
+                // Save the previously looked object
+                focus.previousLookObject = focus.lookObject;
+
                 if (collisionOcurred)
                 {
                     // Get the thing that is hit
@@ -80,8 +88,28 @@ namespace PropHunt.Mixed.Systems
                     focus.lookObject = Entity.Null;
                     focus.lookDistance = -1;
                 }
+                    
+                // See if the focused object has changed
+                bool changeFocus = focus.lookObject != focus.previousLookObject;
+
+                // Only do this if the focus changed
+                // If the object has a focus target component, set focus to true
+                if (changeFocus && focus.lookObject != Entity.Null && focusTargetGetter.HasComponent(focus.lookObject))
+                {
+                    // Focus the currently looked at object
+                    parallelWriter.SetComponent<FocusTarget>(entityInQueryIndex, focus.lookObject, new FocusTarget { isFocused = true });
+                }
+                if (changeFocus && focus.previousLookObject != Entity.Null && focusTargetGetter.HasComponent(focus.previousLookObject))
+                {
+                    // De-focus the previously looked at object
+                    parallelWriter.SetComponent<FocusTarget>(entityInQueryIndex, focus.previousLookObject, new FocusTarget { isFocused = false });
+                }
             }).ScheduleParallel();
             this.Dependency.Complete();
+
+            // Set the focus state of objects
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
         }
     }
 }

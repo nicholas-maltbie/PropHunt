@@ -102,6 +102,52 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
 
         /// <summary>
+        /// Test to verify the focus target component change on the focused object
+        /// </summary>
+        [Test]
+        public void TestFocusTargetObject()
+        {
+            // Create the test player
+            Entity player = CreateTestPlayer(float3.zero, 0, 0, true);
+            // Object for the player to look at
+            Entity focusObject = PhysicsTestUtils.CreateBox(base.m_Manager, new float3(1, 1, 1), new float3(0, 0, 1), float3.zero, 0, quaternion.Euler(float3.zero), false);
+            base.m_Manager.AddComponent<FocusTarget>(focusObject);
+
+            this.buildPhysicsWorld.Update();
+            this.focusDetectionSystem.Update();
+
+            FocusDetection focusComponent = base.m_Manager.GetComponentData<FocusDetection>(player);
+            Assert.IsTrue(focusComponent.lookObject.Index == focusObject.Index);
+            Assert.IsTrue(focusComponent.lookDistance > 0);
+
+            // Assert that the object is now focused
+            Assert.IsTrue(base.m_Manager.GetComponentData<FocusTarget>(focusObject).isFocused);
+
+            // Assert that it is still focused after looking at the object for another frame
+            this.buildPhysicsWorld.Update();
+            this.focusDetectionSystem.Update();
+            focusComponent = base.m_Manager.GetComponentData<FocusDetection>(player);
+            Assert.IsTrue(base.m_Manager.GetComponentData<FocusTarget>(focusObject).isFocused);
+
+            // Assert that the object is not focused when the player looks away
+            base.m_Manager.SetComponentData<PlayerView>(player, new PlayerView {pitch = 0, yaw = 90});
+
+            // Assert that it is not focused once looking away from object
+            this.buildPhysicsWorld.Update();
+            this.focusDetectionSystem.Update();
+
+            focusComponent = base.m_Manager.GetComponentData<FocusDetection>(player);
+            Assert.IsFalse(base.m_Manager.GetComponentData<FocusTarget>(focusObject).isFocused);
+
+            // Assert that it is still not focused once looking away from object
+            this.buildPhysicsWorld.Update();
+            this.focusDetectionSystem.Update();
+
+            focusComponent = base.m_Manager.GetComponentData<FocusDetection>(player);
+            Assert.IsFalse(base.m_Manager.GetComponentData<FocusTarget>(focusObject).isFocused);
+        }
+
+        /// <summary>
         /// Test to verify player focus when the player is looking at nothing
         /// </summary>
         [Test]

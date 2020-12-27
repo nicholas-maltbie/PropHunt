@@ -39,5 +39,10 @@ namespace PropHunt.Mixed.Components
         /// Object that is focused on this frame
         /// </summary>
         public Entity lookObject;
+
+        /// <summary>
+        /// Previous object the player was looking at
+        /// </summary>
+        public Entity previousLookObject;
     }
 }
