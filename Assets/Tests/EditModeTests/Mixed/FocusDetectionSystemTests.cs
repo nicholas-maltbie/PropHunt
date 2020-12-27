@@ -130,7 +130,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(base.m_Manager.GetComponentData<FocusTarget>(focusObject).isFocused);
 
             // Assert that the object is not focused when the player looks away
-            base.m_Manager.SetComponentData<PlayerView>(player, new PlayerView {pitch = 0, yaw = 90});
+            base.m_Manager.SetComponentData<PlayerView>(player, new PlayerView { pitch = 0, yaw = 90 });
 
             // Assert that it is not focused once looking away from object
             this.buildPhysicsWorld.Update();

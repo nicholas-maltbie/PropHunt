@@ -88,7 +88,7 @@ namespace PropHunt.Mixed.Systems
                     focus.lookObject = Entity.Null;
                     focus.lookDistance = -1;
                 }
-                    
+
                 // See if the focused object has changed
                 bool changeFocus = focus.lookObject != focus.previousLookObject;
 
