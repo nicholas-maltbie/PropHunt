@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.Physics.Systems;

@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace PropHunt.Mixed.Utilities
+namespace PropHunt.Mixed.Utils
 {
     /// <summary>
     /// Structure for contains the static decision of predicting at a given tick

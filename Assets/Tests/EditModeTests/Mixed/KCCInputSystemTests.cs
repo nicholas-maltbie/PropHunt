@@ -7,7 +7,7 @@ using Unity.Entities.Tests;
 using Unity.Mathematics;
 using Moq;
 using PropHunt.InputManagement;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 using Unity.NetCode;
 using PropHunt.Mixed.Commands;
 using Assets.Tests.EditModeTests.Utils;
