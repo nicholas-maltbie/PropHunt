@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 4421601493602290122}
   - component: {fileID: -1280934755071772361}
   - component: {fileID: 7895700625144195435}
+  - component: {fileID: -5411285805799060804}
   m_Layer: 0
   m_Name: TestCharacter
   m_TagString: Untagged
@@ -406,8 +407,9 @@ MonoBehaviour:
   focusDistance: 3
   focusRadius: 0.05
   focusOffset: 0
-  focusedDistance: 0
-  focusedObject: {fileID: 0}
+  lookDistance: 0
+  lookObject: {fileID: 0}
+  previousLookObject: {fileID: 0}
 --- !u!114 &7895700625144195435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,6 +429,19 @@ MonoBehaviour:
   Importance: 1
   prefabId: eee6a4ddc1ceae54c92cfa25bd5a5ef1
   Name: TestCharacter
+--- !u!114 &-5411285805799060804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3378658210144245526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2db4933da8faded4dac46b54c88d4feb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TeamValue: 2
 --- !u!1 &5362533525206946736
 GameObject:
   m_ObjectHideFlags: 0
