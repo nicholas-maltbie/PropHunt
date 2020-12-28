@@ -1,6 +1,6 @@
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Utility;
+using PropHunt.Mixed.Utils;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;

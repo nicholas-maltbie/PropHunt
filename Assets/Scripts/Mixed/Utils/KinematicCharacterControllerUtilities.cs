@@ -4,7 +4,7 @@ using Unity.Physics;
 using PropHunt.Mixed.Components;
 using PropHunt.Constants;
 
-namespace PropHunt.Mixed.Utilities
+namespace PropHunt.Mixed.Utils
 {
     /// <summary>
     /// Class for kinematic character controller utilities

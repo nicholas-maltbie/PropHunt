@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using PropHunt.Mixed.Systems;
 using PropHunt.Mixed.Components;
+using PropHunt.Mixed.Utils;
 using PropHunt.Tests.Utils;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.Mathematics;
 using Moq;
 using PropHunt.InputManagement;
-using PropHunt.Mixed.Utilities;
 using Unity.NetCode;
 using PropHunt.Mixed.Commands;
 using Assets.Tests.EditModeTests.Utils;

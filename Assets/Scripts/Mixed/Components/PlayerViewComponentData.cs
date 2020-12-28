@@ -15,13 +15,13 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Offset from the actual object position
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
+        [GhostField(Quantization = 1000, Interpolate = false)]
         public float3 offset;
 
         /// <summary>
         /// Player view speed in degrees per second
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = false)]
+        [GhostField(Quantization = 1000, Interpolate = false)]
         public float viewRotationRate;
 
         /// <summary>
@@ -43,6 +43,16 @@ namespace PropHunt.Mixed.Components
         /// Current yaw of the player's view in degrees
         /// </summary>
         public float yaw;
+
+        /// <summary>
+        /// Get the current rotation of this player view as a quaternion
+        /// </summary>
+        public quaternion TargetRotation => quaternion.Euler(math.radians(this.pitch), math.radians(this.yaw), 0);
+
+        /// <summary>
+        /// Get a forward vector of the direction the player is looking
+        /// </summary>
+        public float3 Forward => math.mul(this.TargetRotation, new float3(0, 0, 1));
     }
 
 }

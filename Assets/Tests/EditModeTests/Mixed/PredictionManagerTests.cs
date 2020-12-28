@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 using Unity.Entities.Tests;
 using Unity.NetCode;
 

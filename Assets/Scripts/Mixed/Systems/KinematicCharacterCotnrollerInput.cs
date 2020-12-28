@@ -1,12 +1,11 @@
 
 using PropHunt.Mixed.Commands;
 using PropHunt.Mixed.Components;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 using PropHunt.InputManagement;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using PropHunt.Mixed.Utility;
 
 namespace PropHunt.Mixed.Systems
 {
