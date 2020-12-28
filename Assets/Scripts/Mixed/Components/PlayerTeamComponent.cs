@@ -18,7 +18,7 @@ namespace PropHunt.Mixed.Components
     /// </summary>
     [GenerateAuthoringComponent]
     [GhostComponent]
-    public struct PlayerTeam: IComponentData
+    public struct PlayerTeam : IComponentData
     {
         /// <summary>
         /// Number identifying which team any given player is on.
