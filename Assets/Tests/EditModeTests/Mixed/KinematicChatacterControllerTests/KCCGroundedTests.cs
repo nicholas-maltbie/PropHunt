@@ -10,7 +10,7 @@ using Unity.Transforms;
 using PropHunt.EditMode.Tests.Utils;
 using Unity.Mathematics;
 using Unity.NetCode;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 
 namespace PropHunt.EditMode.Tests.Mixed
 {

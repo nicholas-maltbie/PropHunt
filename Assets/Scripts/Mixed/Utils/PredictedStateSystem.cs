@@ -1,10 +1,10 @@
 
 using PropHunt.InputManagement;
-using PropHunt.Mixed.Utilities;
+using PropHunt.Mixed.Utils;
 using Unity.Entities;
 using Unity.NetCode;
 
-namespace PropHunt.Mixed.Utility
+namespace PropHunt.Mixed.Utils
 {
     public abstract class PredictedStateSystem : SystemBase
     {
