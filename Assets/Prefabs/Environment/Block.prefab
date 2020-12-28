@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 486005314371101149}
   - component: {fileID: 486005314371101126}
   - component: {fileID: 486005314371101127}
+  - component: {fileID: 3735671941957169974}
   m_Layer: 0
   m_Name: Block
   m_TagString: Untagged
@@ -297,7 +298,7 @@ MonoBehaviour:
   SupportedGhostModes: 1
   OptimizationMode: 0
   Importance: 1
-  prefabId: 
+  prefabId: 568da5fbb592558478a9f165d1b86797
   Name: Block
 --- !u!114 &486005314371101127
 MonoBehaviour:
@@ -316,6 +317,18 @@ MonoBehaviour:
   - {fileID: 486005315137947361}
   loopMethod: 0
   speed: 1
+--- !u!114 &3735671941957169974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 486005314371101148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88479446296a7543848cdba48e42d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &486005315137947360
 GameObject:
   m_ObjectHideFlags: 0
