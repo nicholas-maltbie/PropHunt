@@ -30,7 +30,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Set heartbeat speed of highlight
         /// </summary>
-        public float heartbeatSpeed;
+        public float heartbeatFrequency;
 
         /// <summary>
         /// Emission color as a float4 value

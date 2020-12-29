@@ -38,7 +38,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 emissionColor = UnityEngine.Color.blue,
                 hasHeartbeat = true,
                 fresnelValue = 3.0f,
-                heartbeatSpeed = 3.0f
+                heartbeatFrequency = 3.0f
             };
 
             base.m_Manager.AddComponentData<HighlightableComponent>(entity, baseHighlightable);
@@ -55,7 +55,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(base.m_Manager.GetComponentData<EmissionActiveFloatOverride>(entity).Value == 1.0f);
             Assert.IsTrue(math.all(base.m_Manager.GetComponentData<EmissionColorFloatOverride>(entity).Value == baseHighlightable.EmissionColor));
             Assert.IsTrue(base.m_Manager.GetComponentData<HasHeartbeatFloatOverride>(entity).Value == (baseHighlightable.hasHeartbeat ? 1.0f : 0.0f));
-            Assert.IsTrue(base.m_Manager.GetComponentData<HeartbeatFrequencyFloatOverride>(entity).Value == baseHighlightable.heartbeatSpeed);
+            Assert.IsTrue(base.m_Manager.GetComponentData<HeartbeatFrequencyFloatOverride>(entity).Value == baseHighlightable.heartbeatFrequency);
             Assert.IsTrue(base.m_Manager.GetComponentData<FresnelValueFloatOverride>(entity).Value == baseHighlightable.fresnelValue);
         }
 
@@ -71,7 +71,7 @@ namespace PropHunt.EditMode.Tests.Mixed
                 emissionColor = UnityEngine.Color.blue,
                 hasHeartbeat = true,
                 fresnelValue = 3.0f,
-                heartbeatSpeed = 3.0f
+                heartbeatFrequency = 3.0f
             };
 
             base.m_Manager.AddComponentData<HighlightableComponent>(entity, baseHighlightable);

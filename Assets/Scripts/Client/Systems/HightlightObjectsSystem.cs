@@ -1,5 +1,6 @@
 using PropHunt.MaterialOverrides;
 using PropHunt.Mixed.Components;
+using PropHunt.Utils;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.NetCode;
@@ -33,63 +34,27 @@ namespace PropHunt.Client.Systems
                 .ForEach((
                 Entity entity,
                 int entityInQueryIndex,
-                HighlightableComponent highlightable,
-                FocusTarget focusTarget
+                in HighlightableComponent highlightable,
+                in FocusTarget focusTarget
             ) =>
             {
                 if (focusTarget.isFocused)
                 {
-                    if (!emissionActiveGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<EmissionActiveFloatOverride>(entityInQueryIndex, entity, new EmissionActiveFloatOverride { Value = 1.0f });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<EmissionActiveFloatOverride>(entityInQueryIndex, entity, new EmissionActiveFloatOverride { Value = 1.0f });
-                    }
-                    if (!emissionColorGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<EmissionColorFloatOverride>(entityInQueryIndex, entity, new EmissionColorFloatOverride { Value = highlightable.EmissionColor });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<EmissionColorFloatOverride>(entityInQueryIndex, entity, new EmissionColorFloatOverride { Value = highlightable.EmissionColor });
-                    }
-                    if (!hasHeartbeatGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<HasHeartbeatFloatOverride>(entityInQueryIndex, entity, new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<HasHeartbeatFloatOverride>(entityInQueryIndex, entity, new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f });
-                    }
-                    if (!heartbeatFrequencyGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity, new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatSpeed });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity, new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatSpeed });
-                    }
-                    if (!fresnelValueGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<FresnelValueFloatOverride>(entityInQueryIndex, entity, new FresnelValueFloatOverride { Value = highlightable.fresnelValue });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity, new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatSpeed });
-                    }
+                    ModifyEntityUtilities.AddOrSetData<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionActiveFloatOverride { Value = 1.0f }, emissionActiveGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetData<EmissionColorFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionColorFloatOverride { Value = highlightable.EmissionColor }, emissionColorGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetData<HasHeartbeatFloatOverride>(entityInQueryIndex, entity,
+                        new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f }, hasHeartbeatGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetData<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity,
+                        new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatFrequency }, heartbeatFrequencyGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetData<FresnelValueFloatOverride>(entityInQueryIndex, entity,
+                        new FresnelValueFloatOverride {  Value = highlightable.fresnelValue }, fresnelValueGetter, parallelWriter);
                 }
                 else
                 {
-                    if (!emissionActiveGetter.HasComponent(entity))
-                    {
-                        parallelWriter.AddComponent<EmissionActiveFloatOverride>(entityInQueryIndex, entity, new EmissionActiveFloatOverride { Value = 0.0f });
-                    }
-                    else
-                    {
-                        parallelWriter.SetComponent<EmissionActiveFloatOverride>(entityInQueryIndex, entity, new EmissionActiveFloatOverride { Value = 0.0f });
-                    }
+                    ModifyEntityUtilities.AddOrSetData<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionActiveFloatOverride { Value = 0.0f }, emissionActiveGetter, parallelWriter);
                 }
             }).ScheduleParallel();
             this.Dependency.Complete();
