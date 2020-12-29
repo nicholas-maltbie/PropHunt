@@ -8,7 +8,7 @@ namespace PropHunt.MaterialOverrides
     /// Set the highlight on for a given object
     /// </summary>
     [MaterialProperty("_EmissionColor", MaterialPropertyFormat.Float4)]
-    struct EmissionColorFloatOverride : IComponentData
+    public struct EmissionColorFloatOverride : IComponentData
     {
         public float4 Value;
     }
@@ -17,7 +17,7 @@ namespace PropHunt.MaterialOverrides
     /// Set the highlight on for a given object
     /// </summary>
     [MaterialProperty("_EmissionActive", MaterialPropertyFormat.Float)]
-    struct EmissionActiveFloatOverride : IComponentData
+    public struct EmissionActiveFloatOverride : IComponentData
     {
         public float Value;
     }
@@ -26,7 +26,7 @@ namespace PropHunt.MaterialOverrides
     /// Set the Fresnel value for a highlighted object
     /// </summary>
     [MaterialProperty("_FresnelValue", MaterialPropertyFormat.Float)]
-    struct FresnelValueFloatOverride : IComponentData
+    public struct FresnelValueFloatOverride : IComponentData
     {
         public float Value;
     }
@@ -35,7 +35,7 @@ namespace PropHunt.MaterialOverrides
     /// Set the blinking of a highlighted object on/off
     /// </summary>
     [MaterialProperty("_HasHeartbeat", MaterialPropertyFormat.Float)]
-    struct HasHeartbeatFloatOverride : IComponentData
+    public struct HasHeartbeatFloatOverride : IComponentData
     {
         public float Value;
     }
@@ -44,7 +44,7 @@ namespace PropHunt.MaterialOverrides
     /// Set the frequency of blinking of the object
     /// </summary>
     [MaterialProperty("_HeartbeatFrequency", MaterialPropertyFormat.Float)]
-    struct HeartbeatFrequencyFloatOverride : IComponentData
+    public struct HeartbeatFrequencyFloatOverride : IComponentData
     {
         public float Value;
     }

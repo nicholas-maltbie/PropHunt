@@ -13666,7 +13666,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -13676,22 +13676,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 3452347754535660630, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -18542,7 +18542,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -18552,22 +18552,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 7560659512777369428, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -24059,7 +24059,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -24069,22 +24069,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 3452347754535660630, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -24614,7 +24614,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -24624,22 +24624,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 3452347754535660630, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -34192,7 +34192,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -34202,22 +34202,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 3452347754535660630, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -42513,7 +42513,7 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: fresnelValue
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
@@ -42523,22 +42523,22 @@ PrefabInstance:
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: heartbeatSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.b
-      value: 0.01375042
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.g
-      value: 0.6431722
+      value: 0.34890452
       objectReference: {fileID: 0}
     - target: {fileID: 1594818414301232715, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}
       propertyPath: emissionColor.r
-      value: 0.9716981
+      value: 0.8490566
       objectReference: {fileID: 0}
     - target: {fileID: 7560659512777369428, guid: 9ce66645134d05648a349e8c3c23779d,
         type: 3}

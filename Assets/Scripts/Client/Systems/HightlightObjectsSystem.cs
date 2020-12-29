@@ -12,7 +12,7 @@ namespace PropHunt.Client.Systems
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
-    public class HighlightFocusedObjects : SystemBase
+    public class HighlightObjectsSystem : SystemBase
     {
         protected override void OnUpdate()
         {
