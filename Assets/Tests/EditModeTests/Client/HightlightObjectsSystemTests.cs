@@ -27,7 +27,7 @@ namespace PropHunt.EditMode.Tests.Mixed
         }
 
         /// <summary>
-        /// Test adding and removing a highlight to an object
+        /// Test adding a highlight to an object
         /// </summary>
         [Test]
         public void TestAddHighlightToObjects()
@@ -57,11 +57,29 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(base.m_Manager.GetComponentData<HasHeartbeatFloatOverride>(entity).Value == (baseHighlightable.hasHeartbeat ? 1.0f : 0.0f));
             Assert.IsTrue(base.m_Manager.GetComponentData<HeartbeatFrequencyFloatOverride>(entity).Value == baseHighlightable.heartbeatSpeed);
             Assert.IsTrue(base.m_Manager.GetComponentData<FresnelValueFloatOverride>(entity).Value == baseHighlightable.fresnelValue);
+        }
 
+        /// <summary>
+        /// Test remove highlight to an object
+        /// </summary>
+        [Test]
+        public void TestRemoveHighlightToObjects()
+        {
+            Entity entity = base.m_Manager.CreateEntity();
+            HighlightableComponent baseHighlightable = new HighlightableComponent
+            {
+                emissionColor = UnityEngine.Color.blue,
+                hasHeartbeat = true,
+                fresnelValue = 3.0f,
+                heartbeatSpeed = 3.0f
+            };
+
+            base.m_Manager.AddComponentData<HighlightableComponent>(entity, baseHighlightable);
             base.m_Manager.AddComponentData<FocusTarget>(entity, new FocusTarget { isFocused = false });
 
             this.highlightObjectSystem.Update();
 
+            Assert.IsTrue(base.m_Manager.HasComponent<EmissionActiveFloatOverride>(entity));
             Assert.IsTrue(base.m_Manager.GetComponentData<EmissionActiveFloatOverride>(entity).Value == 0.0f);
         }
     }
