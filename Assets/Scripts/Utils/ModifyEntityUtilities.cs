@@ -17,7 +17,7 @@ namespace PropHunt.Utils
             ComponentDataFromEntity<T> componentGetter, EntityCommandBuffer.ParallelWriter writer)
             where T : struct, IComponentData
         {
-            if(componentGetter.HasComponent(entity))
+            if (componentGetter.HasComponent(entity))
             {
                 writer.SetComponent<T>(sortKey, entity, newData);
                 return true;

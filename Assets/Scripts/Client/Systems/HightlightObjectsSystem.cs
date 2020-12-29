@@ -49,7 +49,7 @@ namespace PropHunt.Client.Systems
                     ModifyEntityUtilities.AddOrSetData<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity,
                         new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatFrequency }, heartbeatFrequencyGetter, parallelWriter);
                     ModifyEntityUtilities.AddOrSetData<FresnelValueFloatOverride>(entityInQueryIndex, entity,
-                        new FresnelValueFloatOverride {  Value = highlightable.fresnelValue }, fresnelValueGetter, parallelWriter);
+                        new FresnelValueFloatOverride { Value = highlightable.fresnelValue }, fresnelValueGetter, parallelWriter);
                 }
                 else
                 {
