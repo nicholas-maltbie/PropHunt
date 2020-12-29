@@ -33,7 +33,7 @@ namespace PropHunt.Client.Systems
                     parallelWriter.AddComponent<EmissionColorFloatOverride>(entityInQueryIndex, entity, new EmissionColorFloatOverride { Value = highlightable.EmissionColor });
                     parallelWriter.AddComponent<HasHeartbeatFloatOverride>(entityInQueryIndex, entity, new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f });
                     parallelWriter.AddComponent<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity, new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatSpeed });
-                    parallelWriter.AddComponent<FresnelValueFloatOverride>(entityInQueryIndex, entity, new FresnelValueFloatOverride{ Value = highlightable.fresnelValue });
+                    parallelWriter.AddComponent<FresnelValueFloatOverride>(entityInQueryIndex, entity, new FresnelValueFloatOverride { Value = highlightable.fresnelValue });
                 }
                 else
                 {

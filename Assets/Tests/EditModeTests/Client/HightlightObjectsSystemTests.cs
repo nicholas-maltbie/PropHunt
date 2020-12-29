@@ -33,7 +33,8 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void TestAddHighlightToObjects()
         {
             Entity entity = base.m_Manager.CreateEntity();
-            HighlightableComponent baseHighlightable = new HighlightableComponent{
+            HighlightableComponent baseHighlightable = new HighlightableComponent
+            {
                 emissionColor = UnityEngine.Color.blue,
                 hasHeartbeat = true,
                 fresnelValue = 3.0f,
