@@ -1,44 +1,40 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
+using UnityEngine;
 
 namespace PropHunt.Mixed.Components
 {
     /// <summary>
     /// Component for things that are highlighted when you look at them.
     /// </summary>
-    [GenerateAuthoringComponent]
     [GhostComponent]
+    [GenerateAuthoringComponent]
     public struct HighlightableComponent : IComponentData
     {
         /// <summary>
         /// Color of the highlight emission
         /// </summary>
-        [GhostField(Quantization = 100, Interpolate = true)]
-        float4 emissionColor;
-
-        /// <summary>
-        /// Set whether object is currently being highlighted
-        /// </summary>
-        [GhostField]
-        bool emissionIsActive;
+        public Color emissionColor;
 
         /// <summary>
         /// Set whether object has a 'heartbeat' effect when emission is active
         /// </summary>
-        [GhostField]
-        bool hasHeartbeat;
+        public bool hasHeartbeat;
 
         /// <summary>
         /// Set fresnel value of hightlight
         /// </summary>
-        [GhostField]
-        bool fresnelValue;
+        public float fresnelValue;
 
         /// <summary>
         /// Set heartbeat speed of highlight
         /// </summary>
-        [GhostField]
-        bool heartbeatSpeed;
+        public float heartbeatSpeed;
+
+        /// <summary>
+        /// Emission color as a float4 value
+        /// </summary>
+        public float4 EmissionColor => new float4(emissionColor.r, emissionColor.g, emissionColor.b, emissionColor.a);
     }
 }

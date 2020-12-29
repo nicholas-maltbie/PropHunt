@@ -647,8 +647,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1704.0,
-            "y": 898.0,
+            "x": -1778.0,
+            "y": 1182.0,
             "width": 141.0,
             "height": 34.0
         }
@@ -924,7 +924,7 @@
 }
 
 {
-    "m_SGVersion": 2,
+    "m_SGVersion": 3,
     "m_Type": "UnityEditor.ShaderGraph.Internal.ColorShaderProperty",
     "m_ObjectId": "1afbf22bc9d90c8eb76fdeeb79ea5ac9",
     "m_Guid": {
@@ -959,9 +959,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -949.9998779296875,
-            "y": 797.0,
-            "width": 208.00001525878907,
+            "x": -1165.0,
+            "y": 1083.0,
+            "width": 208.0,
             "height": 326.0
         }
     },
@@ -999,9 +999,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1659.9998779296875,
-            "y": 1144.0,
-            "width": 208.00001525878907,
+            "x": -2004.0,
+            "y": 1107.0,
+            "width": 208.0,
             "height": 278.0
         }
     },
@@ -1026,7 +1026,7 @@
     "m_Type": "UnityEditor.ShaderGraph.BooleanMaterialSlot",
     "m_ObjectId": "1f4aa85e1ba74da28374b21889982991",
     "m_Id": 0,
-    "m_DisplayName": "HasHeartbeat",
+    "m_DisplayName": "_HasHeartbeat",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1112,8 +1112,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -385.99993896484377,
-            "y": 855.0,
+            "x": -213.0,
+            "y": 1050.0,
             "width": 167.0,
             "height": 34.0
         }
@@ -1146,10 +1146,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -344.00006103515627,
-            "y": 1056.0,
-            "width": 208.00001525878907,
-            "height": 302.0000305175781
+            "x": -421.0000305175781,
+            "y": 1036.0,
+            "width": 208.0,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -1352,9 +1352,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2149.0,
-            "y": 1353.0,
-            "width": 160.0,
+            "x": -2482.0,
+            "y": 1170.0,
+            "width": 160.00001525878907,
             "height": 34.0
         }
     },
@@ -1381,13 +1381,13 @@
     "m_Guid": {
         "m_GuidSerialized": "da223399-2b99-4f65-80f0-6fced2f643bb"
     },
-    "m_Name": "Emission Color",
+    "m_Name": "_EmissionColor",
     "m_DefaultReferenceName": "Color_3a765f58d16e483c890fce9e776f2f70",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_EmissionColor",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 3,
     "m_Hidden": false,
     "m_Value": {
         "r": 0.0,
@@ -1403,7 +1403,7 @@
     "m_Type": "UnityEditor.ShaderGraph.BooleanMaterialSlot",
     "m_ObjectId": "3ae94f701c2243269c57dec68a580954",
     "m_Id": 0,
-    "m_DisplayName": "EmissionIsActive",
+    "m_DisplayName": "_EmissionIsActive",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1472,10 +1472,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1392.0,
-            "y": 829.0,
-            "width": 208.00001525878907,
-            "height": 302.0000305175781
+            "x": -1608.0001220703125,
+            "y": 1107.0,
+            "width": 208.0,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -1565,9 +1565,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -649.9999389648438,
-            "y": 1257.0001220703125,
-            "width": 158.0,
+            "x": -617.0,
+            "y": 1107.0,
+            "width": 158.00001525878907,
             "height": 34.0
         }
     },
@@ -1599,9 +1599,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -35.999813079833987,
-            "y": 1161.0,
-            "width": 208.00001525878907,
+            "x": 60.9998893737793,
+            "y": 1012.0,
+            "width": 208.0,
             "height": 326.0
         }
     },
@@ -1634,13 +1634,13 @@
     "m_Guid": {
         "m_GuidSerialized": "15576f97-2b76-43fb-8386-3cd15079cf9d"
     },
-    "m_Name": "HeartbeatSpeed",
+    "m_Name": "_HeartbeatFrequency",
     "m_DefaultReferenceName": "Vector1_4cc34ceea37f40019d533c26d20ddbd8",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_HeartbeatFrequency",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 3,
     "m_Hidden": false,
     "m_Value": 0.0,
     "m_FloatType": 0,
@@ -1762,10 +1762,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1945.0,
-            "y": 1169.0001220703125,
-            "width": 208.00001525878907,
-            "height": 302.0000305175781
+            "x": -2285.0,
+            "y": 1107.0,
+            "width": 208.0,
+            "height": 302.0
         }
     },
     "m_Slots": [
@@ -1792,7 +1792,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "57fce8f83fae44b8a5d4315452f73e7d",
     "m_Id": 0,
-    "m_DisplayName": "HeartbeatSpeed",
+    "m_DisplayName": "_HeartbeatFrequency",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1934,9 +1934,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2272.0,
-            "y": 1119.0,
-            "width": 126.00000762939453,
+            "x": -2482.0,
+            "y": 997.0000610351563,
+            "width": 126.0,
             "height": 173.0
         }
     },
@@ -2083,9 +2083,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -334.9997863769531,
-            "y": 1452.0,
-            "width": 208.00001525878907,
+            "x": -198.00001525878907,
+            "y": 1107.0,
+            "width": 208.0,
             "height": 127.0
         }
     },
@@ -2172,13 +2172,13 @@
     "m_Guid": {
         "m_GuidSerialized": "be464a0e-1489-409f-ba69-c05c8b3d17ff"
     },
-    "m_Name": "FresnelValue",
+    "m_Name": "_FresnelValue",
     "m_DefaultReferenceName": "Vector1_72c600d009074542aed110bc18e58c20",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_FresnelValue",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 3,
     "m_Hidden": false,
     "m_Value": 0.0,
     "m_FloatType": 0,
@@ -2317,13 +2317,13 @@
     "m_Guid": {
         "m_GuidSerialized": "f6d60520-148b-420b-b970-4af74755abb5"
     },
-    "m_Name": "HasHeartbeat",
+    "m_Name": "_HasHeartbeat",
     "m_DefaultReferenceName": "Boolean_817b01ffe28a47adb6a1d7e95dc8b232",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_HasHeartbeat",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 3,
     "m_Hidden": false,
     "m_Value": false
 }
@@ -2540,8 +2540,8 @@
     "m_Theme": 0,
     "m_Position": {
         "serializedVersion": "2",
-        "x": -2518.0,
-        "y": 1052.0,
+        "x": -2090.0,
+        "y": 918.0,
         "width": 200.0,
         "height": 100.0
     },
@@ -2617,9 +2617,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -636.9998779296875,
-            "y": 866.0,
-            "width": 208.00001525878907,
+            "x": -841.0,
+            "y": 1036.0,
+            "width": 208.0,
             "height": 326.0
         }
     },
@@ -2926,7 +2926,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "de3e1eb54bfe423790208e48bbb2bbde",
     "m_Id": 0,
-    "m_DisplayName": "FresnelValue",
+    "m_DisplayName": "_FresnelValue",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -3016,8 +3016,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1145.9998779296875,
-            "y": 1045.0,
+            "x": -1351.0,
+            "y": 1182.0,
             "width": 141.0,
             "height": 34.0
         }
@@ -3176,7 +3176,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "ef35adbe8ab04a7dbb6bc2dad0e95324",
     "m_Id": 0,
-    "m_DisplayName": "FresnelValue",
+    "m_DisplayName": "_FresnelValue",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -3215,7 +3215,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "f31290696d8945a399e8bd98c2902588",
     "m_Id": 0,
-    "m_DisplayName": "Emission Color",
+    "m_DisplayName": "_EmissionColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -3242,13 +3242,13 @@
     "m_Guid": {
         "m_GuidSerialized": "18ff3d66-6800-4d9a-bb50-2b0298cbc788"
     },
-    "m_Name": "EmissionIsActive",
+    "m_Name": "_EmissionIsActive",
     "m_DefaultReferenceName": "Boolean_f51c0015bdf1405d9798667ab2e26c9a",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_EmissionActive",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
+    "overrideHLSLDeclaration": true,
+    "hlslDeclarationOverride": 3,
     "m_Hidden": false,
     "m_Value": false
 }
@@ -3445,8 +3445,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1153.0,
-            "y": 743.0,
+            "x": -1351.0,
+            "y": 1107.0,
             "width": 149.0,
             "height": 34.0
         }
