@@ -337,3 +337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b88479446296a7543848cdba48e42d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  emissionColor: {r: 1, g: 0.6443302, b: 0, a: 0}
+  hasHeartbeat: 1
+  fresnelValue: 1
+  heartbeatFrequency: 5
