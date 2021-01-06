@@ -40,10 +40,14 @@ namespace PropHunt.EditMode.Tests.Mixed
             float3 closedPosition = new float3(0, 3, 0);
             float3 openedRotation = new float3(0, 0, 3.14f);
             float3 closedRotation = new float3(0, 0, -3.14f);
-            Door doorComponent = new Door {
-                openedPosition = openedPosition, openedRotation = openedRotation,
-                closedPosition = closedPosition, closedRotation = closedRotation,
-                state = DoorState.Opened};
+            Door doorComponent = new Door
+            {
+                openedPosition = openedPosition,
+                openedRotation = openedRotation,
+                closedPosition = closedPosition,
+                closedRotation = closedRotation,
+                state = DoorState.Opened
+            };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
             base.m_Manager.AddComponent<Translation>(door);
             base.m_Manager.AddComponent<Rotation>(door);
@@ -61,10 +65,14 @@ namespace PropHunt.EditMode.Tests.Mixed
             float3 closedPosition = new float3(0, 3, 0);
             float3 openedRotation = new float3(0, 0, 3.14f);
             float3 closedRotation = new float3(0, 0, -3.14f);
-            Door doorComponent = new Door {
-                openedPosition = openedPosition, openedRotation = openedRotation,
-                closedPosition = closedPosition, closedRotation = closedRotation,
-                state = DoorState.Closed};
+            Door doorComponent = new Door
+            {
+                openedPosition = openedPosition,
+                openedRotation = openedRotation,
+                closedPosition = closedPosition,
+                closedRotation = closedRotation,
+                state = DoorState.Closed
+            };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
             base.m_Manager.AddComponent<Translation>(door);
             base.m_Manager.AddComponent<Rotation>(door);
@@ -82,11 +90,16 @@ namespace PropHunt.EditMode.Tests.Mixed
             float3 closedPosition = new float3(0, 3, 0);
             float3 openedRotation = new float3(0, 0, 3.14f);
             float3 closedRotation = new float3(0, 0, -3.14f);
-            Door doorComponent = new Door {
-                openedPosition = openedPosition, openedRotation = openedRotation,
-                closedPosition = closedPosition, closedRotation = closedRotation,
-                elapsedTransitionTime = 1.0f, transitionTime = 10.0f,
-                state = DoorState.Opening};
+            Door doorComponent = new Door
+            {
+                openedPosition = openedPosition,
+                openedRotation = openedRotation,
+                closedPosition = closedPosition,
+                closedRotation = closedRotation,
+                elapsedTransitionTime = 1.0f,
+                transitionTime = 10.0f,
+                state = DoorState.Opening
+            };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
             base.m_Manager.AddComponent<Translation>(door);
             base.m_Manager.AddComponent<Rotation>(door);
@@ -106,11 +119,16 @@ namespace PropHunt.EditMode.Tests.Mixed
             float3 closedPosition = new float3(0, 3, 0);
             float3 openedRotation = new float3(0, 0, 3.14f);
             float3 closedRotation = new float3(0, 0, -3.14f);
-            Door doorComponent = new Door {
-                openedPosition = openedPosition, openedRotation = openedRotation,
-                closedPosition = closedPosition, closedRotation = closedRotation,
-                elapsedTransitionTime = 1.0f, transitionTime = 10.0f,
-                state = DoorState.Closing};
+            Door doorComponent = new Door
+            {
+                openedPosition = openedPosition,
+                openedRotation = openedRotation,
+                closedPosition = closedPosition,
+                closedRotation = closedRotation,
+                elapsedTransitionTime = 1.0f,
+                transitionTime = 10.0f,
+                state = DoorState.Closing
+            };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
             base.m_Manager.AddComponent<Translation>(door);
             base.m_Manager.AddComponent<Rotation>(door);
@@ -161,22 +179,22 @@ namespace PropHunt.EditMode.Tests.Mixed
         public void VerifyUpdateOnClient()
         {
             Entity door = base.m_Manager.CreateEntity();
-            base.m_Manager.AddComponentData<Door>(door, new Door { } );
-            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { } );
+            base.m_Manager.AddComponentData<Door>(door, new Door { });
+            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { });
 
             // Destory server system to emulate running on client
             base.World.DestroySystem(base.World.GetExistingSystem<ServerSimulationSystemGroup>());
             // Update the door control system
             this.doorControlSystem.Update();
         }
-        
+
         [Test]
         public void VerifyElapsedTimeStateChanges()
         {
             Entity door = base.m_Manager.CreateEntity();
-            Door doorComponent = new Door { transitionTime = 3.0f, elapsedTransitionTime = 0.0f, state = DoorState.Opening};
+            Door doorComponent = new Door { transitionTime = 3.0f, elapsedTransitionTime = 0.0f, state = DoorState.Opening };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
-            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { previousInteracted = false, interacted = false } );
+            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { previousInteracted = false, interacted = false });
 
             // Test test change to new state when the transition time is reached
             this.doorControlSystem.Update();
@@ -190,7 +208,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).elapsedTransitionTime == 0.0f);
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Opened);
             // Repeat the process but with closing state
-            base.m_Manager.AddComponentData<Door>(door, new Door { transitionTime = 3.0f, elapsedTransitionTime = 0.0f, state = DoorState.Closing});
+            base.m_Manager.AddComponentData<Door>(door, new Door { transitionTime = 3.0f, elapsedTransitionTime = 0.0f, state = DoorState.Closing });
             this.doorControlSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).elapsedTransitionTime == 1.0f);
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Closing);
@@ -208,29 +226,29 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity door = base.m_Manager.CreateEntity();
             Door doorComponent = new Door { transitionTime = 10.0f, elapsedTransitionTime = 0.0f };
             base.m_Manager.AddComponentData<Door>(door, doorComponent);
-            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { previousInteracted = false, interacted = true } );
+            base.m_Manager.AddComponentData<Interactable>(door, new Interactable { previousInteracted = false, interacted = true });
 
             // Test interact while opened
             doorComponent.state = DoorState.Opened;
-            base.m_Manager.SetComponentData<Door>(door, doorComponent );
+            base.m_Manager.SetComponentData<Door>(door, doorComponent);
             this.doorControlSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Closing);
             // Test interact while closed
             doorComponent.state = DoorState.Closed;
-            base.m_Manager.SetComponentData<Door>(door, doorComponent );
+            base.m_Manager.SetComponentData<Door>(door, doorComponent);
             this.doorControlSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Opening);
             // Test interact while opening
             doorComponent.state = DoorState.Opening;
             doorComponent.elapsedTransitionTime = 2.0f;
-            base.m_Manager.SetComponentData<Door>(door, doorComponent );
+            base.m_Manager.SetComponentData<Door>(door, doorComponent);
             this.doorControlSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Closing);
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).elapsedTransitionTime == (doorComponent.transitionTime - 1));
             // Test interact while closing
             doorComponent.state = DoorState.Closing;
             doorComponent.elapsedTransitionTime = 2.0f;
-            base.m_Manager.SetComponentData<Door>(door, doorComponent );
+            base.m_Manager.SetComponentData<Door>(door, doorComponent);
             this.doorControlSystem.Update();
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).state == DoorState.Opening);
             Assert.IsTrue(base.m_Manager.GetComponentData<Door>(door).elapsedTransitionTime == (doorComponent.transitionTime - 1));

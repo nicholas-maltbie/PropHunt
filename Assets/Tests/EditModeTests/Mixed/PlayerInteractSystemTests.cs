@@ -79,7 +79,7 @@ namespace PropHunt.EditMode.Tests.Mixed
             uint currentTick = 1;
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
-            InputUtils.AddInput(base.m_Manager, player, interact : 1, currentTick: currentTick);
+            InputUtils.AddInput(base.m_Manager, player, interact: 1, currentTick: currentTick);
 
             this.playerinteractSystem.Update();
         }
@@ -93,10 +93,10 @@ namespace PropHunt.EditMode.Tests.Mixed
             uint currentTick = 1;
             // Setup mocked behaviour to permit predicting for this player
             this.predictionStateMock.Setup(e => e.GetPredictingTick(It.IsAny<World>())).Returns(currentTick);
-            InputUtils.AddInput(base.m_Manager, player, interact : 1, currentTick: currentTick);
+            InputUtils.AddInput(base.m_Manager, player, interact: 1, currentTick: currentTick);
 
             this.playerinteractSystem.Update();
-            
+
             // Assert that the object is interacted
             Assert.IsTrue(base.m_Manager.GetComponentData<Interactable>(focus).interacted == true);
         }

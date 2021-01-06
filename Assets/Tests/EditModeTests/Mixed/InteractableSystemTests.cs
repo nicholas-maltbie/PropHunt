@@ -30,14 +30,20 @@ namespace PropHunt.EditMode.Tests.Mixed
             Entity interactedWith = base.m_Manager.CreateEntity();
             Entity manyInteractedWith = base.m_Manager.CreateEntity();
 
-            base.m_Manager.AddComponentData<Interactable>(notInteractedWith, new Interactable { 
-                previousInteracted = false, interacted = false
+            base.m_Manager.AddComponentData<Interactable>(notInteractedWith, new Interactable
+            {
+                previousInteracted = false,
+                interacted = false
             });
-            base.m_Manager.AddComponentData<Interactable>(interactedWith, new Interactable { 
-                previousInteracted = false, interacted = true
+            base.m_Manager.AddComponentData<Interactable>(interactedWith, new Interactable
+            {
+                previousInteracted = false,
+                interacted = true
             });
-            base.m_Manager.AddComponentData<Interactable>(manyInteractedWith, new Interactable { 
-                previousInteracted = true, interacted = true
+            base.m_Manager.AddComponentData<Interactable>(manyInteractedWith, new Interactable
+            {
+                previousInteracted = true,
+                interacted = true
             });
 
             Assert.IsTrue(base.m_Manager.GetComponentData<Interactable>(notInteractedWith).InteractStart == false);
