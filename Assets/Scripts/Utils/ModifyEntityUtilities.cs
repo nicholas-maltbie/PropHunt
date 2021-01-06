@@ -15,19 +15,18 @@ namespace PropHunt.Utils
         /// <param name="newData">New data to set in the entity</param>
         /// <typeparam name="T">Component data type being modified</typeparam>
         /// <returns>True if the component was set (already exists). False if the component was added (did not exist).</returns>
-        public static bool AddOrSetDataRecursive<T>(int sortKey, Entity entity, T newData,
+        public static void AddOrSetDataRecursive<T>(int sortKey, Entity entity, T newData,
             ComponentDataFromEntity<T> componentGetter, BufferFromEntity<Child> childBufferData, EntityCommandBuffer.ParallelWriter writer)
             where T : struct, IComponentData
         {
-            bool hasUpdated = AddOrSetData<T>(sortKey, entity, newData, componentGetter, writer);
+            AddOrSetData<T>(sortKey, entity, newData, componentGetter, writer);
             if (childBufferData.HasComponent(entity))
             {
                 foreach (Child child in childBufferData[entity])
                 {
-                    hasUpdated = hasUpdated || AddOrSetDataRecursive<T>(sortKey, child.Value, newData, componentGetter, childBufferData, writer);
+                    AddOrSetDataRecursive<T>(sortKey, child.Value, newData, componentGetter, childBufferData, writer);
                 }
             }
-            return hasUpdated;
         }
 
         /// <summary>
