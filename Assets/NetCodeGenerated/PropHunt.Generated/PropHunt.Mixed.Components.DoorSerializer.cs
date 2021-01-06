@@ -24,7 +24,7 @@ namespace PropHunt.Generated
             {
                 s_State = new GhostComponentSerializer.State
                 {
-                    GhostFieldsHash = 7279690305286548884,
+                    GhostFieldsHash = 7206354693560987144,
                     ExcludeFromComponentCollectionHash = 0,
                     ComponentType = ComponentType.ReadWrite<PropHunt.Mixed.Components.Door>(),
                     ComponentSize = UnsafeUtility.SizeOf<PropHunt.Mixed.Components.Door>(),
@@ -63,8 +63,20 @@ namespace PropHunt.Generated
             public int state;
             public float transitionTime;
             public int elapsedTransitionTime;
+            public float openedPosition_x;
+            public float openedPosition_y;
+            public float openedPosition_z;
+            public float closedPosition_x;
+            public float closedPosition_y;
+            public float closedPosition_z;
+            public float openedRotation_x;
+            public float openedRotation_y;
+            public float openedRotation_z;
+            public float closedRotation_x;
+            public float closedRotation_y;
+            public float closedRotation_z;
         }
-        public const int ChangeMaskBits = 3;
+        public const int ChangeMaskBits = 7;
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.CopyToFromSnapshotDelegate))]
         private static void CopyToSnapshot(IntPtr stateData, IntPtr snapshotData, int snapshotOffset, int snapshotStride, IntPtr componentData, int componentStride, int count)
@@ -77,6 +89,18 @@ namespace PropHunt.Generated
                 snapshot.state = (int) component.state;
                 snapshot.transitionTime = component.transitionTime;
                 snapshot.elapsedTransitionTime = (int) math.round(component.elapsedTransitionTime * 100);
+                snapshot.openedPosition_x = component.openedPosition.x;
+                snapshot.openedPosition_y = component.openedPosition.y;
+                snapshot.openedPosition_z = component.openedPosition.z;
+                snapshot.closedPosition_x = component.closedPosition.x;
+                snapshot.closedPosition_y = component.closedPosition.y;
+                snapshot.closedPosition_z = component.closedPosition.z;
+                snapshot.openedRotation_x = component.openedRotation.x;
+                snapshot.openedRotation_y = component.openedRotation.y;
+                snapshot.openedRotation_z = component.openedRotation.z;
+                snapshot.closedRotation_x = component.closedRotation.x;
+                snapshot.closedRotation_y = component.closedRotation.y;
+                snapshot.closedRotation_z = component.closedRotation.z;
             }
         }
         [BurstCompile]
@@ -95,6 +119,10 @@ namespace PropHunt.Generated
                 component.state = (PropHunt.Mixed.Components.DoorState) snapshotBefore.state;
                 component.transitionTime = snapshotBefore.transitionTime;
                 component.elapsedTransitionTime = snapshotBefore.elapsedTransitionTime * 0.01f;
+                component.openedPosition = new float3(snapshotBefore.openedPosition_x, snapshotBefore.openedPosition_y, snapshotBefore.openedPosition_z);
+                component.closedPosition = new float3(snapshotBefore.closedPosition_x, snapshotBefore.closedPosition_y, snapshotBefore.closedPosition_z);
+                component.openedRotation = new float3(snapshotBefore.openedRotation_x, snapshotBefore.openedRotation_y, snapshotBefore.openedRotation_z);
+                component.closedRotation = new float3(snapshotBefore.closedRotation_x, snapshotBefore.closedRotation_y, snapshotBefore.closedRotation_z);
             }
         }
         [BurstCompile]
@@ -106,6 +134,18 @@ namespace PropHunt.Generated
             component.state = backup.state;
             component.transitionTime = backup.transitionTime;
             component.elapsedTransitionTime = backup.elapsedTransitionTime;
+            component.openedPosition.x = backup.openedPosition.x;
+            component.openedPosition.y = backup.openedPosition.y;
+            component.openedPosition.z = backup.openedPosition.z;
+            component.closedPosition.x = backup.closedPosition.x;
+            component.closedPosition.y = backup.closedPosition.y;
+            component.closedPosition.z = backup.closedPosition.z;
+            component.openedRotation.x = backup.openedRotation.x;
+            component.openedRotation.y = backup.openedRotation.y;
+            component.openedRotation.z = backup.openedRotation.z;
+            component.closedRotation.x = backup.closedRotation.x;
+            component.closedRotation.y = backup.closedRotation.y;
+            component.closedRotation.z = backup.closedRotation.z;
         }
 
         [BurstCompile]
@@ -128,7 +168,19 @@ namespace PropHunt.Generated
             changeMask = (snapshot.state != baseline.state) ? 1u : 0;
             changeMask |= (snapshot.transitionTime != baseline.transitionTime) ? (1u<<1) : 0;
             changeMask |= (snapshot.elapsedTransitionTime != baseline.elapsedTransitionTime) ? (1u<<2) : 0;
-            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 3);
+            changeMask |= (snapshot.openedPosition_x != baseline.openedPosition_x) ? (1u<<3) : 0;
+            changeMask |= (snapshot.openedPosition_y != baseline.openedPosition_y) ? (1u<<3) : 0;
+            changeMask |= (snapshot.openedPosition_z != baseline.openedPosition_z) ? (1u<<3) : 0;
+            changeMask |= (snapshot.closedPosition_x != baseline.closedPosition_x) ? (1u<<4) : 0;
+            changeMask |= (snapshot.closedPosition_y != baseline.closedPosition_y) ? (1u<<4) : 0;
+            changeMask |= (snapshot.closedPosition_z != baseline.closedPosition_z) ? (1u<<4) : 0;
+            changeMask |= (snapshot.openedRotation_x != baseline.openedRotation_x) ? (1u<<5) : 0;
+            changeMask |= (snapshot.openedRotation_y != baseline.openedRotation_y) ? (1u<<5) : 0;
+            changeMask |= (snapshot.openedRotation_z != baseline.openedRotation_z) ? (1u<<5) : 0;
+            changeMask |= (snapshot.closedRotation_x != baseline.closedRotation_x) ? (1u<<6) : 0;
+            changeMask |= (snapshot.closedRotation_y != baseline.closedRotation_y) ? (1u<<6) : 0;
+            changeMask |= (snapshot.closedRotation_z != baseline.closedRotation_z) ? (1u<<6) : 0;
+            GhostComponentSerializer.CopyToChangeMask(bits, changeMask, startOffset, 7);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.SerializeDelegate))]
@@ -143,6 +195,30 @@ namespace PropHunt.Generated
                 writer.WritePackedFloatDelta(snapshot.transitionTime, baseline.transitionTime, compressionModel);
             if ((changeMask & (1 << 2)) != 0)
                 writer.WritePackedIntDelta(snapshot.elapsedTransitionTime, baseline.elapsedTransitionTime, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedPosition_x, baseline.openedPosition_x, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedPosition_y, baseline.openedPosition_y, compressionModel);
+            if ((changeMask & (1 << 3)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedPosition_z, baseline.openedPosition_z, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedPosition_x, baseline.closedPosition_x, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedPosition_y, baseline.closedPosition_y, compressionModel);
+            if ((changeMask & (1 << 4)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedPosition_z, baseline.closedPosition_z, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedRotation_x, baseline.openedRotation_x, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedRotation_y, baseline.openedRotation_y, compressionModel);
+            if ((changeMask & (1 << 5)) != 0)
+                writer.WritePackedFloatDelta(snapshot.openedRotation_z, baseline.openedRotation_z, compressionModel);
+            if ((changeMask & (1 << 6)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedRotation_x, baseline.closedRotation_x, compressionModel);
+            if ((changeMask & (1 << 6)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedRotation_y, baseline.closedRotation_y, compressionModel);
+            if ((changeMask & (1 << 6)) != 0)
+                writer.WritePackedFloatDelta(snapshot.closedRotation_z, baseline.closedRotation_z, compressionModel);
         }
         [BurstCompile]
         [MonoPInvokeCallback(typeof(GhostComponentSerializer.DeserializeDelegate))]
@@ -163,6 +239,54 @@ namespace PropHunt.Generated
                 snapshot.elapsedTransitionTime = reader.ReadPackedIntDelta(baseline.elapsedTransitionTime, compressionModel);
             else
                 snapshot.elapsedTransitionTime = baseline.elapsedTransitionTime;
+            if ((changeMask & (1 << 3)) != 0)
+                snapshot.openedPosition_x = reader.ReadPackedFloatDelta(baseline.openedPosition_x, compressionModel);
+            else
+                snapshot.openedPosition_x = baseline.openedPosition_x;
+            if ((changeMask & (1 << 3)) != 0)
+                snapshot.openedPosition_y = reader.ReadPackedFloatDelta(baseline.openedPosition_y, compressionModel);
+            else
+                snapshot.openedPosition_y = baseline.openedPosition_y;
+            if ((changeMask & (1 << 3)) != 0)
+                snapshot.openedPosition_z = reader.ReadPackedFloatDelta(baseline.openedPosition_z, compressionModel);
+            else
+                snapshot.openedPosition_z = baseline.openedPosition_z;
+            if ((changeMask & (1 << 4)) != 0)
+                snapshot.closedPosition_x = reader.ReadPackedFloatDelta(baseline.closedPosition_x, compressionModel);
+            else
+                snapshot.closedPosition_x = baseline.closedPosition_x;
+            if ((changeMask & (1 << 4)) != 0)
+                snapshot.closedPosition_y = reader.ReadPackedFloatDelta(baseline.closedPosition_y, compressionModel);
+            else
+                snapshot.closedPosition_y = baseline.closedPosition_y;
+            if ((changeMask & (1 << 4)) != 0)
+                snapshot.closedPosition_z = reader.ReadPackedFloatDelta(baseline.closedPosition_z, compressionModel);
+            else
+                snapshot.closedPosition_z = baseline.closedPosition_z;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.openedRotation_x = reader.ReadPackedFloatDelta(baseline.openedRotation_x, compressionModel);
+            else
+                snapshot.openedRotation_x = baseline.openedRotation_x;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.openedRotation_y = reader.ReadPackedFloatDelta(baseline.openedRotation_y, compressionModel);
+            else
+                snapshot.openedRotation_y = baseline.openedRotation_y;
+            if ((changeMask & (1 << 5)) != 0)
+                snapshot.openedRotation_z = reader.ReadPackedFloatDelta(baseline.openedRotation_z, compressionModel);
+            else
+                snapshot.openedRotation_z = baseline.openedRotation_z;
+            if ((changeMask & (1 << 6)) != 0)
+                snapshot.closedRotation_x = reader.ReadPackedFloatDelta(baseline.closedRotation_x, compressionModel);
+            else
+                snapshot.closedRotation_x = baseline.closedRotation_x;
+            if ((changeMask & (1 << 6)) != 0)
+                snapshot.closedRotation_y = reader.ReadPackedFloatDelta(baseline.closedRotation_y, compressionModel);
+            else
+                snapshot.closedRotation_y = baseline.closedRotation_y;
+            if ((changeMask & (1 << 6)) != 0)
+                snapshot.closedRotation_z = reader.ReadPackedFloatDelta(baseline.closedRotation_z, compressionModel);
+            else
+                snapshot.closedRotation_z = baseline.closedRotation_z;
         }
         #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [BurstCompile]
@@ -177,6 +301,14 @@ namespace PropHunt.Generated
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.transitionTime - backup.transitionTime));
             ++errorIndex;
             errors[errorIndex] = math.max(errors[errorIndex], math.abs(component.elapsedTransitionTime - backup.elapsedTransitionTime));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.openedPosition, backup.openedPosition));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.closedPosition, backup.closedPosition));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.openedRotation, backup.openedRotation));
+            ++errorIndex;
+            errors[errorIndex] = math.max(errors[errorIndex], math.distance(component.closedRotation, backup.closedRotation));
             ++errorIndex;
         }
         private static int GetPredictionErrorNames(ref FixedString512 names)
@@ -193,6 +325,22 @@ namespace PropHunt.Generated
             if (nameCount != 0)
                 names.Append(new FixedString32(","));
             names.Append(new FixedString64("elapsedTransitionTime"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("openedPosition"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("closedPosition"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("openedRotation"));
+            ++nameCount;
+            if (nameCount != 0)
+                names.Append(new FixedString32(","));
+            names.Append(new FixedString64("closedRotation"));
             ++nameCount;
             return nameCount;
         }
