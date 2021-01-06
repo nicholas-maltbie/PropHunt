@@ -62,7 +62,7 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Returns the current transition progress as a value between 0 and 1
         /// </summary>
-        public float TransitionProgress => transitionTime > 0 ? elapsedTransitionTime / transitionTime : 0;
+        public float TransitionProgress => transitionTime > 0 ? elapsedTransitionTime / transitionTime : 1;
     }
 
 }
