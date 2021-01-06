@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using PropHunt.Authoring;
 using PropHunt.Mixed.Components;
+using PropHunt.Tests.Utils;
 using Unity.Entities;
 using Unity.Entities.Tests;
 using Unity.Mathematics;
@@ -49,29 +50,30 @@ namespace PropHunt.EditMode.Tests.Authoring
 
             // Set some filler data
             openingGameObject.transform.position = new Vector3(0, 10, 0);
-            openingGameObject.transform.position = new Vector3(0, 5, 0);
+            closingGameObject.transform.position = new Vector3(0, 5, 0);
             openingGameObject.transform.rotation = Quaternion.Euler(0, 30, 0);
-            openingGameObject.transform.rotation = Quaternion.Euler(0, 90, 0);
+            closingGameObject.transform.rotation = Quaternion.Euler(0, 90, 0);
 
             // Add moving platform authoring component
             DoorAuthoringComponent doorAuthoring = this.doorObject.AddComponent<DoorAuthoringComponent>();
             doorAuthoring.openedState = openingGameObject.transform;
-            doorAuthoring.closedState = openingGameObject.transform;
+            doorAuthoring.closedState = closingGameObject.transform;
             doorAuthoring.transitionTime = 3.0f;
             doorAuthoring.startingState = DoorState.Opened;
 
             // Convert the game object to an entity
             Entity converted = GameObjectConversionUtility.ConvertGameObjectHierarchy(this.doorObject, this.settings);
             Door doorComponent = base.m_Manager.GetComponentData<Door>(converted);
-            Assert.IsTrue(math.all(doorComponent.closedPosition == new float3(closingGameObject.transform.position)));
-            Assert.IsTrue(math.all(doorComponent.openedPosition == new float3(openingGameObject.transform.position)));
-            Assert.IsTrue(math.all(doorComponent.closedRotation == new float3(closingGameObject.transform.rotation.eulerAngles)));
-            Assert.IsTrue(math.all(doorComponent.openedRotation == new float3(openingGameObject.transform.rotation.eulerAngles)));
+
+            Assert.IsTrue(TestUtils.VectorEquals(doorComponent.closedPosition, closingGameObject.transform.position));
+            Assert.IsTrue(TestUtils.VectorEquals(doorComponent.openedPosition, openingGameObject.transform.position));
+            Assert.IsTrue(math.all(doorComponent.closedRotation == math.radians(closingGameObject.transform.rotation.eulerAngles)));
+            Assert.IsTrue(math.all(doorComponent.openedRotation == math.radians(openingGameObject.transform.rotation.eulerAngles)));
             Assert.IsTrue(doorAuthoring.transitionTime == 3.0f);
 
             // Cleanup objects
-            GameObject.Destroy(openingGameObject);
-            GameObject.Destroy(closingGameObject);
+            GameObject.DestroyImmediate(openingGameObject);
+            GameObject.DestroyImmediate(closingGameObject);
         }
     }
 }
