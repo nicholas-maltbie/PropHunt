@@ -1,7 +1,5 @@
 using Unity.Entities;
-using Unity.Mathematics;
 using Unity.NetCode;
-using Unity.Physics;
 
 namespace PropHunt.Mixed.Components
 {
