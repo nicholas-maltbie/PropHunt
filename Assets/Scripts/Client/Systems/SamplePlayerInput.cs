@@ -60,7 +60,7 @@ namespace PropHunt.Client.Systems
                 yawChange = this.unityService.GetAxis("Mouse X");
                 playerInput.horizMove = this.unityService.GetAxis("Horizontal");
                 playerInput.vertMove = this.unityService.GetAxis("Vertical");
-                playerInput.interact = (byte)(this.unityService.GetButtonDown("Interact") ? 1 : 0);
+                playerInput.interact = (byte)(this.unityService.GetButton("Interact") ? 1 : 0);
                 playerInput.jump = (byte)(this.unityService.GetButton("Jump") ? 1 : 0);
                 playerInput.sprint = (byte)(this.unityService.GetButton("Sprint") ? 1 : 0);
             }

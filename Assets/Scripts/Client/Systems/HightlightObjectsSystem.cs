@@ -4,6 +4,7 @@ using PropHunt.Utils;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Transforms;
 
 namespace PropHunt.Client.Systems
 {
@@ -23,6 +24,7 @@ namespace PropHunt.Client.Systems
             var hasHeartbeatGetter = this.GetComponentDataFromEntity<HasHeartbeatFloatOverride>(true);
             var heartbeatFrequencyGetter = this.GetComponentDataFromEntity<HeartbeatFrequencyFloatOverride>(true);
             var fresnelValueGetter = this.GetComponentDataFromEntity<FresnelValueFloatOverride>(true);
+            var childBufferGetter = this.GetBufferFromEntity<Child>(true);
             var parallelWriter = ecb.AsParallelWriter();
 
             Entities.WithChangeFilter<FocusTarget>()
@@ -31,6 +33,7 @@ namespace PropHunt.Client.Systems
                 .WithReadOnly(hasHeartbeatGetter)
                 .WithReadOnly(heartbeatFrequencyGetter)
                 .WithReadOnly(fresnelValueGetter)
+                .WithReadOnly(childBufferGetter)
                 .ForEach((
                 Entity entity,
                 int entityInQueryIndex,
@@ -40,21 +43,27 @@ namespace PropHunt.Client.Systems
             {
                 if (focusTarget.isFocused)
                 {
-                    ModifyEntityUtilities.AddOrSetData<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
-                        new EmissionActiveFloatOverride { Value = 1.0f }, emissionActiveGetter, parallelWriter);
-                    ModifyEntityUtilities.AddOrSetData<EmissionColorFloatOverride>(entityInQueryIndex, entity,
-                        new EmissionColorFloatOverride { Value = highlightable.EmissionColor }, emissionColorGetter, parallelWriter);
-                    ModifyEntityUtilities.AddOrSetData<HasHeartbeatFloatOverride>(entityInQueryIndex, entity,
-                        new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f }, hasHeartbeatGetter, parallelWriter);
-                    ModifyEntityUtilities.AddOrSetData<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity,
-                        new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatFrequency }, heartbeatFrequencyGetter, parallelWriter);
-                    ModifyEntityUtilities.AddOrSetData<FresnelValueFloatOverride>(entityInQueryIndex, entity,
-                        new FresnelValueFloatOverride { Value = highlightable.fresnelValue }, fresnelValueGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionActiveFloatOverride { Value = 1.0f },
+                        emissionActiveGetter, childBufferGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<EmissionColorFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionColorFloatOverride { Value = highlightable.EmissionColor },
+                        emissionColorGetter, childBufferGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<HasHeartbeatFloatOverride>(entityInQueryIndex, entity,
+                        new HasHeartbeatFloatOverride { Value = highlightable.hasHeartbeat ? 1.0f : 0.0f },
+                        hasHeartbeatGetter, childBufferGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<HeartbeatFrequencyFloatOverride>(entityInQueryIndex, entity,
+                        new HeartbeatFrequencyFloatOverride { Value = highlightable.heartbeatFrequency },
+                        heartbeatFrequencyGetter, childBufferGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<FresnelValueFloatOverride>(entityInQueryIndex, entity,
+                        new FresnelValueFloatOverride { Value = highlightable.fresnelValue },
+                        fresnelValueGetter, childBufferGetter, parallelWriter);
                 }
                 else
                 {
-                    ModifyEntityUtilities.AddOrSetData<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
-                        new EmissionActiveFloatOverride { Value = 0.0f }, emissionActiveGetter, parallelWriter);
+                    ModifyEntityUtilities.AddOrSetDataRecursive<EmissionActiveFloatOverride>(entityInQueryIndex, entity,
+                        new EmissionActiveFloatOverride { Value = 0.0f },
+                        emissionActiveGetter, childBufferGetter, parallelWriter);
                 }
             }).ScheduleParallel();
             this.Dependency.Complete();

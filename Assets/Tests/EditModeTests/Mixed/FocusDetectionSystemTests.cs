@@ -14,7 +14,7 @@ using Unity.Physics.Systems;
 namespace PropHunt.EditMode.Tests.Mixed
 {
     /// <summary>
-    /// Tests for the KCC Components
+    /// Tests for the Focus detection system
     /// </summary>
     [TestFixture]
     public class FocusDetectionSystemTests : ECSTestsFixture
