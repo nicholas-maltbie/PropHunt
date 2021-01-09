@@ -22,7 +22,7 @@ namespace PropHunt.Mixed.Systems
     {
         protected override void OnUpdate()
         {
-            Entities.ForEach((
+            Entities.WithChangeFilter<Door>().ForEach((
                 Entity entity,
                 ref Translation translation,
                 ref Rotation rotation,
