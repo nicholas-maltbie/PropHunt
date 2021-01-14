@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4335394383583999813
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 4
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -20,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: My ProBuilder Default URP
-  m_Shader: {fileID: -6465566751694194690, guid: f9c4155b45f8ccd4bab657a36ad4095d,
+  m_Name: TransparentMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: b879fcfe30ba7b844833969535661f5e,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -36,7 +23,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_69A4DF54:
-        m_Texture: {fileID: 2800000, guid: d89e963096d1c3b409f4d4a3f3308165, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_BF5F6835:
@@ -44,7 +31,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 6344bf96fbda94141a525046d088fb23, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -86,7 +73,8 @@ Material:
     m_Floats:
     - Boolean_817b01ffe28a47adb6a1d7e95dc8b232: 0
     - Boolean_f51c0015bdf1405d9798667ab2e26c9a: 0
-    - Vector1_4C4B7100: 0.5
+    - Vector1_28c61d0951fe4845b28b25b5050ddbac: 0
+    - Vector1_4C4B7100: 0
     - Vector1_4cc34ceea37f40019d533c26d20ddbd8: 0
     - Vector1_72c600d009074542aed110bc18e58c20: 0
     - _AlphaClip: 0
@@ -117,7 +105,7 @@ Material:
     m_Colors:
     - Color_3a765f58d16e483c890fce9e776f2f70: {r: 0.009433985, g: 0.009433985, b: 0.009433985,
         a: 0}
-    - Color_F9CC1639: {r: 1, g: 1, b: 1, a: 0}
+    - Color_F9CC1639: {r: 0, g: 0, b: 0, a: 1}
     - Vector2_49D10C6: {r: 1, g: 1, b: 0, a: 0}
     - Vector2_57A569B6: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

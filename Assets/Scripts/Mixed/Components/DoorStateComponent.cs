@@ -42,21 +42,25 @@ namespace PropHunt.Mixed.Components
         /// <summary>
         /// Position of door when opening
         /// </summary>
+        [GhostField]
         public float3 openedPosition;
 
         /// <summary>
         /// Position of door when closing
         /// </summary>
+        [GhostField]
         public float3 closedPosition;
 
         /// <summary>
         /// Rotation of door when opening as an euler angle measured in Radians
         /// </summary>
+        [GhostField]
         public float3 openedRotation;
 
         /// <summary>
         /// Rotation of door when closing as an euler angle measured in Radians
         /// </summary>
+        [GhostField]
         public float3 closedRotation;
 
         /// <summary>
